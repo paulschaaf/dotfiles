@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# $Source: e:/MyDocuments/cvsroot/src/Makefile,v $
+# $Revision: 1.1 $
+# $Date: 2003/08/30 00:16:28 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+[ `basename $0` = "whereizd" ] && dironly=true
+
+case $1 in
+    "-d")
+	testx='-d'; shift
+	;;
+    "-e")
+	testx='-e'; shift
+	;;
+    "-f")
+	testx='-f'; shift
+	;;
+    *)
+	testx='-x'
+	;;
+esac
+
+# REPLACE NULL FIELD IN $PATH WITH A .
+fixpath=$PATH
+#"`echo $PATH | sed \
+#    -e 's/^:/.:/' \
+#    -e 's/::/:.:/g' \
+#    -e 's/:$/:./'`"
+
+IFS=":  "
+
+for command
+do
+    where=""
+
+    for direc in $fixpath
+    do
+	if [ $testx $direc/$command ]
+	then
+	    where="$where $direc"
+	    [ -z "$dironly" ] && where="$where/$command"
+	fi
+    done
+
+    if [ -n "$where" ]
+    then
+	if [ -n "$dironly" ]
+	then
+	    echo $where | sed "s~/$command\( \|$\)~ ~g"
+	else
+	    echo $where
+	fi
+    fi
+done

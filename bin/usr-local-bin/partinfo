@@ -1,0 +1,256 @@
+#!/usr/bin/env ruby
+
+# $Source: e:/MyDocuments/cvsroot/bin/usr-local-bin/partinfo,v $
+# $Revision: 1.4 $
+# $Date: 2003/12/10 02:29:04 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+Headings = [
+  '==== ',
+  '     ',
+]
+$ignore_fs = %w(nfs supermount)
+
+# ==================================================
+class Array
+  def self.join(aSepString=$,, arr=self.new)
+    yield(arr)
+    arr.join(aSepString)
+  end
+
+  def comment
+    self.collect {|e| e.comment}
+  end
+
+  def heading(n=1)
+    self.collect {|e| e.heading(n)}
+  end
+end
+
+# ==================================================
+class String
+  def comment
+    '# ' + self
+  end
+
+  def heading(n=1)
+    (Headings[n-1].to_s + self).comment
+  end
+
+  def strip_m
+    self.strip!
+    self
+  end
+end
+
+# ==================================================
+class Partition
+  # todo: can a partition be mounted on multiple points? maybe if R/O...
+  attr_accessor :name, :size, :used, :avail, :use_percentage, :linked_to, :mount_point, :fstab
+
+  def self.from_fstab
+    File.readlines('/etc/fstab')\
+      .reject {|e| e =~ /^\s*(none |\#|$|.*\b(#{$ignore_fs.join('|')})\b)/}\
+      .collect {|entry| self.new(*entry.split(/\s+/))}
+  rescue
+    []
+  end
+
+  def self.df_values_for(name)
+    return [] if name.empty?
+    `/bin/df -h #{name} 2>/dev/null`.chomp.split(/\s+/).reject {|each|
+      each =~ /^[A-Za-z]/ or each == name
+    }
+  end
+
+  def initialize(name, mount_point, *fstab)
+    self.name, self.mount_point, self.fstab = name, mount_point, fstab
+    self
+  end
+
+  def name=(aValue)
+    @name        = aValue.to_sym
+    @linked_to   = nil
+    self.from_df
+  end
+
+  def from_df
+    # ignore mount_point, since we already know it
+    self.size, 
+      self.used, 
+      self.avail, 
+      self.use_percentage,
+      mount_point = *self.class.df_values_for(self.linked_to)
+  end
+
+  def <=>(other)
+    -(other <=> self.mount_point.to_s)
+  end
+
+  def mount_point=(aValue)
+    @mount_point = aValue.to_sym
+  end
+
+  def linked_to
+    return @linked_to if @linked_to
+    a_match = (/.*symbolic link to .(.*)\'$/.match(`file #@name`.chomp))
+    @linked_to = if a_match
+                   '/dev/' + a_match[1]
+                 else # plain 'No such file', 'block special', etc.
+                   ''
+                 end
+  end
+
+  alias_method :mounted?, :used
+
+  def summary_s
+    Array.join('') {|arr|
+      arr.push(@mount_point)
+      if self.mount_point == :swap
+      elsif self.mounted?
+        arr.push(", #@use_percentage full (#@used/#@size), #@avail available")
+      else
+        arr.push(', not mounted')
+      end
+    }.heading
+  end
+
+  def report_s
+    Array.join($/) {|arr|
+      arr.push(self.summary_s)
+      arr.push(@linked_to.heading(2)) unless @linked_to.empty?
+      arr.push([@name, @mount_point, *@fstab].join(' '))
+    }
+  end
+
+  def to_s
+    'Partition ' + self.summary_s
+  end
+end
+
+# ==================================================
+# === If this is run as stand-alone script
+if __FILE__ == $0
+
+  puts ['-*- eval: (outline-minor-mode) -*-', 
+    Time.now.strftime("Partition info for #{`hostname`.chomp}, %F %T %Z"),
+    'Output from', 
+    "   #{`basename #$0`.chomp} #{ARGV.collect {|e| e.inspect}.join(' ')}"].heading
+  puts
+
+  parts = Partition.from_fstab.sort.collect {|e| e.report_s}
+  unless ARGV.empty?
+    regexps = ARGV.collect {|e| Regexp.new(e, Regexp::MULTILINE)}
+    parts = parts.select {|part|
+      regexps.detect {|exp|
+        part =~ exp
+      }
+    }
+  end
+  
+  puts parts.join($/ * 2)
+
+end # ==============================================
+
+# def test(string=nil, &block)
+#   return true unless block_given?
+#   puts "Testing #{string}" if string
+#   puts
+#   if (status = block.call)
+#     puts 'Test passed.'
+#   else
+#     puts "Test failed! #{block.binding.instance_variables}"
+#   end
+#   status
+# end
+
+=begin
+# ===== -*- eval: (outline-minor-mode) -*-
+# ===== Partition info for copernicus, 2003-11-09 16:57:09 PST
+
+# ===== / uses 3.3G
+# (87%) of 4.0G, leaving 504M free
+/dev/hde5 / ext3 defaults 1 1
+
+# ===== /boot uses 2.5M
+# (18%) of 16M, leaving 12M free
+/dev/hda7 /boot ext2 defaults 1 2
+
+# ===== /home uses 1.2G
+# (40%) of 3.0G, leaving 1.9G free
+/dev/hde7 /home ext3 defaults 1 2
+
+# ===== /mnt/data uses 1.3G
+# (64%) of 2.0G, leaving 726M free
+/dev/hde4 /mnt/data vfat iocharset=iso8859-1,codepage=850,umask=0 0 0
+
+# ===== /mnt/games uses 7.2G
+# (98%) of 7.4G, leaving 204M free
+/dev/hda6 /mnt/games vfat iocharset=iso8859-1,codepage=850,umask=0 0 0
+
+# ===== /mnt/jaz uses 828M
+# (82%) of 1021M, leaving 194M free
+/dev/sda4 /mnt/jaz vfat iocharset=iso8859-1,codepage=850,umask=0 0 0
+
+# ===== /mnt/win_2k uses 2.1G
+# (53%) of 3.9G, leaving 1.9G free
+/dev/hda5 /mnt/win_2k ntfs iocharset=iso8859-1,ro,umask=0 0 0
+
+# ===== /usr uses 4.2G
+# (73%) of 6.1G, leaving 1.6G free
+/dev/hde1 /usr ext2 defaults 1 2
+
+# ===== swap uses 0
+# (-) of 0, leaving 0 free
+/dev/hde6 swap swap defaults 0 0
+
+# ===== swap uses 0
+# (-) of 0, leaving 0 free
+/dev/hda8 swap swap defaults 0 0
+
+# *************************************************************
+# *************************************************************
+# *************************************************************
+
+# ==== -*- eval: (outline-minor-mode) -*-
+# ==== Partition info for satori.versant.com, 2003-12-09 18:37:05 PST
+# ==== Output from
+# ====    partinfo 
+
+# ==== /, 6% full (99M/2.0G), 1.8G available
+#      /dev/ide/host0/bus0/target0/lun0/part5
+/dev/hda5 / ext3 noatime 1 1
+
+# ==== /boot, 30% full (4.0M/15M), 9.6M available
+#      /dev/ide/host0/bus0/target0/lun0/part1
+/dev/hda1 /boot ext3 noatime 1 2
+
+# ==== /home, 18% full (2.8G/17G), 14G available
+#      /dev/ide/host0/bus0/target0/lun0/part9
+/dev/hda9 /home ext3 noatime 1 2
+
+# ==== /mnt/cdrom, not mounted
+/dev/ide/host0/bus1/target0/lun0/cd /mnt/cdrom auto ro,noauto,user,exec 0 0
+
+# ==== /mnt/cdwriter, not mounted
+/dev/scsi/host0/bus0/target4/lun0/cd /mnt/cdwriter auto ro,noauto,user,exec 0 0
+
+# ==== /tmp, 2% full (17M/981M), 915M available
+#      /dev/ide/host0/bus0/target0/lun0/part10
+/dev/hda10 /tmp ext3 noatime 1 2
+
+# ==== /usr, 31% full (2.0G/6.8G), 4.5G available
+#      /dev/ide/host0/bus0/target0/lun0/part7
+/dev/hda7 /usr ext3 noatime 1 2
+
+# ==== /var, 7% full (196M/2.9G), 2.6G available
+#      /dev/ide/host0/bus0/target0/lun0/part8
+/dev/hda8 /var ext3 noatime 1 2
+
+# ==== swap
+#      /dev/ide/host0/bus0/target0/lun0/part6
+/dev/hda6 swap swap defaults 0 0
+
+=end

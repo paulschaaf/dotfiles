@@ -1,0 +1,484 @@
+# -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
+
+# This script is run by interactive shells
+
+# 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
+# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
+# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# ...
+# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
+
+log=:
+#log=echo
+$log '*** In .zshrc'
+
+interactive=true
+
+# Built:	Wed Sep 22 22:19:12 PDT 2004
+# By:  	pschaaf@congo
+# For:
+#    host     = congo   shell    = zsh
+#    uname    = Linux   term     = xterm
+
+# llocate () {
+#     if [ -e locatedb ]; then
+#         command locate -d locatedb "$@"
+#     else
+#         command locate "$@"
+#     fi
+# }
+
+# setenv () {
+#     local _label=$1; shift
+#     export $_label="$@"
+# }
+
+
+# ======== Zsh Compinstall
+if [ -z "$ifZsh" ]; then
+    zstyle ':completion:*' expand prefix suffix
+    zstyle ':completion:*' file-sort name
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*' ignore-parents parent ..
+    zstyle ':completion:*' list-colors ''
+    zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+    zstyle ':completion:*' menu select=0
+    zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+    zstyle ':completion:*' squeeze-slashes true
+    zstyle ':zftp:' titlebar true
+    zstyle ':completion:*' verbose true
+    zstyle  :compinstall filename "$HOME/etc/env/$HOST.zsh"
+
+    autoload -U compinit
+    autoload zed                  && alias fned='zed -f'
+    unalias  run-help 2>/dev/null && autoload run-help
+    autoload -U compinit
+fi
+
+
+# ======== Shell Options
+
+# limit coredumpsize 0
+
+if [ -z "$ifZsh" ]; then
+    unsetopt \
+        beep \
+        clobber \
+        flow_control \
+        hup \
+        notify \
+        print_exit_value \
+        rm_star_silent
+
+    setopt \
+        auto_list \
+        auto_menu \
+        auto_param_slash \
+        auto_pushd \
+        auto_remove_slash \
+        bang_hist \
+        correct \
+        extended_history \
+        function_argzero \
+        hash_cmds \
+        hash_dirs \
+        hist_find_no_dups \
+        hist_ignore_dups \
+        hist_ignore_space \
+        hist_no_functions \
+        hist_reduce_blanks \
+        ignore_eof \
+        inc_append_history \
+        pushd_silent \
+        pushd_to_home
+fi
+
+# ======== Cd, Dirs, Popd, Pushd
+
+frotz () {
+    pushd ~/private/sync/int-fic
+    local stories=".*/${1:-.*}\\.\\(dat\\|z5\\)\$"
+    if [ "$*" = "" ]; then
+        : # if no args, show all game files
+        find -regex $stories -print | sed 's/^\.\///; s/\.\(dat\|z5\)$//'
+    else
+        : # otherwise run the one requested
+        local story=`find -maxdepth 1 -regex $stories -print -quit`
+        command frotz $story
+    fi
+    popd
+}
+
+
+setfont () {
+    local name
+    case $1 in
+        unreadable)
+            name=nil2
+            ;;
+        tiny)
+            name=5x7
+            ;;
+        small)
+            name=6x10
+            ;;
+        medium)
+            name=7x13
+            ;;
+        large)
+            name=9x15
+            ;;
+        huge)
+            name=10x20
+            ;;
+        *)
+            name=$1
+            ;;
+    esac
+    echo "]50;$name"
+}
+
+
+wedit () {
+    local cmd file x
+    for x in $*
+    do
+        file=$(which $x) && cmd="${cmd:-edit} $file" || echo $file
+    done
+    eval $cmd
+}
+
+locate() {
+    command locate $* | sed -e '/^\/c\/\(home\|cygwin\)/d; s_'${HOME}'_~_g;'
+}
+
+# ======== Aliases
+# any_alias () {
+#     local label=$1; shift
+#     alias $label="$*"
+# }
+
+
+basename () {
+    echo ${(F)@:t}
+}
+dirname  () {
+    echo ${(F)@:h}
+}
+
+
+if [ "$USER" != "pschaaf" ]; then
+    alias  emacs='emacs --user pschaaf'
+    alias xemacs='xemacs --user pschaaf'
+fi
+
+if [ -n "$CYGROOT" ]; then
+    alias exp=explorer
+fi
+
+
+alias pd=popd
+
+# only enable bindkey if in zsh
+$ifNotZsh alias bindkey=':'
+
+# Use Emacs key bindings
+bindkey -e
+
+# ======== Function Keys
+
+# Here's what we'd like to accomplish:
+#    __PRESS__  __TO__
+#    F6         cut
+#    F7         copy
+#    F8         paste
+#    F9         search
+#    F12        exit
+
+# if [ -z "$ifZsh" ]; then
+    bindkey "[17~" kill-whole-line
+    bindkey "[18~" copy-region-as-kill
+    bindkey "[19~" yank
+    bindkey "[20~" history-incremental-search-backward
+
+    if [ -z "$inScreen" ]; then
+        bindkey -s "[21~" "exit\n"
+    fi
+# else
+#     bind '"\e[17~": kill-whole-line'
+#     bind '"\e[18~": copy-region-as-kill'
+#     bind '"\e[19~": yank'
+# #    bind '"\e[20~": history-incremental-search-backward'
+# fi
+
+# ======== Other Extra Keys
+
+# Here's what we'd like to accomplish:
+
+#   __PRESS __  __TO__
+#   ctrl_left   backward-word
+#   ctrl_right  forward-word
+
+#   home        beginning-of-line
+#   end         end-of-line
+
+#   ctrl_delete backward-kill-word
+#   delete      delete-char
+
+#set -x
+if [ -z "$ifZsh" ]; then
+    bindkey "\033[3~" delete-char
+
+    #if [ -n "$CYGROOT" -a "$TERM" != "rxvt" ]; then
+    #    bindkey "\177"    backward-kill-word
+    #fi
+
+    # echo; (bindkey | grep 'backward-delete-char'; echo; bindkey | grep 'backward-kill-word') | sed 's/" /"\t/g'
+
+    bindkey "\M-C\M-5" up-case-word
+    bindkey "\M-C\M-," down-case-word
+
+    case ${TERM} in
+        cygwin*)
+            bindkey "\033H"     backward-delete-char
+            bindkey "\033?"     backward-kill-word
+            bindkey "\033[1;5D" backward-word
+            bindkey "\033[1~"   beginning-of-line
+            bindkey "\033[4~"   end-of-line
+            bindkey "\033[1;5C" forward-word
+            bindkey "\033[3;5~" kill-word
+            ;;
+        rxvt*)
+            bindkey "^H"        backward-delete-char
+            bindkey "\033Od"    backward-word
+            bindkey "\033[7~"   beginning-of-line
+            bindkey "\033[3~"   delete-char-or-list
+            bindkey "\033[8~"   end-of-line
+            bindkey "\033Oc"    forward-word
+            bindkey "\033[3;5~" kill-word
+
+            bindkey "\033?"     backward-kill-word
+            bindkey "\033[1;5D" backward-word
+            bindkey "\033[1~"   beginning-of-line
+            bindkey "\033[4~"   end-of-line
+            bindkey "\033[1;5C" forward-word
+            bindkey "\033[3;5~" kill-word
+            ;;
+        xterm*)
+            bindkey "^?"        backward-delete-char
+            bindkey "^H"        backward-kill-word
+            bindkey "\033[1;5D" backward-word
+            bindkey "\033[H"    beginning-of-line
+            bindkey "\033[1~"   beginning-of-line
+            bindkey "\033[3~"   delete-char-or-list
+            bindkey "\033[4~"   end-of-line
+            bindkey "\033[F"    end-of-line
+            bindkey "\033[1;5C" forward-word
+            bindkey "\033[3;5~" kill-word
+            ;;
+        *)
+            echo Unknown terminal type: $TERM
+            ;;
+    esac
+
+elif [ -z $ifMinGW ]; then
+    bind    '"\C-?"   backward-kill-word'
+fi
+
+# ======== Macro Keys
+# C-? prepends 'whence' to command line
+bindkey -s ""^_"" "\C-apath \C-e\C-m"
+#     if [ -z "$CONNECTION" ]; then
+#         #bindkey -r "\C-h" 	# remove binding
+#         #bindkey "\C-h\C-k" describe-key-briefly	#
+#     fi
+
+
+updateManpath () {
+    appendManpath `echo $PATH | awk '/\/bin$/ {gsub(/\/bin$/, "/man"); print}' RS=':'`
+}
+
+
+# ======== Functions
+
+# if [ -n "$ANT_HOME" ]; then
+#    function ant_complete () {
+#       local args_line args
+#       read -l args_line
+#       set -A args $args_line
+#       set -A reply $(COMP_LINE=$args_line complete-ant-cmd ${args[1]} $1)
+#    }
+#    compctl -K ant_complete ant build.sh
+# fi
+
+# homeToTilde () {echo "$@" | sed 's,\(^\|:\)'$HOME',\1~,g'}
+
+# Save script args in variable to allow access inside script
+# todo: does this even work?
+# script () {
+# 	SCRIPT_ARGS="script $*" command script $*
+# }
+
+# signals () {
+#     echo "   \$signals="
+#     echo $signals | tr " " "
+# " | cat -n | awk ' {print "    ", $1-1, $2}'  | column
+# }
+
+#smspaul () {sendSMS.pl -r 4086444762 -p TMOBILE -s $EMAIL}
+#smsvic  () {sendSMS.pl -r 4086444769 -p TMOBILE -s $EMAIL}
+
+# syncdir () {
+#     make ${1:+-C $1} -ef ~/etc/makefiles/syncdir.make
+# }
+
+if [ -z "$CYGROOT" ]; then
+    vicdo () {
+        eval sudo /bin/su -l vschaaf -- --restricted ${*:+-c "'$*'"}
+    }
+fi
+
+
+# ======== Prompt
+$ifZsh source /c/PROGRA~2/Git/etc/git-prompt.sh
+#SCRIPTING_MSG="$(__git_ps1)"
+
+export OLD_PS1=${PS1/\\n$ */}
+
+CONNECTION_END=' '
+case $CONNECTION in
+    ssh)
+        export CONNECTION_COLOR='[33;1m'
+        ;;
+    tlnt)
+        export CONNECTION_COLOR='[31;1m'
+        ;;
+    sudo)
+        export CONNECTION_COLOR='[35;1;40m'
+        ;;
+    tlnt)
+        export CONNECTION_COLOR='[31;1m'
+        ;;
+    *)
+        unset CONNECTION_END
+        ;;
+esac
+
+rootColorString='[37;1;41m'
+
+
+case $UNAME in
+   AIX*)
+        # blue bold
+        platformColor='[34;1;40m'
+        ;;
+   CYGWIN*)
+        # white bold on green
+        platformColor='[37;1;42m'
+        ;;
+    HPUX*)
+        # cyan bold
+        platformColor='[36;1;40m'
+        ;;
+    Linux*)
+        # green bold
+        platformColor='[32;1;40m'
+        ;;
+    SunOS*)
+        # yellow bold
+        platformColor='[33;1;40m'
+        ;;
+    Windows*)
+        # white bold on blue
+        platformColor='[37;1;44m'
+        ;;
+    UNKN*|*)
+        # magenta bold
+        platformColor='[35;1;40m'
+        ;;
+esac
+
+export branchName branchDesc branchFullName
+
+updateGitEnv () {
+    # print only the line starting with a * after replacing that char with a CR
+    export branchName="$(git.exe symbolic-ref --short HEAD 2>/dev/null)"
+    export branchDesc=
+    export branchFullName=
+    if [ -n "$branchName" ]; then
+        branchDesc="$(git.exe config branch.$branchName.description)"
+        branchFullName="
+[32m$branchName  $branchDesc[0m"
+    fi
+
+    if [ -n "$inScreen" ]; then
+        # Update the screen status line
+        echo -n "\ek${branchName#user/pschaaf/}\e\\"
+    fi
+}
+
+# Not Git Bash
+if [ -n "$ifGit" ]; then
+    export dirs
+    chpwd () {
+        dirs="`builtin dirs -p |
+            awk 'NR == 2 {printf(\"%s\", \"[0;33m\")}; {print}' ORS=' '`"
+        updateGitEnv
+    }
+
+    git () {
+        command git $*
+        # if this is a checkout, fix the path in the prompt
+        [ "$1" = "checkout" ] && updateGitEnv
+    }
+
+    precmd () {
+        fixPrompt
+    }
+
+    fixPrompt () {
+        PS1="
+%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[33;1m%}%62>\>>$dirs%<<%{[0m%}$branchFullName
+%2(L.%L-.)%{[36;1m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
+    }
+
+    PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
+
+    # set up the prompt
+    if [ -n "$inScreen" ]; then
+        # cd to the symlinked path to this directory
+        thisDir=`pwd | sed '
+              s_^\(/c\)*'$HOME'\|'$ZDOTDIR'_~_;
+              s_^/c/ferrite_/ferrite_;
+              s_^\(/c\)*/depot/eng/\(diamond\|emerald\)_/\2_;
+              s_ _'"' '"'_g'`
+        eval pcd $thisDir
+    else
+        [ $PWD = $HOME ] || pcd .
+    fi
+    unset thisDir
+
+else  # Git Bash
+    export PS1=${OLD_PS1/\\n/\\n\$(date +%k:%M) }"\$(dirs | sed 's/^[^ ]*//')\n\[\e[36;1m\]\!\[\e[0m\] $ "
+
+fi
+
+$ifZsh compinit
+
+# ======== Manpath
+
+# Move this heredoc around in the file to temporarily disable sections
+# of code. Make sure to keep the opening tag first, and the closing tag
+# against the left margin on a line by itself. Don't forget that any
+# edits are lost if this file is re-generated.
+#: <<DEBUG_NO_EXEC
+#DEBUG_NO_EXEC
+#
+
+# Used packages:
+#	ant		column		cvs		cxoffice	emacs
+#	gnuclient	grep_color	grep_gnu	info		java_sdk
+#	less		ls_color	ls_gnu		msoffice	ruby
+#	screen		sms		ssh		suroot		tree
+#	versant		vi		vim		x_contrib	xemacs

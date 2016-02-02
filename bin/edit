@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#echo \$1=$1
+
+case ${1} in
+    # Guidewire XML file
+    # *.eti|*.etx|*.eix|*.pcf|*.tti|*.ttl)
+    #     '/c/Program Files (x86)/Notepad++/notepad++.exe' "$@"
+    #     ;;
+
+    # Anything else
+    *)
+        ~/bin/win/emacs "$@"
+        ;;
+esac

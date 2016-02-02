@@ -1,0 +1,25 @@
+#!/usr/bin/env ruby
+
+require 'stringio'
+
+map = Hash.new {|hash, key| hash[key] = Array.new}
+
+def map.to_s
+  str = StringIo.new
+  self.collect {|key, values|
+    str.printf("%s  \t%s\n", key, values.join("\n        \t"))
+  }
+  str.string
+end
+
+`ls -1i #{ARGV.join(' ')}`.split($/).each {|line|
+  inode, file = line.split(/( *\d+) (.*)/)[1..-1]
+  # file = sprintf("%s  \t%s", inode, file) unless map[inode]
+  map[inode].push(file)
+}
+
+# map.each_pair {|inode, files|
+#   files[0] = inode + "  \t" << files[0]
+#   puts files.join("\n        \t")
+# }
+puts map

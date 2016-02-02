@@ -1,0 +1,24 @@
+# ln -s ~/etc/colorscheme.kcsrc ~/.kde/share/apps/kdisplay/color-schemes/pschaaf-colorscheme.kcsrc
+
+[Color Scheme]
+Name=pschaaf
+activeBackground=50,98,132
+activeBlend=50,98,132
+activeForeground=255,255,255
+activeTitleBtnBg=153,153,153
+alternateBackground=183,183,183
+background=153,153,153
+buttonBackground=153,153,153
+buttonForeground=0,0,0
+contrast=5
+foreground=0,0,0
+inactiveBackground=129,129,129
+inactiveBlend=153,153,153
+inactiveForeground=255,255,255
+inactiveTitleBtnBg=153,153,153
+linkColor=0,0,192
+selectBackground=85,128,151
+selectForeground=255,255,255
+visitedLinkColor=128,0,128
+windowBackground=195,195,195
+windowForeground=0,0,0

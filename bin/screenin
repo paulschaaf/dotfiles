@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+
+# Add a screen session in the specified directory
+
+enable_logging = false
+dry_run = false
+
+LOGFILE = '/var/log/screenin.log'
+
+self.class.class_eval do
+work = if enable_logging
+         proc {|*args| File.open(LOGFILE, "a") {|log| log.puts(*args); puts *args}}
+       else
+         proc {|*args| }
+       end
+  define_method :log, work
+end
+
+
+log "\n### #{`date`.chomp} ########################"
+
+# default to work in the current directory
+cdto = `pwd`.chomp
+
+while ($*.length > 0)
+  case $*.first
+  when '--help'
+    puts <<EOF
+ Usage:  #{$0.gsub %r_.*/_, ''} [-t title] [directory]
+
+ Creates a new window in a running instance of GNU screen and in
+either the specified or the current directory.
+  -t title         Set the screen title. If absent it will either
+                   derive the title or leave it blank.
+  --help           Show this screen
+  -n, --dry-run    Display the resulting command without executing
+
+
+Windows Tip: Use regedit to add the command
+
+   c:\\cygwin\\bin\\ruby.exe c:\\Users\\pschaaf\\bin\\screenin "%L"
+
+to the context menu for Directories (HKEY_USERS\\???\\Software\\Classes\\Directory\\Shell\\cygwin_ash\\command).
+
+EOF
+    exit
+  when '-t'
+    $*.shift
+    title = $*.first
+  when /-n|--dry-run/
+    dry_run=true
+  when '--'
+    $*.shift
+    break
+  else
+    # work in the user specified directory
+    cdto = `cygpath -au '#{$*.first}'`.chomp
+    break
+  end
+  $*.shift
+end
+
+unless title
+  if /(BillingCenter|ClaimCenter|ContactCenter|ExampleCenter|PolicyCenter|TrainingApp)_?([0-9.]{0,3})/ =~ cdto
+
+    gw_products = {
+      :BillingCenter => 'BC',
+      :ClaimCenter   => 'CC',
+      :ContactCenter => 'AB',
+      :ExampleCenter => 'EX',
+      :PolicyCenter  => 'PC',
+      :TrainingApp   => 'TA'
+    }
+
+    puts $1
+    title = gw_products[$1.to_sym] + $2
+  end
+
+end
+
+title_switch = "-t '#{title}'" if title
+cmd = "screen -X chdir '#{cdto}'; screen -X screen #{title_switch}; screen -X chdir"
+
+log "cdto  = #{cdto}\ntitle = #{title}\n\n#{cmd}"
+
+if dry_run
+    puts cmd
+else
+    exec cmd
+end
+
+sleep 100000
+

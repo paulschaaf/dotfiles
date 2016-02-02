@@ -1,0 +1,48 @@
+#!/bin/sh
+
+###############
+# MAKE SURE TO REMOVE 'exit' and any auto-started apps from /usr/X11R6/bin/startxwin.sh!
+###############
+
+cd
+
+set -x
+
+if [ "$1" = "restart" ]; then
+    pkill XWin
+    shift
+fi
+
+# export PATH=`/usr/bin/cygpath -aup $CYGPATH`:$PATH
+
+#source $HOME/bin/win/start-ssh-agent.sh
+set -x
+# sleep 5
+echo 'Adjust your display, then press <Enter> to continue'
+read
+
+# /usr/X11R6/bin/run /bin/sh -lc source '/usr/X11R6/bin/startxwin.sh; sleep 3; source $HOME/.xinitrc'
+[ -z "$DISPLAY" ] && export DISPLAY=127.0.0.1:0.0
+
+# export PATH=/usr/X11R6/bin:"$PATH"
+
+#export XAPPLRESDIR=/usr/X11R6/lib/X11/app-defaults
+#export XCMSDB=/usr/X11R6/lib/X11/Xcms.txt
+#export XKEYSYMDB=/usr/X11R6/lib/X11/XKeysymDB
+#export XNLSPATH=/usr/X11R6/lib/X11/locale
+
+# Cleanup from last run.
+rm -rf /tmp/.X11-unix
+
+export TERM=xterm
+export SHLVL=-1
+
+#SHLVL=-1 /usr/bin/run XWin -multiwindow -clipboard -silent-dup-error
+source /usr/bin/startxwin
+
+# echo 'Press <Enter> to handle .xinitrc'; read
+#source ~/.xinitrc
+#run /bin/sh -c
+#exec ~/.xinitrc
+
+#echo Press any key to exit $0; read

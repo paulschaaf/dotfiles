@@ -1,0 +1,145 @@
+#!/usr/bin/env ruby
+
+if ARGV[0] == '--synonyms' #|| $0 =~ /(.*\/)?mozclient/
+  puts [:mail, :news, :www].join($/)
+  exit
+end
+
+require 'cgi'
+
+$app = `basename $0`.chomp
+
+ON_CYGWIN  = (/cygwin/ =~ RUBY_PLATFORM)
+NOT_CYGWIN = ! ON_CYGWIN
+
+$mozilla = case $app
+           when /mail|news/
+             ON_CYGWIN \
+               ? '/c/PROGRA~1/THUNDE~1/thunderbird.exe' \
+               : '/opt/pschaaf/thunderbird/mozilla-xremote-client -a thunderbird'
+           else
+             ON_CYGWIN \
+               ? '/c/PROGRA~1/MOZILL~1/firefox.exe' \
+               : '/opt/pschaaf/firefox/mozilla-xremote-client -a firefox'
+           end
+
+$moz_startup_time = 4
+
+class Array
+  def self.join(aSepString=$,, arr=self.new)
+    yield(arr)
+    arr.join(aSepString)
+  end
+end
+
+class String
+  def is_filename?
+    (self =~ /^(\.|\/)/) || FileTest.exists?(self)
+  end
+
+  def expand_path
+    if ON_CYGWIN
+      '/' + `cygpath -am #{self}`.chomp
+    else
+      File.expand_path(self)
+    end
+  end
+
+  def to_url
+    "'" + (if self[header = 'file://']
+            self
+          elsif self.is_filename?
+            header + self.expand_path
+          else
+            CGI.escapeHTML(self).gsub(/&amp;/, '&')
+          end) + "'"
+  end
+end
+
+class Proc
+  def poll(delay)
+    wait = 0
+    wait += sleep(delay) until self.call
+    wait
+  end
+end
+
+def poll(delay, &block)
+  block.poll(delay)
+end
+
+class Mozilla
+  attr_accessor :is_running
+
+  def ping
+    cmd_do(self.remote_cmd(:ping)) unless ON_CYGWIN
+  end
+
+  def is_running
+    @is_running ||= self.ping
+  end
+
+  def startup(cmd, wait=true)
+    return false if self.is_running
+    moz_bg_do(cmd)
+    return self unless wait
+    if ON_CYGWIN
+      sleep($moz_startup_time)
+      self.is_running = true
+    end
+    poll($moz_startup_time) {self.is_running}
+  end
+
+  def open(*strings)
+    self.openURLs(*strings.collect {|e| e.to_s.to_url})
+  end
+
+  def openURLs(*urls)
+    urls.reject! {|e|
+      e.is_filename? && "konqueror #{e}" # && puts(e)
+    } if $app == 'www'
+
+    # p urls
+    urls.shift if self.startup(urls[0], urls.size > 1)
+    moz_bg_do(*self.open_url_cmd(*urls))
+  end
+
+  def open_url_cmd(*urls)
+    return urls if ON_CYGWIN
+    urls.collect {|e| self.remote_cmd(:openURL, e, 'new-tab')}
+  end
+
+  def remote_cmd(api, *args)
+    "'#{api}(#{args.join(', ')})'"
+  end
+
+  def moz_bg_do(*cmds)
+    cmds_do(cmds, true)
+  end
+
+  def cmds_do(cmds, background=false, debug=$debug, echoOnly=$echoOnly)
+    cmds.collect {|each| cmd_do(each, background, debug, echoOnly)}
+  end
+
+  alias_method :moz_fg_do, :cmds_do
+
+  def cmd_do(cmd, background=false, debug=false, echoOnly=false)
+    full_cmd = Array.join(' ') {|arr|
+      arr.push($mozilla, cmd)
+      arr.push('2>/dev/null') unless debug
+      arr.push('&') if background
+    }
+    if echoOnly
+      puts(full_cmd)
+    else
+      system(full_cmd)
+    end
+  end
+
+  private :moz_bg_do, :moz_fg_do, :cmd_do, :cmds_do
+end
+
+$debug    = ARGV.shift if ARGV[0] =~ /^-(d|-debug)/
+$echoOnly = ARGV.shift if ARGV[0] =~ /^-(e|-echo)/
+
+Mozilla.new.open(*ARGV)

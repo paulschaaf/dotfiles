@@ -1,0 +1,2 @@
+@call nolan.bat renew
+

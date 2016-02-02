@@ -1,0 +1,60 @@
+#!/bin/sh
+
+INFO=':' # ignore (versus echo) remaining line
+switches=''
+dry_run=''
+
+# echo '$*'=$*
+
+command=`basename $0`
+
+case ${command} in
+    mklink)
+        command=cmd /C ${command}
+        ;;
+    *)
+        ;;
+esac
+
+
+args=${*}
+
+for x in ${*}; do
+    case "$x" in
+        --debug)
+            INFO='echo -n ## INFO '
+            ;;
+        --dry_run)
+            dry_run='echo '
+            ;;
+        -h|--help)
+            echo '## Wrapper script displaying help from Windows program'
+            echo
+            $command '/?'
+            exit
+            ;;
+        -*)
+            switches=${switches} /
+            ${INFO} Parsed switches into: $new_switches
+            switches+="$new_switches"
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+${INFO} switches=${switches}
+
+if [ -z "$*" ]; then
+    attrib.exe ${switches}
+else
+    for file in ${*}; do
+        # change each file individually
+        eval ${dry_run}attrib.exe${switches} ${file}
+    done
+
+    # print the ls of the files
+    ${INFO} `ls -l ${*}`
+fi

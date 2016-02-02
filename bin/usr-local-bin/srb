@@ -1,0 +1,304 @@
+#!/usr/bin/env ruby
+
+$PROMPT = '> '
+
+# //////////////////////////////////////////////////////////////
+class Object
+  def non_obj_methods
+    (methods - Object.instance_methods).sort!
+  end
+
+  def sendWithArgs(aMessage, *args)
+    if args.empty?
+      self.send(aMessage)
+    else
+      self.send(aMessage, *args)
+    end
+  rescue Exception => ex
+    p ex
+    $stderr.puts "When sending #{aMessage}(*#{args}) to a #{self.class}"
+  end
+end
+
+
+# //////////////////////////////////////////////////////////////
+class Array
+  def empty!
+    reject! {|e| true}
+  end
+
+  def unwrappedIfSingle
+    (self.size == 1) ? self[0] : self
+  end
+end
+
+
+# //////////////////////////////////////////////////////////////
+class Stack < Array
+  alias_method :show, :inspect
+
+
+  # ----------------------------------------
+  # Primitive Operations
+  # ----------------------------------------
+
+  def dup(count=1);  rpush(*self[0...count]);                end
+  def pop(count=1);  slice!(0..(count-1)).unwrappedIfSingle  end
+  def push(*args);   args.each {|each| unshift(each)};       end
+  def top(count=1);  [*pop(count)];                          end
+
+  # def at(index);     self[index-1];                         end
+  # def []=(index,*args)
+  #   p
+  #   super(index-1, args.unwrappedIfSingle)
+  #   p
+  # end
+
+
+  # ----------------------------------------
+  # Stack Manipulation
+  # ----------------------------------------
+
+  def roll
+    third = pop
+    firstAndSecond = pop(2)
+    push(third)
+    rpush(*firstAndSecond)
+  end
+  def rpush(*coll);  push(*coll.reverse);                   end
+  def swap;          push(*pop(2));                         end
+end
+
+
+# //////////////////////////////////////////////////////////////
+$wanted_methods = /^__.*/
+# $unwanted_methods=Object.new.methods.reject! {|unwanted| unwanted =~ $wanted_methods}
+
+
+# //////////////////////////////////////////////////////////////
+class SRB
+
+  $unwanted_methods = superclass.instance_methods.reject! {|unwanted| unwanted =~ $wanted_methods}
+  $unwanted_methods.delete(:object_id)
+
+  alias_method :__class,   :class
+  alias_method :__methods, :methods
+
+  $unwanted_methods.each {|name| undef_method(name.to_sym)}
+
+  # ----------------------------------------
+  # Class Methods
+  # ----------------------------------------
+
+  @@dont_push_after, @@dont_push_after_r  = [],  nil
+
+  def self.prompt
+    $PROMPT || '> '
+  end
+
+  def self.readFrom(aStream)
+    self.new.readFrom(aStream)
+  end
+
+  def self.dont_push_after(*method_names)
+    @@dont_push_after   += method_names
+    @@dont_push_after_r  = /^(#{@@dont_push_after.join('|')})\s*\(?/
+  end
+
+  def self.expose_stack_method(*method_names)
+    method_names.each {|symbol|
+      eval "def #{symbol}(*args); @stack.#{symbol}(*args); end"
+    }
+  end
+
+
+  # ----------------------------------------
+  # Stack Methods
+  # ----------------------------------------
+
+  expose_stack_method :at,   :dup,  :empty!, :empty?,
+                      :pop,  :push, :roll,   :rpush,  :swap,   :top
+  dont_push_after     /^__/, :at=,  :clear,  :dup,    :empty!, :exit,
+                      :p,    :pop,  :rpush,  :roll,   :swap,   :value,  :w
+
+  alias :bye   :exit
+  alias :clear :empty!
+  alias :p     :pop
+  alias :q     :exit
+  alias :w     :swap
+
+  def value(*args)
+    $stderr.puts('Method :value is not currently supported.')
+  end
+
+
+  # ----------------------------------------
+  # Implementaion Methods
+  # ----------------------------------------
+
+  def initialize
+    @stack = Stack.new
+    silently {
+      begin
+        File.open(File.expand_path('~/.srbrc')) {|file|
+          readFrom(file)
+        }
+      rescue
+      end
+    }
+  end
+
+  def silently
+    @silence = true
+    yield
+  ensure
+    @silence = false
+  end
+
+  def readFrom(aStream)
+    __show
+    aStream.each {|line|
+      line.strip!
+      __evalString(line)
+    }
+  end
+
+  def __show
+    unless @silence
+      $stdout.puts(@stack.show)
+      $stdout.print(__class.prompt)
+    end
+  end
+
+  protected
+
+  def __evalString(aString)
+    begin
+      case aString
+
+      when ''  # user simply hits <enter>
+        self.dup unless self.empty?
+
+      when @@dont_push_after_r
+        # for these methods we do not want to push the result
+        eval aString
+
+      when /^;/
+        # escape -- forcibly send message to stack contents, not stack
+        aString.slice!(0)
+        begin
+          __evalMethodCall(aString)
+        rescue => ex
+          $stderr.puts ex.to_s
+        end
+
+      when %r_\+|\-|\*|/_
+      __evalMethodCall(aString)
+
+      else
+        # $stderr.puts('Assuming explicit receiver (functional style)')
+        result=eval aString
+        push(result)
+      end
+
+    rescue NameError, SyntaxError
+      $stderr.puts("Retrying as method call: '#{aString}'")
+      __evalMethodCall(aString)
+    end
+
+    __show
+  end
+
+  # evaluate the method, with top element as receiver. arguments are supplied
+  # one at a time from the top of the stack until the method call succeeds or
+  # we run out of arguments
+  def __evalMethodCall(aString)
+    # TODO handle arguments on same line (i.e. parenthetical) computations #(/\(|\)|\s+/)
+    msg, *args = aString.split
+    retries, saveStack = 0, @stack.dup
+
+    begin
+      arity = top().method(msg).arity
+      args = pop(arity)
+
+      # $stderr.puts('trying to trap ArgumentError and NameError')
+      receiver = self.pop
+
+      # no truncation!
+      #receiver *= 1.0 if msg == '/' and receiver.instance_of?(Fixnum)
+
+      #$stderr.puts("Sending message #{receiver}.#{msg}(#{args})")
+      value = receiver.sendWithArgs(msg, *args)
+
+      # $stderr.puts('done running sendWithArgs')
+      self.push(value)
+      # $stderr.puts('donetrying to trap ArgumentError and NameError')
+
+    rescue NameError => ex
+      # message not understood
+      $stderr.puts "nameerror"
+      $stderr.puts(ex, ex.backtrace, ex.non_obj_methods)
+
+    rescue ArgumentError => ex
+      $stderr.puts("Retrying with #{retries} arguments")
+    #   exit
+      if (retries < 5) and (!@stack.empty?)
+        args.unshift(receiver)
+        retries += 1
+        retry
+      else
+        @stack = saveStack
+        $stderr.puts ex.to_s
+      end
+    end
+  end
+
+end
+
+# //////////////////////////////////////////////////////////////
+# If this script is run as stand-alone script
+if __FILE__ == $0
+require 'extn/Options'
+
+   # -a, --max-args        The maximum number of arguments to
+   #                       supply to a method before failing.
+
+headerString = <<HEADER_STRING
+Usage: #{File.basename($0)} [option]... [files]...
+Ruby stack-based evaluator. Reads and evaluates Ruby lines from
+stdin.
+HEADER_STRING
+
+switchString = <<SWITCH_STRING
+   -h, --help            Show this help text
+SWITCH_STRING
+
+tailString = <<TAILSTRING
+Report bugs to <paul.schaaf@gmail.com>.
+TAILSTRING
+
+options = ExtOptions.new(headerString, switchString, tailString)
+
+inputs = if ARGV.empty?
+  $stdin
+else
+  Dir[ARGV.shift].collect {|e| File.open(e)}
+end
+
+SRB.readFrom(inputs)
+
+#puts srb.methods.sort
+#inputs << $stdin
+
+# begin
+#  srb.__show
+#   inputs.each { |anInputStr|
+#    srb.readFrom(anInputStr)
+#  }
+#  $stdout.puts srb.pop
+# rescue => ex
+#   $stderr.puts ex.to_s
+#   retry
+# end
+
+end # //////////////////////////////////////////////////////////

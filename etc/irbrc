@@ -1,0 +1,157 @@
+$autoload_files = %w(
+  date
+  Logger
+)
+
+
+# ================================================
+# ======= ARGV
+
+ARGV.concat %w( --readline --prompt-mode simple )
+
+
+# ================================================
+# ======= LOAD_PATH
+
+$LOAD_PATH.push *%w(
+   ~/lib/ruby
+   ~/bin
+   ~
+   ~/.ruby
+)
+
+puts "$LOAD_PATH=%w(\n\t#{$LOAD_PATH.join("\n\t")}\n)"
+
+#test_file = 'lib/ruby/quiz/DictionaryMatcher.rb'
+
+
+# ================================================
+# ======= Imports
+
+%w( irb/completion.rb
+    irb/ext/save-history
+	Matrix
+    rubygems
+    #wirble
+).concat($autoload_files).each do |lib|
+  begin
+    if lib[0] != '#'
+        printf 'require %-30s # => ', "'#{lib}'"
+        puts require lib
+    end
+  rescue LoadError => err
+    print 'false '
+    $stderr.puts "Can\'t find library _#{lib}_: #{err}"
+    puts ''
+  end
+end
+puts
+
+
+# ================================================
+# ======= Wirble
+
+begin
+  if Wirble
+    Wirble.init
+    #  Wirble.colorize  # doesn't display Rational(1, 3) properly
+  end
+rescue
+end
+
+
+# ================================================
+# ======= Aliases
+
+alias :bye :exit
+alias :q   :exit
+
+
+# ================================================
+# ======= Global Functions
+
+module Kernel
+  def refresh(file=$test_file)
+    eval File.read(file) if file
+  end
+end
+
+class Object
+  # Answer the hidden class that holds singleton methods and properties
+  # From "Metaprogramming Ruby", p. 121
+  # def eigenClass;  class << self; self; end;  end
+  alias_method :eigenClass, :singleton_class
+
+  # Return a list of methods defined locally for a particular object.
+  def local_methods(obj = self)
+    (obj.methods - obj.class.superclass.instance_methods).sort!
+  end
+
+  # Answer all methods except those inherited from Object
+  def specific_methods
+    (self.methods - Object.instance_methods).sort
+  end
+end
+
+class Array
+  puts '# convert an array of (feet, inches [, frac_inches]?] to inches'
+  puts '# e.g. [1, 2].to_inches ==> 14,  [1, 2, 1/8.0].to_inches ==> 14.125'
+  def to_inches
+    self[0]*12 + (self[1] || 0) + (self[2] || 0)
+  end
+
+  def to_feet
+    self.to_inches / 12.0
+  end
+
+  def to_mm
+    self.to_inches.to_mm
+  end
+end
+
+# class Fixnum
+#   def inches
+#     [self / 12, self % 12]
+#   end
+#   def r(num)
+#     Rational self, num
+#   end
+# end
+
+class Numeric
+  def to_feet
+    [(self / 12).floor, self % 12]
+  end
+
+  def to_inches
+    self / 2.54
+  end
+
+  def to_mm
+    self * 2.54
+  end
+
+  def r(num)
+    Rational self, num
+  end
+end
+
+
+# ================================================
+# ======= Sample Objects
+
+puts '## Sample objects:'
+sample_objects = <<EOF
+  $a = [:one, :two, :three, :four]
+  $f = 1.r 3
+  $h = {1 => :one, 2 => :two, 3 => :three, 4 => :four}
+  $m = Matrix[[1, 2, 3], [4, 5, 6]]
+  $r = /[A-Z]+/
+  $s = 'The quick brown fox jumped over the lazy dogs.'
+
+EOF
+
+puts sample_objects
+eval sample_objects
+
+puts "# Loaded #{__FILE__}\n\n"

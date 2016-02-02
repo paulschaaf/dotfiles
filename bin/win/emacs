@@ -1,0 +1,101 @@
+#!/bin/sh
+
+#emacs_home=/c/PROGRA~2/emacs-24.3
+emacs_home=
+
+emacs_bin=${emacs_home}/bin
+
+emacs=${emacs_bin}'/emacs'
+#emacs=${emacs_bin}'/runemacs.exe'
+
+options=''
+#dry_run=true
+while [ -n "$*" ]; do
+    case "$1" in
+        --debug)
+            : ${debug:=' '}
+            export debug
+            # set -x
+            ;;
+        --dry-run)
+            dry_run=true
+            ;;
+        --help)
+            echo Usage: `basename $0` [--dry-run] [--help] [OPTION] NAME...
+            echo '   --dry-run  Show commands but do not execute them'
+            echo '   --help     Display this help screen'
+            options+=' '${1}
+            ;;
+        --)
+            shift
+            break
+            ;;
+
+        # emacs doesn't use = to pass arguments to switches, but we
+        # allow it so that we don't need to enumerate every switch
+        # that takes an argument
+        -*=*|+*=*)
+            options+=' '${1/=/ }
+            ;;
+
+        # switches that take an argument where no equals sign was specified
+        --display|-bd|-bf|-bw|-cr|-d|-f|-fg|-font|-geometry|-ib|-l|-ms|-name|+number|-t|-title)
+            options+=' '${1}' '${2}
+            shift
+            ;;
+
+        -*|+*)
+            options+=' '${1}
+            ;;
+
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+#echo dry_run is $dry_run
+
+[ -n "$debug" ] && echo "## \$1=${1}" && echo "## \$2=${2}"
+[ -n "$debug" ] && echo '## ' $0 && set -x
+
+files=''
+while [ -n "$*" ]; do
+    files="$files '$1'"
+    export DISPLAY=localhost:0.0
+
+    if [ -n "${debug}" ]; then
+        echo \$1 is--\> $1
+        echo Files is--\> $files | cat -A
+        echo
+    fi
+    shift
+done
+
+if [ `whoami` != 'pschaaf' -a `whoami` != 'centripital\pschaaf' ]; then
+    options+=' -u pschaaf'
+fi
+
+[ -n "$debug" ] && echo options="[ ${options} ]"
+
+case "__${options}${files}__" in
+    ____)
+        cmd=${emacs} -rv
+        ;;
+    __*-batch*__)
+        cmd="${emacs} ${options} ${files}"
+        ;;
+    *)
+        cmd="${emacs_bin}/emacsclient --no-wait --alternate-editor='${emacs}' ${options} ${files}"
+        ;;
+esac
+#echo cmd=$cmd
+#echo Press any key to contiue; read
+
+if [ -n "${dry_run}" -o -n "${debug}" ]; then
+    echo $cmd
+fi
+
+if [ -z "${dry_run}" ]; then
+    eval $cmd &
+fi

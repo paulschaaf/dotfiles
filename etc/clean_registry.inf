@@ -1,0 +1,15 @@
+; the target platform ($CHICAGO$ is an old working name).
+[version]
+signature = "$CHICAGO$"
+
+; The second section is predefined for default installations, which is fine here. The identifier "DelReg" is also predefined, and should be set to the name of the section that lists registry stuff to delete.
+[DefaultInstall]
+DelReg = NoParasites
+
+; You can put as many entries in the last section as you wish, and the syntax used here is for deleting individual registry entries. Many other manipulations are possible, but that's another story.
+; Obviously, one needs to replace "EntryNameToDelete" with the offending registry entry's name.
+[NoParasites]
+; HKLM,"Software\Microsoft\Windows\CurrentVersion\Run","EntryNameToDelete"
+
+
+; The command line for running this file is in the registry under "HKCR\inffile\shell\Install\command"

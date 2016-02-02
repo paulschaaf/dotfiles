@@ -1,0 +1,82 @@
+# Default input encoding.
+DefaultEncoding: latin1
+
+# Default fancy header.
+DefaultFancyHeader: enscript
+
+# Default output media.
+DefaultMedia: Letter
+
+# Where output goes as a default: `printer' or `stdout'
+DefaultOutputMethod: stdout
+
+# Include following font files to all PostScript outputs.
+#
+# DownloadFont: FooFont1
+# DownloadFont: FooFont2
+
+# The gray level which is used to print highlight bars.
+HighlightBarGray: .9
+
+# How high highlight bars are in lines.  The default is 0 so no
+# highlight bars are printed.
+HighlightBars: 2
+
+# How wrapped lines are marked in printout.  Possible values are: `none',
+# `plus', `box' and `arrow'.  As a default, we do not mark them.
+MarkWrappedLines: none
+
+# Media definitions:
+#	name		width	height	llx	lly	urx	ury
+Media:	A3		842	1190	24	24	818	1166
+Media:	A4		595	842	24	24	571	818
+Media:	A5		420	595	24	24	396	571
+Media:	Legal		612	1008	24	24	588	984
+Media:  Letter		612	792	38	24	574	768
+
+# HP DeskJet media (DeskJet can't print on the bottom 1/2" of the paper).
+Media:	A4dj		595	842	24	50	571	818
+Media:  Letterdj        612     792     24      40      588     768
+
+# Spooler option to suppress the job header.
+NoJobHeaderSwitch: -h
+
+# How non-printable characters are printed: `caret', `octal',
+# `questionmark' or `space'.
+NonPrintableFormat: octal
+
+# PostScript output's first line.
+OutputFirstLine: %!PS-Adobe-3.0
+
+# Default page label format: `short' or `long'.
+PageLabelFormat: short
+
+# Enable / disable page prefeed.
+PagePrefeed: 0
+
+# The PostScript language level that enscript should use.
+PostScriptLevel: 2
+
+# Printer name to spool to.  As a default we want to use system's
+# default printer.
+# Printer: ps
+
+# The spooler command switch to select the printer queue.  This option
+# can also be used to pass other flags to the spooler command but they
+# must be given bofore the queue switch.
+QueueParam: -P
+
+# Pass following Page Device options to the generated output.
+#
+# Duplex printing.
+SetPageDevice: Duplex:true
+
+# Printer spooler command name.
+Spooler: lpr
+
+# States' default highlight style.
+StatesHighlightStyle: emacs
+
+# Format string for table-of-contents entries.
+#
+# TOCFormat: $3v $-40N $3% pages $4L lines  $E $C

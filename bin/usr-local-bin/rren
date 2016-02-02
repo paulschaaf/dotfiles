@@ -1,0 +1,171 @@
+#!/usr/bin/env ruby
+
+$ON_WINDOWS = (/(cyg)?win/ =~ RUBY_PLATFORM)
+
+
+# //////////////////////////////////////////////////////////////
+class Renamer
+
+  def self.intermediary
+    @@intermediary ||= $ON_WINDOWS ? "___.#$$" : ''
+  end
+
+  def intermediary
+    @changeCaseFlag ? self.class.intermediary : ''
+  end
+
+  attr_accessor :execute, :files, :mapping, :showFrom, :lowercaseNameTerminationMarker
+  attr_writer   :debugOn, :showTo
+
+  # Answer the value of showTo. If unset, return true unless showFrom has been specified
+  def showTo; @showTo == nil ? (!showFrom) : @showTo; end
+
+  def initialize(anArray=[])
+    @files, @mapping = anArray.sort, {}
+  end
+
+  def [](key); @mapping[key]; end
+
+  def []=(key, value)
+    @mapping[key] = value if value and value != key
+  end
+
+  def debugPrint
+    p yield if @debugOn
+  end
+
+  def lowercase
+    @changeCaseFlag = true if $ON_WINDOWS
+    self.renameAll(self.files) {|each|
+      result = each.downcase
+      result << self.intermediary if $ON_WINDOWS && (result != each)
+    }
+  end
+
+  def capitalize
+    @changeCaseFlag = true if $ON_WINDOWS
+    self.renameAll(self.files) {|each|
+      result = each.upcase
+      result << self.intermediary if $ON_WINDOWS && (result != each)
+      result
+    }
+  end
+
+  def uppercase
+    @changeCaseFlag = true if $ON_WINDOWS
+    self.renameAll(self.files) {|each|
+      result = each.upcase
+      result << self.intermediary if $ON_WINDOWS && (result != each)
+    }
+  end
+
+  def reverseSort(separator)
+    fieldWidth = Math.log10(files.size + 1).ceil
+    index = -1
+    self.files.reverse_each {|each|
+      self.rename(each, format("%0#{fieldWidth}d%s%s", index+=1, separator, each))
+    }
+  end
+
+  def rename(from, to=nil)
+    self[from] = block_given? ? (yield from) : to
+  end
+
+  def renameAll(froms)
+    froms.each {|from| self[from] = yield from}
+  end
+
+  def renameFiles(from, to)
+    from = Regexp.new(from) if from.kind_of?(String)
+    targets = self.files.select {|each|
+      self.rename(each, each.gsub(from,to)) if each =~ from
+    }
+    $stderr.puts "No matches for '#{from.source}'." if targets.empty?
+    targets
+  end
+
+  def evaluate
+    announcement = "Renaming files in '#{Dir.pwd}'#{' FROM' if showFrom}#{' TO' if showTo}\n"
+
+    answer = []
+    mapping.each_pair {|key, value|
+      operation = showFrom ? ($/ + key.to_s) : ''
+      operation << $/ << value[0..-(self.intermediary.length+1)] if showTo
+      (operation << $/) if showFrom && showTo
+      answer << operation
+      if execute
+        # p 'key = ' + key, 'value = ' + value
+        File.rename(key, value)
+        # p 'done with initial renaming'
+        if $ON_WINDOWS && @changeCaseFlag
+          File.rename(value, value[0..-(self.intermediary.length+1)])
+        end
+      end
+    }
+
+    puts announcement, answer.sort.join unless answer.empty?
+    puts 'Renaming complete.' if execute
+  end
+end
+
+# //////////////////////////////////////////////////////////////
+# If this script is run as stand-alone script
+if __FILE__ == $0 # ////////////////////////////////////////////
+
+require 'optparse'
+
+renamer = Renamer.new
+
+optparse = OptionParser.new do |opts|
+  opts.banner = <<BANNER_STRING
+Usage: #{File.basename($0)} (--reverseSort | <regexp> <replacement>) [-x] [files]...
+Renames a set of files, replacing matches of <regexp> with <replacement>. By
+default, it will display the list of renames. Use -x to make them happen.
+
+Special characters can be used in <replacement>:
+
+   \\1, \\2, ... \\9         The value matched by the nth grouped subexpression
+   \\\`                     The part of the string before the match
+   \\\'                     The part of the string after the match
+   \\&                     The last match
+   \\+                     The highest-numbered group matched
+
+For example, the command:
+
+   #{File.basename($0)} '^([0-9][^0-9]+)' '0\\1' *
+
+will prepend a zero to every filename that begins with exactly one digit.
+
+NOTE: The --reverseSort switch assumes all other arguments are filename globs.
+      Using this switch with a regex will not give the results you want!
+
+Report bugs to <paul.schaaf@gmail.com>.
+BANNER_STRING
+
+  # options[:debug] = false
+  opts.on('-d', '--debug',           'Display debugging information')            { renamer.debugOn = true }
+  opts.on('-c', '--capitalize',      'Change the first letter to uppercase')     { renamer.capitalize }
+  opts.on('-l', '--lowercase',       'Change the filename to use all lowercase') { renamer.lowercase }
+  opts.on('-u', '--uppercase',       'Change the filename to use all uppercase') { renamer.uppercase }
+  opts.on('-h', '--help',            'Show this help text')                      { puts opts }
+  opts.on('-f', '--showFrom',        'Show the old name of the affected files')  { renamer.showFrom = true }
+  #opts.on('-r', '--reverseSort=sep', 'Renames files such that they will now sort in reverse by prepending an integer followed by sep to the filename. Cannot be combined with a regexp.')                        { renamer.reverseSort = true }
+  opts.on('-t', '--showTo',          'Show the new name of the affected files')  { renamer.showTo = true }
+  opts.on('-x', '--execute',         'Performs the renaming')                    { renamer.execute = true }
+end
+
+optparse.parse!
+
+# optparse.warn("Missing arguments! Type #{File.basename($0)} --help for usage.") if optparse.getopts.size < 3
+
+if ARGV.size == 0
+  puts optparse.to_s
+else
+  pattern       = ARGV.shift
+  replacement   = ARGV.shift
+  renamer.files = ARGV.empty? ? Dir["*"] : ARGV.collect {|filespec| Dir[filespec]}.flatten
+
+  renamer.renameFiles(pattern, replacement)
+  renamer.evaluate
+end
+end # //////////////////////////////////////////////////////////

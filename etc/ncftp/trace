@@ -1,0 +1,312 @@
+SESSION STARTED at:  2011-06-28 16:13:14 PDT -0700
+   Program Version:  NcFTP 3.2.1/349 Jul 29 2007, 09:55 AM
+   Library Version:  LibNcFTP 3.2.1 (August 13, 2007)
+        Process ID:  15948
+          Platform:  cygwin_nt-5.0
+          Hostname:  pschaaf-w51.guidewire.com  (rc=3)
+          Terminal:  xterm
+16:13:14  Fw: firewall.guidewire.com  Type: 0  User: pschaaf  Pass: ********  Port: 21
+16:13:14  FwExceptions: .guidewire.com,localhost,localdomain
+16:13:14  Resolving zoe.guidewire.com...
+16:13:14  Connecting to 10.0.0.12...
+16:13:14  LibNcFTP 3.2.1 (August 13, 2007) compiled for cygwin_nt-5.0
+16:13:14  Uname: CYGWIN_NT-6.1-WOW64|pschaaf-w51|1.7.9(0.237/5/3)|2011-03-29 10:10|i686
+16:13:18  Logging in...
+16:13:18  220: FileZilla Server version 0.9.15 beta
+16:13:18       written by Tim Kosse (Tim.Kosse@gmx.de)
+16:13:18       Please visit http://sourceforge.net/projects/filezilla/
+16:13:18  Connected to 10.0.0.12.
+16:13:18  Cmd: USER jclark
+16:13:18  331: Password required for jclark
+16:13:18  Cmd: PASS xxxxxxxx
+16:13:18  Logging in...
+16:13:18  230: Logged on
+16:13:18  Cmd: PWD
+16:13:18  257: "/" is current directory.
+16:13:18  Logged in to 10.0.0.12 as jclark.
+16:13:18  Cmd: FEAT
+16:13:18  211: Features:
+16:13:18        MDTM
+16:13:18        REST STREAM
+16:13:18        SIZE
+16:13:18        MLST type*;size*;modify*;
+16:13:18        AUTH SSL
+16:13:18        AUTH TLS
+16:13:18        UTF8
+16:13:18        CLNT
+16:13:18       End
+16:13:18  Cmd: HELP SITE
+16:13:18  214: Command SITE is supported by FileZilla Server
+16:13:18  Logged in to zoe.guidewire.com.
+16:13:18  Cmd: CLNT NcFTP 3.2.1 cygwin_nt-5.0
+16:13:18  200: Don't care
+16:13:23  > ls
+
+16:13:23  Cmd: OPTS MLST type;size;modify;
+16:13:23  501: Option not understood
+16:13:23  Cmd: PORT 192,168,2,77,192,43
+16:13:23  200: Port command successful
+16:13:23  Cmd: MLSD
+16:13:23  150: Opening data channel for directory list.
+16:13:23  226: Transfer OK
+16:13:23  Remote listing contents {
+16:13:23      type=dir;modify=20110615091154; Demo Team
+16:13:23      type=dir;modify=20110125232617; GWServices
+16:13:23      type=dir;modify=20110614163341; Sales Consulting
+16:13:23  }
+16:13:23  Demo Team/         GWServices/        Sales Consulting/
+16:13:26  > cd "Sales Consulting"/
+
+16:13:26  Cmd: CWD Sales Consulting
+16:13:26  250: CWD successful. "/Sales Consulting" is current directory.
+16:13:26  > ls
+
+16:13:26  Cmd: PORT 192,168,2,77,192,44
+16:13:26  200: Port command successful
+16:13:26  Cmd: MLSD
+16:13:26  150: Opening data channel for directory list.
+16:13:26  226: Transfer OK
+16:13:26  Remote listing contents {
+16:13:26      type=dir;modify=20080610202623; afalls
+16:13:26      type=dir;modify=20090731111924; AIUH
+16:13:26      type=dir;modify=20090804231556; AmFam
+16:13:26      type=dir;modify=20110623055318; arivans
+16:13:26      type=dir;modify=20081103230722; bbrantley
+16:13:26      type=dir;modify=20100422202500; BC_213_SSQ
+16:13:26      type=dir;modify=20100521004210; BC_30116_Analyst2010
+16:13:26      type=dir;modify=20100823173147; bsabathil
+16:13:26      type=file;modify=20080911090131;size=589824; CC_500_BaseDemo_EU_20080724_1200JULY 24 SCRIPT PARM ASR#1.zip
+16:13:26      type=dir;modify=20100212180941; CC_502_BaseDemo
+16:13:26      type=dir;modify=20110211141930; CC_600_ANPAC
+16:13:26      type=file;modify=20100413190445;size=11075584; CC_Reporting.zip
+16:13:26      type=dir;modify=20110519191312; chbashar
+16:13:26      type=dir;modify=20090708180413; chubb
+16:13:26      type=dir;modify=20100915161900; cjames
+16:13:26      type=dir;modify=20110210215224; cklempay
+16:13:26      type=dir;modify=20091012222156; countryfinancial
+16:13:26      type=dir;modify=20110127003201; cscott
+16:13:26      type=dir;modify=20110617231018; dgroves
+16:13:26      type=dir;modify=20110119213830; emaier
+16:13:26      type=dir;modify=20080610202719; enewton
+16:13:26      type=dir;modify=20090305021434; gloeffler
+16:13:26      type=dir;modify=20110508220437; HSB_Config_CC_AB_DB_BackupsToo_May8
+16:13:26      type=dir;modify=20080610202936; itavener
+16:13:26      type=dir;modify=20080610202924; jkwak
+16:13:26      type=dir;modify=20110317212706; jolson
+16:13:26      type=dir;modify=20091211011251; kkamimura
+16:13:26      type=dir;modify=20100830164347; kmaheshwari
+16:13:26      type=dir;modify=20100520173849; lbonds
+16:13:26      type=dir;modify=20110117224023; ldrabik
+16:13:26      type=dir;modify=20101202080301; lscarano
+16:13:26      type=dir;modify=20110207153030; lwerk
+16:13:26      type=dir;modify=20101019142310; mbenhamouche
+16:13:26      type=dir;modify=20101119020331; mcburn
+16:13:26      type=dir;modify=20110606152419; meischens
+16:13:26      type=dir;modify=20110125231801; mmodica
+16:13:26      type=dir;modify=20110425185335; monate
+16:13:26      type=dir;modify=20110617005749; mpaulenko
+16:13:26      type=dir;modify=20100614051329; msigman
+16:13:26      type=dir;modify=20110214163346; nfrank
+16:13:26      type=dir;modify=20101108202839; pedwards
+16:13:26      type=dir;modify=20110527095212; psabeva
+16:13:26      type=dir;modify=20080806001826; psmyth
+16:13:26      type=dir;modify=20110614163341; pzhang
+16:13:26      type=dir;modify=20090317233131; rhawk
+16:13:26      type=dir;modify=20100929162905; scase
+16:13:26      type=dir;modify=20110615152141; sgeorgescu
+16:13:26      type=dir;modify=20080610202808; showe
+16:13:26      type=dir;modify=20090413221831; suncorp
+16:13:26      type=dir;modify=20110120170221; tempAccess2007
+16:13:26      type=dir;modify=20101028172934; Thunderhead
+16:13:26      type=dir;modify=20101006184630; tvollmer
+16:13:26      type=dir;modify=20110603190716; wmead
+16:13:26      type=dir;modify=20110627223825; ytzioumis
+16:13:26  }
+16:13:26  AIUH/
+16:13:26  AmFam/
+16:13:26  BC_213_SSQ/
+16:13:26  BC_30116_Analyst2010/
+16:13:26  CC_500_BaseDemo_EU_20080724_1200JULY 24 SCRIPT PARM ASR#1.zip
+16:13:26  CC_502_BaseDemo/
+16:13:26  CC_600_ANPAC/
+16:13:26  CC_Reporting.zip
+16:13:26  HSB_Config_CC_AB_DB_BackupsToo_May8/
+16:13:26  Thunderhead/
+16:13:26  afalls/
+16:13:26  arivans/
+16:13:26  bbrantley/
+16:13:26  bsabathil/
+16:13:26  chbashar/
+16:13:26  chubb/
+16:13:26  cjames/
+16:13:26  cklempay/
+16:13:26  countryfinancial/
+16:13:26  cscott/
+16:13:26  dgroves/
+16:13:26  emaier/
+16:13:26  enewton/
+16:13:26  gloeffler/
+16:13:26  itavener/
+16:13:26  jkwak/
+16:13:26  jolson/
+16:13:26  kkamimura/
+16:13:26  kmaheshwari/
+16:13:26  lbonds/
+16:13:26  ldrabik/
+16:13:26  lscarano/
+16:13:26  lwerk/
+16:13:26  mbenhamouche/
+16:13:26  mcburn/
+16:13:26  meischens/
+16:13:26  mmodica/
+16:13:26  monate/
+16:13:26  mpaulenko/
+16:13:26  msigman/
+16:13:26  nfrank/
+16:13:26  pedwards/
+16:13:26  psabeva/
+16:13:26  psmyth/
+16:13:26  pzhang/
+16:13:26  rhawk/
+16:13:26  scase/
+16:13:26  sgeorgescu/
+16:13:26  showe/
+16:13:26  suncorp/
+16:13:26  tempAccess2007/
+16:13:26  tvollmer/
+16:13:26  wmead/
+16:13:26  ytzioumis/
+16:13:29  > cd mpaulenko/
+
+16:13:29  Cmd: CWD mpaulenko
+16:13:29  250: CWD successful. "/Sales Consulting/mpaulenko" is current directory.
+16:13:29  > ls
+
+16:13:29  Cmd: PORT 192,168,2,77,192,45
+16:13:29  200: Port command successful
+16:13:29  Cmd: MLSD
+16:13:29  150: Opening data channel for directory list.
+16:13:29  226: Transfer OK
+16:13:29  Remote listing contents {
+16:13:29      type=dir;modify=20091106004242; ab60
+16:13:29      type=file;modify=20100327194928;size=159524049; AB_600_BaseDemo.zip
+16:13:29      type=file;modify=20100329220152;size=10062337; AB_600_BaseDemoNW_Mar29_pm.zip
+16:13:29      type=file;modify=20110211145557;size=93019700; AB_600_BaseDemo_ANPAC.7z
+16:13:29      type=file;modify=20100213010633;size=160770322; AB_600_BaseDemo_MAR28_NW.zip
+16:13:29      type=file;modify=20100329051155;size=10245601; AB_600_BaseDemo_NW_DB.zip
+16:13:29      type=dir;modify=20100519164424; ACORD BC BUILD
+16:13:29      type=dir;modify=20100519175936; ACORD PC BUILD
+16:13:29      type=dir;modify=20110316182727; ANPAC_db_backups
+16:13:29      type=dir;modify=20090904171853; CC502_Nationwide
+16:13:29      type=file;modify=20080625002730;size=127898609; CC_500_BaseDemo_20080624_1726_Final.zip
+16:13:29      type=file;modify=20090916223237;size=606164754; CC_502_PL.zip
+16:13:29      type=file;modify=20110211152837;size=404586853; CC_600_ANPAC.zip
+16:13:29      type=file;modify=20100813034524;size=296101010; CC_600_BaseDemo_Aviva.7z
+16:13:29      type=file;modify=20100329184156;size=26909291; CC_600_BaseDemo_Mar29am.zip
+16:13:29      type=file;modify=20100328004016;size=27616085; CC_600_BaseDemo_NA_20100327_2036_SC1_.zip
+16:13:29      type=file;modify=20100328214259;size=28245874; CC_600_BaseDemo_NA_20100328_1738_SC_Sun1_.zip
+16:13:29      type=file;modify=20091106004210;size=176451714; CC_600_connections.7z
+16:13:29      type=file;modify=20100326011942;size=405715387; CC_600_Nationwide.zip
+16:13:29      type=file;modify=20100329014553;size=451999813; CC_600_Nationwide_Configs_All_20100328.zip
+16:13:29      type=file;modify=20100328095913;size=399730841; CC_600_Nationwide_PoliciesIncluded.zip
+16:13:29      type=file;modify=20100409130053;size=395867389; CC_600_Torus.7z
+16:13:29      type=file;modify=20110427042339;size=425416697; CC_602_BaseDemo_USACND.zip
+16:13:29      type=file;modify=20100413200637;size=283876269; CC_Reporting.zip
+16:13:29      type=file;modify=20110304005722;size=2152; EditableStatuteLV.pcf
+16:13:29      type=dir;modify=20080819170751; Full config - DAG
+16:13:29      type=dir;modify=20110508221556; HSB_Config_CC_AB_DB_BackupsToo_May5
+16:13:29      type=dir;modify=20110508222040; HSB_Config_CC_AB_DB_BackupsToo_May8
+16:13:29      type=dir;modify=20100629175258; JewelersSuite
+16:13:29      type=dir;modify=20110623223336; Localized Builds
+16:13:29      type=dir;modify=20110523205740; LUCA
+16:13:29      type=file;modify=20110523214321;size=123357019; May 16 10.00 [HSB AMIG Claim Solution Evaluati...].zip
+16:13:29      type=dir;modify=20110508051529; MI app 05-08-11
+16:13:29      type=dir;modify=20100322235527; NWBase032210
+16:13:29      type=file;modify=20110308010828;size=270754968; PC7.zip
+16:13:29      type=file;modify=20091219005826;size=157181629; PC_400_BaseDemo.zip
+16:13:29      type=file;modify=20110311190050;size=210489981; PC_400_GA_POC_WAW_ContractorsChoice_SQL_DB.zip
+16:13:29      type=file;modify=20091001004331;size=218144778; PolicyCenter.zip
+16:13:29      type=file;modify=20091123165828;size=202512540; PolicyCenter4GA.zip
+16:13:29      type=file;modify=20100415030455;size=1084433454; Scottsdale_CC_502_TestDrive.zip
+16:13:29      type=file;modify=20090921235306;size=57393504; SQLEXPR.EXE
+16:13:29      type=dir;modify=20100414201454; UserGroup
+16:13:29  }
+16:13:29  AB_600_BaseDemo.zip
+16:13:29  AB_600_BaseDemoNW_Mar29_pm.zip
+16:13:29  AB_600_BaseDemo_ANPAC.7z
+16:13:29  AB_600_BaseDemo_MAR28_NW.zip
+16:13:29  AB_600_BaseDemo_NW_DB.zip
+16:13:29  ACORD BC BUILD/
+16:13:29  ACORD PC BUILD/
+16:13:29  ANPAC_db_backups/
+16:13:29  CC502_Nationwide/
+16:13:29  CC_500_BaseDemo_20080624_1726_Final.zip
+16:13:29  CC_502_PL.zip
+16:13:29  CC_600_ANPAC.zip
+16:13:29  CC_600_BaseDemo_Aviva.7z
+16:13:29  CC_600_BaseDemo_Mar29am.zip
+16:13:29  CC_600_BaseDemo_NA_20100327_2036_SC1_.zip
+16:13:29  CC_600_BaseDemo_NA_20100328_1738_SC_Sun1_.zip
+16:13:29  CC_600_Nationwide.zip
+16:13:29  CC_600_Nationwide_Configs_All_20100328.zip
+16:13:29  CC_600_Nationwide_PoliciesIncluded.zip
+16:13:29  CC_600_Torus.7z
+16:13:29  CC_600_connections.7z
+16:13:29  CC_602_BaseDemo_USACND.zip
+16:13:29  CC_Reporting.zip
+16:13:29  EditableStatuteLV.pcf
+16:13:29  Full config - DAG/
+16:13:29  HSB_Config_CC_AB_DB_BackupsToo_May5/
+16:13:29  HSB_Config_CC_AB_DB_BackupsToo_May8/
+16:13:29  JewelersSuite/
+16:13:29  LUCA/
+16:13:29  Localized Builds/
+16:13:29  MI app 05-08-11/
+16:13:29  May 16 10.00 [HSB AMIG Claim Solution Evaluati...].zip
+16:13:29  NWBase032210/
+16:13:29  PC7.zip
+16:13:29  PC_400_BaseDemo.zip
+16:13:29  PC_400_GA_POC_WAW_ContractorsChoice_SQL_DB.zip
+16:13:29  PolicyCenter.zip
+16:13:29  PolicyCenter4GA.zip
+16:13:29  SQLEXPR.EXE
+16:13:29  Scottsdale_CC_502_TestDrive.zip
+16:13:29  UserGroup/
+16:13:29  ab60/
+16:13:37  > cd "Localized Builds"/
+
+16:13:37  Cmd: CWD Localized Builds
+16:13:37  250: CWD successful. "/Sales Consulting/mpaulenko/Localized Builds" is current directory.
+16:13:38  > ls
+
+16:13:38  Cmd: PORT 192,168,2,77,192,46
+16:13:38  200: Port command successful
+16:13:38  Cmd: MLSD
+16:13:38  150: Opening data channel for directory list.
+16:13:38  226: Transfer OK
+16:13:38  Remote listing contents {
+16:13:38      type=file;modify=20110617012731;size=823190597; CC_602_BaseDemo_USACNDUK.zip
+16:13:38      type=file;modify=20110617012604;size=580455978; PC 7 - CNDUSA Localization.zip
+16:13:38      type=file;modify=20110623225000;size=38980133; PC_700_BaseDemo_700_REL20110616-080134.zip
+16:13:38  }
+16:13:38  CC_602_BaseDemo_USACNDUK.zip
+16:13:38  PC 7 - CNDUSA Localization.zip
+16:13:38  PC_700_BaseDemo_700_REL20110616-080134.zip
+16:14:54  > get PC_700_BaseDemo_700_REL20110616-080134.zip 
+
+16:14:54  Cmd: TYPE I
+16:14:54  200: Type set to I
+16:14:54  Cmd: MLST PC_700_BaseDemo_700_REL20110616-080134.zip
+16:14:54  250: Listing /Sales Consulting/mpaulenko/Localized Builds/PC_700_BaseDemo_700_REL20110616-080134.zip
+16:14:54        type=file;size=38980133;modify=20110623225000; /Sales Consulting/mpaulenko/Localized Builds/PC_700_BaseDemo_700_REL20110616-080134.zip
+16:14:54       End
+16:14:54  Cmd: PORT 192,168,2,77,192,47
+16:14:54  200: Port command successful
+16:14:54  Cmd: RETR PC_700_BaseDemo_700_REL20110616-080134.zip
+16:14:54  150: Opening data channel for file transfer.
+16:14:56  226: Transfer OK
+09:18:07  > exit
+
+09:18:07  Cmd: QUIT
+09:18:07  Could not write to control stream: Software caused connection abort.
+SESSION ENDED at:    Wed Jun 29 09:18:07 2011

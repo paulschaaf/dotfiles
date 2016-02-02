@@ -1,0 +1,108 @@
+#!/bin/sh
+# $Source: e:/MyDocuments/cvsroot/bin/pref_shell,v $
+# $Revision: 1.21 $
+# $Date: 2004/07/07 02:26:34 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+# This file also doubles as a .profile that can automatically switch to 
+# the preferred shell on login.
+
+choice=''
+#set -x
+
+for arg
+do
+    case $arg
+    in
+        -h|--help)
+            shift
+            echo
+            echo Usage: `/bin/basename $0` [kernel_name [kernel_release [host_name]]]
+            echo '   -d  Debug output'
+            echo '   -h  Show this help screen'
+            echo
+            echo '   Calling with no arguments is equivalent to'
+            echo '      '`basename $0` '`uname -snr`'
+            exit
+            ;;
+
+        -d|--debug)
+            shift
+            debug='-d'
+            set -x
+            ;;     
+    esac
+done
+
+switch_to="`$HOME/bin/shortUname -v $debug $* 2>/dev/null` `$HOME/bin/shortHostName -v $debug $* 2>/dev/null`"
+
+case "$switch_to"
+in
+    vftp)
+        choice=/export/home/ftp/gnu/zsh
+        ;;
+    *gwmail)
+        choice=/usr/bin/zsh
+        ;;
+    SunOS_5.8*)
+        choice=/usr/bin/zsh
+        ;;
+    SunOS*)
+        choice=/apps/gnu/bin/bash
+        ;;
+    Linux*|*satori*|*koan*)
+        choice=/bin/zsh
+        ;;
+    CYGWIN*)
+        choice=/bin/zsh
+        ;;
+    HPUX*)
+        choice=/opt/zsh/bin/zsh
+        ;;
+
+    # if arguments describe unrecognised system, ask it
+    $*)
+        choice=`/usr/bin/ssh $1 bin/pref_shell &>/dev/null || echo /bin/sh`
+        ;;
+
+    # keep current shell if no arguments (means local system)
+    *)
+        if [ `/bin/basename $SHELL` = "csh" ]; then
+            #echo but I\'d still rather have sh than csh
+            choice=/bin/sh
+        fi
+        ;;
+esac
+
+if [ `/bin/basename $0` = "-sh" ]; then
+    if [ -d $HOME/test_login ]; then
+        testfile=$HOME/test_login/`hostname`.`date '+%Y-%m-%d_%H:%M:%S'`
+        rm -f $testfile; touch $testfile
+        (
+            echo '----------$$';        echo $$
+            echo '----------$0';        echo $0
+            echo '----------$_';        echo $_
+            echo '----------$*';        echo $*
+            echo '----------$HOST';     echo $HOST
+            echo '----------$HOSTNAME'; echo $HOSTNAME
+            echo '----------tty';       tty
+            echo '----------set';       set
+            echo '----------env';       env
+            echo '----------$choice';   echo $choice
+        ) >> $testfile
+    fi
+
+    if [ -f "$choice" ]; then
+        exec $choice
+    else
+        # otherwise, continue with the current shell
+        #echo $0 $_
+        source $HOME/etc/env/resolve_local.sh
+    fi
+else
+    echo ${choice:-/bin/sh}
+fi
+
+

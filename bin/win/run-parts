@@ -1,0 +1,38 @@
+#!/bin/bash
+# run-parts - concept taken from Debian
+# keep going when something fails
+
+set +e
+
+exit_code=0
+
+if [ $# -lt 1 ]; then
+   echo "Usage: run-parts <dirs...>"
+   exit 1
+fi
+
+debug="''"
+
+case "$1" in
+    -d|--debug)
+        debug='Executing %p\n'
+        shift
+        ;;
+    *)
+        ;;
+esac
+
+# follow links in the supplied directory
+# don't recurse (replace -maxdepth with -wholename '*\.svn' -prune -o to use recursion)
+
+# ignore subversion # execute all files with any executable bit set
+find -L $* \
+    -maxdepth 1 \
+       -type f          \
+       -perm +111       \
+       ! -name '*~'     \
+       ! -name '#*#'    \
+       -printf "$debug" \
+       -exec {}         \;
+
+exit $exit_code

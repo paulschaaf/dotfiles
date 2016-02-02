@@ -1,0 +1,5 @@
+#!/usr/bin/zsh
+
+EMPTY_DIR_ROOTS=~/netmeeting
+
+find ${EMPTY_DIR_ROOTS} -type d | sort -r | xargs rmdir

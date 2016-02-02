@@ -1,0 +1,184 @@
+#!/bin/bash
+if [ "${0##*/}" = "ssh-to" ]; then
+    echo Create a symlink to this file named after the server with whom you wishto connect to use as a turbo ssh connections
+fi
+
+# Decrement to not count this script as a level
+((SHLVL--))
+
+env_vars_to_export='SHLVL ZDOTDIR'
+env_vars_to_pass=''
+ssh_flags=''
+
+def_dirs_list='function dirslist() { echo -n \"[33;1m\"; dirs | sed \"s/ / [0;33m/\"; echo \"[0m\"; }; export -f dirslist'
+
+def_fix_prompt='fix() { PS1=\"\[\033[32;1m\]\${PS1%> }\n\[\033[0m\]\A \[\033[36;1m\]\!\[\033[0m\] \$ \"; export PS1; }; export -f fix'
+
+def_path_cmd="path() { echo \\\$PATH | tr \\\":\\\" \\\"\\n\\\" | nl; }; export -f path"
+
+def_pschaaf_cmd='pschaaf() { fix; }; export -f pschaaf'
+
+# reattach || (start detached with B as escape key; set the caption; attach"
+start_screen='screen -r \|\| \(screen -dmS $USER -e^Bb\; screen -X caption always \"%{=b km}%H %{=u wk}%-Lw%{= yk}%n%f %t%{-}%+Lw %{-}%=\"\; screen -r\)'
+
+add_ssh_flag() {
+    for fl in $*; do
+        ssh_flags=${ssh_flags}${fl}' '
+    done
+}
+
+set_history_format='export HISTTIMEFORMAT=\"%m/%d %R \"'
+
+#
+# Remote host is usually name of the currently executing file or link
+#
+remote_host=`basename $0`
+
+#
+# Collect flags for this script and ssh (but not flags for remote command)
+#
+unset ssh_flags
+while [ -n "$*" ]; do
+    case $1 in
+        --)
+            shift
+            break
+            ;;
+        --debug)
+            set -x
+            ;;
+        --dir)
+            shift
+            CD_TO=$1
+            ;;
+        --dry-run|--dry_run)
+            dry_run=true
+            ;;
+        --noscreen)
+            start_screen='exec bash -il'
+            ;;
+        -*)
+            # ssh_flags=${ssh_flags}${1}' '
+            add_ssh_flag $1
+            ;;
+        *)
+            if [ "$remote_host" = "ssh-to" ]; then
+                remote_host=$1
+            else
+                break
+            fi
+            ;;
+    esac
+    shift
+done
+
+protocol=ssh
+
+# Everything else is the remote command, flags, and arguments
+cmd=${*}
+
+#
+# Establish default commands and values for machines
+#
+
+case $remote_host in
+    copernicus)
+        TERM=linux
+        env_vars_to_export+=' TERM'
+        ;;
+
+    evander)
+        remote_host=perftest@${remote_host}
+
+        CD_TO=/users/\${USER}
+
+        ssh_flags+='-Y -t -t '
+        bash_cmd='bash --rcfile .bashrc'
+        # [ -z "$cmd" ] && cmd="${bash_cmd}"
+        cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
+        ;;
+
+    # Guidewire merge machines
+    [a-z]-cc-*)
+        remote_host+=@devmerge2
+        ssh_flags+='-X -t -t '
+
+        def_switch_p4user='source /etc/profile.d/devmerge.sh; eval \`typeset -f switch-user | sed \"s~switch-user~switch~; s~fi\\$~fix; fi~; s~read NEWUSER~NEWUSER=\\\\\${1:-pschaaf}~\"\`; export -f switch'
+
+        def_pschaaf_cmd='pschaaf() { fix; switch; }; export -f pschaaf'
+
+        bash_args="${set_history_format}; ${def_path_cmd}; ${def_fix_prompt}; ${def_switch_p4user}; ${def_pschaaf_cmd}; ${start_screen}"
+        bash_cmd="bash -c \"${bash_args}\""
+#        ssh_flags=${ssh_flags}'-f '
+        #        cmd="/usr/bin/Terminal -x '${bash_cmd}'"
+        [ -z "$cmd" ] && cmd="'${bash_cmd}'"
+        # typeset -p cmd def_switch_p4user bash_args bash_cmd
+        ;;
+
+    *@ftp)
+        # : ${CD_TO:=/chroot-jail}
+        if [ -z "$cmd" ]; then
+            add_ssh_flag '-t'
+            cmd='zsh -il'
+        fi
+        ;;
+
+    zoe)
+        protocol=ncftp
+        ;;
+
+    root@copernicus)
+        remote_host=copernicus
+        cmd='sudo /bin/su root'
+        ssh_flags=${ssh_flags}-t' '
+        ;;
+
+    root)
+        final='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
+        ;;
+
+    *)
+        ;;
+esac
+
+#set +x
+#
+# We must manually cd before evaluating any remote commands
+# If no command specified, the remote shell is expected to handle the cd
+#
+if [ -n "$CD_TO" ]; then
+    if [ -n "$cmd" ]; then
+        cmd="cd $CD_TO\; "${cmd}
+    else
+        env_vars_to_pass=${env_vars_to_pass}' CD_TO'
+    fi
+fi
+
+#
+# ssh Environment variables
+#
+unset environment
+if [ -n "$env_vars_to_pass" ]; then
+    environment='export '
+    for variable in ${env_vars_to_pass}; do
+        eval value=\$${variable}
+        if [ -n "$value" ]; then
+            environment=${environment}${variable}=${value}'\; '
+        fi
+    done
+fi
+
+cmd=$environment\ $cmd
+
+final=${final:-${protocol} ${ssh_flags}${remote_host}${cmd:+ -- }${cmd}}
+
+# 'exec' dislikes leading envvar definitions--it's easier to just export them
+if [ -n "${env_vars_to_export}" ]; then
+    typeset -x ${env_vars_to_export}
+    typeset -p ${env_vars_to_export}
+fi
+echo ${final}
+
+if [ -z "$dry_run" ]; then
+    eval exec ${final}
+fi

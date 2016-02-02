@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# set -x
+command=`basename $0`
+
+case $command in
+    cmd-c)
+        if [ "$1" = "--help" -o -z "$1" ]; then
+            cat <<EOF
+Usage: $command [command]
+
+Pass the name of a DOS command to execute in a DOS subshell:
+
+  \$ ${command} pause
+  Press any key to continue . . .
+
+The real value comes when you make a symbolic link to this file named
+after a DOS command:
+
+  \$ ln -s ./${command} assoc
+  \$ ln -s ./${command} pause
+  \$ ln -s ./${command} start
+
+Now you can use these DOS commands in a shell script.
+
+  \$ ./start notepad
+
+Type 'help' to see other DOS commands. Note that some of them, like xcopy,
+are executables, and so don't need this linking if they are in the PATH.
+
+EOF
+            exit
+        else
+            command=$1
+            shift
+        fi
+        ;;
+
+    start)
+    	echo Starting $1...
+    	;;
+
+esac
+
+unset help
+if [ "$1" = "-h" -o "$1" = "--help" ]; then
+    shift
+    help="/?"
+fi
+
+exec cmd /C ${command} "${help}${@}"

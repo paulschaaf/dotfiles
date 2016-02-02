@@ -1,0 +1,53 @@
+#!/bin/bash
+
+output=-
+
+if [ "$1" = "-f" ]; then
+    shift
+    1>$1; shift
+fi
+
+temp_dir=$(mktemp -d ${TMP:-/tmp}/$$.XXXXXX)
+
+log_cmd () {
+    eval "$* > $temp_dir/'$*.out'"
+}
+
+puts () {
+    local title=$1; shift
+    enscript -q --toc --pretty-print --language=html -t "$title" -o - -- $@ 2>/dev/null
+}
+# | sed "s,Contents</H1>,$title</H1><p>`date`<p>`uname -a`<p>,g; s,$temp_dir/,\`,g; s,\.out,\`,g"
+#log_cmd partinfo
+#log_cmd procinfo -a
+
+files="/proc/cpuinfo
+/proc/partitions
+"
+
+case `uname` in
+    CYGWIN*)
+        ;;
+
+    *)
+        files=$files"
+/proc/dma
+/proc/interrupts
+/proc/iomem
+/proc/ioports
+/proc/modules
+/proc/mtrr
+/proc/pci
+/proc/slabinfo
+/proc/swaps
+"
+        ;;
+esac
+
+title="$(basename $0) for \\\"$(hostname)\\\""
+
+puts "$title" `echo -n $files | sort | tr '\\n' '\\0'`
+
+enscript -q --toc --pretty-print --language=html -t "$title" $@ -o - -- "$files" 2>/dev/null | sed "s,Contents</H1>,$title</H1><p>`date`<p>`uname -a`<p>,g; s,$temp_dir/,\`,g; s,\.out,\`,g"
+
+rm -rf $temp_dir

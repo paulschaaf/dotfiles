@@ -1,0 +1,114 @@
+#!/bin/bash
+
+dry_run=''
+select=''
+select_full=''
+
+show_usage () {
+    cat <<EOF
+ `basename $0` [switches] [dir]
+
+ Open a Windows Explorer focused on directory dir (defaults to the current
+ directory).
+
+   -e                 Explore - Show the tree hierarchy in the left pane.
+                      Ineffective on Windows 7.
+
+   --echo, --dry-run  Echoes the cmd.exe translation of the invocation.
+
+   -h, --help         Show this help screen.
+
+   --root             Explore from here - Make the target dir the root of the
+                      directory tree for this window. This implies -e.
+
+   --select=x         Pre-select item x in the target dir.
+EOF
+}
+
+#set -x
+# parse switches
+for x in ${@}; do
+    case ${x} in
+        -h|--help)
+            show_usage
+            exit
+            ;;
+        -e)
+            args=/e${args:+,$args}
+            ;;
+        --echo|--dry-run)
+            dry_run=true
+            ;;
+        --select=*)
+            # remove everything up to the '='
+            select=${x#*=}
+            ;;
+        # --select*)
+        #     # select=$*
+        #     select_full=true
+        #     ;;
+        --root)
+            args="/e,${args:+$args,}/root"
+            ;;
+        --)
+            shift
+            break
+            ;;
+        #         --*)
+        #             args=${args:+$args,}/${x:2}
+        #             ;;
+        -*)
+            echo Error: unrecognized switch: $x
+            echo
+            show_usage
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+# expand the path
+# echo "\$@='${@}'"
+# set -x
+if [ "$@" ]; then
+    # echo check @
+    dir="`cygpath -au "${@}"`"
+
+    # If this is a file, focus on parent and select it
+    if [ -f "${dir}" ]; then
+        eval `find "${dir}" -printf 'dir="%h"; select="%p"'`
+    fi
+
+    # echo check dir
+    dir=`cygpath -aw "${dir}"`
+    # echo dir is ${dir}
+fi
+
+if [ -n "$select" ]; then
+    # echo check select
+    select=`cygpath -aw "${select}"`
+    # echo select is $select
+fi
+
+#dir=`cygpath -aw "${dir:-.}" | sed 's/cygwin\\\\home/Users/g'`
+
+args=${args//,\/e/}     # strip duplicate /e's
+# echo args=${args}
+
+# if [ -n "$select_full" ]; then
+#     args=${args}/select,${dir}
+# el
+if [ -n "$select" ]; then
+    args=${args}/select,${select}
+    # echo "selecting '"$select"'"
+else
+    args=$args${args:+,}${dir:-.}
+fi
+
+echo explorer.exe ${args} \&
+if [ -z "$dry_run" ]; then
+    run explorer.exe ${args}
+fi

@@ -1,0 +1,32 @@
+# Google Feeling Lucky in URL
+http://www.google.com/search?btnI=I%27m+Feeling+Lucky&ie=UTF-8&oe=UTF-8&q=files
+
+# Set permanent environment variables from command line
+http://www.google.com/search?q=site%3Amicrosoft.com+setx
+
+# Minimize to taskbar, vertical maximize, hotkeys, etc
+http://www.google.com/search?q=the+wonderful+icon
+
+# enhanced task switch
+http://www.google.com/search?q=windows+powertoy&btnG=Search
+
+# Tortoise Subversion client
+http://www.google.com/search?q=tortoise+svn
+
+# iTunes
+http://www.google.com/search?q=site:apple.com+itunes
+
+# Mozilla Thunderbird
+http://www.google.com/search?q=mozilla+thunderbird
+
+http://www.google.com/search?q=gaim
+
+http://www.google.com/search?q=tightvnc
+
+http://www.google.com/search?q=the+gimp
+
+http://www.google.com/search?q=pdfcreator
+
+http://www.google.com/search?q=bittorrent
+
+http://www.google.com/search?q=larry%27s+any+text+file+indexer

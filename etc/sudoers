@@ -1,0 +1,33 @@
+# sudoers file.
+#
+# This file MUST be edited with the 'visudo' command as root.
+#
+# See the sudoers man page for the details on how to write a sudoers file.
+#
+
+# Host alias specification
+
+# User alias specification
+
+# Cmnd alias specification
+
+# Defaults specification
+
+# User privilege specification
+root	ALL=(ALL) ALL
+
+# Uncomment to allow people in group wheel to run all commands
+# %wheel	ALL=(ALL)	ALL
+
+# Same thing without a password
+# %wheel	ALL=(ALL)	NOPASSWD: ALL
+
+# Samples
+# %users  ALL=/sbin/mount /cdrom,/sbin/umount /cdrom
+# %users  localhost=/sbin/shutdown -h now
+
+pschaaf satori=/bin/su root,/bin/su -l,/bin/su -
+pschaaf satori=/usr/sbin/drakconf.real
+pschaaf satori=/etc/init.d/httpd stop,/etc/init.d/httpd start,/etc/init.d/httpd restart
+
+pschaaf pschaaf-w51=/bin/su root,/bin/su -l,/bin/su -

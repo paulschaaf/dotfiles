@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Example:
+#    cp -r //thfiles/builds/AB/8.0/8.0.4.189_20150420.1812_615121
+#    //files/network/builds/CM/8.0/RELEASES/8.0.4
+
+src=$1
+dest=`echo $1 | sed '
+  s_thfiles_files/network_;
+  s_/AB/_/CM/_;
+  s_\(/[0-9]\.[0-9]/\)\([0-9]\.[0-9]\.[0-9]\).*_\1RELEASES/\2_
+'`
+
+read -p 'Is this an RC build (y/N)? ' is_rc
+if [ "$is_rc" = "y" ]; then
+    touch $dest/RC_BUILDS--DO_NOT_RELEASE.txt
+fi
+
+set -x
+explorer.exe /select,${src//\//\\}
+explorer.exe ${dest//\//\\}
+set +x
+
+echo cp -r $src $dest
+

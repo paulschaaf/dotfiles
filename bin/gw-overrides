@@ -1,0 +1,65 @@
+#!/bin/bash
+
+debug=':'
+verbosity=
+ls="command ls ${LS_FLAGS} -ld"
+
+module_dirs='gosu-lib gosu-core-api gosu-core gosu xml webservices util plugin pl heatmap pc-plugin pl-activex pl-activex-whitelist pc gosu-test-api testresult-formatter pl-gunit pc-gunit pc-pedc BaseDemo demo-dev NA configuration'
+
+
+#set -x
+for arg in $*; do
+    case $arg in
+        -0)
+            verbosity=xargs
+            ;;
+        --brief)
+            verbosity=brief
+            ;;
+        --debug)
+            debug=echo
+            ;;
+        --verbose)
+            verbosity=verbose
+            ;;
+        -*)
+            echo ERROR: Unrecognized switch $arg > /dev/stderr
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+if [ -z "$*" ]; then
+    echo You must specify an argument!
+    exit 1
+fi
+
+#set -x
+ls () {
+    case "$verbosity" in
+        brief)
+            echo $1
+            ;;
+        xargs)
+            printf "%s\0" $1
+            ;;
+        *)
+            $debug Executing $ls "$1"
+            $ls $1
+            ;;
+    esac
+}
+
+for dir in $module_dirs; do
+    # if the file or dir exists, show it
+    if [ -e "$dir/$*" ]; then
+        ls "$dir/$*"
+    # else if verbose show the directory
+    elif [ "$verbosity" = "verbose" ]; then
+        ls "$dir"
+    fi
+done

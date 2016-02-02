@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# keep only the first two dir names (implemented as all of
+# the word chars immediately surrounding the first slash)
+_firstTwoRootDirs=`pwd | sed 's_^\W*\(\w*/\w*\).*$_\1_'`
+
+function export_print() {
+    _varnames=''
+    for declaration in $*; do
+        builtin export $declaration
+        _varnames=${declaration%%=*}' '$_varnames
+    done
+    typeset -p $_varnames | sed 's/^\(declare\|typeset\)\( -x\)* / /'
+}
+
+# _firstTwoRootDirs is now PLATFORM/PRODUCT, so split it
+export_print GW_PLATFORM=${_firstTwoRootDirs%%/*}
+export_print GW_PRODUCT=${_firstTwoRootDirs#*/}
+
+# take the uppercase of the first char
+export_print GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
+
+if [ "$GW_PLATFORM" = "carbon" ]; then
+    IDEA_HOME=$IDEA11_HOME
+    JAVA_HOME=$JAVA16_HOME
+elif [ "$GW_PLATFORM" = "diamond" ]; then
+    IDEA_HOME=$IDEA12_HOME
+    JAVA_HOME=$JAVA16_HOME
+elif [ "$GW_PLATFORM" = "emerald" ]; then
+    IDEA_HOME=$IDEA12_HOME
+    JAVA_HOME=$JAVA17_HOME
+elif [ `pwd` = "/ferrite/mrg/pl/cc" ]; then
+    IDEA_HOME=$IDEA14_HOME
+    JAVA_HOME=$JAVA18_HOME
+else
+    IDEA_HOME=$IDEA14_HOME
+    JAVA_HOME=$JAVA18_HOME
+fi
+export_print IDEA_HOME JAVA_HOME
+
+export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}

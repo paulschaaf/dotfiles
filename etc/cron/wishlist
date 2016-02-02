@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd $HOME/doc/wishlist
+make refresh install >/dev/null

@@ -1,0 +1,207 @@
+#!/usr/bin/env ruby
+
+# Need to turn this output (excluding the line numbers):
+# $ readshortcut -af ~/bin/win/cygwin/Screen.lnk
+
+#   0) Target: /usr/bin/rxvt.exe
+#   1) Working Directory: /c/Guidewire/PolicyCenter_4.0.5.14/Windows-Toolbar/PC4.0/%USERPROFILE%
+#   2) Arguments: -name xscreen -e /usr/bin/screen -R -DD
+#   3) Show Command: Normal
+#   4) Icon Library: /Cygwin.ico
+#   5) Icon Library Offset: 0
+#   6) Description: hello
+
+# into this command (also excluding the line numbers):
+#   mkshortcut
+#   -)  --name='Screen'
+#   6)  --desc=''
+#   1)  --workingdir='%USERPROFILE%'
+#   4)  --icon=/cygwin.ico
+#   5)  --iconoffset=0
+#   3)  --show=norm
+#   2)  --arguments='-name xscreen -e /usr/bin/screen -R -DD'
+#   0)  /usr/bin/rxvt
+
+require 'logger'
+
+$log = Logger.new(STDERR)
+$log.level =
+  Logger::WARN
+  # Logger::INFO
+  # Logger::DEBUG
+
+
+module Kernel
+  def inspect_var(var, value=nil)
+    value = block_given? ? yield : value.inspect
+    "#{var} = #{value}"
+  end
+
+  def delegate_to(targetField, *fields)
+    fields.each do |field|
+      $log.debug "#{self} delegating #{field.inspect} to self.#{targetField}.#{field}" if $log
+      self.send(:define_method, field) { self.send(targetField).send(field) }
+    end
+  end
+end
+
+
+module Cygwin
+  class ReadShortcut
+    attr_accessor :maker
+
+    def self.named(file_or_reader)
+      if file_or_reader.kind_of?(self)
+        $log.debug "Don't create a new #{self}, just return the argument"
+        file_or_reader
+      else
+        $log.debug "Create a new #{self}"
+        self.new(file_or_reader)
+      end
+    end
+
+    def filename;  @filename.gsub ' ', '\ ';  end
+    attr_writer :filename
+
+    attr_reader :working_directory
+    def working_directory=(aValue)
+      # Work around for the Cygwin bug that prepends the current dir
+      # if the path is just an envvar like %USERPROFILE%
+      @working_directory = aValue.gsub /^[^%]*%/, '%'
+    end
+
+    def name; @filename.slice(/(.*)(\.lnk)$/, 1); end
+
+    def initialize(filename)
+      super()
+      @filename = filename
+      task = `readshortcut -af '#@filename'`
+      lines = task.split(/[\n\r]+/)
+      $log.info "Parsing input:\n\t#{lines.join("\n\t")}"
+
+      lines.each do |line|
+        $log.debug "Parsing #{line.inspect}"
+        # split at the first colon
+        field, value = line.chomp.split(/([^:]+):[ \t]*(.*)$/)[1..-1]
+        field = field.gsub(' ', '_').downcase.to_sym
+
+        $log.debug inspect_var(field, value)
+        self.class.module_eval "attr_accessor :#{field}" unless self.respond_to?(field.to_sym)
+        self.send "#{field}=", value
+      end
+    end
+
+    def maker;  @maker ||= MkShortcut.for(self);  end
+
+    delegate_to :maker, :command, :make_cmd
+  end
+
+  class MkShortcut
+    attr_accessor :exec_name, :reader
+
+    def self.for(fileref);  self.new fileref;  end
+
+    @@readerMap = {
+      :arguments  => :arguments,
+      :desc       => :description,
+      :fields     => :fields,
+      :filename   => :filename,
+      :icon       => :icon_library,
+      :iconoffset => :icon_library_offset,
+      :name       => :name,
+      :show       => :show_command,
+      :target     => :target,
+      :unix       => :unix,
+      :windows    => :windows,
+      :workingdir => :working_directory,
+    }
+
+    @@ordered_props = [:name,       :desc,
+                       :workingdir, :icon,
+                       :iconoffset, :show, :arguments
+                      ]
+
+    def initialize(fileref)
+      super()
+      @exec_name = 'mkshortcut'
+      @@readerMap.each_pair do |my_prop, other_prop|
+        self.class.send(:define_method, my_prop) { self.reader.send other_prop }
+      end
+      @reader = ReadShortcut.named(fileref)
+    end
+
+    def show
+      self.reader.show_command[0..3].downcase
+    end
+
+    def command
+      arg_array.unshift("\n#{self.exec_name}").join ' '
+    end
+
+    def make_cmd
+      cmd = arg_array
+      cmd.shift
+      cmd.unshift('--name="$@"')
+         .unshift("\n#{self.filename}:\n\t#{self.exec_name}")
+         .join " \\\n\t   "
+    end
+
+    def arg_array
+      @@ordered_props.collect do |prop|
+        "--#{prop}=#{self.send(prop).inspect}"
+      end << self.target.inspect
+    end
+
+  end
+end
+
+show_cmd, show_make_cmd = false, false
+
+until ARGV.empty?
+  case ARGV.first
+
+  when '--cmd'
+    show_cmd = true
+
+  when '--help'
+    puts "#{$0.sub(/.*\//, '')} [options] *shortcuts
+
+   Options:
+      --cmd        Print the command line to create the shortcut (default)
+      --log_level= Set the logging level to INFO or DEBUG
+      --make_cmd   Print the Makefile target to create the shortcut
+      --help       Show this screen
+
+   P.G. Schaaf, 2011/06/15"
+    exit 0
+
+  when /^--log_level=(.*)/
+    begin
+      $log.level = Logger.const_get $1
+    rescue
+      $log.error "Invalid logging level #$1, using default"
+    end
+
+  when '--make_cmd'
+    show_make_cmd = true
+
+  when /^-/
+    $log.error "Unrecognized switch #{ARGV.first}"
+    exit 1
+
+  else
+    break
+  end
+
+  ARGV.shift
+end
+
+# if no options specified show the normal command
+show_cmd = true unless show_make_cmd
+
+ARGV.each do |filename|
+  aShortcut = Cygwin::ReadShortcut.named(filename.chomp)
+  $log.debug aShortcut.inspect
+  puts aShortcut.command if show_cmd
+  puts aShortcut.make_cmd if show_make_cmd
+end

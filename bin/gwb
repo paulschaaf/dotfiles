@@ -1,0 +1,110 @@
+#!/bin/bash
+
+_batchFile=${0/*\//}.bat
+if [ ! -e "$_batchFile" ]; then
+    _batchFile=bin\\$_batchFile
+fi
+
+_dry_run=''
+
+while [ -n "$*" ]; do
+    case $1 in
+        --dry-run)
+            _dry_run='echo - '
+            ;;
+        --keep)
+            _terminate=/K
+            ;;
+        --max)
+            _size=' /MAX'
+            ;;
+        --min)
+            _size=' /MIN'
+            ;;
+        --nokeep)
+            _terminate=/C
+            ;;
+        --)
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+_userCmd="$*"
+
+echo \$0 is $0
+if [ "${0##*/}" = "perf" ]; then
+    echo called perf!
+    _userCmd='-Ddir.user=pschaaf '$_userCmd
+fi
+
+# Close window afterward if _terminate is unset AND command ends in 'studio'
+if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
+    _terminate=/C
+fi
+
+source ~/bin/gwSetEnv
+
+export TITLE="$GW_PL:$GW_PRODUCT${_userCmd:+ '$_userCmd'}"
+export CMD="$_batchFile ${_userCmd}"
+
+case $GW_PRODUCT in
+    ab)
+        # bright white text on aqua
+        _color=3F
+        ;;
+    bc)
+        # bright white text on red
+        _color=2F
+        ;;
+    cc)
+        # bright white text on blue
+        _color=1F
+        ;;
+    pc)
+        # bright white text on red
+        _color=4F
+        ;;
+    *)
+        _color=0F
+        ;;
+esac
+
+_gwProduct=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
+
+if [ ${UNAME%%_*} = "CYGWIN" ]; then
+    _shell=GWSt_${GW_PL}-${_gwProduct}.lnk
+    if [ ! -e $_shell ]; then
+        echo "# Creating shortcut..."
+        COMSPEC=`cygpath -au $COMSPEC`
+        _desc="${GW_PLATFORM}_${GW_PRODUCT}"
+        _icon=/c/Guidewire/icons/${_gwProduct}_favicon.ico
+
+        _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=. ${COMSPEC}"
+        echo ${_mkshortcut}
+        echo
+        ${_dry_run:-eval} $_mkshortcut
+    fi
+else
+    _shell=$COMSPEC
+fi
+
+echoVar() {
+    typeset -p $* | sed 's/^declare\( -x\)* / /'
+    echo
+}
+
+echo
+echo " # Execute \$CMD in a high-priority window ${TITLE:+titled \$TITLE}${_color:+ and colored \$_color}"
+echoVar CMD TITLE _color _shell
+
+_start='cmd.exe /C start'
+if [ -z "$ifGit" ]; then
+    _start='start'
+fi
+
+[ -z "$_dry_run" ] && set -x
+${_dry_run}${_start}${_size} /HIGH $_shell ${_terminate:-/K} "${_color:+color $_color & }title $TITLE & set CMD=${CMD} & %CMD%"

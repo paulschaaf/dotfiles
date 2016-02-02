@@ -1,0 +1,655 @@
+# -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'") -*-
+# ; outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..."
+
+# This script is run first by every type of zsh, login, interactive, both, or neither
+
+# 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
+# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
+# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# ...
+# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
+
+umask 22
+set +x
+log=:
+#log=echo
+
+$log '*** In .zshenv'
+
+
+# ======== Default Settings
+exportDefault () {
+    eval : \${$1:='$2'}
+    export $1
+}
+
+exportDefault UNAME    `uname`
+exportDefault HOSTNAME `hostname`
+
+fixDOSPathIn () {
+    local var val
+    for var; do
+        eval val=\$$var
+        eval export $var=`cygpath -aup $val`
+    done
+}
+
+if [ -n "$CYGWIN_SSH_AGENT_PID" ]; then
+    export SSH_AGENT_PID=$CYGWIN_SSH_AGENT_PID
+    export SSH_AUTH_SOCK=$CYGWIN_SSH_AUTH_SOCK
+fi
+
+# ======== Global Flags
+# default is to ignore remaining line
+export ifCygwin=:;  export ifNotCygwin=
+export ifMinGW=:;   export ifNotMinGW=
+
+CYGPATH=`cygpath -aup $CYGPATH` 2>/dev/null
+
+case ${UNAME} in
+    CYGWIN*)
+        exportDefault CYGROOT 'c:\cygwin'
+        exportDefault USER $LOGNAME
+        $log cygwin!
+        ifCygwin=
+
+        # e.g. turn /c/home/.. into /home/...
+        export HOME=${HOME/\/c\///}
+        ;;
+    MINGW32_NT*)
+        $log mingw!
+        ifMinGW=
+
+        # change the driveLetter+colon combo into forwardSlash+driveLetter, swap all slashes, replace
+        # semicolons with colons
+        CYGROOT=`echo $CYGROOT | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+#        CYGPATH=`cygpath -aup $CYGPATH`
+        #echo $CYGPATH | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+
+        # can't use cygpath.exe for above variables because it collapses all references to $CYGROOT
+        # to /, which doesn't work outside of Cygwin (since $CYGWIN won't be the root directory)
+        alias cygpath=${CYGROOT}/bin/cygpath.exe
+
+        fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
+        ;;
+    *)
+        ;;
+esac
+$ifCygwin export ifNotCygwin=:
+$ifMinGW  export ifNotMinGW=:
+
+
+export ifGit=:;  export ifNotGit=
+export ifZsh=:;  export ifNotZsh=
+
+# but enable the line if we're running the right shell
+case "$0" in
+    */Git/*)
+        $log git!
+        ifGit=
+        ;;
+    */bin/zsh)
+        $log zsh!
+        ifZsh=
+        ;;
+    *)
+        ;;
+esac
+
+$ifGit export ifNotGit=:
+$ifZsh export ifNotZsh=:
+
+
+if [ -z "$USER" ]; then
+    export USER=`whoami`
+fi
+
+exportDefault HOME /home/${USER}
+
+if [ -n "$CD_TO" ]; then
+    builtin cd "$CD_TO" && unset CD_TO
+fi
+
+$ifZsh typeset -U CDPATH FPATH LD_LIBRARY_PATH PATH
+
+
+# ======== Pathing Functions
+appendToVar  () {
+    local var=$1; shift; eval "$var=\${$var}$*"
+}
+prependToVar () {
+	local var=$1; shift; eval "$var=$*\${$var}"
+}
+
+member () {
+   eval local value=:\$$2:
+   echo $value | grep ":$1:" >&/dev/null
+}
+
+prependToList () {
+    local each var=$1; shift
+    for each; do
+        member $each $var || eval "$var=\"$each\${$var:+${RS:-:}\$$var}\""
+    done
+}
+
+appendToList () {
+    local each var=$1; shift
+    for each; do
+        member $each $var || eval "$var=\"\${$var:+\$$var${RS:-:}}$each\""
+    done
+}
+
+case ${UNAME} in
+    CYGWIN*)
+        prependToCygList () {
+            local each var=$1; shift
+            for each; do
+                each=`cygpath -asw "$each"`
+                member $each $var || eval "$var=\"$each\${$var:+;\$$var}\""
+            done
+        }
+
+        appendToCygList () {
+            local each var=$1; shift
+            for each; do
+                each=`cygpath -asw "$each"`
+                member $each $var || eval "$var=\"\${$var:+\$$var;}$each\""
+            done
+        }
+
+        appendClasspath  () {
+            appendToCygList  CLASSPATH $*
+        }
+        prependClasspath () {
+            prependToCygList CLASSPATH $*
+        }
+        ;;
+
+    *)
+        appendClasspath  () {
+            appendToList  CLASSPATH $*
+        }
+        prependClasspath () {
+            prependToList CLASSPATH $*
+        }
+        ;;
+esac
+
+appendLibpath    () {
+	appendToList  LD_LIBRARY_PATH $*
+}
+prependLibpath   () {
+	prependToList LD_LIBRARY_PATH $*
+}
+
+appendPath       () {
+	appendToList  PATH $*
+}
+prependPath      () {
+	 prependToList PATH $*
+}
+
+appendRubyLib    () {
+	appendToList  RUBYLIB $*
+}
+prependRubyLib   () {
+	prependToList RUBYLIB $*
+}
+
+# echo a path without double slashes, or empty or relative paths
+cleanpath () {
+	echo :$PATH: | sed '
+     s/:::*/:/g;
+     s,///*,/,g;
+     s,:c:/,:/c/,g;
+     s/:[^/][^:]*//g;
+     s_:[^:]*/pschaaf/bin/win__g;
+     s/^://; s/:$//
+   '
+}
+PATH=`cleanpath`
+
+
+# ======== Path
+appendPath ~/bin/quick-ssh ~/Support/tools/bin
+
+case ${UNAME} in
+    CYGWIN*)
+        prependPath $HOME/bin/win
+        ;;
+    *)
+        prependPath $HOME/bin
+        appendPath /usr/X11R6/bin
+        ;;
+esac
+appendPath /opt/git-gw
+$ifGit appendPath $GIT_PATH $CYGPATH
+
+# ======== Environment and Shell Variables
+# exportDefault ANT_HOME /usr/local/ant
+
+export BROWSER=chrome
+exportDefault CLASSPATH .
+
+# ======== CLASSPATH
+appendClasspath $JWTK/bin $JWTK/lib
+case $HOSTNAME in
+    ftp)
+        appendClasspath /opt/PostgresPlus/8.3/jdbc
+        ;;
+    tolson)
+        appendClasspath $RIM_SDK/lib/net_rim_api.jar
+        ;;
+    *)
+        ;;
+esac
+
+export CLHSROOT=$TECHREF/languages/lisp/HyperSpec/
+
+# ======== Remote sessions
+if   [ -n "$SSH_TTY"    ]; then
+    CONNECTION=ssh
+elif [ -n "$REMOTEHOST" ]; then
+    CONNECTION=tlnt
+elif [ -n "$SUDO_USER"  ]; then
+    CONNECTION=sudo
+elif [ -n "$REMOTEUSER" ]; then
+    CONNECTION=tlnt
+fi
+export CONNECTION
+
+export CVS_SOURCEFORGE=:pserver:anonymous@cvs.sourceforge.net:/cvsroot
+export SVNROOT='https://pschaaf-w51.guidewire.com/svn/personal'
+
+EDITOR=/usr/bin/emacs
+if [ ${USER} != 'pschaaf' ]; then
+    EDITOR=${EDITOR}' --user pschaaf'
+fi
+
+EDITOR=/usr/bin/emacs
+case $USER in
+    pschaaf)
+        EMAIL=paul.schaaf@gmail.com
+        ;;
+    root)
+        EDITOR=${EDITOR}' -u pschaaf -nw'
+        EMAIL=paul.schaaf@gmail.com
+        ;;
+    vschaaf)
+        EDITOR=${EDITOR}' -u pschaaf'
+        EMAIL=designer007@gmail.com
+        ;;
+    *)
+        ;;
+esac
+export EDITOR EMAIL
+
+export ESHELL=$SHELL
+export FCEDIT=zed
+export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
+export GREP_COLOR="[1;33"
+if [ -z "$ifNotGit" ]; then
+    grep() {
+        /bin/grep --color $*
+    }
+fi
+
+export HISTSIZE=1000
+
+case $HOSTNAME in
+    ftp)
+        export JAVA_HOME=/usr/java/j2sdk1.4.2_18
+        unset JRE_HOME
+        ;;
+    *)
+        ;;
+esac
+
+#export JAVA_HOME=`cygpath -au ${JAVA_HOME}`
+#export JAVA16_HOME=`cygpath -au ${JAVA16_HOME}`
+#export JAVA17_HOME=`cygpath -au ${JAVA17_HOME}`
+#export JAVA17_DCEVM_HOME=`cygpath -au ${JAVA17_DCEVM_HOME}`
+
+case $UNAME in
+    CYGWIN*)
+        prependPath `cygpath -au ${JAVA_HOME}/bin`
+        ;;
+    Linux)
+        prependPath ${JAVA_HOME}/bin
+        export IDEA_HOME=/opt/idea
+        ;;
+    *)
+        prependPath ${JAVA_HOME}/bin
+        ;;
+esac
+
+export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESSKEY=${HOME}/.less_$HOSTNAME
+
+# ======== Library Path
+export LIBPATH_NAME=LD_LIBRARY_PATH
+appendLibpath /lib /usr/lib $HOME/lib
+
+# ======== ls Options
+export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
+
+export LS_FLAGS=${LS_COLORS:+--color }-BCFbh
+$ifZsh export LS_FLAGS=${LS_FLAGS}H
+export LA_FLAGS=${LS_FLAGS}A
+export LL_FLAGS=${LS_FLAGS}l
+
+
+# export OFFICE_DRIVE=c:
+# export OFFICE_PATH="Program Files//Microsoft Office//Office"
+export PAGER=less
+export PRINTER=//ad2/hplj5100
+export RSYNC_RSH=ssh
+
+# ======== RUBYLIB
+export RUBYLIB
+appendRubyLib ${HOME}/lib/ruby $HOME/bin
+
+case ${UNAME} in
+    CYGWIN*)
+       exportDefault SCREENDIR /tmp/uscreens/S-${USER}
+       ;;
+    *)
+       exportDefault SCREENDIR ${HOME}/tmp
+       ;;
+esac
+
+export SHELL=zsh
+
+# if [ -n "$SCRIPT_ARGS" ]; then
+#     export SCRIPTING_MSG='[cc] '
+# fi
+
+export SVN_EDITOR=emacs
+export TECHREF=$HOME/doc/TechRef
+
+$ifZsh export VIMRUNTIME=/usr/share/vim/vim74
+
+export VISUAL=$EDITOR
+if [ -f ${VIMRUNTIME}/macros/less.sh ]; then
+    export VLESS='$VIMRUNTIME/macros/less.sh'
+else
+    export VLESS='vim -u ~pschaaf/.vimrc.less'
+fi
+
+# export MANPAGER="sh -c \"col -b | ${VLESS} -c 'set ft=man nomod nolist titlestring=MANPAGE' -\""
+export MANPAGER=less
+
+# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
+# The remaining punctuation chars are considered separate words, regardless of
+# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
+export WORDCHARS='|*?.-~\\$%^'
+
+exportDefault ZDOTDIR /home/${USER}
+
+# # ======== Functions
+
+# # cd'ing to a file will put you in its directory, the argument defaults to home
+# cd () {
+# set +x
+#     if [ "$1" = "." ]; then
+#         chpwd # force the prompt to be rebuilt
+#     elif [ -f "$1" ]; then
+#         pushd "${1:h}"
+#     else
+#         pushd "${1:=.}"
+#     fi
+# }
+
+echoList () {
+    local show_type
+    if [ "$1" = "--show_type" ]; then
+        echo it does
+        show_type=file
+        shift
+    fi
+    if [ -z "$ifZsh" ]; then
+        echo ' ${'${1}'} has type '${(Pt)1}
+    fi
+    eval local list=\$${1}
+    shift
+    # save all AWK output to the end to avoid screen flicker
+    echo -E ${list} | awk '
+    NR == 1 {split(file, files, " ")}
+
+    { gsub("/c" ENVIRON["HOME"],"~")
+      gsub(ENVIRON["HOME"],"~")
+      dirname = $0
+      for (idx in files) {
+        fullpath = $1 "/" files[idx]
+        if (! system("test -f " fullpath)) {
+            dirname = "[1;33m" dirname "[0m"
+            matches = matches " " fullpath
+            break
+        }
+      }
+      output = output sprintf("\n %2d ", NR) dirname
+    }
+    END {
+        print output
+        if (matches) {
+            print ls matches "\n"
+            system(ls matches)
+            if (show_type) {
+                print "\n" show_type matches "\n"
+                system(show_type matches)
+            }
+        }
+    }' RS=${RS:-:} file=${@} ls="ls ${LL_FLAGS}U" show_type=${show_type}
+}
+
+# alias echoVar=typeset
+echoVar () {
+    local var
+    for var; do
+        if [ -z "$ifZsh" ]; then
+            echo "\n # \${${var}} has type ${(Pt)var}"
+            echo -n ' '
+            set | /usr/bin/grep -ai "^$var="
+        else
+            typeset -p $var
+        fi
+    done
+}
+
+if [ -z "$ifCygwin" ]; then
+    alias classpath='RS=\; echoList CLASSPATH'
+    export CYGCLASSPATH="`cygpath -aup $CLASSPATH`"
+    alias start='cmd /C start'
+else
+    alias classpath='echoList CLASSPATH'
+fi
+
+alias fpath='echoList FPATH'
+alias infopath='echoList INFOPATH'
+alias libpath='echoList LD_LIBRARY_PATH'
+
+hidedotfiles () {
+	for f in .*; do attrib +S +H $f; done
+}
+showdotfiles () {
+	for f in .*; do attrib -S -H $f; done
+}
+
+path () {
+    local show_type
+    if [ "$1" = "--show_type" -o "$1" = "-t" ]; then
+        show_type=yes
+        shift
+    fi
+    if [ -z "$ifZsh" ]; then
+        local regex="${*// /\|}"
+        echo -n ' '
+        whence $* | sed '/^$\|^\/\|not found$/d; s:^\('$regex'\):[1;40;33m\1[0;0m:g'
+        echo
+    fi
+    echoList ${show_type:+--show_type} PATH $*
+}
+
+rubylib () {
+    echoVar RUBYLIB
+    echo
+    local RUBYLIB=`ruby -e 'print $:.join(":")'`
+    echoList RUBYLIB | sed 's/^.*has type.*/ Including implied dirs:/'
+}
+
+cdl () {
+	cd $*; ls
+}
+
+ddu () {
+    # show the size of each subdirectory
+    find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n
+}
+
+pcd () {
+    # Change to the specified dir & remove starting place from dir stack
+    cd "$@"; popd +1 2>/dev/null
+}
+
+wcat ()   {
+	cat $(which $*)
+}
+wcd ()    {
+	cd $(which $*)
+}
+wfile ()  {
+	file $(which ${@}) 2>/dev/null || echo \'${@}\' not found
+}
+whence () {
+	builtin whence -ac $*
+}
+wless ()  {
+	${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found
+}
+
+# ======== ls Aliases and Functions
+unalias l la ll ls lsd rm d s p rd 2>/dev/null
+alias l='/bin/ls'
+
+alias ls='l '${LS_FLAGS}
+
+alias la='l '${LA_FLAGS}
+alias ll='l '${LL_FLAGS}
+
+lld  () {
+	ll $* | grep --color=never "/$\\|^$\\|^[^ ][^ ]*$"
+}
+alias lls=ll
+alias lr='ls -R'
+alias lla='la -l'
+alias llt='ll -rt'
+# lltt () {
+#	llt $* | grep "date +%b.%d"
+#}
+
+lsd () {
+    for x in ${*:-.}; do
+        pushd $x
+        ls -BCHbd */
+        popd
+    done
+}
+
+lsda () {
+    for x in ${*:-.}; do
+        pushd $x
+        ls -BCHabd */ .*/
+        popd
+    done
+}
+alias lsad='lsda'
+
+lsf () {
+    local x
+    for x in ${*:-*}
+    do
+        echo `file -N -F: -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
+    done | column -t -s ':'
+}
+
+# ======== Aliases
+alias ...=../..
+alias ....=../../..
+alias ..='pushd ..'
+alias cls=clear
+$ifCygwin alias cp='nocorrect cp'
+alias df='df -h -x supermount'
+alias du='du -h'
+$ifZsh alias find='find -L'
+alias gosu=gosu.cmd
+alias igrep='grep -i'
+alias lan=lan.bat
+alias nolan=nolan.bat
+alias relan='nolan; lan'
+$ifCygwin alias mv='nocorrect mv'
+if [ `uname` = "Linux" ]; then
+    alias perf='./perf -Ddir.user=pschaaf'
+fi
+alias pgrep='ps -aef | grep'
+alias ping=PING
+# alias pstree='pstree -G'
+alias rm='rm -i'
+alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
+$ifNotCygwin alias run=''
+# alias svncommit='svn commit -m ""'
+# alias svnupdate='(cd; svn update)'
+# alias svnupdate='pushd; svn update; popd'
+$ifCygwin alias tracert='TRACERT.EXE'
+alias tree="tree -Aa --dirsfirst --ignore_backups --ignore_regex '\\.svn|\\.git'"
+alias vdiff='/c/PROGRA~1/Araxis/ARAXIS~1/AraxisGitDiff'
+alias which-command=path
+
+# ======== Guidewire Functions
+# __gwcmd () {
+# #    set -x
+#     export CMD="$*"
+#     export SHELL=cmd
+#     CD=' /D bin'
+#     TERMINATE=/K
+
+#     if [ "${CMD/* }" = "studio" ]; then
+#         TERMINATE=/C
+#     fi
+
+#     echoVar() {
+#         typeset -p $* | sed 's/^typeset\( -x\)* //'
+#     }
+
+#     source ~/bin/gwSetEnv
+#     export TITLE="$GW_PL:$GW_BUILD \"%CMD%\""
+
+#     if [ "$1" = "gwb" ]; then
+#         unset CD
+#     elif [ -e "bin/GWSt_*.exe" ]; then
+#         SHELL=`cd bin > /dev/null; echo GWSt_*.exe`
+# #        SHELL=${SHELL##*/} # remove the leading directories
+#     fi
+
+#     echoVar CMD GW_BUILD GW_PL GW_PLATFORM IDEA_HOME JAVA_HOME SHELL TITLE
+#      #| sed 's/^typeset -x/ /'
+
+#     echo ''
+#     echo '# Spawn high-priority cmd titled "$*"'${CD:+ in "./bin" dir}', white text on blue, executing $*'
+#     _exec="start${CD} /HIGH %SHELL% /T:1F $TERMINATE 'title %TITLE% & %CMD%'"
+#     echoVar _exec
+#     eval $_exec
+# }
+
+
+# for prod in all ab bc cc pc pl px; do
+#     unset TARGET_MODULE
+#     if [ "$prod" = "cc" -a  -z "$TARGET_MODULE" ]; then
+#         if [    "$GW_PL" = "a" -o "$GW_PL" = "b" -o "$GW_PL" = "c" \
+#              -o "$GW_PL" = "d" -o "$GW_PL" = "e" ]; then
+#             export TARGET_MODULE=cc-perf-test
+#         fi
+#     fi
+#     alias ${prod}="__gwcmd ${prod}${TARGET_MODULE:+ -Dgw.studio.targetModule=}${TARGET_MODULE}"
+# done

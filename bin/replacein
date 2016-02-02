@@ -1,0 +1,90 @@
+#!/usr/bin/env ruby
+
+# $Source: e:/MyDocuments/cvsroot/src/Makefile,v $
+# $Revision: 1.1 $
+# $Date: 2003/08/30 00:16:28 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+# //////////////////////////////////////////////////////////////
+# If this script is run as stand-alone script
+if __FILE__ == $0 # ////////////////////////////////////////////
+
+# //////////////////////////////////////////////////////////////
+# read arguments
+require 'extn/Options'
+
+headerString = <<HEADER_STRING
+Usage: #{File.basename($0)} [option]... <search_regx> <repl_ex> [files]...
+Default behavior is to display which files would be affected, without
+actually changing them.
+HEADER_STRING
+
+switchString = <<SWITCH_STRING
+   -x, --execute              Performs the replacement(s)
+   -l, --showLines            Show the affected lines
+   -A, --after-context=num    Print num lines of context after matching lines
+   -B, --before-context=num   Print num lines of context before matching lines
+   -C, --context=num          Print num lines of context around matching lines
+   -s, --show=10              Show the replacement(s) with surrounding chars
+   -0, --separator=num        Specify record separator (in octal)
+   -i, --editInPlace[=extn]   Edit files in place (backup if extension given)
+
+SWITCH_STRING
+
+tailString = <<TAILSTRING
+Special replacement characters can be used in <repl_ex>:
+   ReplacementText           Substitution
+   \\1, \\2, ... \\9            The value matched by the nth grouped subexp
+   \\&                        The last match
+   \\\`                        The part of the string before the match
+   \\\'                        The part of the string after the match
+   \\+                        The highest-numbered group matched
+
+Report bugs to <paul_schaaf@yahoo.com>.
+TAILSTRING
+
+options = ExtOptions.new(headerString, switchString, tailString)
+
+options.exitShowUsage if ARGV.size < 3
+
+# //////////////////////////////////////////////////////////////
+# main processing
+
+search, replace, *files = *ARGV
+search=Regexp.new(search)
+
+options[:showLines] = ! (options[:show] || options[:execute])
+
+files.each {|file|
+  string = (File.open(file, 'r').read).gsub!(search, replace)
+  if string
+    if (options[:execute])
+      File.open(file, 'w').write(string)
+      puts "Updated #{file}"
+    elsif (options[:show] || options[:showLines])
+      puts
+      puts "Changes for #{file}:"
+
+      # todo: this is never used!
+      padding = if options[:show]
+		  '.{0,' + options[:show].to_s + '}'
+		else
+		  '.*'
+		end
+
+      before = File.open(file, 'r').read.scan(search)
+      p string, search, before, replace
+      before.each { |each|
+	p each
+	puts each.to_s.gsub(search, replace)
+	puts
+      }
+    else
+      puts "Affects #{file}"
+    end
+  end
+}
+
+end # //////////////////////////////////////////////////////////

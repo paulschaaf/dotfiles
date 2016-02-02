@@ -1,0 +1,183 @@
+#!/usr/bin/env ruby
+
+ARGV.shift while ARGV[0] =~ /^-/
+
+case (ARGV[0] || `hostname`.chomp).to_sym
+when :ausable, :styx, :superior
+  puts 'CYGWIN'
+else
+  if ARGV[0].to_s.empty?
+    $stdout << `uname -s`
+  else
+    puts "Unknown host #{ARGV[0]}"
+    exit 1
+  end
+end
+
+__END__
+
+#!/bin/sh
+
+# $Source: e:/MyDocuments/cvsroot/bin/shortUname,v $
+# $Revision: 1.18 $
+# $Date: 2004/02/06 19:46:09 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+#set -x
+hosts_file=$HOME/etc/hosts
+
+color_string() {
+    case $1
+    in
+        AIX*)
+            colorString='yellow on_blue'
+            ;;
+        CYGWIN*)
+            colorString='white on_green'
+            ;;
+        HPUX*)
+            colorString=cyan
+            ;;
+        Linux*)
+            colorString=green
+            ;;
+        SunOS*)
+            colorString=yellow
+            ;;
+        Windows*)
+            ;;
+        UNKN*|*)
+            colorString="white on_red"
+            ;;
+     esac
+
+     if [ -n "colorString" ]; then
+        echo "$colorString bold"
+     fi
+}
+
+colorize () {
+    colorString=`color_string $1`
+    shift
+
+    if [ -n "$colorString" ]; then
+        echo $* | lite -c "$colorString" '^.*$'
+    else
+        echo $*
+    fi
+}
+
+shorten_string () {
+    echo "$*" | sed 's/[-._][^ \t]*//g'
+}
+
+case `basename $0`
+in
+    shortUname)
+        all=platforms
+        out_uname_hostname_rel () {
+            shift #hostname
+            uname=${1:-`uname -snr`}
+            basic_out_hostname_uname_rel $uname $*
+        }
+        ;;
+
+    *)
+        all=hosts
+        out_uname_hostname_rel () {
+            basic_out_hostname_uname_rel `shorten_string ${2:-1}` $1
+        }
+        ;;
+esac
+
+# case $defaultName
+# in
+#     CYGWIN*)
+        defaultName=CYGWIN
+#         ;;
+#     *)
+#         ;;
+# esac
+
+basic_out_hostname_uname_rel () {
+    shift
+    echo "$*"
+}
+
+unset color colorString
+for arg
+do
+    case $arg
+    in
+        -a|--all)
+            names=`$all`
+            shift
+            ;;
+        -c|--color)
+            unset colorString
+            color=$1
+            basic_out_hostname_uname_rel () {
+                colorize $1 $2
+            }
+            shift
+            ;;
+        --escape)
+            unset colorString
+            color=$1
+            basic_out_hostname_uname_rel () {
+                colorize $1 "''"
+            }
+            shift
+            ;;
+        -d|--debug)
+            basic_out_hostname_uname_rel () {
+                set +x
+                echo
+                echo colorString=`color_string $1`
+                echo \$1=\"$1\"
+                echo \$2=\"$2\"
+                set -x
+            }
+            shift
+            set -x
+            ;;
+         -s|--colorString)
+            unset color
+            colorString=$1
+            basic_out_hostname_uname_rel () {
+                #echo -n "$1 "
+                color_string $1
+            }
+            shift
+            ;;
+         -v|--verbose)
+            verbose=true
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+for name in ${names:=${*:-`hostname`}}
+do
+    if [ "$name" = "localhost" ]
+    then
+        name=`$default_name_cmd`
+    fi
+    name=`shorten_string $name`
+
+    args=`awk "/^[^#]*$name/ {print; exit}" $hosts_file | tr '-' '_'`
+
+    if [ -z "$verbose" ]
+    then
+        args=`shorten_string $args`
+    fi
+
+    # pass hostname, uname into function
+    out_uname_hostname_rel ${args:-$name}
+
+done

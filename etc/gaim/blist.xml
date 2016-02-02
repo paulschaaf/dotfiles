@@ -1,0 +1,831 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+
+<gaim version='1.0'>
+	<blist>
+		<group name="Guidewire Technical Consultants">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>atjsfo</name>
+					<alias>Tony Jackson</alias>
+					<setting name="buddy_icon" type="string">fd682e61</setting>
+					<setting name="icon_checksum" type="int">1925961923</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>edwardjporter</name>
+					<alias>Ed Porter</alias>
+					<setting name="buddy_icon" type="string">e0be42d5</setting>
+					<setting name="icon_checksum" type="int">1311380689</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>gtscrap</name>
+					<alias>Jeff Sontheimer</alias>
+					<setting name="buddy_icon" type="string">5dbedd</setting>
+					<setting name="icon_checksum" type="int">-561213491</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>hari_0011</name>
+					<alias>Hari Kanaga</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>jhooks01</name>
+					<alias>Josh Hooks</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>lang4ksu</name>
+					<alias>Brian Lang</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>prexer</name>
+					<alias>Peter Rexer</alias>
+					<setting name="buddy_icon" type="string">449692fc</setting>
+					<setting name="icon_checksum" type="int">1983962430</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>tgruskie</name>
+					<alias>Tom Gruskiewicz</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>tom_r_burke</name>
+					<alias>Tom Burke</alias>
+					<setting name="buddy_icon" type="string">db7524b9</setting>
+					<setting name="icon_checksum" type="int">-1067882909</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>rkiran_j</name>
+					<alias>Ravi Kiran</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>delchapp</name>
+					<alias>Deloris Chappell</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>dxrodri</name>
+					<alias>Dom Rodrigues</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>bobfickley</name>
+					<alias>Bob Fickley</alias>
+					<setting name="buddy_icon" type="string">e3dc3a2b</setting>
+					<setting name="icon_checksum" type="int">1503909601</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>scintojoe</name>
+					<alias>Joe Scinto</alias>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Guidewire Product Management">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>dgordon_98109</name>
+					<alias>Dan Gordon</alias>
+					<setting name="buddy_icon" type="string">4a900424</setting>
+					<setting name="icon_checksum" type="int">2147483647</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>jeremyhenrickson</name>
+					<alias>Jeremy Henrickson</alias>
+					<setting name="buddy_icon" type="string">3d0e4cb8</setting>
+					<setting name="icon_checksum" type="int">1230449794</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>maria_t_tran</name>
+					<alias>Maria Tran</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>planeteve</name>
+					<alias>Eve Gilbert</alias>
+					<setting name="buddy_icon" type="string">926542af</setting>
+					<setting name="icon_checksum" type="int">2147483647</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>sigridpatel</name>
+					<alias>Sigrid Georgescu</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>ssgsriram</name>
+					<alias>Sriram Sankaran</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>srahemtulla</name>
+					<alias>Semira Rahemtulla</alias>
+					<setting name="buddy_icon" type="string">d0492f53</setting>
+					<setting name="icon_checksum" type="int">938469059</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>whitk</name>
+					<alias>Whitman Kwok</alias>
+					<setting name="buddy_icon" type="string">fb0637f2</setting>
+					<setting name="icon_checksum" type="int">1939001190</setting>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Guidewire Functional Consultants">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>aaronhowell</name>
+					<alias>Aaron Howell</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>alex_naddaff2002</name>
+					<alias>Alex Naddaff</alias>
+					<setting name="buddy_icon" type="string">6010117d</setting>
+					<setting name="icon_checksum" type="int">1837714119</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>aupanal</name>
+					<alias>Rudy Upanal</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>bmoore23</name>
+					<alias>Brian Moore</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>dwang75</name>
+					<alias>Daniel Wang</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>hnsutherland</name>
+					<alias>Hank Sutherland</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>huscarl98</name>
+					<alias>Sheridon Glen</alias>
+					<setting name="buddy_icon" type="string">b4fb4fa8</setting>
+					<setting name="icon_checksum" type="int">-1316656071</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>jgische</name>
+					<alias>Jason Gische</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>jneumill</name>
+					<alias>John Neumiller</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>johnkbabcock2</name>
+					<alias>John Babcock</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>kevinecall</name>
+					<alias>Kevin Call</alias>
+					<setting name="buddy_icon" type="string">c287fe01</setting>
+					<setting name="icon_checksum" type="int">2147483647</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>kwgupta</name>
+					<alias>Kanika Gupta</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>scott_plummer</name>
+					<alias>Scott Plummer</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>shakeelmahate</name>
+					<alias>Shakeel Mahate</alias>
+					<setting name="buddy_icon" type="string">55702a2f</setting>
+					<setting name="icon_checksum" type="int">-798551135</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>tkrzyk</name>
+					<alias>Ted Krzyk</alias>
+					<setting name="buddy_icon" type="string">b2614490</setting>
+					<setting name="icon_checksum" type="int">959676293</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>troywinter</name>
+					<alias>Troy Winter</alias>
+					<setting name="buddy_icon" type="string">757d88ac</setting>
+					<setting name="icon_checksum" type="int">1496331308</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>volvomark_2000</name>
+					<alias>Mark Clark</alias>
+					<setting name="buddy_icon" type="string">a8bd6246</setting>
+					<setting name="icon_checksum" type="int">-1950699242</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>watkinsbrian</name>
+					<alias>Brian Watkins</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>yiannis_tzioumis</name>
+					<alias>Yiannis Tzioumis</alias>
+					<setting name="buddy_icon" type="string">88e365bd</setting>
+					<setting name="icon_checksum" type="int">1109477274</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>colinbparker2003</name>
+					<alias>Colin Parker</alias>
+					<setting name="buddy_icon" type="string">d179935</setting>
+					<setting name="icon_checksum" type="int">755635388</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>amnon6</name>
+					<alias>Amnon Levy</alias>
+					<setting name="buddy_icon" type="string">300f03a8</setting>
+					<setting name="icon_checksum" type="int">2095077662</setting>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Guidewire Engineering">
+			<setting name="collapsed" type="bool">0</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>cisilyxi111</name>
+					<alias>Emily Cheng</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>dewidog</name>
+					<alias>Chris Donahue</alias>
+					<setting name="buddy_icon" type="string">cbc6d3f2</setting>
+					<setting name="icon_checksum" type="int">2147483647</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>donahuejw</name>
+					<alias>John Donahue</alias>
+					<setting name="buddy_icon" type="string">11fa3ab3</setting>
+					<setting name="icon_checksum" type="int">-1773362362</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>mark_shaw</name>
+					<alias>Mark Shaw</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>russseligman</name>
+					<alias>Russ Seligman</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>kui1815</name>
+					<alias>Kui Zhang</alias>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Guidewire Development">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>schan-tin@limpopo.guidewire.com</name>
+					<alias>Sebastien Chan-Tin</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>asedillo-glatt@limpopo.guidewire.com</name>
+					<alias>Adam Sedillo-Glatt</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dfaulkner@limpopo.guidewire.com</name>
+					<alias>Derek Faulkner</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>mwallis@limpopo.guidewire.com</name>
+					<alias>Michael Wallis</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>tmorris@limpopo.guidewire.com</name>
+					<alias>Trevor Morris</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>eporter@limpopo.guidewire.com</name>
+					<alias>Ed Porter</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dlonborg@limpopo.guidewire.com</name>
+					<alias>Danny Lonborg</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>pdalbora@limpopo.guidewire.com</name>
+					<alias>Paul D&apos;Albora</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>smckinney@limpopo.guidewire.com</name>
+					<alias>Scott McKinney</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dsohigian@limpopo.guidewire.com</name>
+					<alias>David Sohigian</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>kbranson@limpopo.guidewire.com</name>
+					<alias>Ken Branson</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>cdonahue@limpopo.guidewire.com</name>
+					<alias>Chris Donahue</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dbrewster@limpopo.guidewire.com</name>
+					<alias>Dave Brewster</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dgordon@limpopo.guidewire.com</name>
+					<alias>Dan Gordon</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>prexer@limpopo.guidewire.com</name>
+					<alias>Peter Rexer</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>ibosyi@limpopo.guidewire.com</name>
+					<alias>Igor Bosyi</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>tburke@limpopo.guidewire.com</name>
+					<alias>Tom Burke</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>efurtado@limpopo.guidewire.com</name>
+					<alias>Eric Furtado</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>rkitts@limpopo.guidewire.com</name>
+					<alias>Rick Kitts</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>egilbert@limpopo.guidewire.com</name>
+					<alias>Eve Gilbert</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>lchang@limpopo.guidewire.com</name>
+					<alias>Lerk-Ling Chang</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>jdonahue@limpopo.guidewire.com</name>
+					<alias>John Donahue</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>ukumar@limpopo.guidewire.com</name>
+					<alias>Mamta Kumar</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>achen@limpopo.guidewire.com</name>
+					<alias>Alecia Chen</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>rseligman@limpopo.guidewire.com</name>
+					<alias>Russ Seligman</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>aaisinzon@limpopo.guidewire.com</name>
+					<alias>Alex Aisinzon</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>beloy@limpopo.guidewire.com</name>
+					<alias>Ben Eloy</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>bjohnson@limpopo.guidewire.com</name>
+					<alias>Bryan Johnson</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>myang@limpopo.guidewire.com</name>
+					<alias>Mike Yang</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>rtam@limpopo.guidewire.com</name>
+					<alias>Raymond Tam</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>amorano@limpopo.guidewire.com</name>
+					<alias>Allen Morano</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>sren@limpopo.guidewire.com</name>
+					<alias>Sandia Ren</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>jburton@limpopo.guidewire.com</name>
+					<alias>Jim Burton</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>echan-tin@limpopo.guidewire.com</name>
+					<alias>Eric Chan-Tin</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>tbamberger@limpopo.guidewire.com</name>
+					<alias>Tony Bamberger</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dwake@limpopo.guidewire.com</name>
+					<alias>David Wake</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>jseybold@limpopo.guidewire.com</name>
+					<alias>John Seybold</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>echeng@limpopo.guidewire.com</name>
+					<alias>Emily Cheng</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>akeefer@limpopo.guidewire.com</name>
+					<alias>Alan Keefer</alias>
+					<setting name="servernick" type="string">Alan Keefer</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>prelampagos@limpopo.guidewire.com</name>
+					<alias>Pinky Relampagos</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>rwong@limpopo.guidewire.com</name>
+					<alias>Rebecca Wong</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>efoley@limpopo.guidewire.com</name>
+					<alias>Eric Foley</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>rsmith@limpopo.guidewire.com</name>
+					<alias>Ryan Smith</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>mconforti@limpopo.guidewire.com</name>
+					<alias>Maor Conforti</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>hhuang@limpopo.guidewire.com</name>
+					<alias>Howard Huang</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dparker-rose@limpopo.guidewire.com</name>
+					<alias>Drew Parker-Rose</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>wkwok@limpopo.guidewire.com</name>
+					<alias>Whitman Kwok</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>jbrenner@limpopo.guidewire.com</name>
+					<alias>Jerry Brenner</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>mshaw@limpopo.guidewire.com</name>
+					<alias>Mark Shaw</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>dmccreary@limpopo.guidewire.com</name>
+					<alias>Doug McCreary</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>clee@limpopo.guidewire.com</name>
+					<alias>Charlie Lee</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>aheydon@limpopo.guidewire.com</name>
+					<alias>Allan Heydon</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>jhenrickson@limpopo.guidewire.com</name>
+					<alias>Jeremy Henrickson</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf@im.guidewire.com/Gaim" proto="prpl-jabber">
+					<name>cgross@limpopo.guidewire.com</name>
+					<alias>Carson Gross</alias>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Guidewire">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>dparkerrosegw</name>
+					<alias>Drew Parker-Rose</alias>
+					<setting name="buddy_icon" type="string">f1e0b081</setting>
+					<setting name="icon_checksum" type="int">1411540901</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>g0james</name>
+					<alias>James Wu</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>gary_alan_merrick</name>
+					<alias>Gary Merrick</alias>
+					<setting name="buddy_icon" type="string">c015b94a</setting>
+					<setting name="icon_checksum" type="int">1333813478</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>howyliu</name>
+					<alias>Howard Liu</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>jamesykwak</name>
+					<alias>James Kwak</alias>
+					<setting name="buddy_icon" type="string">3ba8cc0</setting>
+					<setting name="icon_checksum" type="int">-761774221</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>ncabell2001</name>
+					<alias>Nick Cabell</alias>
+					<setting name="buddy_icon" type="string">5fef0751</setting>
+					<setting name="icon_checksum" type="int">855280309</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>vinrai</name>
+					<alias>Vin Rai</alias>
+					<setting name="buddy_icon" type="string">a92d0422</setting>
+					<setting name="icon_checksum" type="int">-677892530</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>luis_arturo_diaz</name>
+					<alias>Luis Diaz</alias>
+					<setting name="buddy_icon" type="string">fe4b3e7c</setting>
+					<setting name="icon_checksum" type="int">-227295832</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>heidi017</name>
+					<alias>Heidi Hammack</alias>
+					<setting name="buddy_icon" type="string">468887d2</setting>
+					<setting name="icon_checksum" type="int">-399305272</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>robertds</name>
+					<alias>Robert Schanafelt</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>peepzoid</name>
+					<alias>Padma Krishnan</alias>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>nikki.calleja</name>
+					<alias>Nikki Calleja</alias>
+				</buddy>
+			</contact>
+		</group>
+		<group name="Friends">
+			<setting name="collapsed" type="bool">1</setting>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>interiordesigner007</name>
+					<alias>Victoria</alias>
+					<setting name="buddy_icon" type="string">14292e2a</setting>
+					<setting name="icon_checksum" type="int">-1612531450</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="pschaaf8@hotmail.com" proto="prpl-msn">
+					<name>mothtwiceborn@hotmail.com</name>
+					<alias>Robert Ramsay</alias>
+					<setting name="buddy_icon" type="string">867b2bbf</setting>
+					<setting name="icon_checksum" type="string">XTE2BIvPfF18JcrQgXjABAZEt7g=</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>panmanbob</name>
+					<alias>Bob Gebhardt</alias>
+					<setting name="buddy_icon" type="string">9a60468</setting>
+					<setting name="icon_checksum" type="int">1950988717</setting>
+				</buddy>
+			</contact>
+			<contact>
+				<buddy account="paul_schaaf" proto="prpl-yahoo">
+					<name>paul_schaaf</name>
+					<alias>me</alias>
+					<setting name="buddy_icon" type="string">a266b5f5</setting>
+					<setting name="icon_checksum" type="int">-1955343262</setting>
+				</buddy>
+			</contact>
+		</group>
+	</blist>
+	<privacy>
+		<account proto="prpl-yahoo" name="paul_schaaf" mode="4">
+			<block>juliefiner</block>
+			<block>sk8_or_sk8_420</block>
+			<block>babysarah188</block>
+		</account>
+		<account proto="prpl-oscar" name="pschaaf8@netscape.com" mode="1">
+		</account>
+		<account proto="prpl-msn" name="pschaaf8@hotmail.com" mode="3">
+			<permit>mothtwiceborn@hotmail.com</permit>
+			<permit>jsottile@hotmail.com</permit>
+			<permit>ghupp920@hotmail.com</permit>
+			<permit>dbeckes@hotmail.com</permit>
+			<block>guillot_patrick@hotmail.com</block>
+			<block>gdighton27@hotmail.com</block>
+			<block>kkampf@hotmail.com</block>
+			<block>pschaaf8@hotmail.com</block>
+		</account>
+		<account proto="prpl-jabber" name="pschaaf@im.guidewire.com/Gaim" mode="1">
+		</account>
+	</privacy>
+</gaim>

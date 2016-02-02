@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd /
+dir=${1/$HOME/~}; shift
+prefix=$1; shift
+
+cmd /c title ${prefix:+$prefix:}${dir##/cygdrive}

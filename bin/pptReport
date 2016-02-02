@@ -1,0 +1,659 @@
+#!/usr/bin/env ruby
+
+# ================================================
+# ======= Require statements
+
+# require statements
+require 'extn/Win32ole'
+#require 'cygwin'
+require 'debugMethod'
+require 'extn/Enumerable'
+require 'Proxy'
+#require 'profile'
+#require 'yaml'
+
+#p WIN32OLE.instance_methods
+#["ole_put_methods", "invoke", "ole_obj_help", "ole_get_methods", "ole_method_help", "ole_methods", "method_missing", "[]", "ole_method", "setproperty", "[]=", "ole_func_methods", "each", "_invoke"]
+
+#module PowerPoint_const
+#end
+
+# ================================================
+# ======= Standard library modifications
+
+class Fixnum
+  def legalChar?
+    # Answer self if all non-control chars, plus cr, lf, and tab
+    self if self.between?(32, 127) || self == 9 || self == 10 || self == 13
+  end
+
+  def legalized
+    aChar = self.legalChar?
+    return aChar if aChar
+    return ?\" if self.between?(224, 225)
+		return ?-  if self == 205
+		return ?\' if self == 222
+		return ?-  if self == 227
+		return 32  #space char
+	end
+end
+
+# ================================================
+# ======= WIN32OLE
+
+class WIN32OLE
+  include Enumerable
+
+  def frameText
+    begin
+      answer = String.new
+      text   = self.TextFrame.TextRange.Text
+      puts('text is: ' + text)
+      text.to_s.each_byte {|char|
+        answer << char.legalized
+      }
+      answer.strip!
+      answer
+    rescue WIN32OLERuntimeError
+      String.new
+    end
+  end
+
+  def comment?
+    begin
+      aShape.Name =~ /^Comment/
+    rescue
+      false
+    end
+  end
+
+#   def title?
+#     begin
+#       self.Parent.Shapes.Title == self
+#     rescue
+#       false
+#     end
+#   end
+
+  def instructorNote?
+    begin
+      aShape.Name =~ /^InstructorNote/
+    rescue
+      false
+    end
+  end
+end
+
+# ================================================
+# =======
+
+
+class PowerPoint < WIN32App
+
+  def documentClass
+    Presentation
+  end
+
+  def initialize(*args)
+    super
+    self.restoreWindow
+    self.visible = true
+  end
+
+  def documents
+    self.Presentations
+  end
+
+  def close(*args)
+    begin
+      self.Quit
+    rescue Exception => ex
+      raise(UnableToCloseException, "Unable to close the application.", ex.backtrace)
+    end
+  end
+end
+
+# ================================================
+# =======
+
+
+class Presentation < Win32Doc
+
+  def close(*args)
+    begin
+      self.Close
+    rescue Exception => ex
+      #raise(UnableToCloseException.new, "Unable to close the document (it may already be closed).", ex.backtrace)
+    end
+  end
+
+  def grep(pattern)
+    self.slides.select {|each| each.to_s =~ pattern}
+  end
+
+  def postSetProxy(aValue)
+    self.initProperties
+    alias_method :docComments,    :comments
+    alias_method :moduleName,     :title
+    alias_method :patchLevel,     :revisionNumber
+    alias_method :section,        :subject
+    # alias_method :sectionVersion, :sectionVersionNumber
+    alias_method :slideCount,     :numberOfSlides
+    alias_method :templateBuild,  :templateVersion
+  end
+
+  def slides
+    @slides ||= self.Slides.collect {|aSlide| Slide.newIn(self, aSlide)}
+  end
+
+  def refreshView
+    self.runMacro(:refreshView)
+    self.save
+  end
+
+  exposeMacroOrReturn(:moduleNumber, 0)
+  exposeMacroOrReturn(:moduleNumberString, '0')
+
+  exposeMacro \
+    :allConfidentialSlideNumbers,
+    :allCourseExclusions,
+    :generateInstructorAndStudentGuides,
+    :generateInstructorGuide,
+    :generateStudentGuide,
+    :portFilesFromTo,
+    :templateVersion
+
+  def version
+    "#{self.sectionVersion} p#{self.patchLevel}"
+  end
+
+  def to_s
+    "Module #{self.moduleNumber}: #{self.title} [ver. #{self.version}]"
+  end
+
+  def countComments
+    self.commments.size
+  end
+
+  def markedConfidential
+    answer= self.allConfidentialSlideNumbers
+    answer.strip!
+    answer.split("\n")
+  end
+
+  def exclusions
+    answer= self.allCourseExclusions
+    answer.strip!
+    answer.gsub!("[ ]+", ' ')
+    answer.gsub!(",[ ]+([0-9]+)", "\n"'\1')
+    answer.split("\n")
+  end
+
+  def sectionNumber
+    self.sectionNameAbbreviation.gsub(/.*(\d+).*/, '\1')
+  end
+
+  def sectionNameAbbreviation
+    self.fileSpec.gsub(/^.*_(\d+[^-]+)-.*/, '\1')
+  end
+
+  def titles
+    self.slides.collect {|aSlide| aSlide.title}
+  end
+
+  def comments
+    self.slides.collect {|aSlide| aSlide.comments}
+  end
+
+  def instructorNotes
+    self.slides.collect {|aSlide| aSlide.instructorNotes}
+  end
+
+  def slideNotes
+    self.slides.collect {|aSlide| aSlide.slideNotes}
+  end
+
+  def slideText
+    (self.slides.collect {|aSlide| aSlide.to_s}).flatten.join("\n")
+  end
+
+  def slideWords
+    words = self.slideText.split(/\s+/).sort!
+    words.uniq!
+    words.collect {|aSlide| aSlide.to_s}.flatten.join("\n")
+  end
+
+  def nameSpec
+    self.fileSpec.gsub(/^.*_(\d+_[^-]+)-([^.]+)\..*/, '\1 \2')
+  end
+
+  def stats
+    super + <<STATS_STRING
+    Section:           #{self.section}
+     Slides:           #{self.slideCount}
+
+STATS_STRING
+  end
+
+end
+
+# ================================================
+# =======
+
+
+class Slide < Win32DocComponent
+  alias_method :presentation, :container
+
+  def slideNumberString
+    answer = self.slideNumber.to_s
+    if answer.size < 2
+      '0' + answer
+    else
+      answer
+    end
+  end
+
+  def title
+    #[#{self.slideIndex},
+    @title ||= self.slideNumberString.clone + ' ' \
+    << begin
+         self.Shapes.Title.frameText.or_if_empty('[--untitled--]')
+       rescue
+         '[--untitled--]'
+       end
+  end
+
+  def comments
+    self.processStrings
+    @comments
+  end
+
+  def instructorNotes
+    self.processStrings
+    @instructorNotes
+  end
+
+  def slideNotes
+    self.processStrings
+    @slideNotes
+  end
+
+  def comments?
+    !(self.comments.empty?)
+  end
+
+  #def exclusions
+  #	self.runMacro("CourseExclusionsOn(#{self})")
+  #end
+
+  def to_s
+    return @to_s if @to_s
+    answer = self.title.clone + ' ######'
+    if comments?
+      answer << "\n<comments>\n\t"
+      (t_comments = self.comments.join("\n\n")).gsub!("\n", "\n\t")
+      answer << t_comments << "\n<\\comments>"
+    end
+    answer << "\n\t" << self.text.join
+    @to_s = answer
+  end
+
+  def text
+    self.processStrings
+    @myText
+  end
+
+  def nameSpec
+    self.presentation.nameSpec + ' ' + self.title
+  end
+
+  def processStrings
+    return if @myText
+    commentsColl= []
+    textColl= []
+    instructorColl = []
+    self.Shapes.each do |aShape|
+      text = aShape.frameText
+      next unless text
+
+      if (aShape.comment?)
+        commentsColl << text
+      elsif aShape.instructorNote?
+        instructorColl << text
+      elsif self.title.index(text)
+        # some styles of slide list the title after the content. go figure.
+        #do nothing
+      else
+        text.gsub!("\n", "\n\t")
+        textColl << text << "\n"
+      end
+    end
+
+    @slideNotes      = self.NotesPage.Shapes.entries[-1].frameText.to_s
+    @comments        = commentsColl   #bundle all comments on this slide
+    @myText          = textColl << @slideNotes #bundle all text on this slide
+    @instructorNotes = instructorColl
+  end
+
+  #def instructorNote
+  #	aNote = self.runMacro(:InstructorNoteOn)
+  #	aNote.frameText
+  #end
+end
+
+
+# //////////////////////////////////////////////////////////////
+# If this is run as stand-alone script
+if __FILE__ == $0
+  require 'extn/Options'
+
+  headerString = <<HEADER_STRING
+ Usage: #{File.basename($0)} [option]... [files]...
+
+Displays a summary of attributes of the specified PowerPoint presentations
+  ("documents").
+HEADER_STRING
+
+  switchString = <<SWITCH_STRING
+Reporting:
+  -C, --caseSensitive     Make regexp searches case sensitive
+  -6, --confidential      Show all confidential slides
+  -1, --countComments     Show the number of comment boxes
+  -x, --exclusions        Show the exclusions
+  -g, --grep=regexp       Answer each slide with text matching <regexp>
+  -h, --help              Show this help text
+  -8, --indexFor=regex    Shows the index entry for regexp (case insensitive)
+  -i, --instructorNotes   Show all instructor notes
+  -n, --noFilename        Do not show the filename in the output
+  -p, --properties        Display the document properties
+  -0, --slideComments     Show all slide comments
+  -z, --slideNotes        Show all slide (a.k.a."student") notes
+  -e, --slideText         Show the text from each slide (including titles)
+  -q, --slSelect=code     Answer each slide for which <code> is not false
+  -s, --stats             Show some summary statistics
+  -2, --templateVersion   Show the template version
+  -t, --titles            Show the title of each slide
+  -v, --version           Show the document version
+
+Modifying:
+  -a, --author[=name]     Show or set the author\'s name
+  -b, --category[=str]    Show or set the presentation\'s category
+  -f, --comments[=str]    Show or set the presentation\'s comments
+  -k, --keywords[=str]    Show or set the document keywords
+  -m, --manager[=str]     Show or set the document manager
+  -r, --refreshView       Runs the document macro 'refreshView', then saves
+  -y, --status[=str]      Show or set the document status
+  -j, --subject[=str]     Show or set the document subject/section
+  -l, --title[=str]       Show or set the document title
+
+Action:
+  -c, --close             Close running instance of application
+  -O, --copySlidesNum='[...]' Copies the slides whose numbers are in the list
+  -w, --docDo=code        Evaluate Ruby <code> against each document
+  -5, --genInstructGuide  Generate instructor guides
+  -4, --genStudentGuide   Generate student guides
+  -3, --generateGuides    Generate student and instructor guides
+  -9, --indexFrom=file    Call indexFor for each line in file
+  -T, --into=filename     Copy slides selected with slSelect into <filename>
+  -o, --open              Open the named files
+  -u, --outline           Generate an outline of the documents
+  -7, --portFilesIn=dir   Ports files in dir to template of target file
+  -d, --slidesDo=code     Evaluate Ruby <code> against each slide
+
+SWITCH_STRING
+
+tailString = <<TAILSTRING
+<code> - Ruby source <code> to compile and execute as an enumeration block
+against the specified collection. The result of each enumeration is sent to
+stdout. For example, the switch
+
+      --docDo='each.title + "\\n" + each.version'
+
+will answer the title and version of each document.
+
+Report bugs to <paul.schaaf@gmail.com>.
+TAILSTRING
+
+options = ExtOptions.new(headerString, switchString, tailString)
+regexpCaseSensitivity = options[:caseSensitive] ? nil : Regexp::IGNORECASE
+
+files= (ARGV.collect {|filespec| Dir[filespec]}).flatten.sort
+
+if options.empty?
+  if files.empty?
+    options.exitShowUsage
+  else
+    options[:open] = true
+  end
+end
+
+PowerPoint.close if options[:close]
+
+if options[:indexFrom]
+  flags = true
+else
+  flags = nil
+end
+
+if options[:open]
+  files.each {|ea| PowerPoint.open.openDoc(ea)}
+
+
+elsif options[:new]
+  # todo: Not working
+  # -N, --new=filename      Create a new document
+  $stderr.puts "creating file #{options[:new]}"
+  PowerPoint.open.create(options[:new])
+
+
+elsif options[:generateGuides] || options[:genStudentGuide] || options[:genInstructorGuide]
+  PowerPoint.open.maximize
+  files.each {|ea|
+    aDocument = PowerPoint.open.openDoc(ea)
+    aDocument.generateInstructorAndStudentGuides if options[:generateGuides]
+    aDocument.generateInstructorGuide if options[:genInstructorGuide]
+    aDocument.generateStudentGuide if options[:genStudentGuide]
+  }
+
+
+else
+  if ARGV.empty?
+    puts "No files specified!"
+    options.exitShowUsage
+  end
+
+  documentIndex = Hash.new
+
+  # if options[:into]
+  #   $into = PowerPoint.open.openDoc(options[:into])
+  # end
+
+  PowerPoint.docsDo(files) {|aDocument|
+
+    puts unless options[:indexFrom]
+    puts aDocument.fileSpec unless options[:noFilename] ||
+      options[:outline] ||
+      options[:grep] ||
+      options[:indexFor] ||
+      options[:indexFrom]
+
+    puts aDocument.stats if options[:stats]
+    puts aDocument.countComments if options[:countComments]
+    puts "\t" + 'Version: ' + aDocument.version if options[:version]
+    puts "\t" + 'Template version: ' + aDocument.templateVersion if options[:templateVersion]
+
+    if options[:refreshView]
+      aDocument.application.maximize
+      aDocument.refreshView
+    end
+
+    if options[:properties]
+      answer = []
+      aDocument.properties.each_pair {|key, value|
+        answer << ("\t" + key + ': ' + value.Value.to_s) rescue next
+      }
+      puts answer.sort.join("\n")
+    end
+
+    if options[:portFilesIn]
+      ##### doesn't work yet
+      aDocument.portFilesFromTo #(CygPath.new(options[:portFilesIn]).winAbsolute, CygPath.new('$HOME/courses').winAbsolute)
+    end
+
+    if options[:slideText]
+      puts aDocument.slideText
+    elsif options[:titles] || options[:outline]
+      (answer = aDocument.titles).flatten!
+      if options[:outline]
+        rejects = [	/^.*untitled.*$/,
+          /^.*[Cc]ont(ued|.|\'d).*$/,
+          /^\t(Co(urs|rporat)e )?O(verview|utline)[ \t]*$/,
+          /^\t(Summary|Introduction[s]?|Topics)[ \t]*$/
+        ]
+        last = nil # unlikely to match the first slide title
+        answer = answer.reject do |each|
+          each.gsub!(/^\d+ Module \d+: +/,'')
+          each.gsub!(/^\d+ /, "\t")
+          each.gsub!(/[\t ]+$/, '')
+          each.gsub!(/ +\(\d\)$/, '') # remove strings like ' (2)' from end of line
+          if each.downcase == last
+            true # remove any line that matches its predecesspr
+          else
+            last = each.downcase
+            rejects.detect do |rejectPattern|
+              each =~ rejectPattern
+            end
+          end
+        end
+      end
+      answer = answer.join($/)
+      puts answer
+    end
+
+    ['author', 'comments', 'subject', 'title', 'manager', 'keywords'].each do |property|
+      eval %Q!
+        if options[:#{property}]
+          unless options[:#{property}] == ''
+            aDocument.#{property} = options[:#{property}]
+            aDocument.save
+          end
+          puts '	' + '#{property.capitalize}: ' + aDocument.#{property}.to_s
+        end!
+    end
+
+    if options[:slideComments]
+      puts "Editorial comments: \n\n"
+      (answer = aDocument.comments).flatten!
+      puts answer.join("\n\t")
+    end
+
+    if options[:slideNotes]
+      puts "Slide notes: \n\n"
+      (answer = aDocument.slideNotes).flatten!
+      puts answer.join("\n\t")
+    end
+
+    if options[:instructorNotes]
+      puts "Instructor notes: \n\n"
+      (answer = aDocument.instructorNotes).flatten!
+      puts answer.join("\n\t")
+    end
+
+    if options[:confidential]
+      puts "\t -Confidential-"
+      puts "\t" + aDocument.markedConfidential.join("\n\t");
+    end
+
+    if options[:exclusions]
+      puts "\t -Exclusions-"
+      puts "\t" + aDocument.exclusions.join("\n\t");
+    end
+
+    if options[:docDo]
+      code = 'Proc.new {|each|' + options[:docDo] + '}'
+      puts eval(code).call(aDocument)
+    end
+
+    if options[:slidesDo]
+      code = 'Proc.new {|each|' + options[:slidesDo] + '}'
+      aProc = eval(code)
+      puts (aDocument.slides.collect &aProc)
+    end
+
+    if options[:copySlidesNum]
+      numbers = eval options[:copySlidesNum]
+      slides = aDocument.Slides.Range(numbers).Select
+      app = PowerPoint.open
+      app.activeWindow.selection.copy
+      if options[:into]
+        PowerPoint.open.openDoc(options[:into]) {|into|
+          # app.activeWindow.view.gotoSlide(into.slides.size)
+          app.activeWindow.view.paste
+          app.activePresentation.save
+        }
+      end
+      slides
+    end
+
+    if options[:slSelect]
+      code = 'Proc.new {|each|' + options[:slSelect] + '}'
+      aProc = eval(code)
+      slides = aDocument.slides.select(&aProc)
+      app = PowerPoint.open
+      app.activeWindow.selection.copy
+      if options[:into]
+        # $stderr.puts $into.methods.sort
+        $into = PowerPoint.open.openDoc(options[:into])
+        app.activeWindow.view.paste
+        app.activePresentation.save
+      else
+        slides.each {|aSlide| puts "\n" + aSlide.to_s}
+      end
+      slides
+    end
+
+    if options[:grep]
+      matches = aDocument.grep(Regexp.new(options[:grep], regexpCaseSensitivity))
+      puts "\t" + aDocument.fileSpec
+      matches.each {|each| puts "\t\t" + each.title}
+    end
+
+    if options[:indexFor]
+      # puts options[:indexFor]
+      matches = aDocument.grep(Regexp.new(options[:indexFor], regexpCaseSensitivity))
+      unless matches.empty?
+        puts options[:indexFor]
+        puts "\t" + aDocument.nameSpec
+        matches.each {|each| puts "\t\t" + each.title}
+      end
+    end
+
+    if options[:indexFrom]
+      #puts aDocument
+      File.open(options[:indexFrom], 'r') { |aFile|
+        aFile.each_line { |pattern|
+          $stderr.puts "#{Time.now}: checking #{pattern}"
+          pattern = pattern.chomp("\r\n").chomp
+          #puts pattern
+          matches = aDocument.grep(Regexp.new(pattern, regexpCaseSensitivity))
+          unless matches.empty?
+            #puts "\t" + matches.join("\n\t")
+            entryForPattern = documentIndex[pattern] ||= Hash.new
+            thisIndex = entryForPattern["%02d: %s" % [aDocument.sectionNumber, aDocument.section]] ||= Hash.new
+
+            thisIndex["%02d: %s" % [aDocument.moduleNumberString,  aDocument.title]] = matches.collect { |each|
+              each.title
+            }
+          end
+        }
+      }
+    end
+  }
+  unless documentIndex.empty?
+    require 'extn/Hash'
+    documentIndex.printTree(5)
+  end
+
+end
+
+end # if __FILE__ == $0

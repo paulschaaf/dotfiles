@@ -1,0 +1,58 @@
+#!/bin/sh
+
+# generally use either gnuclient or emacsclient, but allow override for 
+# any particular client
+
+[ "$1" = '--debug' ] && shift && export ${debug:=1}
+[ -n "$debug" ] && set -x
+
+# case "${VISUAL=${EDITOR=vi}}:"`hostname`; in
+#     xemacs:*|*gnuclient:*)
+#         gnuclient -q > /dev/null 2>&1
+
+#         if [ $? -eq 0 ]; then
+#             VISUAL=gnuclient
+#             _args="-qf 'raise-frame'"
+#         else
+#             VISUAL=xemacs
+#         fi
+#         ;;
+
+#     emacs:*|emacsclient:*)
+#         VISUAL=emacsclient
+#         _args="-n -a emacs"
+#         ;;
+
+#     *)
+#         ;;
+# esac
+
+# echo $VISUAL $_args "$@"
+# echo $VISUAL $_args ${@} '> /dev/null 2>&1'
+# run ${VISUAL} ${_args} "${@}"
+# 2>/dev/null
+
+
+if   emacsclient -a emacs --no-wait "$@" 2>/dev/null; then
+    :
+elif emacs "$@"; then
+    :
+elif gnuclient -q; then
+     gnuclient -q -f 'raise-frame' "$@"
+else
+    case "${VISUAL=${EDITOR=vi}}"
+        in
+        xemacs|gnuclient)
+            VISUAL=xemacs
+            ;;
+
+        emacs*)
+            VISUAL=emacs
+            ;;
+
+        *)
+            ;;
+    esac
+
+    $VISUAL "$@"
+fi

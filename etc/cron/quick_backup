@@ -1,0 +1,3 @@
+#!/bin/sh
+
+rsync -au ~/.firefox/bookmarks.* ~/doc/private

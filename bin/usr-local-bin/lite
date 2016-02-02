@@ -1,0 +1,109 @@
+#!/usr/bin/env ruby
+
+# $Source: e:/MyDocuments/cvsroot/src/Makefile,v $
+# $Revision: 1.1 $
+# $Date: 2003/08/30 00:16:28 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+require 'lib/ansicolor'
+
+$COLOR_SWITCH = '-c'
+
+helpText = <<HELP
+Usage: #{File.basename($0)} [-n]? [[-c color]* [regex]+]+
+
+(ANSI) colorizes text matching a regex pattern.
+
+  #$COLOR_SWITCH color
+  #$COLOR_SWITCH 'color1 color2 ...'
+        Highlight matches against the subsequent regexes using 'color'.
+        If no -c terms are specified, the default '-c yellow bold'
+        is used. A group of colors can be listed together; in this
+        case the colors are combined to override the previous color
+        (even if it is the default). If combining the colors causes a
+        conflict, the last one wins: e.g. '-c blue -c red' equals
+        '-c red'. Regex\'s may overlap and are applied in the order
+        specified. $USE_COLOR must be set to some non-nil value (see -n).
+
+  -n, --color=never
+        Do not use color. This treats any -c color values as strings
+        rather than color specifications, and uses them to 'bookend'
+        the matches. This is equivalent to having $USE_COLOR unset or
+        set to 'f', 'false', 'n', or 'no' (case insensitive). 
+        --color=never is provided for compatibility with grep.
+
+Example:
+  ls /etc | lite '\\w*rc[\\w.]*' -c 'red bold' conf -c on_green mail
+
+  List the files in /etc, using the following colors:
+     -default color:     a word that contains 'rc'
+     -red bold:          the letters 'conf'
+     -green background:  the letters 'mail'
+
+  ls /etc | lite -n '\\w*rc[\\w.]*' -c red -c bold conf -c on_green mail
+
+Report bugs to <paul_schaaf@yahoo.com>.
+HELP
+
+if ARGV.include?('-h') || ARGV.include?('--help')
+  puts helpText
+  exit
+end
+
+# if ARGV.empty?
+#   ARGV.push('.*')
+# end
+
+use_color = ENV['USE_COLOR'].instance_eval {
+  self.empty? or self !~ /^(no?|f(alse)?)$/i unless nil?
+}
+
+while (line=STDIN.gets(''))
+  if ARGV[0] =~ /-(n|-color=never)/
+    use_color = false
+    ARGV.shift
+  elsif ARGV[0] =~ /--color=a(lways|uto)/
+    ARGV.shift
+  end
+
+  until ARGV.empty?
+
+    # process all colors
+    color = ''
+    while ! ARGV.empty? && ARGV[0] =~ /^#$COLOR_SWITCH/
+      ARGV.shift
+      ARGV.shift.split(' ').each {|aColor|
+	color += if use_color and Color.respond_to?(aColor)
+	  Color.send(aColor)
+	else
+	  aColor
+	end
+      }
+    end
+
+    # process all regexes
+    until ARGV.empty? || ARGV[0] =~ /^#$COLOR_SWITCH/
+      regex = Regexp.new(ARGV.shift, Regexp::IGNORECASE)
+
+      line=if use_color
+             if color.empty?
+               line.highlight(regex)
+             else
+               line.highlight(regex, color)
+             end
+           elsif color.empty?
+             if regex.source.empty?
+               line
+             else
+               line.highlight(regex, '__', '__')
+             end
+           else
+             line.highlight(regex, color, color)
+           end
+    end
+
+  end
+  print line   # don't add a line terminator of our own as that would "change" the input
+end

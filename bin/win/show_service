@@ -1,0 +1,38 @@
+#!/bin/sh
+
+THIS_APP=`basename $0`
+
+while [ -n "$*" ]; do
+    case $1 in
+        --host)
+            shift
+            HOSTNAME=$1
+            ;;
+
+        -h|--help)
+            cat <<EOF
+   Usage: $THIS_APP [--debug] [--host hostname] [service_name]
+
+   Shows detail of services installed on a remote machine.
+EOF
+            exit
+            ;;
+        --debug)
+            set -x
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            echo Unknown switch: $1
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+regtool list -pv ${HOSTNAME:-`hostname`}":/HKEY_LOCAL_MACHINE/system/CurrentControlSet/Services/${*}"

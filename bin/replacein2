@@ -1,0 +1,95 @@
+#!/usr/bin/env ruby
+
+# $Source: e:/MyDocuments/cvsroot/src/Makefile,v $
+# $Revision: 1.1 $
+# $Date: 2003/08/30 00:16:28 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+require 'lib/ansicolor'
+
+# //////////////////////////////////////////////////////////////
+# If this script is run as stand-alone script
+if __FILE__ == $0 # ////////////////////////////////////////////
+
+# //////////////////////////////////////////////////////////////
+# read arguments
+require 'extn/Options'
+
+headerString = <<HEADER_STRING
+Usage: #{File.basename($0)} [option]... <search_regx> <repl_ex> [files]...
+Default behavior is to display which files would be affected, without
+actually changing them.
+HEADER_STRING
+
+switchString = <<SWITCH_STRING
+   -l, --showLines          Show the affected lines
+   -A, --after-context=num  Print num lines of context after matching lines
+   -B, --before-context=num Print num lines of context before matching lines
+   -C, --context=num        Print num lines of context around matching lines
+   -s, --show=10            Show the replacement(s) with surrounding chars
+   -0, --recordSeparator[=octal]          Specify record separator (default \\0)
+   -i, --editInPlace        Edit files in place (make backup if extension supplied)
+   -h, --help               Show this help text
+SWITCH_STRING
+
+tailString = <<TAILSTRING
+Special replacement characters can be used in <repl_ex>:
+   ReplacementText    Substitution
+   \\\\1, \\\\2, ... \\\\9     The value matched by the nth grouped subexpression
+   \\\\&                 The last match
+   \\\\+                 The highest-numbered group matched
+   \\\`                 The part of the string before the match
+   \\\'                 The part of the string after the match
+
+Report bugs to <paul_schaaf@yahoo.com>.
+TAILSTRING
+
+options = ExtOptions.new(headerString, switchString, tailString)
+
+if ARGV.size < 2
+  options.exitShowUsage
+end
+
+# //////////////////////////////////////////////////////////////
+# main processing
+
+include Term::ANSIColor
+
+search, replace, *files = *ARGV
+
+options[:showLines]     = ! (options[:show] || options[:editInPlace])
+
+if options[:context]
+  context_lines  = options[:context].to_i
+  $beforeContext = (context_lines / 2.0).ceiling
+  $afterContext  = context_lines - $beforeContext
+else
+  $beforeContext = options['before-context'.to_sym].to_i
+  $afterContext  = options['after-context'.to_sym].to_i
+end
+
+ruby_switches = ['-p', "-0#{options[:recordSeparator] || "\0"}"]
+
+search = eval(search).instance_eval {|regex|
+  "/.{0,#{options[:beforeContext]}}#{source}.{0,#{options[:afterContext]}}/#{options}"
+}
+
+replace = "\"#{replace}\"" unless [?', ?"].include?(replace[0])
+
+code = if options[:showLines]
+         "slice(#{search})"
+
+       elsif options[:editInPlace]
+         ruby_switches << "-i~#{options[:editInPlace]}"
+         "gsub(#{search}, #{replace})"
+
+       else # send entire file to stdout
+         "gsub(#{search}, #{replace})"
+
+       end
+
+puts `ruby #{ruby_switches.join(' ')} -e '#{code}' #{files.join(' ')}`
+
+end # //////////////////////////////////////////////////////////

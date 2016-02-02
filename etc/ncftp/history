@@ -1,0 +1,60 @@
+ls
+cd "Sales Consulting"/
+ls
+cd mpaulenko/
+ls
+help
+ls
+cd "Localized Builds"/
+ls
+bgget "PC 7 - CNDUSA Localization.zip" 
+get !$
+ls
+exit
+ls
+exit
+bookmark
+bookmarks
+exit
+ls
+exit
+ls
+cd "Sales Consulting"/
+ls
+cd mpaulenko/
+ls
+cd "Localized Builds"/
+ls
+get "PC 7 - CNDUSA Localization.zip" 
+exit
+cd "Sales Consulting"
+cd mpaulenko
+ls
+cd "Localized Builds"/
+ls
+get "PC 7 - CNDUSA Localization.zip" 
+exit
+cd "Sales Consulting"/mpaulenko/Localized Builds
+ls
+cd "Sales Consulting"/mpaulenko
+cd "Localized Builds"/
+ls
+ll
+ls -l
+get PC_700_BaseDemo_700_REL20110616-080134.zip 
+exit
+cd /Sales Consulting/mpaulenko/Localized Builds
+ls
+cd "/Sales Consulting/mpaulenko/Localized Builds"
+ls
+get PC_700_BaseDemo_700_REL20110616-080134.zip 
+exit
+ls
+cd "Sales Consulting"/
+ls
+cd mpaulenko/
+ls
+cd "Localized Builds"/
+ls
+get PC_700_BaseDemo_700_REL20110616-080134.zip 
+exit

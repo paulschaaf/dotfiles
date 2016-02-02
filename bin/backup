@@ -1,0 +1,26 @@
+#!/bin/sh
+
+# $Source: e:/MyDocuments/cvsroot/bin/backup,v $
+# $Revision: 1.18 $
+# $Date: 2004/05/11 02:34:15 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+if [ -z "$1" ]; then
+    host="$HOSTNAME"
+else
+    host=$1
+    shift
+    if [ "$host" = "laptop" ]; then
+        host=$laptop
+    fi
+fi
+
+if [ "$host" = "$HOSTNAME" ]; then
+    echo "# Backing up $host" #| lite -c black -c on_white '.*'
+    cd
+    make -kf /home/pschaaf/etc/makefiles/backup.make $*
+else
+    ssh $host `basename $0` $*
+fi

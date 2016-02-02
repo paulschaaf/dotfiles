@@ -1,0 +1,28 @@
+#!/usr/bin/env ruby
+# soon 'c:\cygwin\bin\bash.exe' --login -i
+#
+# Shortcut command to start a system login shell:
+# C:\cygwin\bin\bash.exe -c "at $(date +%H):$(($(date +%M) + 1)) /interactive 'c:\cygwin\bin\bash.exe' --login -i; secs=$((60 - $(date +%S))); while [ $secs -ne 0 ]; do echo -ne 'Please wait '$secs' seconds for the shell \r'; sleep 1; secs=$(($secs - 1)); done"
+#
+
+if ARGV[0] =~ /-e|--echo/
+  ARGV.shift
+  echo = 'echo '
+end
+
+ARGV[0] = `cygpath -asw #{ARGV[0]}`.chomp
+
+module Comparable
+  def min(other)
+    self <= other ? self : other
+  end
+  def max(other)
+    self >= other ? self : other
+  end
+end
+
+start_time = Time.now + 60
+start_time += Time.parse(
+`#{echo}at #{start_time.strftime('%H:%M')} /interactive #{ARGV} &`)
+
+puts "Job will begin in #{(start_time - Time.now - start_time.sec).to_i} seconds"

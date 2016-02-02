@@ -1,0 +1,27 @@
+#!/usr/bin/env ruby
+# rot13.rb
+# $Id: rot13,v 1.1 2002/09/27 20:00:05 pschaaf Exp $
+# 1999/12/17 14:42:48 msato
+# Algorithm of 'rot13' is described in Jargon File
+# http://www.tuxedo.org/~esr/jargon/html/entry/rot13.html
+
+class String
+   def rot(num = 13)
+      self.split('').collect { |ch|
+         if /^[a-z]$/ === ch
+	    ((ch[0] + num - ?a) % 26 + ?a).chr
+         elsif /^[A-Z]$/ === ch
+	    ((ch[0] + num - ?A) % 26 + ?A).chr
+         else
+	    ch
+         end
+      }.join("")
+   end
+   alias rot13 rot
+end
+
+if __FILE__ == $0
+   while line = gets
+      puts line.rot13
+   end
+end

@@ -1,0 +1,24 @@
+#!/usr/bin/env perl
+
+# get the list of all branches
+$output = `/c/PROGRA~2/Git/bin/git.exe branch --color=always 2> /dev/null`;
+
+foreach my $line (split(/\[0?m\n/, $output)) {
+  # printf("line <%s\n", $line);
+  # printf("line >%s\n", $line);
+
+  my ($is_current, $name) = split(/\s+/, $line);
+  # printf("current: %s\n", $is_current);
+
+  # printf("name <%s\n", $name);
+  $name =~ s/\[\d+m//;   # remove all ANSI color codes
+  # printf("name >%s\n", $name);
+
+  my $branchName = "branch.${name}.description";
+  # printf("branch = \"%s\"\n", $branchName);
+
+  my $description = `git config "${branchName}"`;
+  $description =~ s/\s+$//;
+
+  printf("%-24s  %s[0m\n", $line, $description);
+}

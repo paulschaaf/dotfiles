@@ -1,0 +1,28 @@
+# -*- mode: shell-script; compile-command: (concat "zcompile " buffer-file-name); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
+
+# 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
+# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
+# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# ...
+# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
+
+#echo '*** In .zprofile'
+
+# this script is run only by login shells, but after .zshenv
+loginsh=1
+
+### START-Keychain ###
+# Let  re-use ssh-agent and/or gpg-agent between logins
+/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
+source $HOME/.keychain/$HOSTNAME-sh
+### End-Keychain ###
+
+# ======== Terminal Settings
+# if [ "$TERM" = "screen" ]; then
+#    export TERM=xterm
+# fi
+
+$ifZsh stty start ''   stop   ''
+
+# stty lnext '^V' eof '^D' quit '^\\' susp '^Z' start '^Q' eol '^-' flush '^O' werase '^H' eol2 '^-' erase '^?' stop '^S' min '1' time '0' intr '^C' rprnt '^R' kill '^U'

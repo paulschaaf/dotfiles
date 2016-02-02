@@ -1,0 +1,64 @@
+#!/bin/sh
+
+INFO=':' # ignore remaining line (versus echoing remaining line)
+switches=''
+dry_run=''
+
+dos_cmd='cmd /c mklink'
+# echo '$*'=$*
+
+help() {
+    echo '## Wrapper script around Windows executable'
+    echo
+    $dos_cmd
+echo '
+Single-letter switches can be written either with a leading slash (DOS-style) or a leading dash (Unix-style).
+
+In addition, the wrapper script supports the following switches:
+
+      --debug   Print debugging information
+      --dry-run Print resulting windows command without executing
+      --help    Displays this screen'
+}
+
+for x in ${*}; do
+    case "$x" in
+        --debug)
+            set -x
+            INFO='echo -n ## INFO '
+            ;;
+        --dry[_-]run)
+            dry_run='echo '
+            ;;
+        --help)
+            exit
+            ;;
+        /D |/H |/J |-*)
+            switches+=" $x"
+            ;;
+        --) # end of options
+            break
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+${INFO} switches=${switches}
+${INFO} '$* is ' $*
+
+# echo '$1='$1
+# echo '$2='$2
+# echo '$3='$3
+
+if [ -z "$2" ]; then
+    help
+    exit
+fi
+set +x
+from=`cygpath -aw ${2}`
+to=`cygpath -aw ${1}`
+
+eval ${dry_run}${dos_cmd} ${switches//-//} ${to//\\/\\\\} ${from//\\/\\\\}

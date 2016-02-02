@@ -1,0 +1,12 @@
+#!/bin/bash
+
+if [ "$1" = "-a" -o "$1" = "--all" ]; then
+    eval `/c/PROGRA~2/Git/bin/git.exe branch | sed -n 's_.*/\(.*\)_chrome jira.guidewire.com/browse/\U\1; _gp'`
+else
+    jira=$1
+    if [ -z "$jira" ]; then
+        jira=`echo $branchName | sed 's_.*/\(.*\)_\U\1_'`
+    fi
+    chrome jira.guidewire.com/browse/$jira &
+fi
+

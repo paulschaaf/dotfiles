@@ -1,0 +1,105 @@
+#!/bin/bash
+
+baseurl=$TECHREF/languages/ruby
+volume=`basename $0`
+
+debug () {
+:
+}
+quiet=echo
+dump='-dump -nolist'
+
+while :; do
+    case $1
+    in
+        -nodump)
+            unset dump
+            ;;
+        -q|--quiet)
+            quiet=:
+            ;;
+        -d)
+            debug () {
+                echo "# --- $*"
+                echo
+            }
+            ;;
+        --)
+            shift
+            break
+            ;;
+        -*)
+            echo $volume error: unknown switch \'$1\'
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+puts () {
+    $quiet "$*"
+}
+
+debug_var () {
+    local var val
+    for var
+    do
+        eval val=\$$var
+        echo "\n$var='$val'"
+    done
+}
+
+likely_targets () {
+    #choices=`
+find ${baseurl} -iregex ".*${class_or_meth}.*.html$" -printf '   %P\n'
+#    echo "$choices"
+    #|
+#         sed 's/\.html$//; s,/,.,g' |
+#         sort -u
+}
+
+echo_likely_targets_or () {
+    answer=`likely_targets`
+    puts "${answer:-$*}"
+}
+
+browse_textual () {
+    echo $1
+    debug "url =
+   \$TECHREF${1#$TECHREF}"
+    if [ -e $1 ]; then
+        lynx $dump $1 2>/dev/null | awk '/Back to ri find/ {exit}; {print $0}'
+        puts '   '$1
+    else
+        echo_likely_targets_or "No files match $class_or_meth"
+    fi
+}
+
+browse_graphical () {
+    echo $1
+    debug "url =
+   \$TECHREF${1}"
+    if [ -e $1 ]; then
+        links -g -mode 800x1100 $1 &
+        puts '   '$1
+    else
+        echo_likely_targets_or "No files match $class_or_meth"
+    fi
+}
+
+baseurl=$baseurl/$volume/
+
+class_or_meth=${@//.//}
+
+book=$baseurl$class_or_meth
+
+if [ -z "$class_or_meth" ]; then
+    browse_graphical ${book}index.html
+elif [ "$volume" = "stdlib" ]; then
+    browse_graphical ${book}/rdoc/files/${class_or_meth}_rb.html
+else
+    browse_textual   ${book}.html
+fi

@@ -1,0 +1,93 @@
+! -*- compile-command: (concat "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge " buffer-file-name); comment-start: "! " -*-
+! -*- compile-command: (concat "xrdb -override " buffer-file-name) -*-
+
+! geometry: WxH[+-]posX[+-]posY
+
+!
+! emacs
+
+! emacs.foreground: white
+! emacs.background: black
+
+! Emacs.font: -misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
+! Emacs.boldFont: -misc-fixed-bold-r-normal-*-10-*-*-*-*-*-*-*
+emacs.geometry: 80x78
+!+82
+! emacs.visualClass: TrueColor
+
+xlogo.geometry: 80x88
+!+120+0
+
+!
+! vncviewer
+!
+! Xvnc :1 -desktop "satori.guidewire.com:1 (`whoami`)" -httpd /usr/share/vnc/classes -auth ~/.Xauthority -geometry 1280x1024 -depth 16 -rfbauth ~/.vnc/passwd -rfbport 5901 -pn
+!
+! Start from command line using
+! pkill Xvnc; vncserver -geometry 1280x1024 -depth 16
+! ssh satori 'PATH=$PATH:/usr/X11R6/bin; vncserver -desktop "satori ($USER)" -geometry 1540x1140 -depth 16'
+vncviewer*raiseOnBeep: false
+vncviewer*requestedDepth: 16
+
+!
+! rxvt
+
+!Comment out the following line in /etc/X11/app-defaults/Rxvt:
+!      Rxvt.backspacekey:      ^H
+
+!Rxvt.backspacekey:      ^? ! gives this sequence with or without CTRL
+!Rxvt.backspacekey:      ^H ! gives this sequence with or without CTRL
+Rxvt*background: black
+Rxvt*foreground: white
+Rxvt*font: -*-lucidatypewriter-medium-*-*-*-12-*-*-*-*-*-*-*
+Rxvt*geometry: 80x95
+Rxvt*scrollBar: true
+!Rxvt*scrollBar_right: true
+Rxvt*termName: rxvt
+
+!Rxvt*font: 	-misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
+!Rxvt*boldFont: 	-misc-fixed-bold-r-normal-*-10-*-*-*-*-*-*-*
+
+!
+! xterm
+!	less /etc/X11/app-defaults/XTerm
+!	VT100.utf8Fonts.font4: -misc-fixed-medium-r-normal-*-*-100-*-*-*-*-iso10646-1
+XTerm*background: black
+XTerm*foreground: white
+
+XTerm*cutNewline: false
+XTerm*cutToBeginningOfLine: false
+!  XTerm*boldFont: -*-lucidatypewriter-bold-*-*-*-12-*-*-*-*-*-*-*
+XTerm*font: 	-misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
+XTerm*geometry: 80x78
+XTerm*toolBar: off
+
+XTermCyrillic*background: black
+XTermCyrillic*foreground: white
+XTermCyrillic.font: -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
+! XTermCyrillic.font: -*-symbol-*-*-*-*-11-*-*-*-*-*-*-*
+
+XTerm*VT100*colorBDMode:  off
+XTerm.VT100*colorULMode:  off
+XTerm.VT100*underLine:  on
+XTerm*scrollBar: true
+XTerm*scrollBar_right: true
+
+!
+! xscreen
+!
+xscreen*background: black
+xscreen*foreground: white
+xscreen*saveLines: 3000
+xscreen*scrollBar: false
+
+
+! ssh satori '/bin/zsh -ilc vncserver -geometry 1540x1140 -depth 16 -desktop "satori (pschaaf)"'
+
+! windows default is xfontsel -pattern '-*-courier new-normal-r-*-*-13-*-*-*-c-*-fontset-standard'
+! xfontsel -pattern '-misc-fixed-medium-r-normal--13-120-75-75-c-80-iso10646-1'
+! xfontsel -pattern '-misc-fixed-medium-r-normal-*-*-*-*-*-*-*-iso10646-1'
+
+! ! default
+! -*-clean-medium-r-*-*-*-*-*-*-*-*-iso10646-*
+! -*-courier-medium-r-*-*-*-*-*-*-*-70-iso10646-*

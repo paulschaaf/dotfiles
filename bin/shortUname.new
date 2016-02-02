@@ -1,0 +1,156 @@
+#!/bin/sh
+
+# $Source: e:/MyDocuments/cvsroot/bin/shortUname,v $
+# $Revision: 1.18 $
+# $Date: 2004/02/06 19:46:09 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+#set -x
+hosts_file=$HOME/etc/hosts
+
+if [ -n " $ansi_term" ]; then
+    setfg () { tput setaf $1; }
+    setbg () { tput setab $1; }
+
+    black=0
+    blue=4
+    cyan=6
+    green=2
+    magenta=5
+    red=1
+    white=7
+    yellow=3
+else
+    setfg () { tput setf $1; }
+    setbg () { tput setb $1; }
+
+    black=0
+    blue=1
+    cyan=3
+    green=2
+    magenta=5
+    red=4
+    white=7
+    yellow=6
+fi
+
+colorize () {
+    tput bold
+    case $1
+    in
+        AIX*)
+            setfg $yellow
+            setbg $blue
+            ;;
+        CYGWIN*)
+            setfg $black
+            setbg $green
+            ;;
+        HPUX*)
+            setfg $cyan
+            ;;
+        Linux*)
+            setfg $green
+            ;;
+        SunOS*)
+            setfg $yellow
+            ;;
+        Windows*)
+            ;;
+        UNKN*|*)
+            setfg $white
+            setbg $red
+            ;;
+    esac
+
+    shift
+    echo -n ${colorString:-$*}
+    tput sgr0
+    echo
+}
+
+shorten_string () {
+    echo "$*" | sed 's/[-._][^ \t]*//g'
+}
+
+case `basename $0`
+in
+    shortUname)
+        all=platforms
+        out_uname_hostname_rel () {
+            shift #hostname
+            uname=${1:-'UNKN UNKN'}
+            basic_out_hostname_uname_rel $uname $*
+        }
+        ;;
+
+    *)
+        all=hosts
+        out_uname_hostname_rel () {
+            basic_out_hostname_uname_rel `shorten_string ${2:-1}` $1
+        }
+        ;;
+esac
+
+case $defaultName
+in
+    CYGWIN*)
+        defaultName=CYGWIN
+        ;;
+    *)
+        ;;
+esac
+
+basic_out_hostname_uname_rel () {
+    shift
+    echo "$*"
+}
+
+unset color colorString
+for arg
+do
+    case $arg
+    in
+        -a|--all)
+            shift
+            names=`$all`
+            ;;
+        -c|--color)
+            shift
+            color=true
+            basic_out_hostname_uname_rel () {
+                colorize $1 $2
+            }
+            ;;
+        -s|--colorString)
+            shift
+            colorString=$1; shift
+            color=true
+            basic_out_hostname_uname_rel () {
+                colorize $1 $2
+            }
+            ;;
+         -v|--verbose)
+            shift
+            verbose=true
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+for name in ${names:=${*:-`shorten_string \`hostname\``}}
+do
+    args="`grep \"^[^#]*\\<$name\" $hosts_file | sed 's/-/_/g' | awk '/./ {print $1, $2, $3, $4, $5; exit}'`"
+    if [ -z "$verbose" ]
+    then
+        args="`shorten_string $args`"
+    fi
+
+    # pass hostname, uname into function
+    out_uname_hostname_rel ${args:-$name}
+
+done

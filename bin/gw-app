@@ -1,0 +1,327 @@
+#!/usr/bin/env ruby
+
+require 'enumerator'
+require 'set'
+require 'extn/Enumerable'
+require 'extn/IO'
+require 'extn/Numeric'
+
+$studio_dir   = '/c/studio'
+$show_cmd, $show_match = true, true
+
+# =========
+# ========= Application Locations
+# =========
+
+# name, version, url, files
+$bc_apps = %w()
+
+$cc_apps = %w(
+  -         2.1.4  menominee:8214/base_cc-2.1.4    /ccenvts/base/2.1.4
+  -         3.0.1  ausable:8301/cc-3.0.1.33p2      /ccenvts/release3.0.1.33p2
+  -         3.0.2  menominee:10302/cc302           /base_envts/cc302
+  -         3.0.3  styx:6563/base_cc-3.0.3         /ccenvts/cc-base/3.0.3
+  -         3.0.4  menominee:10304/cc304           /base_envts/cc304
+  -         3.0.5  menominee:10305/cc305           /base_envts/cc305
+  -         3.1.0  menominee:10310/cc310           /base_envts/cc310
+  -         3.1.1  menominee:10311/cc311           /base_envts/cc311
+  -         3.1.2  localhost:10312/cc312           /base_envts/cc312
+  -         3.1.2  menominee:10312/cc312           /base_envts/cc312
+  -         3.1.3  menominee:10313/cc313           /base_envts/cc313
+
+  AMERCO    3.1.2  stonz:33312/cc312               /ccenvts/amerco/cc3.1.2
+  Canal     2.1.4  stonz:11214/Canal_cc-20050930   /ccenvts/canal/20050930
+  CIGA      3.0.5  stonz:6582/CIGA_cc-3.0.5        /ccenvts/ciga/120506/ClaimCenter/3.0.6
+  CNA       2.1.4  ausable:8312/cc                 /ccenvts/cna/200412178312
+  Donegal   3.1.2  styx:11312/cc312                /ccenvts/donegal/claimcenter3.1.2
+  EDIC      3.1.2  stonz:14312/cc312               /ccenvts/edic/cc312
+  Hastings  2.1.2  ausable:8269/cc                 /ccenvts/hastings/20040806DATA
+  ICAT      3.1.0  styx:8322/cc                    /ccenvts/icat
+  Liberty   3.1.0  styx:8311/cc                    /ccenvts/libertymutual
+  MSA       3.1.1  stonz:12312/cc312               /ccenvts/msa/cc3.1.2
+  Merastar  3.0.2  styx:8423/cc                    /ccenvts/merastar/3.0.2.15
+  NMM       3.1.2  styx:8506/cc                    /ccenvts/nmm/claimcenter3.1.2
+  Sequoia   3.1.0  styx:10512/cc                   /ccenvts/sequoia
+)
+
+$pc_apps = %w(
+  -         1.0.3  stone:12103/pc103               /base_envts/pc1.0
+  CNA_pol   1.0.3  stone:13103/pc103               /customer_envts/cna_policy/pc1.0.3
+  CNA_pol   1.0.3  styx:13103/pc103                /pcenvts/cna/pc1.0.3
+  -         2.0.0  stone:12200/pc200               /base_envts/pc2.0pr3.3
+)
+
+class Array
+  def user_select
+    $debug.puts(4, self.inspect)
+    if self.size < 2
+      self.first
+    else
+      self.each_with_index {|e, i| $stderr.printf "%2i) %s\n", i + 1, e}
+      $stderr.print("\n? ")
+
+      # make array index == offset & permit use of negative numbers
+      self.unshift(nil)
+      self[$stdin.gets.to_i]
+    end
+  end
+end
+
+
+THIS_SCRIPT = $0.split('/')[-1].to_sym
+def help
+  $stderr.puts("#{THIS_SCRIPT} --debug --help --list --dry-run --regexp --name --version --url")
+end
+
+
+class GW_App
+  attr_accessor :dir, :host, :port, :url, :version
+
+  @@names     = Hash.new {|hash, key| hash[key] = []}
+  @@urls      = @@names.dup
+  @@versions  = @@names.dup
+  @@sort_keys = [:name, :version, :url, :dir]
+  @@widths    = Hash[:name, 0, :version, 0, :url, 0, :dir, 0]
+
+  def self.sort_keys
+    @@sort_keys.uniq! || @@sort_keys
+  end
+
+  def self.register(*args)
+    args.each_slice(4) {|name, version, url, dir|
+      # leading # should act like the entire row was commented out
+      unless name[0] == ?#
+        name = nil if name == '-'
+        url = "http://#{url}" unless url =~ %r'://'
+        app = self.new(:name => name, :version => version, :url => url, :dir => dir)
+        app.register
+      end
+    }
+  end
+
+  def self.all
+    @@names.values.flatten.sort!
+  end
+
+  def self.select(*keys)
+    keys << '.*' if keys.empty?
+    $debug.puts(2, 'Finding ' + keys.inspect)
+    matches = Set.new
+    apps = @@names.values.flatten
+
+    keys.each {|aKey|
+      key = Regexp.new(aKey, Regexp::IGNORECASE)
+
+      apps.each {|app|
+        matches << app if app.is_a?(self) and (key =~ app.to_s)
+      }
+    }
+    return yield if block_given? and matches.empty?
+    matches.sort
+  end
+
+  def self.user_select(*query)
+    self.select(*query).user_select
+  end
+
+  def initialize(hash)
+    @name, @dir, @version, @url = hash[:name], hash[:dir], hash[:version], hash[:url]
+    match = %r-(?:http://)?([^:/]+)(?::([\d]+))?(.*)-.match(@url)
+    @host, @port = hash[:host] || match[1], hash[:port] || match[2]
+  end
+
+  def name
+    @name || '-base'
+  end
+
+  def register
+    @@versions[@version] << self
+    @@names[@name]       << self
+    @@urls[@url]         << self
+    self
+  end
+
+  def ===(other)
+    Regexp.new("#{name}|#{url}|#{version}") === other
+  end
+
+  def <=>(other)
+    -(other <=> @@sort_keys.collect {|e| self.send(e)}.to_s.downcase)
+  end
+
+  def to_a
+    self.class.sort_keys.collect {|key| self.send(key)}
+  end
+
+  def <=>(aValue)
+    -(aValue <=> self.to_a)
+  end
+
+  def to_s
+    sprintf("%-5s  %-14s  %-24s\n%-27s%s", self.version, self.name, self.url, '', self.dir)
+  end
+end
+
+class BillingCenter < GW_App; end
+class ClaimCenter   < GW_App; end
+class PolicyCenter  < GW_App; end
+
+BillingCenter.register( *$bc_apps )
+ClaimCenter.register(   *$cc_apps )
+PolicyCenter.register(  *$pc_apps )
+
+$debug, $dry_run, $escape_strings = DebugIO.new, nil, true
+
+class Protocol
+  attr_accessor :gw_app
+
+  def initialize(app=GW_App)
+    @gw_app = app
+  end
+end
+
+class Browse < Protocol
+  def launch(choice, switches)
+    "explorer #{choice.url}"
+  end
+end
+
+class Reload < Protocol
+  def launch(choice, switches)
+    "links -dump #{choice.url}/ReloadConfiguration.do"
+  end
+end
+
+class Studio < Protocol
+  def launch(choice, switches)
+    "cd #$studio_dir/#{choice.version}; ../studio.sh #{switches}#{choice.url}"
+  end
+end
+
+class Scp < Protocol
+  def launch(choice, switches)
+    $dry_run = true
+    args=" 'cd $CD_TO; #{ARGV.join(' ')}'" unless ARGV.empty?
+    "CD_TO='#{choice.dir}' scp #{choice.host}#{args}"
+  end
+end
+
+class Ssh < Protocol
+  def launch(choice, switches)
+    localhost = ENV['HOSTNAME'].chomp
+    $debug.puts(3, "localhost is #{localhost}, destination host is #{choice.host}")
+    if localhost == choice.host
+      ARGV.unshift(';') unless ARGV.empty?
+      "CD_TO='#{choice.dir}' zsh -i"
+    else
+      ARGV.unshift(' ') unless ARGV.empty?
+      "ssh-to --dir #{choice.dir} #{choice.host}"
+    end
+  end
+end
+
+($protocol = {
+  :gwcc      => Browse.new(ClaimCenter),
+  :gwpc      => Browse.new(PolicyCenter),
+  :gwreload  => Reload.new,
+  :gwscp     => Scp.new,
+  :gwssh     => Ssh.new,
+  :gwstudio  => Studio.new,
+}).default = Browse.new
+
+#
+# Get options
+#
+switches = ''
+until ARGV.empty?
+  $debug.puts(2, "Parsing arg: #{ARGV.first.inspect}")
+
+  case (switch=ARGV.first)
+
+  when /^-(d|-debug)=?/
+    $debug.level = (switch[/\d+$/] || ($debug.level+1)).to_i
+
+  when '-h', '--help'
+    help
+    exit
+
+  when '-l', '--list'
+    ARGV.push(/.*/)
+
+  when '-n', '--dry-run'
+    $dry_run = true
+    switches << '--dry_run '
+    $debug.puts(2, "$dry_run: #$dry_run")
+
+  when '-r', '--regexp'
+    $escape_strings = false
+    $debug.puts(2, '$escape_strings: ' + $escape_strings.to_s)
+
+  when '--name'
+    GW_App.sort_keys.unshift(:name)
+
+  when '--synonyms'
+    GW_App.sort_keys.unshift(:version)
+
+  when '--version'
+    GW_App.sort_keys.unshift(:version)
+
+  when '--url'
+    GW_App.sort_keys.unshift(:url)
+
+  when '--'
+    ARGV.shift
+    break
+
+  when /^-/
+    $stderr.puts('Unknown switch: ', switch)
+    exit 1
+
+  when %r'^//'
+    GW_App.sort_keys.unshift(:dir)
+    break
+
+  when /[0-9]/
+    GW_App.sort_keys.unshift(:version)
+    break
+
+  else
+    break
+
+  end
+  ARGV.shift
+end
+
+query    = ARGV.shift.to_a
+$debug.puts(3, "query is #{query.empty? ? :empty : query.inspect}")
+
+protocol = $protocol[THIS_SCRIPT]
+$debug.puts(3, "protocol is #{protocol.inspect}")
+
+gw_app   = protocol.gw_app
+$debug.puts(3, "gw_app is #{gw_app.inspect}")
+
+choice   = gw_app.user_select(*query)
+
+if choice
+  $debug.puts(4, "choice is #{choice.inspect}")
+else
+  $stderr.puts('No matches.')
+  exit(1)
+end
+
+$debug.puts($show_match ? 0 : 1, "#{choice.name} #{choice.version}")
+
+switches << "--debug=#{$debug.level-1} " if $debug.at_level?(2)
+cmd = protocol.launch(choice, switches)
+
+if $dry_run or $show_cmd
+  puts cmd
+else
+  $debug.puts(2, 'Not showing cmd ' + cmd)
+end
+
+# decrement SHLVL so that it doesn't include the current process
+ENV['SHLVL'] = ENV['SHLVL'].to_i.pred.to_s
+
+exec(cmd) unless $dry_run or cmd.empty?

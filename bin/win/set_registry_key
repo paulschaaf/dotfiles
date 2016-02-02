@@ -1,0 +1,72 @@
+#!/bin/bash
+
+error() {
+    errorcode=$1
+    shift
+    echo "
+ERROR $(basename $0) $*
+" >&2
+    exit $errorcode
+}
+
+help() {
+    echo "
+Usage: $(basename $0) [--add|--set|--uninstaller] <arguments>
+
+   --add key [defaultvalue]    Add the key, optionally set its default value
+   --set key value             Set the key to the value
+   --uninstaller key name cmd  Add an uninstaller entry named name which
+                               runs the specified command.
+   --help                      Display this screen"
+}
+
+#exit
+cmd=$1; shift
+
+# echo '$cmd' is \'$cmd\'
+# echo '$1' is \'$1\'
+# echo '$2' is \'$2\'
+# echo '$3' is \'$3\'
+
+case "$cmd" in
+    --add)
+        if [ -z "$2" ]; then
+            # echo one-arg add called
+            set -x
+            regtool add "${1}"
+        else
+            # two arguments means also set the key's default value
+            $0 --add "${1}"
+            $0 --set "${1}/" "${2}"
+        fi
+        ;;
+
+    --set)
+        set -x
+        regtool set "${1}" "${2}"
+        ;;
+
+    --uninstaller)
+        shell_un_ext=/machine/Software/Microsoft/Windows/CurrentVersion/Uninstall
+        set -x
+        $0 --add "${shell_un_ext}/$1"
+        $0 --set "${shell_un_ext}/$1/DisplayName" "$2"
+        $0 --set "${shell_un_ext}/$1/UninstallString" "$3"
+        ;;
+
+    --help)
+        help
+        ;;
+
+    --*)
+        error 1 Unknown command \'$cmd\'
+        ;;
+
+    *)
+        error 2 No command specified
+        ;;
+
+esac
+
+
+# cmd='xterm here'; key="/root/Directory/Shell/$cmd"; set_registry_key --add "$key" '&xterm Here'

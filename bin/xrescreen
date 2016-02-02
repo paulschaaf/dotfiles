@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# $Source: e:/MyDocuments/cvsroot/bin/xrescreen,v $
+# $Revision: 1.12 $
+# Last Edit: $Date$
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+this_file=`basename $0`
+
+cmd='screen'
+xterm=/usr/bin/xterm
+
+case ${this_file} in
+    *rescreen)
+        cmd=${cmd}' -R -DD'
+        ;;
+    *screen)
+        ;;
+    *)
+        echo Error: \'`basename $0`\' is not a valid name for this file.
+        exit 1
+        ;;
+esac
+
+case ${this_file} in
+    x*)
+        #if [ -n "$CYGROOT" ]; then
+        #    xterm=rxvt
+        #else
+        #    xterm=rxvt
+        #fi
+        cmd="${xterm} -name xscreen ${cmd:+ -e '$cmd'}"
+        ;;
+    *)
+        ;;
+esac
+
+case "$1" in
+    -n|--dry-run)
+        shift
+        echo $cmd $*
+        ;;
+    --synonyms)
+        file=`readlink -f $0 | xargs basename`
+        for syn in {,x}{,re}screen; do
+            # exclude whatever name we used for this file
+            [ ${syn} = ${file} ] || echo -n ${syn}' ';
+        done
+        echo
+        ;;
+    *)
+        [ -n "$xhost" ] && eval $xhost
+        eval $cmd $*
+        ;;
+esac

@@ -1,0 +1,112 @@
+#!/bin/bash
+
+# $Source: e:/MyDocuments/cvsroot/bin/usr-local-bin/echoList,v $
+# $Revision: 1.4 $
+# $Date: 2004/03/11 01:24:50 $
+# $Author: pschaaf $
+# $State: Exp $
+# $Name:  $
+
+which column > /dev/null || \
+    column () {
+        cat $*
+    }
+
+echoList () {
+    local color dirs filename findpath list matches no_color rs
+
+    color=$(echo '\033[1;40;33m')
+    no_color=$(echo '\033[0m')
+
+    list=$1
+
+    if [ -z "$list" ]
+    then
+        return
+    fi
+    shift
+
+    rs=${RS:-:}
+
+    for filename
+    do
+       findpath="${findpath}${list//$rs//$filename }/$filename "
+    done
+
+    if [ -n "$findpath" ]
+    then
+        matches="$(eval find $findpath -maxdepth 0 -printf '%p:' 2>/dev/null| sed 's/:$//')"
+        dirs=$(
+            echo $matches |
+            awk 'NF > 2 {
+                    for (i=2; i<NF; i++) printf "/" $i
+                    printf ORS
+                }' RS=: FS=/ |
+            sort -u |
+            tr '\n' ':'
+        )
+    fi
+
+    echo $list |
+        awk '{printf(" %2d ", ++x); print}' RS="$rs" |
+        column |
+        sed "s- \\(${dirs//$rs/\\|}\\)\\( \\|\\t\\|$\\)- $color\\1$no_color\\2-g"
+
+    if [ -n "$matches" ]
+    then
+        eval $(echo "\nll -id ${matches//:/ }\n" | tee $(tty)) #| column -t
+    elif [ -n "$2" ]
+    then
+        echo 'Not found.'
+    fi
+}
+
+path2 () {
+        echo $PATH | awk '{
+        output = output sprintf(" %2d ", NR)
+        fullname = " " $1 "/" file
+        if (! system("test -f" fullname)) {
+                output(start)
+                matches = matches fullname
+        }
+        output = output $0 "\n"
+}
+END {
+        system("echo \"" output "\"|column")
+        if (matches) {
+                cmd=cmd matches
+                print cmd "\n"
+                system(cmd)
+        }
+}' RS=: cmd="\nls -dhl --color" file="$*" start="*" | sed 's/\( \|\t\)\*/\1'`echo "\033[1;33m"`'/g; s/\($\|[ \t][0-9][0-9]* \)/'`echo "\033[0m"`'\1/g'
+}
+
+
+
+
+
+
+
+
+path2 () {
+        echo $PATH | awk '
+function output(string) {outstr = outstr string}
+
+{
+    output(sprintf(" %2d ", NR))
+    fullname = " " $1 "/" file
+    if (! system("test -f" fullname)) {
+        $0 = marker $0
+        matches = matches fullname
+    }
+    output($0 "\n")
+}
+END {
+    system("echo \"" outstr "\"|column")
+    if (matches) {
+        cmd=cmd matches
+        print "\n" cmd "\n"
+        system(cmd)
+    }
+}' RS=: cmd="ls -dhl --color" file="$*" marker="*" | sed 's/\( \|\t\)\*/\1'`echo "\033[1;33m"`'/g; s/\($\|[ \t][0-9][0-9]* \)/'`echo "\033[0m"`'\1/g'
+}

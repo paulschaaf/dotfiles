@@ -1,0 +1,84 @@
+lftp gw-liberty-am
+ls
+exit
+lftp gw-liberty
+ls
+exit
+lftp gw-liberty-am
+ls
+exit
+lftp gw-axa
+ls
+exit
+lftp gw-fcci
+ls
+exit
+lftp gw-hanover
+ls
+exit
+lftp gw-admin
+ls
+cd releases/cc-rel/3.0/
+ls
+lls
+!ls
+ls
+mv ClaimCenter_3.0.4_Patch1.zip ClaimCenter3.0.4_Patch1.zip
+mv ClaimCenter_3.0.4_Patch1_ReleaseNotes.html ClaimCenter3.0.4_Patch1_ReleaseNotes.html
+ls
+exit
+lftp gw-user
+ls
+cd releases/cc-rel/3.0/
+ls
+exit
+lftp gw-msf
+ls
+exit
+lftp gw-cna
+ls
+cd pc-rel/
+ls
+cd 1.x/
+ls
+exit
+lftp gw-liberty
+ls
+exit
+lftp gw-user
+exit
+lftp gw-admin
+ls
+cd releases/pc-rel/1.x/
+ls
+exit
+lftp gw-admin
+cd releases/pc-rel/1.x
+ls
+ls ..
+cd ../../
+cd ../
+cd customers/
+ls
+exit
+lftp gw-admin
+cd releases/pc_rel/1.x
+cd releases
+ls
+cd pc-rel
+ls
+cd 1.x
+put PolicyCenter1.0.3_Patch3.zip
+lcd PolicyCenter1.0.3_Patch3
+!ls
+put readme-patch.html
+mv readme-patch.html 
+ls
+mv readme-patch.html PolicyCenter1.0.3_Patch3_ReleaseNotes.html
+ls
+exit
+bookmarks
+bookmark
+gw-edic
+open gw-edic
+exit

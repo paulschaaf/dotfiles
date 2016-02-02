@@ -1,0 +1,150 @@
+#!/usr/bin/env ruby -W0
+
+require 'date'
+require 'parsedate'
+require 'pp'
+require 'shell'
+require 'yaml'
+
+$pid = ARGV[0]
+
+class Shell
+#   alias_method :each, :foreach
+#   include Enumerable
+
+  def_system_command :ls,       '/bin/ls'
+  def_system_command :ps,       '/bin/ps'
+  def_system_command :tail,     '/usr/bin/tail'
+  alias_command      :ps_o,     :ps,    '-o'
+  alias_command      :ps_user,  :ps_o,  'user'
+  alias_command      :ps_long,  :ps,    '-f',   '-l'
+  alias_command      :lld,      :ls,    '-l',   '-d'
+
+  def contents(file)
+    entries = []
+    self.foreach(file) {|entry| entries << entry.strip}
+    entries
+  end
+end
+
+class ProcFSShell < Shell
+  def initialize(*args, &block)
+    super
+    self.verbose = false
+  end
+end
+
+class OS_Process
+  def self.ps_fields
+    %w(ppid group fgroup nice cputime start_time state suid time tty uid uname)
+  end
+
+  attr_reader :pid, :shell
+
+  def ensure_attr_accessor(*names)
+    names.each {|name|
+      self.class.module_eval("attr_accessor :#{name}") unless self.respond_to?(name.to_sym)
+    }
+  end
+
+  def init_fields_and_values(fields, values=nil)
+    hash = values ? fields.zip(values) : fields
+    hash.each {|field, _value|
+      self.ensure_attr_accessor(field)
+      value = if value == /^\d+$/
+                value.to_i 
+              else
+                _value
+              end
+      self.send("#{field}=", value)
+    }
+  end
+
+  def ps_o(*fields)
+    (@shell.ps_o(fields.join(','), @pid) | @shell.tail('-n', '1')).to_s.strip.split(/ +/)
+  ensure
+    @shell.check_point
+  end
+
+  def init_from_ps_o(*fields)
+    self.init_fields_and_values(fields, self.ps_o(*fields))
+  end
+
+  def contents(fname)
+    case fname
+    when 'environ', 'maps', 'mounts'
+      return nil # 'skipped big file'
+    when 'mem'
+      return nil # 'reading may cause errors'
+    when 'stat'
+      return nil # 'see no value in this info'
+    end
+    
+    answer = if @shell.symlink?(fname)
+               @shell.readlink(fname).strip
+             else
+               @shell.contents(fname)
+             end
+    answer = answer[0] if answer.size == 1
+
+    p fname
+    case fname
+    when 'fd'
+      hash = Hash.new
+      answer.each {|e| hash[e.to_i] = self.contents(fname + '/' + e)}
+      answer = hash
+    when /(p|g)id$/i
+      answer = answer.to_i
+    when 'cmdline'
+      answer.gsub!(/\000/, ' ')
+    when 'status'
+      hash = Hash.new
+      answer.each {|e|
+        key, value = *e.split(":\t")
+        value.gsub!(/\t/, ' ')
+        hash[key] = case key
+                    when /(p|g)id$/i, 'FDSize'
+                      value.to_i
+                    else
+                      value
+                    end
+      }
+      answer = hash
+    when 'root'
+      answer = answer.chr if answer.kind_of?(Numeric)
+      answer = nil if answer == '/'
+    end
+
+    answer
+  rescue Errno::EACCES
+    '[permission denied]'
+  end
+
+  def init_from_procfs
+    aHash = Hash.new
+    @shell.foreach {|fname|
+      unless %w(. ..).include?(fname)
+        value = self.contents(fname)
+        aHash[fname] = value unless (value == '' or value == nil)
+      end
+    }
+    self.init_fields_and_values(aHash)
+  end
+
+  def initialize(pid)
+    @pid = pid
+    @shell = ProcFSShell.new.cd("/proc/#@pid")
+    self.init_from_ps_o(*self.class.ps_fields)
+    self.init_from_procfs
+  end
+
+  def to_yaml_properties
+    super - ["@shell"]
+  end
+end
+
+y OS_Process.new($pid)
+
+__END__
+
+#  [:binfmt, :cwd, :exe, :maps, :mounts, :stat, :status, :cmdline, :environ, :fd/, :mem, :root, :statm].each {|file|

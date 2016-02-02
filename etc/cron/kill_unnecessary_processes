@@ -1,0 +1,17 @@
+#!/usr/bin/zsh
+
+# MacroVision InstallShield process that checks for software updates
+# http://www.processlibrary.com/directory/files/isuspm
+#PROCESS_NAMES+=isuspm.exe
+
+echo Killing processes:
+echo
+
+killProc() {
+    echo $1
+    echo '  '$2
+    echo
+    pskill $1
+}
+
+killProc isuspm.exe 'MacroVision InstallShield; checks for software updates'

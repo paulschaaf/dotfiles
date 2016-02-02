@@ -1,0 +1,251 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN" "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML DIR="LTR">
+<HEAD>
+<META HTTP-EQUIV="Content-Type" Content="text/html; charset=Windows-1252">
+<TITLE>Setx.exe</TITLE>
+
+<STYLE TYPE="text/css">
+body	{ color: #000000;
+		background: #FFFFFF;	  
+		font-size: 70%;			
+		font-family: Verdana, Arial, Sans Serif; }
+h1
+		{ font-size: 125%; 
+		margin-bottom:" .5em"; clear:both; }
+h2
+		{ font-size: 110%;  
+		margin-top: "1.5em";
+		margin-bottom:" .5em"; clear:both; }
+h3
+		{ font-size: 100%; 
+		margin-top: "1.2em";  
+		margin-bottom: ".5em"; clear:both; }
+h4
+		{ font-size: 100%; 
+		margin-top: "1.2em";  
+		margin-bottom: ".5em"; clear:both; }
+p
+		{ margin-top:" .6em"; 
+		margin-bottom: ".6em"; }
+ol
+		{ margin-top: ".5em"; 
+		margin-bottom: 0; 
+		margin-left: "2.1em"; 
+		padding-left: "0em";
+		margin-right:"2.1em" }
+ul
+		{ margin-top: ".6em";	 
+		margin-bottom: 0;
+		list-style-type: disc;
+		margin-left: "1.5em";
+		padding-left: "0em";
+		margin-right: "1.5em"; }
+li
+		{ margin-bottom: ".7em"; clear:both; }
+p.browse
+		{text-align: right;
+		margin-top: -.5em;
+		margin-bottom: -.5em;}
+p.note, p.tip, p.important, p.caution, p.warning
+		{ font-weight:bold;
+		clear:both; margin-top: "1.2em";
+		margin-bottom: "-.4em"; }
+p.alert
+	{ margin-left: 1.5em; 
+	margin-top: -1.em; margin-bottom: -.3em; font-weight: bold } 
+
+p.indent	
+		{ margin-left: "1.3em"; }		   
+		
+p.topics	{font-weight: bold}
+p.info		{font-weight: bold}
+p.files		{font-weight: bold}
+p.syntax	{background: #dddddd;
+			margin-top: 1em; 
+			margin-bottom: 1em;}
+dl		{margin-top: -.5em;}
+dt.SyntaxTerm {font-weight: normal}
+a.poplink
+		{ color: "#000000";
+		cursor: "text";
+		text-decoration: "none"; }
+table
+		{ font-size: 100%;
+		margin-top: 1em; 
+		margin-bottom: 1em; 
+		cellpadding: 0.5em; }
+		
+th
+		{ text-align: left;
+		background: #dddddd;
+		vertical-align: bottom;
+		padding: .2em;
+		padding-left: .45em;
+		padding-right: .5em; }
+		
+tr
+		{ vertical-align: top; }
+
+td
+		{ background: #EEEEEE;
+		vertical-align: top;
+		padding: .2em;
+		padding-left: .45em;
+		padding-right: .5em; }
+
+</STYLE>
+
+
+
+</HEAD>
+
+<BODY>
+
+
+<H1>Setx.exe</H1>
+
+
+<HR>
+
+<P>This command-line tool offers a batch method for setting environmental variables in the user or system environment and requires no programming or scripting. In addition to taking an environmental variable and its associated value from the command line, it can also get the values of registrykeys and write them to text files.</P>
+
+<P>SetX provides the only command-line or programmatic way to directly set system environment values for Microsoft Windows&nbsp;2000. System environment variables are manually configureable through Control Panels or through a registry editor (Regedit or Regedt32). The SET command, which is internal to the command interpreter (Cmd.exe), sets only user environment variables for the current console window.</P>
+
+<P>You can use SetX to set values for user and system environment variables from one of three sources: Command Line Mode, Registry Mode, or File Mode.</P>
+
+<P>
+To display command-line options and details about syntax for all three modes, type:<BR>
+<B>setx</B> <B>/?</B> or <B>setx</B> (without parameters)</P>
+
+<BR><P>For additional information and examples for all three modes, type:<BR>
+<B>setx</B> <B>-i</B>
+</P>
+
+<P><B>Note</B></P>
+<UL>
+	<LI>SetX is similar to the UNIX utility SETENV. For more information about UNIX cognates in Windows&nbsp;2000 and Windows&nbsp;2000 Resource Kits, see &quot;I Want to Use UNIX Commands Within Windows&nbsp;2000.&quot;</LI>
+</UL>
+
+<P CLASS="files">File Required</P>
+<UL>
+     <LI>Setx.exe</LI>
+</UL>
+
+<A NAME="setx_topics"></A>
+<P CLASS="topics">SetX Topics</P>
+<UL>
+	 <LI><A HREF="#setx_command">Command-Line Mode Syntax</A></LI>
+	 <LI><A HREF="#setx_registry">Registry Mode Syntax</A></LI>
+	 <LI><A HREF="#setx_file">File Mode Syntax</A></LI>
+	 <LI><A HREF="#setx_limitations">Known Limitations</A></LI>
+</UL>
+
+<A NAME="setx_command"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>Command-Line Mode Syntax</H2>
+<HR>
+
+<P CLASS="syntax"><b>setx</b> <i>variable</i> <i>value</i> [<b>-m</b>]</p>
+
+<P>Where:</p>
+
+<DL>
+
+<DT CLASS="SyntaxTerm"><i>variable</i></DT>
+<DD>is the name of the environmental variable to be set.</DD>
+
+<DT CLASS="SyntaxTerm"><i>value</i></DT>
+<DD>is the value to which the environmental variable will be set.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-m</b></DT>
+<DD>specifies that the <i>value</i> being set is in the system environment.  The default is the user environment.</DD>
+
+</DL>
+
+<A NAME="setx_registry"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>Registry Mode Syntax</H2>
+<HR>
+
+<P CLASS="syntax"><b>setx</b> <i>variable</i> <b>-k</b> <i>hive\key\...\value</i> [<b>-m</b>]</p>
+
+<P>Where:</p>
+
+<DL>
+
+<DT CLASS="SyntaxTerm"><i>variable</i></DT>
+<DD>is the name of the environmental variable to be set.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-k</b></DT>
+<DD>specifies that the variable is set based on information from a registry key.</DD>
+
+<DT CLASS="SyntaxTerm"><i>hive\key\...\value</i></DT>
+<DD>is the registry path to the value for the environmental variable. For example: HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\TimeZoneInformation\StandardName</DD>
+
+<DT CLASS="SyntaxTerm"><b>-m</b></DT>
+<DD>specifies that the <i>value</i> being set is in the system environment. The default is the user environment.</DD>
+
+</DL>
+
+<A NAME="setx_file"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>File Mode Syntax</H2>
+<HR>
+
+<P CLASS="syntax"><B>setx</B> <i>variable</i> <b>-f</b> <i>filename</i> {<b>-a</b> <i>x</i><b>,</b><i>y</i> | <b>-r</b> <i>x</i><b>,</b><i>y</i> <b>&quot;</b><i>string</i><b>&quot;</b>} [<b>-d</b> <i>d</i>] [<b>-x</b>] [<b>-m</b>]</p>
+
+<P>Where:</p>
+
+<DL>
+
+<DT CLASS="SyntaxTerm"><b>-f</b> <i>filename</i></DT>
+<DD>specifies the name of the file to use.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-a</b> <i>x</i><b>,</b><i>y</i></DT>
+<DD>specifies absolute coordinates and offset as search parameters.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-r</b> <i>x</i><b>,</b><i>y</i> <b>&quot;</b><i>string</i><b>&quot;</b></DT>
+<DD>specifies relative coordinates and offset from <i>string</i> as search parameters.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-d</b> <i>d</i></DT>
+<DD>specifies additional delimiters (<i>d</i>) such as &quot;<b>,</b>&quot; or &quot;<b>\</b>&quot;.
+<p>
+The 4 built-in delimiters are space, tab, carriage return and linefeed. Any ASCII character can be used as an additional delimiter. The maximum number of delimiters, including the 4 built-in ones, is 15.</p>
+</DD>
+
+<DT CLASS="SyntaxTerm"><b>-x</b></DT>
+<DD>displays file coordinates. Switches <b>-a</b>, <b>-r</b>, and <b>-d</b> are ignored.</DD>
+
+<DT CLASS="SyntaxTerm"><b>-m</b></DT>
+<DD>specifies that the <i>value</i> being set is in the system environment.  The default is the user environment.</DD>
+
+</DL>
+
+<A NAME="setx_limitations"></A>
+<HR>
+<P class="browse"><A HREF="#top">top</A></P>
+<H2>Known Limitations</H2>
+<HR>
+<P>The following list contains known limitations for setx:</P>
+<UL>
+
+
+<LI>SetX writes variables to the master environment in the registry. Variables set with SetX variables are available only in future command windows, not in the current command window. This is a limitation of Windows&nbsp;2000.</LI>
+
+<LI>When gaining access to REG_MULTI_SZ values in the registry, only the first item is extracted and used.</LI>
+
+<LI>The only supported hives are <B>HKEY_CURRENT_USER</B> and <B>HKEY_LOCAL_MACHINE</B>. </LI>
+
+<LI>Values added to the user or system environments cannot be removed with SetX.  A corresponding value can be removed from the local environment by using SET with a variable name and no value.</LI>
+
+<LI>Registry values of type REG_DWORD are extracted and used in hexadecimal mode.</LI>
+
+<LI>File Mode supports the parsing of CR-LF text files only.</LI>
+
+</UL>
+
+</BODY>
+</HTML>

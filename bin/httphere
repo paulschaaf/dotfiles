@@ -1,0 +1,5 @@
+#!/bin/sh
+
+python -m SimpleHTTPServer
+#import SimpleHTTPServer
+#test()

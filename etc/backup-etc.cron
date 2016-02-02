@@ -1,0 +1,6 @@
+#!/bin/sh
+
+FILE=/home/pschaaf/sync/backup/etc-`hostname -s`.tar.bz2
+
+tar jcvf $FILE /etc
+chown pschaaf $FILE

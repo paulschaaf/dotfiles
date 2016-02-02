@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# export TITLE=`pwd | cygpath -a . | sed 's~/c/depot/eng/\(.\)[^/]*/\(.*\)/~_\1-\2~; s~/~-~g'`
+# echo TITLE=$TITLE
+#export DOS_LANG=en-US
+
+source ~/bin/gwSetEnv
+
+cd bin
+
+COMSPEC=`cygpath -au $COMSPEC`
+desc="${GW_PLATFORM} ${GW_BUILD}"
+GW_BUILD=`echo $GW_BUILD | sed 's/.*/\U\0/'`
+name=GWSt_${GW_PL}-${GW_BUILD}.lnk
+icon=/c/Guidewire/icons/${GW_BUILD}_favicon.ico
+
+set -x
+mkshortcut --desc=${desc} --icon=${icon} --name=${name} --workingdir=.. ${COMSPEC}

@@ -1,0 +1,97 @@
+#!/bin/bash
+
+interactive=true
+unset execute
+
+while true
+do
+    case "$1"
+    in
+        -i|--interactive)
+            interactive=true
+            shift
+            ;;
+        -x|--execute)
+            execute=true
+            shift
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+unixpath () {
+    cygpath -w -f - | cygpath -u -f -
+}
+
+error_skip_file () {
+    echo Error: $* >&2
+    continue
+}
+
+assert () {
+        eval ${*/]/] || echo Error: }
+}
+
+for x in $@
+do
+    echo
+    [ -e "$x" ] || error_skip_file "file '$x' not found\!"
+
+    type="`file -b $x`"
+
+    case $type
+    in
+        *ms-Windows\ shortcut)
+            echo -n '# Found windows shortcut' $x.
+            dest=$(strings "$x" | sed -n '1~p; s/!$//g' | unixpath)
+            ;;
+        *Assembler\ source)
+            echo -n '# Found broken link' $x.
+            dest=$(strings "$x" | sed 's,^!<symlink>,,g')
+            ;;
+        *broken\ symbolic\ link*)
+            echo -n '# Found broken link' $x.
+            dest=$(strings "$x" | sed -n '1~p; s,^cygdrive,,g')
+            ;;
+        *symbolic\ link*)
+            echo -n '# Ignoring working symlink' $x.
+            dest=''
+            ;;
+        cannot\ open\ \(*\))
+            error_skip_file "cannot open file '$x'."
+            ;;
+        *)
+            error_skip_file "skipping '$x', file type '$type' unknown."
+            ;;
+    esac
+
+    [ -n "$dest" ] || error_skip_file "target name not found in '$x'."
+
+    cmd="ln -s '$dest' '${x%%.lnk}'"
+
+
+    if [ -n "$interactive" ]; then
+        echo ' Repair using'
+        echo -n "   $cmd   (y|N)? "
+        case `read`
+        in
+            y|yes|Y|YES)
+                execute=true
+                ;;
+            *)
+                unset execute
+                ;;
+        esac
+    else
+        echo $cmd
+    fi
+        
+    if [ -n "$execute" ]; then
+        echo -n ' Repairing ... '
+        rm -f "$x"
+        eval $cmd
+        echo done.
+    fi
+done

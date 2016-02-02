@@ -1,0 +1,49 @@
+# -*- mode: shell-script -*-
+
+# MENU remote {
+#    "screen on satori"  EXEC "xterm -name xscreen -e ssh -ttX satori screen -R -DD"
+# }
+
+MENU terminals {
+   rxvt                EXEC "rxvt -e /bin/zsh -il"
+   xterm               EXEC "run xterm -ls"
+}
+
+MENU "reload" {
+   "this menu (.XWinrc)"      RELOAD
+   "X startup (.xinitrc)"     EXEC ".xinitrc"
+   "X styles (.Xresources|.Xdefaults)"   EXEC "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge /home/pschaaf/.Xresources"
+}
+
+MENU restart {
+   "sshd and ssh-agent"       EXEC "/home/pschaaf/bin/win/start-ssh-agent.sh restart"
+   "X"                        EXEC "/bin/run --quote /bin/bash.exe -l -c 'cd; pkill XWin; source /usr/bin/startxwin &'"
+   "X4"                       EXEC "/bin/run --quote /bin/bash.exe -l -c 'source ~/bin/win/startx restart'"
+   "X5"                       EXEC "/bin/run --quote '/home/pschaaf/bin/win/startx restart &'"
+}
+
+#MENU utilities {
+#   "Restart sshd and ssh-agent"       EXEC "/home/pschaaf/bin/win/start-ssh-agent.sh restart"
+#   SEPARATOR
+#   "Reload this menu (.XWinrc)"       RELOAD
+#   "Reload X styles (.Xresources)"    EXEC "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge /home/pschaaf/.Xresources"
+#   "Reload X startup (.xinitrc)"      EXEC ".xinitrc"
+#   SEPARATOR
+#   "Kill X window"                    EXEC "xkill"
+#}
+
+menu root {
+   "Kill X window"     EXEC "xkill"
+   "Reload ..."        MENU "reload"
+   "Restart ..."       MENU restart
+   "Terminals"         MENU terminals
+#    "Remote access"    MENU remote
+#   "Utilities"         MENU utilities
+   SEPARATOR
+   Emacs               EXEC "/usr/bin/emacs -rv"
+   Screen              EXEC "run xterm -name xscreen -e 'screen -R -DD'"
+   SEPARATOR
+}
+
+ROOTMENU root
+SILENTEXIT
