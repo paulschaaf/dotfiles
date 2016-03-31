@@ -1,0 +1,66 @@
+#!/usr/bin/zsh
+
+fixDOSPathIn () {
+    local var val
+    for var; do
+        eval val=\$$var
+        eval export $var=`cygpath -aup $val`
+    done
+}
+
+exportDefault CYGROOT 'c:\cygwin'
+exportDefault USER $LOGNAME
+exportDefault HOME ${HOME/\/c\///}  # e.g. turn /c/home/.. into /home/...
+
+fixDosPathIn CYGPATH
+prependPath $HOME/bin/win
+
+alias classpath='RS=\; echoList CLASSPATH'
+alias cp='nocorrect cp'
+alias exp=explorer
+alias gosu=gosu.cmd
+alias lan=lan.bat
+alias mv='nocorrect mv'
+alias nolan=nolan.bat
+alias ping=PING.EXE
+alias relan='nolan; lan'
+alias start='cmd /C start'
+alias tracert=TRACERT.EXE
+alias vdiff='/c/PROGRA~1/Araxis/ARAXIS~1/AraxisGitDiff'
+
+hidedotfiles () {
+	 for f in .*; do attrib +S +H $f; done
+}
+showdotfiles () {
+	 for f in .*; do attrib -S -H $f; done
+}
+
+locate() {
+    command locate $* | sed -e '/^\/c\/\(home\|cygwin\)/d; s_'${HOME}'_~_g;'
+}
+
+prependToCygList () {
+    local each var=$1; shift
+    for each; do
+        each=`cygpath -asw "$each"`
+        member $each $var || eval "$var=\"$each\${$var:+;\$$var}\""
+    done
+}
+
+appendToCygList () {
+    local each var=$1; shift
+    for each; do
+        each=`cygpath -asw "$each"`
+        member $each $var || eval "$var=\"\${$var:+\$$var;}$each\""
+    done
+}
+
+appendClasspath  () {
+    appendToCygList  CLASSPATH $*
+}
+prependClasspath () {
+    prependToCygList CLASSPATH $*
+}
+
+
+

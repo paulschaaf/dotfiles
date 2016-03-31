@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 # get the list of all branches
-$output = `/c/PROGRA~2/Git/bin/git.exe branch --color=always 2> /dev/null`;
+$output = `git branch --color=always 2> /dev/null`;
 
 foreach my $line (split(/\[0?m\n/, $output)) {
   # printf("line <%s\n", $line);

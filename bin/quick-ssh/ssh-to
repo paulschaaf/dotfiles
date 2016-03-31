@@ -19,7 +19,7 @@ def_path_cmd="path() { echo \\\$PATH | tr \\\":\\\" \\\"\\n\\\" | nl; }; export 
 def_pschaaf_cmd='pschaaf() { fix; }; export -f pschaaf'
 
 # reattach || (start detached with B as escape key; set the caption; attach"
-start_screen='screen -r \|\| \(screen -dmS $USER -e^Bb\; screen -X caption always \"%{=b km}%H %{=u wk}%-Lw%{= yk}%n%f %t%{-}%+Lw %{-}%=\"\; screen -r\)'
+start_screen='screen -r -- || (screen -dmS $USER -e^Bb; screen -X caption always \"%{=b km}%H %{=u wk}%-Lw%{= yk}%n%f %t%{-}%+Lw %{-}%=\"; screen -r)'
 
 add_ssh_flag() {
     for fl in $*; do

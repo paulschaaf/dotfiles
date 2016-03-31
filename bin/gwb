@@ -1,16 +1,15 @@
-#!/bin/bash
+#!/bin/zsh
 
-_batchFile=${0/*\//}.bat
-if [ ! -e "$_batchFile" ]; then
-    _batchFile=bin\\$_batchFile
-fi
+_batchFile=./${0##*/}
 
-_dry_run=''
+UNAME=`uname`
+
+unset _dry_run
 
 while [ -n "$*" ]; do
     case $1 in
         --dry-run)
-            _dry_run='echo - '
+            _dry_run=': '
             ;;
         --keep)
             _terminate=/K
@@ -33,13 +32,12 @@ while [ -n "$*" ]; do
     shift
 done
 
-_userCmd="$*"
+_userCmd=$*
 
-echo \$0 is $0
-if [ "${0##*/}" = "perf" ]; then
-    echo called perf!
-    _userCmd='-Ddir.user=pschaaf '$_userCmd
-fi
+# if [ "${0##*/}" = "perf" ]; then
+#     echo called perf!
+#     _userCmd='-Ddir.user=pschaaf '$_userCmd
+# fi
 
 # Close window afterward if _terminate is unset AND command ends in 'studio'
 if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
@@ -48,63 +46,79 @@ fi
 
 source ~/bin/gwSetEnv
 
-export TITLE="$GW_PL:$GW_PRODUCT${_userCmd:+ '$_userCmd'}"
-export CMD="$_batchFile ${_userCmd}"
+# Separate the directory name
+GW_START_DIR=${GW_START_SCRIPT%/*}
+GW_START_DIR=${GW_START_DIR:-.}   # default it to '.'
+GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
 
-case $GW_PRODUCT in
-    ab)
-        # bright white text on aqua
-        _color=3F
-        ;;
-    bc)
-        # bright white text on red
-        _color=2F
-        ;;
-    cc)
-        # bright white text on blue
-        _color=1F
-        ;;
-    pc)
-        # bright white text on red
-        _color=4F
+case $UNAME in
+    CYGWIN*)
+        export GW_TITLE="${GW_TITLE}${_userCmd:+ '$_userCmd'}"
         ;;
     *)
-        _color=0F
+        export GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
         ;;
 esac
-
-_gwProduct=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
-
-if [ ${UNAME%%_*} = "CYGWIN" ]; then
-    _shell=GWSt_${GW_PL}-${_gwProduct}.lnk
-    if [ ! -e $_shell ]; then
-        echo "# Creating shortcut..."
-        COMSPEC=`cygpath -au $COMSPEC`
-        _desc="${GW_PLATFORM}_${GW_PRODUCT}"
-        _icon=/c/Guidewire/icons/${_gwProduct}_favicon.ico
-
-        _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=. ${COMSPEC}"
-        echo ${_mkshortcut}
-        echo
-        ${_dry_run:-eval} $_mkshortcut
-    fi
-else
-    _shell=$COMSPEC
-fi
 
 echoVar() {
     typeset -p $* | sed 's/^declare\( -x\)* / /'
     echo
 }
 
+export CMD="$GW_START_SCRIPT ${_userCmd}"
+
 echo
-echo " # Execute \$CMD in a high-priority window ${TITLE:+titled \$TITLE}${_color:+ and colored \$_color}"
-echoVar CMD TITLE _color _shell
+echo " # Execute \$CMD in a high-priority window ${GW_TITLE:+titled \$GW_TITLE}${GW_COLOR:+ and colored \$GW_COLOR}"
+echoVar CMD GW_TITLE
 
-_start='cmd.exe /C start'
-if [ -z "$ifGit" ]; then
-    _start='start'
-fi
+_gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
+_iconBase=/Guidewire/icons/${_gwProduct_upcase}_favicon
 
-[ -z "$_dry_run" ] && set -x
-${_dry_run}${_start}${_size} /HIGH $_shell ${_terminate:-/K} "${_color:+color $_color & }title $TITLE & set CMD=${CMD} & %CMD%"
+[ -n "$_dry_run" ] && set -x
+
+case $UNAME in
+    CYGWIN*)
+        if [ ${GW_START_DIR} = "." ]; then
+            GW_START_DIR=`pwd`
+        fi
+        _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
+        echoVar _shell
+        _priority=' /HIGH'
+        if [ ! -e $_shell ]; then
+            echo '# Creating shortcut...'
+            COMSPEC=`cygpath -au $COMSPEC`
+            _desc="${GW_PLATFORM}_${GW_PRODUCT}"
+            _icon=/c${_iconBase}.ico
+
+            _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
+            echo ${_mkshortcut}
+            echo
+            ${_dry_run:-eval} $_mkshortcut
+        fi
+        _start='cmd.exe /C start'
+        if [ -z "$ifGit" ]; then
+            _start='start'
+        fi
+
+        ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
+        ;;
+
+    Linux)
+        if [ -n ${GW_START_DIR} -a ${GW_START_DIR} != "." ]; then
+            cd $GW_START_DIR
+        fi
+
+        _icon=/windows${_iconBase}.png
+        [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
+        ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+        echo In `pwd`
+        echo $CMD
+        if [ -z $_dry_run ]; then
+            # if [[ "$CMD" =~ studio ]]; then
+            #     eval $CMD &
+            # else
+                eval $CMD
+            # fi
+        fi
+        ;;
+esac
