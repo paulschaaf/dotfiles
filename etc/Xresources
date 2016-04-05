@@ -1,5 +1,5 @@
-! -*- compile-command: (concat "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge " buffer-file-name); comment-start: "! " -*-
 ! -*- compile-command: (concat "xrdb -override " buffer-file-name) -*-
+! -*- compile-command: (concat "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge " buffer-file-name); comment-start: "! " -*-
 
 ! geometry: WxH[+-]posX[+-]posY
 
@@ -52,6 +52,9 @@ Rxvt*termName: rxvt
 ! xterm
 !	less /etc/X11/app-defaults/XTerm
 !	VT100.utf8Fonts.font4: -misc-fixed-medium-r-normal-*-*-100-*-*-*-*-iso10646-1
+xterm*background: black
+xterm*foreground: white
+
 XTerm*background: black
 XTerm*foreground: white
 
@@ -80,6 +83,7 @@ xscreen*background: black
 xscreen*foreground: white
 xscreen*saveLines: 3000
 xscreen*scrollBar: false
+xscreen*geometry: 80x78
 
 
 ! ssh satori '/bin/zsh -ilc vncserver -geometry 1540x1140 -depth 16 -desktop "satori (pschaaf)"'

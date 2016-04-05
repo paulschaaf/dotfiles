@@ -1,0 +1,71 @@
+#!/bin/bash
+dry_run=''
+while [ -n "$*" ]; do
+   echo arg=\'$1\'
+   case $1 in
+       --dry[-_]run)
+           dry_run='echo '
+           ;;
+       --force)
+           force='--force '
+           ;;
+       --)
+           shift
+           break
+           ;;
+       -*)
+           echo Unknown option \'$arg\'
+           exit 1
+           ;;
+       *)
+           break
+           ;;
+   esac
+   shift
+done
+
+cd $1
+destRoot=`pwd`
+if [ ! -d $destRoot ]; then
+    echo Destination directory ${destRoot//$HOME/\~} does not exist!
+    exit 1
+fi
+
+cd ${0%/*}
+sourceRoot=`pwd`
+
+subdirs=`find $sourceRoot -mindepth 1 -maxdepth 1 -type d ! -name '.*' -printf '%f\n' | sort`
+for subdir in $subdirs; do
+    echo "
+---------------
+INSTALLING: $subdir"
+    sourceSubdir=${sourceRoot}/${subdir}
+    destSubdir=${destRoot}/${subdir}
+    if [ -d ${destSubdir} ]; then
+        echo '
+--Making existing subdirectories writable'
+        find ${destSubdir} -type d -exec ${dry_run}chmod u+w {} +
+
+        echo '
+--Deleting all symlinks'
+        ${dry_run}find ${destSubdir} -type l -exec rm -f {} +
+    fi
+    echo '
+--Creating new subdirectories and symlinking to contents'
+    ${dry_run}cp ${force}--recursive --symbolic-link ${sourceSubdir} ${destRoot} 2>&1 | grep -v '.* are the same file'
+
+#    find -type d -exec '[ -f "{}/Makefile" ] && make --directory "{}"' \;
+    if [ -f ${destSubdir}/Makefile ]; then
+        echo '
+--Running Makefile'
+        make --directory ${destSubdir}
+     fi
+
+    echo '
+--Making all subdirectories read-only'
+    find ${destSubdir} -type d -exec ${dry_run}chmod a-w {} +
+
+    echo '
+--Report any differences'
+    ${dry_run}diff --brief --recursive ${sourceSubdir} ${destSubdir} | sed 's_^HOME_~_'
+done
