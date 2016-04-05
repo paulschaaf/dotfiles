@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# set up the environment given the current directory
+source ~/bin/gwSetEnv
+
+cd $IDEA_HOME/bin
+
+exec ./idea.sh
+

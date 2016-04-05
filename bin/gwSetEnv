@@ -1,41 +1,111 @@
 #!/bin/bash
 
-# keep only the first two dir names (implemented as all of
-# the word chars immediately surrounding the first slash)
-_firstTwoRootDirs=`pwd | sed 's_^\W*\(\w*/\w*\).*$_\1_'`
+# case $PWD in
+#     */carbon/*)
+#         export GW_PLATFORM=carbon
+#         ;;
+#     */diamond/*)
+#         export GW_PLATFORM=diamond
+#         ;;
+#     */emerald/*)
+#         export GW_PLATFORM=emerald
+#         ;;
+#     */ferrite/*)
+#         export GW_PLATFORM=ferrite
+#         ;;
+#     *)
+#         echo "Could not determine platform version!" >&2
+#         exit 1
+#         ;;
+# esac
 
-function export_print() {
-    _varnames=''
-    for declaration in $*; do
-        builtin export $declaration
-        _varnames=${declaration%%=*}' '$_varnames
-    done
-    typeset -p $_varnames | sed 's/^\(declare\|typeset\)\( -x\)* / /'
-}
+# export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
 
-# _firstTwoRootDirs is now PLATFORM/PRODUCT, so split it
-export_print GW_PLATFORM=${_firstTwoRootDirs%%/*}
-export_print GW_PRODUCT=${_firstTwoRootDirs#*/}
+# # take the uppercase of the first char
+# export GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
+# export TITLE="$GW_PL:$GW_PRODUCT"
 
-# take the uppercase of the first char
-export_print GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
+case `uname` in
+    CYGWIN*)
+        _script_extension=.bat
+        ;;
+    *)
+        if [ $GW_PLATFORM = "ferrite" ]; then
+            _script_extension=
+        else
+            _script_extension=.sh
+        fi
+        ;;
+esac
 
-if [ "$GW_PLATFORM" = "carbon" ]; then
-    IDEA_HOME=$IDEA11_HOME
-    JAVA_HOME=$JAVA16_HOME
-elif [ "$GW_PLATFORM" = "diamond" ]; then
-    IDEA_HOME=$IDEA12_HOME
-    JAVA_HOME=$JAVA16_HOME
-elif [ "$GW_PLATFORM" = "emerald" ]; then
-    IDEA_HOME=$IDEA12_HOME
-    JAVA_HOME=$JAVA17_HOME
-elif [ `pwd` = "/ferrite/mrg/pl/cc" ]; then
-    IDEA_HOME=$IDEA14_HOME
-    JAVA_HOME=$JAVA18_HOME
-else
-    IDEA_HOME=$IDEA14_HOME
-    JAVA_HOME=$JAVA18_HOME
-fi
-export_print IDEA_HOME JAVA_HOME
+export GW_START_SCRIPT=./gwb
+case $GW_PLATFORM in
+    carbon)
+        export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
+        export IDEA_HOME=$IDEA11_HOME
+        export JAVA_HOME=$JAVA6_HOME
+        ;;
+    diamond)
+        export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
+        export IDEA_HOME=$IDEA12_HOME
+        export JAVA_HOME=$JAVA6_HOME
+        ;;
+    emerald)
+        export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
+        export IDEA_HOME=$IDEA12_HOME
+        export JAVA_HOME=$JAVA7_HOME
+        ;;
+    ferrite)
+        export IDEA_HOME=$IDEA15_HOME
+        export JAVA_HOME=$JAVA8_HOME
+        ;;
+    *)
+        echo "Could not determine platform version!" >&2
+        exit 1
+        ;;
+esac
+
+
+_lib_jars='./lib/*jar'
+CLASSPATH=$JAVA_HOME/lib/\*jar:${CLASSPATH%:$_lib_jars}:$_lib_jars
+
+typeset -p AARDVARK_HOME ANT_HOME M2_HOME IDEA_HOME JAVA_HOME
+echo
 
 export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
+
+java -version
+
+case $GW_PRODUCT in
+    ab)
+        # bright white text on aqua
+        $ifCygwin export GW_COLOR=3F
+        ;;
+    bc)
+        # bright white text on red
+        $ifCygwin export GW_COLOR=2F
+        ;;
+    cc)
+        # bright white text on blue
+        $ifCygwin export GW_COLOR=1F
+        ;;
+    pc)
+        # bright white text on red
+        e$ifCygwin xport GW_COLOR=4F
+        ;;
+    *)
+        $ifCygwin export GW_COLOR=0F
+        ;;
+esac
+
+$ifCygwin typeset -p GW_COLOR
+typeset -p GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
+
+function echoList() {
+    for arg in $*; do
+        echo -e "\n$arg contains:"
+        eval echo \${${arg}} | tr ':' '\n' | cat -n
+    done
+}
+
+echoList PATH CLASSPATH

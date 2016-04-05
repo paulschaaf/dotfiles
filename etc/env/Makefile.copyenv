@@ -1,0 +1,11 @@
+RESOURCES=.zprofile .zshrc .zshenv
+COMPILED_RESOURCES=$(patsubst %,%.zwc,$(RESOURCES))
+
+all:	$(COMPILED_RESOURCES)
+
+$(COMPILED_RESOURCES):	%.zwc:	%
+	/usr/bin/zsh -c 'zcompile $^'
+	@echo
+
+$(RESOURCES):	%:	~pschaaf/%
+	cp -f $^ $@

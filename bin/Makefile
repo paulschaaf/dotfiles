@@ -62,8 +62,8 @@ ${HOME}/.profile:
 
 ssh_links:	${SSH_LINKS}
 
-${SSH_LINKS}:	ssh-to
-	@echo === Symbolically linking $@ to $?; ln -fs ../$? $@
+${SSH_LINKS}:	~/bin/quick-ssh/ssh-to
+	@echo === Symbolically linking $@ to $?; ln -fs $? $@
 #	${SOFT_LINK}
 
 links:	htmlman cygwin whereizd shortHostName $(shell xrescreen --synonyms) ${SSH-LINKS}
