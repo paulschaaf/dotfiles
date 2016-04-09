@@ -1,0 +1,388 @@
+<?xml version="1.0" ?>
+
+<project
+	name="Training Install Preparation"
+	default=""
+	basedir=".">
+	<description>
+		by Paul Schaaf 09/2008
+	</description>
+
+	<property file="bin/build.properties" />
+	<property file="build.properties" />
+
+	<property
+		name="install-directory"
+		value="." />
+
+	<property
+		name="modules-directory"
+		value="${install-directory}/modules" />
+
+	<property
+		name="config-directory"
+		value="${modules-directory}/configuration/config" />
+
+
+	<!-- =========================================================
+		==
+		==  Debugging
+		==
+		=========================================================== -->
+
+	<macrodef name="dump-property">
+		<attribute name="name" />
+		<attribute
+			name="level"
+			default="info" />
+		<sequential>
+			<echo
+				level="@{level}"
+				message="Property: @{name} = ${@{name}}" />
+		</sequential>
+	</macrodef>
+
+   <target name="dump-properties">
+     <!-- propertyregex
+          property="thisdir"
+          input="${basedir}"
+          regexp="[a-z]:(.*))"
+          replace="\1"
+          casesensitive="true" />
+
+     <dump-property name="thisdir" / -->
+     <dump-property name="basedir" />
+     <dump-property name="config-directory" />
+   </target>
+
+
+	<!-- =========================================================
+		==
+		==  External Processes
+		==
+		=========================================================== -->
+
+	<macrodef name="run">
+		<attribute name="executable" />
+		<attribute
+			name="arguments"
+			default="" />
+		<attribute
+			name="dir"
+			default="" />
+		<sequential>
+			<echo level="info">
+				<![CDATA[Running: [@{executable}] [@{arguments}] in [@{dir}]]]>
+			</echo>
+			<exec
+				spawn="true"
+				dir="@{dir}"
+				executable="@{executable}">
+				<arg line="@{arguments}" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="console">
+		<attribute name="executable" />
+		<attribute
+			name="arguments"
+			default="" />
+		<attribute
+			name="dir"
+			default="" />
+
+		<attribute
+			name="colors"
+			default="" />
+		<attribute
+			name="size"
+			default="" />
+		<attribute
+			name="title"
+			default="${registry.release} - ${application.url}" />
+
+		<sequential>
+			<condition
+				property="colors"
+				value="@{colors}">
+				<not>
+					<equals
+						arg1="@{colors}"
+						arg2="" />
+				</not>
+			</condition>
+			<condition
+				property="colors"
+				value="${dos.colors}">
+				<equals
+					arg1="@{executable}"
+					arg2="${dos.shell}" />
+			</condition>
+			<property
+				name="colors"
+				value="" />
+
+			<echo level="debug">
+				<![CDATA[executable = '@{executable}'
+				dos.shell = '${dos.shell}']]>
+			</echo>
+
+			<run
+				dir="@{dir}"
+				executable="${dos.shell}"
+				arguments="/C start '&quot;@{title}&quot;' @{size} @{executable} ${colors} @{arguments}" />
+		</sequential>
+	</macrodef>
+
+
+	<!-- =========================================================
+		==
+		==  Guidewire Tools
+		==
+		=========================================================== - ->
+
+	<macrodef name="run-gw-tool">
+		<attribute name="classname" />
+		<attribute name="message" />
+		<element name="args" />
+		<sequential>
+			<path id="build.classpath">
+				<fileset dir="${basedir}/toolkit/lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</path>
+			<echo
+				level="info"
+				message="@{message}" />
+			<java
+				classname="@{classname}"
+				classpathref="build.classpath">
+				<arg value="-password" />
+				<arg value="gw" />
+				<arg value="-server" />
+				<arg value="${application.url}" />
+				<args />
+			</java>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="gw-import">
+		<attribute name="filenamelist" />
+		<attribute
+			name="dataset"
+			default="0" />
+		<attribute name="description" />
+		<sequential>
+			<run-gw-tool
+				classname="com.guidewire.cc.webservices.cmdline.ImportToolsMain"
+				message="Importing @{description}">
+				<args>
+					<arg value="-import" />
+					<arg value="@{filenamelist}" />
+					<arg value="-dataset" />
+					<arg value="@{dataset}" />
+				</args>
+			</run-gw-tool>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="gw-maintenance">
+		<attribute name="process" />
+		<attribute
+			name="message"
+			default="" />
+		<sequential>
+			<run-gw-tool
+				classname="com.guidewire.cc.webservices.cmdline.CCMaintenanceToolsMain"
+				message="@{message}">
+				<args>
+					<arg value="-startprocess" />
+					<arg value="@{process}" />
+				</args>
+			</run-gw-tool>
+		</sequential>
+	</macrodef>
+   -->
+
+	<!-- =========================================================
+		==
+		== Main Tasks
+		==
+		=========================================================== -->
+
+   <target
+        name="all"
+        description=""
+        depends="update-config-files,regen-toolkit,regen-dictionary">
+     <echo
+          level="info"
+          message="You may also want to run
+                   ant write-protect-base-files"/>
+   </target>
+
+   <target
+        name="update-config-files"
+        description=""
+        depends="config.xml,build.properties,logging.properties"/>
+
+
+	<!-- =========================================================
+		==
+		== Optional Tasks
+		==
+		=========================================================== -->
+
+	<target
+		name="write-protect-base-files"
+		description="">
+     <!-- The chmod task isn't supported on Windows! -->
+     <chmod
+          perm="a-w"
+          type="both">
+       <fileset dir="${modules-directory}">
+         <exclude name="**/configuration/*"/>
+       </fileset>
+     </chmod>
+     <!-- The attrib task isn't supported on Unix! -->
+     <attrib readonly="true">
+       <fileset dir="${modules-directory}">
+         <exclude name="**/configuration/*"/>
+       </fileset>
+     </attrib>
+   </target>
+
+
+	<!-- =========================================================
+		==
+		== config.xml
+		==
+		=========================================================== -->
+
+   <target
+        name="config.xml"
+        description=""
+        depends="Enable incremental PCF compliation,Enable internal debug tools,Fix the database path"/>
+
+   <target
+        name="Enable incremental PCF compliation"
+        description="">
+      <replace
+          file="${config-directory}/config.xml"
+          token="PCFVerificationMode&quot; value=&quot;all&quot;"
+          value="PCFVerificationMode&quot; value=&quot;incremental&quot;" />
+   </target>
+
+   <target
+        name="Enable internal debug tools"
+        description="">
+     <replace
+          file="${config-directory}/config.xml"
+          token="EnableInternalDebugTools&quot; value=&quot;false&quot;"
+          value="EnableInternalDebugTools&quot; value=&quot;true&quot;" />
+   </target>
+
+   <target
+        name="Fix the database path"
+        description="">
+     <replace
+          file="${config-directory}/config.xml"
+          token="jdbc:h2:file:/tmp/guidewire"
+          value="jdbc:h2:file:/GWTraining/ClaimCenter/db" />
+	</target>
+
+
+	<!-- =========================================================
+		==
+		== build.properties
+		==
+		=========================================================== -->
+
+	<target
+		name="build.properties"
+		description="Setting memory parameters in build.properties">
+     <concat
+          append="true"
+          destfile="bin/build.properties">
+dev.server.memory.args = -Xms1024m -Xmx1024m -XX:MaxPermSize=128m -XX:PermSize=128m
+studio.memory.args     = -Xms768m  -Xmx768m  -XX:MaxPermSize=128m -XX:PermSize=128m
+</concat>
+	</target>
+
+
+	<!-- =========================================================
+		==
+		== logging.properties
+		==
+		=========================================================== -->
+
+	<target
+		name="logging.properties"
+		description="Changing logging directory">
+     <replace
+          file="${config-directory}/logging/logging.properties"
+          token="/tmp/gwlogs"
+          value="/GWTraining" />
+	</target>
+
+
+	<!-- =========================================================
+		==
+		== Regeneration
+		==
+		=========================================================== -->
+
+	<target
+		name="regen-toolkit"
+		description="">
+     <!-- <run
+     ....      dir="bin"
+     ....      executable="gw-cc.bat"
+     ....      arguments="regen-toolkit"/> -->
+     <ant
+          dir="bin"
+          target="regen-toolkit"/>
+	</target>
+
+	<target
+		name="regen-dictionary"
+		description="">
+     <ant
+          dir="bin"
+          target="regen-dictionary"/>
+	</target>
+
+
+	<!-- =========================================================
+		==
+		== Server Tasks
+		==
+		=========================================================== -->
+
+	<target
+		name="dev-start"
+		description="">
+     <ant
+          dir="bin"
+          target="dev-start"/>
+	</target>
+
+	<target
+		name="dev-import"
+		description="">
+     <ant
+          dir="bin"
+          target="dev-import"/>
+	</target>
+
+	<target
+		name="studio"
+		description="">
+     <ant
+          dir="bin"
+          target="studio"/>
+	</target>
+
+
+
+</project>

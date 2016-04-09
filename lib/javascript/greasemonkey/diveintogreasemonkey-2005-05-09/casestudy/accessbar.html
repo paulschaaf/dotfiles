@@ -1,0 +1,358 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>5.8.&nbsp;Case study: Access Bar [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;5.&nbsp;Case Studies">
+      <link rel="prev" href="zoomtextarea.html" title="5.7.&nbsp;Case study: Zoom Textarea">
+      <link rel="next" href="../advanced/index.html" title="Chapter&nbsp;6.&nbsp;Advanced Topics">
+   </head>
+   <body id="diveintogreasemonkey-org" class="casestudy-accessbar">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Case Studies</a> &#8594; <span class="thispage">Case study: Access Bar</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="casestudy.accessbar" class="skip" href="#casestudy.accessbar" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 5.8.&nbsp;Case study: Access Bar
+                        </h2>
+                     </div>
+                     <div>
+                        <h3 class="subtitle">Displaying accesskeys in a fixed status bar</h3>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Access Bar displays accesskeys defined on a web page.  Accesskeys are an accessibility feature that allow you to jump to a
+                              specific link or form field with a keyboard shortcut defined by the page author.  (<a href="http://diveintoaccessibility.org/day_15_defining_keyboard_shortcuts.html">Learn more about accesskeys</a>.)
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <p>Firefox supports accesskeys, but it does not display which keys are defined on a page.  Thus, Access Bar was born.</p>
+               <div class="example"><a name="example.casestudy.accessbar" class="skip" href="#example.casestudy.accessbar" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;<a href="http://diveintogreasemonkey.org/download/accessbar.user.js" title="Download Access Bar"><code class="filename">accessbar.user.js</code></a></h3><pre class="programlisting ">// ==UserScript==
+// @name          Access Bar
+// @namespace     http://diveintogreasemonkey.org/download/
+// @description   show accesskeys defined on page
+// @include       *
+// ==/UserScript==
+
+function addGlobalStyle(css) {
+    var head, style;
+    head = document.getElementsByTagName('head')[0];
+    if (!head) { return; }
+    style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+    head.appendChild(style);
+}
+
+var akeys, descriptions, a, desc, label, div;
+akeys = document.evaluate(
+    "//*[@accesskey]",
+    document,
+    null,
+    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+    null);
+if (!akeys.snapshotLength) { return; }
+descriptions = new Array();
+desc = '';
+for (var i = 0; i &lt; akeys.snapshotLength; i++) {
+    a = akeys.snapshotItem(i);
+    desctext = '';
+    if (a.nodeName == 'INPUT') {
+        label = document.evaluate("//label[@for='" + a.name + "']",
+            document,
+            null,
+            XPathResult.FIRST_ORDERED_NODE_TYPE,
+            null).singleNodeValue;
+        if (label) {
+            desctext = label.title;
+            if (!desctext) { desctext = label.textContent; }
+        }
+    }
+    if (!desctext) { desctext = a.textContent; }
+    if (!desctext) { desctext = a.title; }
+    if (!desctext) { desctext = a.name; }
+    if (!desctext) { desctext = a.id; }
+    if (!desctext) { desctext = a.href; }
+    if (!desctext) { desctext = a.value; }
+    desc = '&lt;strong&gt;[' +
+        a.getAttribute('accesskey').toUpperCase() + ']&lt;/strong&gt; ';
+    if (a.href) {
+        desc += '&lt;a href="' + a.href + '"&gt;' + desctext + '&lt;/a&gt;';
+    } else {
+        desc += desctext;
+    }
+    descriptions.push(desc);
+}
+descriptions.sort();
+div = document.createElement('div');
+div.id = 'accessbar-div-0';
+desc = '&lt;div&gt;&lt;ul&gt;&lt;li class="first"&gt;' + descriptions[0] + '&lt;/li&gt;';
+for (var i = 1; i &lt; descriptions.length; i++) {
+    desc = desc + '&lt;li&gt;' + descriptions[i] + '&lt;/li&gt;';
+}
+desc = desc + '&lt;/ul&gt;&lt;/div&gt;';
+div.innerHTML = desc;
+document.body.style.paddingBottom = "4em";
+window.addEventListener(
+    "load",
+    function() {
+        document.body.appendChild(div);
+    },
+    true);
+addGlobalStyle(
+'#accessbar-div-0 {'+
+'  position: fixed;' +
+'  left: 0;' +
+'  right: 0;' +
+'  bottom: 0;' +
+'  top: auto;' +
+'  border-top: 1px solid silver;' +
+'  background: black;' +
+'  color: white;' +
+'  margin: 1em 0 0 0;' +
+'  padding: 5px 0 0.4em 0;' +
+'  width: 100%;' +
+'  font-family: Verdana, sans-serif;' +
+'  font-size: small;' +
+'  line-height: 160%;' +
+'}' +
+'#accessbar-div-0 a,' +
+'#accessbar-div-0 li,' +
+'#accessbar-div-0 span,' +
+'#accessbar-div-0 strong {' +
+'  background-color: transparent;' +
+'  color: white;' +
+'}' +
+'#accessbar-div-0 div {' +
+'  margin: 0 1em 0 1em;' +
+'}' +
+'#accessbar-div-0 div ul {' +
+'  margin-left: 0;' +
+'  margin-bottom: 5px;' +
+'  padding-left: 0;' +
+'  display: inline;' +
+'}' +
+'#accessbar-div-0 div ul li {' +
+'  margin-left: 0;' +
+'  padding: 3px 15px;' +
+'  border-left: 1px solid silver;' +
+'  list-style: none;' +
+'  display: inline;' +
+'}' +
+'#accessbar-div-0 div ul li.first {' +
+'  border-left: none;' +
+'  padding-left: 0;' +
+'}');</pre></div>
+               <p>The code breaks down into six steps:</p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>Define a helper function, <code class="function">addGlobalStyle</code></li>
+                     <li>Find all the page elements that include an <code class="sgmltag-attribute">accesskey</code> attribute
+                     </li>
+                     <li>Loop through those elements and determine the most appropriate text to describe each element</li>
+                     <li>Construct a sorted list of links to the <code class="sgmltag-attribute">accesskey</code>-enabled elements
+                     </li>
+                     <li>Add the sorted list to the page, using standard <code class="sgmltag-element">ul</code> and <code class="sgmltag-element">li</code> elements
+                     </li>
+                     <li>Style the list so it appears as a fixed faux-status-bar at the bottom of the viewport</li>
+                  </ol>
+               </div>
+               <p>First things first.  I need a helper function, <code class="function">addGlobalStyle</code>, to inject my own CSS styles (used in step 6).  See <a href="../patterns/add-css.html" title="4.13.&nbsp;Adding CSS styles">Adding CSS styles</a> for more details on this pattern.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">function addGlobalStyle(css) {
+    var head, style;
+    head = document.getElementsByTagName('head')[0];
+    if (!head) { return; }
+    style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+    head.appendChild(style);
+}</pre></div>
+               <p>Step 2 gets a list of all the page elements that contain an <code class="sgmltag-attribute">accesskey</code> attribute.  This is easy with Firefox's XPath support.  Note that if the XPath query returns no results, I simply bail, since
+                  there will be nothing to display.  See <a href="../patterns/match-attribute.html" title="4.6.&nbsp;Doing something for every element with a certain attribute">Doing something for every element with a certain attribute</a> for more information on this pattern.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">var akeys, descriptions, a, i, desc, label, div;
+akeys = document.evaluate(
+    "//*[@accesskey]",
+    document,
+    null,
+    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+    null);
+if (!akeys.snapshotLength) { return; }</pre></div>
+               <p>Step 3, constructing the list of suitable descriptions for each <code class="sgmltag-attribute">accesskey</code>-enabled element, is the most complicated part of the script.  The problem is that <code class="sgmltag-attribute">accesskey</code> attributes can appear in several different <acronym title="HyperText Markup Language">HTML</acronym> elements.
+               </p>
+               <p>An <code class="sgmltag-element">input</code> element in a form can define an <code class="sgmltag-attribute">accesskey</code>.  <code class="sgmltag-element">input</code> elements may or may not have an associated <code class="sgmltag-element">label</code> that contains an associated text label for the <code class="sgmltag-element">input</code> field.  If so, the <code class="sgmltag-element">label</code> may contain a <code class="sgmltag-attribute">title</code> attribute that gives even more detailed information about the <code class="sgmltag-element">input</code> field.  Or the <code class="sgmltag-element">label</code> attribute may simply contain text.  Or the <code class="sgmltag-element">input</code> element may have no associated label at all, in which case the <code class="sgmltag-attribute">value</code> attribute of the <code class="sgmltag-element">input</code> element is the best I can do.
+               </p>
+               <p>On the other hand, the <code class="sgmltag-element">label</code> itself can define the <code class="sgmltag-attribute">accesskey</code>, instead of the <code class="sgmltag-element">input</code> element the label describes.  Again, I'll look for a description the <code class="sgmltag-attribute">title</code> attribute of the <code class="sgmltag-element">label</code> element, but fall back to the text of the label if no <code class="sgmltag-attribute">title</code> attribute is present.
+               </p>
+               <p>A link can also define an <code class="sgmltag-attribute">accesskey</code> attribute.  If so, the link text is the obvious choice.  But if the link has no text (for example, if it only contains an
+                  image), then the link's <code class="sgmltag-attribute">title</code> attribute is the next place to look.  If the link contains no text and no <code class="sgmltag-attribute">title</code>, I fall back to the link's <code class="sgmltag-attribute">name</code> attribute, and failing that, the link's <code class="sgmltag-element">id</code> attribute.
+               </p>
+               <p>Ain't heuristics a bitch?  Here's the full algorithm.  Remember, <code class="varname">akeys</code> is an <code class="classname">XPathResult</code> object, so I need to get each result by calling <code class="methodname">akeys.snapshotItem(i)</code>.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">descriptions = new Array();
+desc = '';
+for (var i = 0; i &lt; akeys.snapshotLength; i++) {
+    a = akeys.snapshotItem(i);
+    desctext = '';
+    if (a.nodeName == 'INPUT') {
+        label = document.evaluate("//label[@for='" + a.name + "']",
+            document,
+            null,
+            XPathResult.FIRST_ORDERED_NODE_TYPE,
+            null).singleNodeValue;
+        if (label) {
+            desctext = label.title;
+            if (!desctext) { desctext = label.textContent; }
+        }
+    }
+    if (!desctext) { desctext = a.textContent; }
+    if (!desctext) { desctext = a.title; }
+    if (!desctext) { desctext = a.name; }
+    if (!desctext) { desctext = a.id; }
+    if (!desctext) { desctext = a.href; }
+    if (!desctext) { desctext = a.value; }
+    desc = '&lt;strong&gt;[' +
+        a.getAttribute('accesskey').toUpperCase() + ']&lt;/strong&gt; ';
+    if (a.href) {
+        desc += '&lt;a href="' + a.href + '"&gt;' + desctext + '&lt;/a&gt;';
+    } else {
+        desc += desctext;
+    }
+    descriptions.push(desc);
+}</pre></div>
+               <p>Step 4 is simple, since Javascript arrays have a <code class="methodname">sort</code> method that sorts the array in place.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">descriptions.sort();</pre></div>
+               <p>Step 5 creates the <acronym title="HyperText Markup Language">HTML</acronym> to render the list of <code class="sgmltag-attribute">accesskey</code>-enabled elements.  I create a wrapper <code class="sgmltag-element">&lt;div&gt;</code>, construct the <acronym title="HyperText Markup Language">HTML</acronym> for the list of accesskeys as a string, set the wrapper <code class="sgmltag-element">&lt;div&gt;</code>'s <code class="property">innerHTML</code> property, and finally add it to the end of the page.  Because of when user scripts are executed, complex changes to a page
+                  should be delayed until after the page is done loading, so I use <code class="methodname">window.addEventListener</code> to add an <code class="systemitem">onload</code> event that adds the wrapper <code class="sgmltag-element">&lt;div&gt;</code> to the page.
+               </p>
+               <p>See <a href="../patterns/innerhtml.html" title="4.11.&nbsp;Inserting complex HTML quickly">Inserting complex <acronym title="HyperText Markup Language">HTML</acronym> quickly</a> for more information on the use of <code class="property">innerHTML</code>, and <a href="../patterns/onload.html" title="4.16.&nbsp;Post-processing a page after it renders">Post-processing a page after it renders</a> for information on the use of <code class="methodname">window.addEventListener</code>.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">div = document.createElement('div');
+div.id = 'accessbar-div-0';
+desc = '&lt;div&gt;&lt;ul&gt;&lt;li class="first"&gt;' + descriptions[0] + '&lt;/li&gt;';
+for (var i = 1; i &lt; descriptions.length; i++) {
+    desc = desc + '&lt;li&gt;' + descriptions[i] + '&lt;/li&gt;';
+}
+desc = desc + '&lt;/ul&gt;&lt;/div&gt;';
+div.innerHTML = desc;
+document.body.style.paddingBottom = "4em";
+window.addEventListener(
+    "load",
+    function() {
+        document.body.appendChild(div);
+    },
+    true);</pre></div>
+               <p>Finally, in step 6, I add my own set of CSS declarations to the page so that the <acronym title="HyperText Markup Language">HTML</acronym> I'm injecting will look pretty.  (Specifically, it will appear as a fixed black bar along the bottom of the page, that stays
+                  in view even as you scroll the page.  This is made possible by Firefox's support for the <code class="literal">position:fixed</code> display type.)  See <a href="../patterns/add-css.html" title="4.13.&nbsp;Adding CSS styles">Adding CSS styles</a> for more information.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">addGlobalStyle(
+'#accessbar-div-0 {'+
+'  position: fixed;' +
+'  left: 0;' +
+'  right: 0;' +
+'  bottom: 0;' +
+'  top: auto;' +
+'  border-top: 1px solid silver;' +
+'  background: black;' +
+'  color: white;' +
+'  margin: 1em 0 0 0;' +
+'  padding: 5px 0 0.4em 0;' +
+'  width: 100%;' +
+'  font-family: Verdana, sans-serif;' +
+'  font-size: small;' +
+'  line-height: 160%;' +
+'}' +
+'#accessbar-div-0 a,' +
+'#accessbar-div-0 li,' +
+'#accessbar-div-0 span,' +
+'#accessbar-div-0 strong {' +
+'  background-color: transparent;' +
+'  color: white;' +
+'}' +
+'#accessbar-div-0 div {' +
+'  margin: 0 1em 0 1em;' +
+'}' +
+'#accessbar-div-0 div ul {' +
+'  margin-left: 0;' +
+'  margin-bottom: 5px;' +
+'  padding-left: 0;' +
+'  display: inline;' +
+'}' +
+'#accessbar-div-0 div ul li {' +
+'  margin-left: 0;' +
+'  padding: 3px 15px;' +
+'  border-left: 1px solid silver;' +
+'  list-style: none;' +
+'  display: inline;' +
+'}' +
+'#accessbar-div-0 div ul li.first {' +
+'  border-left: none;' +
+'  padding-left: 0;' +
+'}');</pre></div>
+               <div class="download">
+                  <h3>Download</h3>
+                  <ul>
+                     <li><a href="http://diveintogreasemonkey.org/download/accessbar.user.js"><code class="filename">accessbar.user.js</code></a></li>
+                  </ul>
+               </div>
+               <div class="seealso">
+                  <h3>See also</h3>
+                  <ul>
+                     <li><a href="../patterns/add-css.html" title="4.13.&nbsp;Adding CSS styles">Adding CSS styles</a></li>
+                     <li><a href="../patterns/match-attribute.html" title="4.6.&nbsp;Doing something for every element with a certain attribute">Doing something for every element with a certain attribute</a></li>
+                     <li><a href="../patterns/innerhtml.html" title="4.11.&nbsp;Inserting complex HTML quickly">Inserting complex <acronym title="HyperText Markup Language">HTML</acronym> quickly</a></li>
+                     <li><a href="../patterns/onload.html" title="4.16.&nbsp;Post-processing a page after it renders">Post-processing a page after it renders</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="zoomtextarea.html">Case study: Zoom Textarea</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="../advanced/index.html">Advanced Topics</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

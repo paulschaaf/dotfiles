@@ -1,0 +1,121 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>3.2.&nbsp;Logging with GM_log [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;3.&nbsp;Debugging User Scripts">
+      <link rel="prev" href="javascript-console.html" title="3.1.&nbsp;Tracking crashes with JavaScript Console">
+      <link rel="next" href="dom-inspector.html" title="3.3.&nbsp;Inspecting elements with DOM Inspector">
+   </head>
+   <body id="diveintogreasemonkey-org" class="debug-gmlog">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Debugging User Scripts</a> &#8594; <span class="thispage">Logging with GM_log</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="debug.gmlog" class="skip" href="#debug.gmlog" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 3.2.&nbsp;Logging with <code class="function">GM_log</code></h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Greasemonkey provides a logging function, <code class="function">GM_log</code>, that allows you to write messages to JavaScript Console.  Such messages should be taken out before release, but they are
+                              enormously helpful in debugging.  Plus, watching the console pile up with log messages is much more satisfying than sprinkling
+                              alerts throughout your code and clicking <span><strong class="guibutton">OK</strong></span> over and over.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <p><code class="function">GM_log</code> takes one argument, the string to be logged.  After logging to JavaScript Console, the user script will continue executing
+                  normally.
+               </p>
+               <div class="example"><a name="example.gmlog" class="skip" href="#example.gmlog" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Write to JavaScript Console and continue (<a href="http://diveintogreasemonkey.org/download/gmlog.user.js"><code class="filename">gmlog.user.js</code></a>)
+                  </h3><pre class="programlisting ">
+if (/^http:\/\/diveintogreasemonkey\.org\//.test(window.location.href)) {
+    GM_log('running on Dive Into Greasemonkey site w/o www prefix');
+} else {
+    GM_log('running elsewhere');
+}
+GM_log('this line is always printed');
+</pre></div>
+               <p>If you install this user script and open <a href="http://diveintogreasemonkey.org/">http://diveintogreasemonkey.org/</a>, these two lines will appear in JavaScript Console:
+               </p>
+               <div class="informalexample"><pre class="screen"><span class="computeroutput">Greasemonkey: http://diveintomark.org/projects/greasemonkey//Test Log:
+running on Dive Into Greasemonkey site w/o www prefix</span>
+<span class="computeroutput">Greasemonkey: http://diveintomark.org/projects/greasemonkey//Test Log:
+this line is always printed</span></pre></div>
+               <p>As you can see, Greasemonkey includes the namespace and script name, taken from the <a href="../helloworld/metadata.html" title="2.2.&nbsp;Describing your user script with metadata">user script's metadata section</a>, then the message that was passed as an argument to <code class="function">GM_log</code>.
+               </p>
+               <p>If you visit somewhere other than <a href="http://diveintogreasemonkey.org/">http://diveintogreasemonkey.org/</a>, these two lines will appear in JavaScript Console:
+               </p>
+               <div class="informalexample"><pre class="screen"><span class="computeroutput">Greasemonkey: http://diveintomark.org/projects/greasemonkey//Test Log:
+running elsewhere</span>
+<span class="computeroutput">Greasemonkey: http://diveintomark.org/projects/greasemonkey//Test Log:
+this line is always printed</span></pre></div>
+               <p>I tried and failed to find a length limit for logged messages.  It is larger than 255 characters.  Plus, lines in JavaScript
+                  Console wrap properly, so you can always scroll down to see the rest of your log message.  Go nuts with logging!
+               </p>
+               <div class="tip">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Tip]" src="../images/tip.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>In JavaScript Console, you can right-click (Mac users control-click) on any line and select <span><strong class="guimenuitem"><span class="accel">C</span>opy</strong></span> to copy it to the clipboard.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <div class="seealso">
+                  <h3>See also</h3>
+                  <ul>
+                     <li><a href="../api/gm_log.html" title="GM_log"><span class="refentrytitle">GM_log</span></a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="javascript-console.html">Tracking crashes with JavaScript Console</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="dom-inspector.html">Inspecting elements with DOM Inspector</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

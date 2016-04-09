@@ -1,0 +1,111 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>4.16.&nbsp;Post-processing a page after it renders [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;4.&nbsp;Common Patterns">
+      <link rel="prev" href="set-style.html" title="4.15.&nbsp;Setting an element's style">
+      <link rel="next" href="case-insensitive.html" title="4.17.&nbsp;Matching case-insensitive attribute values">
+   </head>
+   <body id="diveintogreasemonkey-org" class="pattern-postprocess">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Common Patterns</a> &#8594; <span class="thispage">Post-processing a page after it renders</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="pattern.postprocess" class="skip" href="#pattern.postprocess" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 4.16.&nbsp;Post-processing a page after it renders
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Because of how Firefox stores a rendered page internally, large changes to the page's DOM should be done <span class="emphasis"><em>after</em></span> the page is finished loading.  You can delay processing of a function using the <code class="function">addEventListener</code> function.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="example"><a name="example.pattern.addeventlistener" class="skip" href="#example.pattern.addeventlistener" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Replace an entire page with custom content</h3><pre class="programlisting ">var newBody = 
+'&lt;html&gt;' +
+'&lt;head&gt;' +
+'&lt;title&gt;My New Page&lt;/title&gt;' +
+'&lt;/head&gt;' +
+'&lt;body&gt;' +
+'&lt;p&gt;This page is a complete replacement of the original.&lt;/p&gt;' +
+'&lt;/body&gt;' +
+'&lt;/html&gt;';
+window.addEventListener(
+    'load', 
+    function() { document.body.innerHTML = newBody; },
+    true);</pre></div>
+               <p>Looking closely at this code, you might naturally wonder why it works at all.  I am declaring an anonymous function to pass
+                  as the second argument to <code class="methodname">window.addEventListener</code>, which accesses the <code class="varname">newBody</code> variable defined in the outer function.  This is called a &#8220;<span class="quote">closure</span>&#8221;, and is perfectly legal in Javascript.  In general, an &#8220;<span class="quote">inner</span>&#8221; function defined within an &#8220;<span class="quote">outer</span>&#8221; function can access all of the outer function's local variables -- even after the outer function finishes executing.  This
+                  is a very powerful feature that makes it possible to create event handlers and other functions that contain data structures
+                  constructed at runtime.
+               </p>
+               <div class="tip">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Tip]" src="../images/tip.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>Zapping and replacing <code class="property">document.body.innerHTML</code> does not change everything about the page.  Anything defined in the <code class="sgmltag-element">&lt;head&gt;</code> of the original page will still be in effect, including the page title, CSS styles, and scripts.  You can modify or remove
+                              these separately.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <div class="usedby">
+                  <h3>Real examples</h3>
+                  <ul>
+                     <li><a href="http://diveintogreasemonkey.org/download/accessbar.user.js">Access Bar</a></li>
+                     <li><a href="http://diveintogreasemonkey.org/download/betterdir.user.js">BetterDir</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="set-style.html">Setting an element's style</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="case-insensitive.html">Matching case-insensitive attribute values</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<?xml-stylesheet type="text/xsl" href="products.xsl"?>
+
+<products>
+  <product id="cc">
+    <name>ClaimCenter</name>
+
+    <version number="2.0">
+      <url>http://odin/network/Builds/CC/2.0</url>
+      <has-screen>DataDictionary</has-screen>
+      <has-screen>InternalTools</has-screen>
+      <has-screen>SecurityDictionary</has-screen>
+    </version>
+
+    <version number="2.1.6">
+      <url>http://odin/network/Builds/CC/2.1/2.1.6.45_20050406.0130_50315</url>
+      <has-screen>DataDictionary</has-screen>
+      <has-screen>InternalTools</has-screen>
+      <has-screen>SecurityDictionary</has-screen>
+    </version>
+
+    <version number="3.0.1">
+      <url>http://odin/network/Builds/CC/3.0/3.0.1.33_20050302.1048_47537</url>
+      <has-screen>DataDictionary</has-screen>
+      <has-screen>InternalTools</has-screen>
+      <has-screen>SecurityDictionary</has-screen>
+    </version>
+
+    <version number="3.0.2">
+      <url>http://odin/network/Builds/CC/3.0/3.0.2.16_20050601.1512_54618</url>
+      <has-screen>DataDictionary</has-screen>
+      <has-screen>InternalTools</has-screen>
+      <has-screen>SecurityDictionary</has-screen>
+    </version>
+
+    <version number="Argo">
+      <url>http://odin/network/Builds/CC/Argo</url>
+      <has-screen>DataDictionary</has-screen>
+      <has-screen>InternalTools</has-screen>
+      <has-screen>SecurityDictionary</has-screen>
+    </version>
+
+    <screen id="DataDictionary">
+      <name>Data Dictionary</name>
+      <url>dictionary/data</url>
+      <description></description>
+    </screen>
+
+    <screen id="InternalTools">
+      <name>Internal Tools</name>
+      <url>InternalTools.do</url>
+      <description>Access to debugging tools</description>
+    </screen>
+
+    <screen id="SecurityDictionary">
+      <name>Security Dictionary</name>
+      <url>dictionary/security</url>
+      <description></description>
+    </screen>
+
+  </product>
+</products>

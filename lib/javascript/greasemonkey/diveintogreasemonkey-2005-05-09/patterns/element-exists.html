@@ -1,0 +1,87 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>4.3.&nbsp;Testing whether a page includes an HTML element [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;4.&nbsp;Common Patterns">
+      <link rel="prev" href="function-exists.html" title="4.2.&nbsp;Testing whether a Greasemonkey function is available">
+      <link rel="next" href="iterate-every-element.html" title="4.4.&nbsp;Doing something for every HTML element">
+   </head>
+   <body id="diveintogreasemonkey-org" class="pattern-testelement">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Common Patterns</a> &#8594; <span class="thispage">Testing whether a page includes an HTML element</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="pattern.testelement" class="skip" href="#pattern.testelement" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 4.3.&nbsp;Testing whether a page includes an <acronym title="HyperText Markup Language">HTML</acronym> element
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>You can use the <code class="function">getElementsByTagName</code> function to test whether an <acronym title="HyperText Markup Language">HTML</acronym> element exists on a page.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="example"><a name="example.pattern.testelement" class="skip" href="#example.pattern.testelement" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Check if the page contains a <code class="sgmltag-element">&lt;textarea&gt;</code></h3><pre class="programlisting ">var textareas = document.getElementsByTagName('textarea');
+if (textareas.length) {
+    // there is at least one textarea on this page
+} else {
+    // there are no textareas on this page
+}</pre></div>
+               <div class="usedby">
+                  <h3>Real examples</h3>
+                  <ul>
+                     <li><a href="http://diveintogreasemonkey.org/download/betterdir.user.js">BetterDir</a></li>
+                     <li><a href="http://diveintogreasemonkey.org/download/zoomtextarea.user.js">Zoom Textarea</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="function-exists.html">Testing whether a Greasemonkey function is available</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="iterate-every-element.html">Doing something for every HTML element</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

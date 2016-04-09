@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+
+<project name="edu-macros_ext"
+         basedir=".">
+	<description>
+		Property overrides and extensions to the general distribution.
+		No targets should be declared in this file.
+		Paul Schaaf 01/08
+	</description>
+
+	<!-- Read the local environment variables -.->
+	<property environment="env" />
+
+	<available
+		property="posix.shell.found"
+		file="${env.CYGROOT}\\bin\\zsh.exe"
+		value="${env.CYGROOT}\\bin\\zsh.exe -i" />
+	<property
+		name="posix.shell"
+		value="${posix.shell.found}" />
+	<!-.- -->
+
+	<property
+		name="posix.shell"
+		value="zsh -i" />
+
+	<property
+		name="tools.colors"
+		value="/T:37" />
+
+</project>

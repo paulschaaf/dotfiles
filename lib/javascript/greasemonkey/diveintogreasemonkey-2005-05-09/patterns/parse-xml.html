@@ -1,0 +1,130 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>4.23.&nbsp;Parsing XML [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;4.&nbsp;Common Patterns">
+      <link rel="prev" href="override-method.html" title="4.22.&nbsp;Overriding a built-in Javascript method">
+      <link rel="next" href="../casestudy/index.html" title="Chapter&nbsp;5.&nbsp;Case Studies">
+   </head>
+   <body id="diveintogreasemonkey-org" class="pattern-parsexml">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Common Patterns</a> &#8594; <span class="thispage">Parsing XML</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="pattern.parsexml" class="skip" href="#pattern.parsexml" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 4.23.&nbsp;Parsing <acronym title="Extensible Markup Language">XML</acronym></h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Firefox automatically parses the current page into a DOM, but you can also manually create a DOM out of any <acronym title="Extensible Markup Language">XML</acronym> string, either one you constructed yourself, or <acronym title="Extensible Markup Language">XML</acronym> that you retrieved from a remote location.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="example"><a name="example.pattern.parsexml.string" class="skip" href="#example.pattern.parsexml.string" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Parse an arbitrary string as <acronym title="Extensible Markup Language">XML</acronym></h3><pre class="programlisting ">var xmlString = '&lt;passwd&gt;' + 
+'  &lt;user id="101"&gt;' +
+'    &lt;login&gt;mark&lt;/login&gt;' + 
+'    &lt;group id="100"/&gt;' +
+'    &lt;displayname&gt;Mark Pilgrim&lt;/displayname&gt;' + 
+'    &lt;homedir&gt;/home/mark/&lt;/homedir&gt;' +
+'    &lt;shell&gt;/bin/bash&lt;/shell&gt;' +
+'  &lt;/user&gt;' +
+'&lt;/passwd&gt;'
+var parser = new DOMParser();
+var xmlDoc = parser.parseFromString(xmlString, "application/xml");</pre><p>The key here is the <code class="classname">DOMParser</code> object, which contains the <code class="methodname">parseFromString</code> method.  (It contains other methods too, but they are not useful to us here.)  Its <code class="methodname">parseFromString</code> method takes two arguments: the <acronym title="Extensible Markup Language">XML</acronym> string to parse, and the content type.  Both arguments are required.
+                  </p>
+               </div>
+               <div class="note">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Note]" src="../images/note.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>The <code class="classname">DOMParser</code>'s <code class="methodname">parseFromString</code> method takes a content type as its second parameter.  The method accepts <code class="systemitem">application/xml</code>, <code class="systemitem">application/xhtml+xml</code>, and <code class="systemitem">text/xml</code>.  For reasons that are too ridiculous to go into, you should always use <code class="systemitem">application/xml</code>.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <p>This pattern is especially powerful when you combine it with the <code class="function">GM_xmlhttpRequest</code> function to parse <acronym title="Extensible Markup Language">XML</acronym> from a remote source.
+               </p>
+               <div class="example"><a name="example.pattern.parsexml.url" class="skip" href="#example.pattern.parsexml.url" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Parse <acronym title="Extensible Markup Language">XML</acronym> from a remote source
+                  </h3><pre class="programlisting ">GM_xmlhttpRequest({
+    method: 'GET',
+    url: 'http://greaseblog.blogspot.com/atom.xml',
+    headers: {
+        'User-agent': 'Mozilla/4.0 (compatible) Greasemonkey/0.3',
+        'Accept': 'application/atom+xml,application/xml,text/xml',
+    },
+    onload: function(responseDetails) {
+        var parser = new DOMParser();
+        var dom = parser.parseFromString(responseDetails.responseText,
+            "application/xml");
+        var entries = dom.getElementsByTagName('entry');
+        var title;
+        for (var i = 0; i &lt; entries.length; i++) {
+            title = entries[i].getElementsByTagName('title')[0].textContent;
+            alert(title);
+        }
+    }
+});</pre><p>This code will load the Atom feed from <a href="http://greaseblog.blogspot.com/atom.xml">http://greaseblog.blogspot.com/atom.xml</a>, parse it into a DOM, and query the DOM to get the list of entries.  For each entry, it queries the DOM again to get the
+                     entry title, then displays it in a dialog box.
+                  </p>
+               </div>
+               <div class="seealso">
+                  <h3>See also</h3>
+                  <ul>
+                     <li><a href="iterate-one-element.html" title="4.5.&nbsp;Doing something for every instance of a specific HTML element">Doing something for every instance of a specific <acronym title="HyperText Markup Language">HTML</acronym> element</a></li>
+                     <li><a href="../api/gm_xmlhttprequest.html" title="GM_xmlhttpRequest"><span class="refentrytitle">GM_xmlhttpRequest</span></a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="override-method.html">Overriding a built-in Javascript method</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="../casestudy/index.html">Case Studies</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

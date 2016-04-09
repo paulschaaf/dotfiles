@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<qualifiedTypeNameHistroy>
+<fullyQualifiedTypeName name="course.labs.activitylab.R.id"/>
+<fullyQualifiedTypeName name="android.content.Context"/>
+<fullyQualifiedTypeName name="course.labs.activitylab.ActivityTwo"/>
+<fullyQualifiedTypeName name="course.labs.intentslab.ActivityLoaderActivity"/>
+<fullyQualifiedTypeName name="course.labs.intentslab.ExplicitlyLoadedActivity"/>
+<fullyQualifiedTypeName name="course.labs.permissionslab.GoToDangerousActivity"/>
+<fullyQualifiedTypeName name="course.labs.fragmentslab.R.id"/>
+<fullyQualifiedTypeName name="android.content.Intent"/>
+<fullyQualifiedTypeName name="java.util.zip.Inflater"/>
+<fullyQualifiedTypeName name="course.labs.todomanager.R.layout"/>
+<fullyQualifiedTypeName name="android.widget.CheckBox"/>
+<fullyQualifiedTypeName name="course.labs.todomanager.ToDoItem.Priority"/>
+<fullyQualifiedTypeName name="android.view.LayoutInflater.Factory"/>
+<fullyQualifiedTypeName name="android.widget.TextView"/>
+<fullyQualifiedTypeName name="course.labs.todomanager.R.id"/>
+<fullyQualifiedTypeName name="course.labs.todomanager.ToDoItem.Status"/>
+<fullyQualifiedTypeName name="course.labs.notificationslab.R.drawable"/>
+<fullyQualifiedTypeName name="android.content.IntentFilter"/>
+<fullyQualifiedTypeName name="course.labs.notificationslab.DownloaderTask"/>
+<fullyQualifiedTypeName name="android.content.BroadcastReceiver"/>
+<fullyQualifiedTypeName name="android.app.PendingIntent"/>
+<fullyQualifiedTypeName name="course.labs.notificationslab.R.layout"/>
+<fullyQualifiedTypeName name="android.app.Notification.Builder"/>
+<fullyQualifiedTypeName name="course.labs.notificationslab.R.string"/>
+<fullyQualifiedTypeName name="android.R.mipmap"/>
+<fullyQualifiedTypeName name="course.labs.GraphicsLab.R.layout"/>
+<fullyQualifiedTypeName name="course.labs.GraphicsLab.R.drawable"/>
+<fullyQualifiedTypeName name="android.graphics.Bitmap"/>
+<fullyQualifiedTypeName name="android.media.SoundPool.OnLoadCompleteListener"/>
+<fullyQualifiedTypeName name="course.labs.GraphicsLab.R.raw"/>
+<fullyQualifiedTypeName name="java.util.logging.Logger"/>
+<fullyQualifiedTypeName name="android.graphics.Matrix"/>
+</qualifiedTypeNameHistroy>

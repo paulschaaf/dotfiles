@@ -1,0 +1,204 @@
+<!--
+ * Copyright 1999 Microsoft Corporation.  All rights reserved.
+ -->
+
+<html>
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<!-- //*********************** -->
+	<script language="VBScript" src="helpers.vbs"></script>
+	<script language="VBScript">
+		curPath = "%THISDIRPATH%"
+	</script>
+	<script language="JavaScript">
+		function launchApp(strCmdLine) {
+  			var obj = new ActiveXObject("LaunchinIE.Launch");
+  			//alert(myLauncher.location); // debug display page requesting launch
+			return obj.LaunchApplication(strCmdLine);
+		}
+		function runCmd(strCmdLine) {
+			obj = new ActiveXObject("ShellUtils.Exec");
+			obj.ExecCommand(curPath, strCmdLine);
+		}
+  		function NewFolder() {
+			// first close previous command if any
+			OnDosPanelClick();
+
+			folderName = textbox.value;
+			if (folderName == "") folderName = "New Folder";
+			obj = new ActiveXObject("ShellUtils.Exec");
+			obj.NewFolderHere(curPath, folderName);
+		}
+
+		function DosPrompt() {
+			cmdText = textbox.value;
+			obj = new ActiveXObject("ShellUtils.Exec");
+
+			// empty command means "Show DOS Prompt"
+			if (cmdText == "") {
+				obj.DosFromHere(curPath);
+				return;
+			}
+			// any other string is interpreted as a DOS command
+			buf = obj.ExecCommand(curPath, cmdText);
+			ShowResults(buf);
+		}
+
+		function cloneWindow() {
+			runCmd("explorer.exe /n," + curPath);
+		}
+
+		function ExploreFromHere() {
+			runCmd("explorer.exe /e,/root," + curPath);
+		}
+
+		function UnixShell() {
+			runCmd("setpwd.bat \"" + curPath + "\"");
+		}
+		function ShowResults(buf) {
+			FileList.style.height = "50%";
+			DosPanelLabel.innerHTML = "<b>Results of: </b>" + cmdText;
+			DosPanel.style.display = "";
+			DosPanelResults.style.setExpression("height", "FileList.style.pixelHeight");
+			DosPanelResults.Text = buf;
+		}
+
+		function OnDosPanelClick() {
+			DosPanel.style.display = "none";
+			FileList.style.height = "100%";
+		}
+
+		// Constants for ShellFolderView
+		var sfvDeSelect = 0;
+		var sfvSelected = 1;
+
+		function SelectItems() {
+			var e, oSFI, sSFIName, fileSpec;
+
+			// Get the file spec
+			fileSpec = textbox.value;
+			if (fileSpec == "") fileSpec = "*.*";
+
+			// Enumerates the items in the folder view
+			e = new Enumerator(FileList.Folder.Items());
+			for (; !e.atEnd(); e.moveNext()) {
+				oSFI = e.item();
+
+				// Deselect first
+				FileList.SelectItem(oSFI, sfvDeSelect);
+
+				// Find a match and select the item
+				sSFIName = oSFI.Name;
+				if (IsLike(sSFIName, fileSpec)) {
+					FileList.SelectItem(oSFI, sfvSelected);
+				}
+			}
+			FileList.focus();
+		}
+
+	</script>
+<!-- //*********************** -->
+    </head>
+    <style>
+        body        {margin: 0; font: menu; color: black}
+        #Panel      {position: absolute; width: 200px; height: 100%; visibility: hidden; overflow: auto}
+        #Corner     {padding-left: 12px; padding-top: 11px}
+        #FolderIcon {width: 32px; height: 32px}
+        #FolderName {margin-top: 8px; font: 13pt/13pt menu; font-weight: bold}
+        #LogoLine   {width: 100%; height: 2px; margin-top: 4px; vertical-align: top}
+        #Details    {padding-left: 12px; margin-top: 8px}
+        #Locked     {vertical-align: baseline}
+        .Divider    {width: 100%; color: #C0C0C0; height: 1px}
+        #Thumbnail  {width: 120px; height: 120px}
+        .Legend     {margin-left: 8px}
+        #Brand      {position: absolute; left: 200px; width: 100%; height: 100%; padding-left: 12px}
+        p           {margin-top: 12px}
+        p.Half      {margin-top: 4px}
+        button      {font: 8pt Tahoma; margin-left: 12px; background: white; color: black}
+        .textbox    {font: 8pt Tahoma; margin-left: 12px; background: beige; color: black}
+	   .mytext     {font: 8pt Tahoma; color: black}
+        #DosPanel   {position:absolute; left:200px; top:50%; border=0}
+        .Message    {width: 100%; frameBorder: 0; background: infobackground; color: infotext; border: 1px solid lightgrey}
+        #CSCPlusMin {width: 17px}
+        #CSCText    {}
+        #CSCDetail  {}
+        #CSCButton  {}
+
+        #FileList   {position:absolute; width:0; height:100%; border=0}
+    </style>
+    <body scroll=no>
+        <div id=Panel style="background: white URL(wvleft.bmp) no-repeat">
+            <div id=Corner>
+                <object id=FolderIcon classid="clsid:844F4806-E8A8-11d2-9652-00C04FC30871" tabIndex=-1>
+                    <param name="scale" value=100>
+                </object>
+                <br>
+                <div id=FolderName>
+                    %THISDIRNAME%
+                </div>
+            </div>
+            <img id=LogoLine src="wvline.gif">
+<!--//***************** -->
+		<div id=CustomPanel>
+			<button style='width:40px' onclick="UnixShell()">xterm</button>
+			<button style='width:40px' onclick="cloneWindow()">clone</button>
+			<button style='width:40px' onclick="ExploreFromHere()">ExpHer</button>
+			<br>
+			<input class=textbox id=textbox style='width:144px' type=text></input><br>
+			<button style='width:40px' onclick="SelectItems()">Select</button>
+			<button style='width:40px' onclick="NewFolder()">mkdir</button>
+			<button style='width:40px' onclick="DosPrompt()">DOS</button>
+		</div>
+		<img id=LogoLine src="wvline.gif">
+<!--//***************** -->
+            <div id=Details>
+                <span id=CSC>
+                    <div tabIndex=2 id=CSCHotTrack>
+                    <span id=CSCPlusMin>
+                    </span>
+                    <span id=CSCText>
+                    </span>
+                    </div>
+                    <div id=CSCDetail>
+                    </div>
+                    <span id=CSCButton>
+                    </span>
+                    <hr CLASS=Divider NOSHADE>
+                </span>
+                <span id=Info>
+                </span>
+
+                <br>
+                <span id=MediaPlayerSpan>
+                </span>
+
+                <object id=Thumbnail classid="clsid:71650000-E8A8-11d2-9652-00C04FC30871" tabIndex=-1>
+                </object>
+                <label id=ThumbnailLabel for="Thumbnail" style="display: none">
+                </label>
+
+                <span id=Links>
+                </span>
+            </div>
+        </div>
+<!--//***************** -->
+	<div id=DosPanel style="display:none">
+		<table border=0 cellpadding=0 cellspacing=1 class=mytext><tr>
+		  <td width=30><img align=absmiddle id=btnClose onclick="OnDosPanelClick()" alt="Close this view" src=opened.gif></td>
+		  <td><span id=DosPanelLabel></span><br></td>
+		</tr></table>
+
+		<object id=DosPanelResults type="text/x-scriptlet" data="textview.htm"
+			style="width:100%">
+		></object>
+			<a href="bash.exe">Example 5</a>
+
+	</div>
+<!--//***************** -->
+        <object id=FileList classid="clsid:1820FED0-473E-11D0-A96C-00C04FD705A2" tabIndex=1>
+        </object>
+        <object id=WVCoord classid="clsid:BCFD624E-705A-11d2-A2AF-00C04FC30871">
+        </object>
+    </body>
+</html>
+

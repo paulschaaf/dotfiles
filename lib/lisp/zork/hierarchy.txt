@@ -1,0 +1,19 @@
+HasContents
+	IsGame
+   	IsExaminable
+		IsExit
+		IsObject
+			IsBag
+		IsDungeon
+		IsRoom
+		IsAnimal
+			IsPlayer
+
+IsInventoryable
+	IsObject
+	IsAnimal
+	
+IsGameComponent
+	IsGame
+	IsDungeon
+	

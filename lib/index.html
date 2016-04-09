@@ -1,0 +1,2273 @@
+<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<HTML>
+<HEAD>
+<TITLE>Enscript Output</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#1F00FF" ALINK="#FF0000" VLINK="#9900DD">
+<A NAME="top">
+<H1>Contents</H1>
+<OL>
+  <LI><A HREF="#file1">lisp/zork</A>
+  <LI><A HREF="#file2">lisp/zork/advflow.txt</A>
+  <LI><A HREF="#file3">lisp/zork/all.lisp</A>
+  <LI><A HREF="#file4">lisp/zork/classes.lisp</A>
+  <LI><A HREF="#file5">lisp/zork/directedgraph.lisp</A>
+  <LI><A HREF="#file6">lisp/zork/dungeon1.lisp</A>
+  <LI><A HREF="#file7">lisp/zork/hierarchy</A>
+  <LI><A HREF="#file8">lisp/zork/hierarchy.txt</A>
+  <LI><A HREF="#file9">lisp/zork/making.lisp</A>
+  <LI><A HREF="#file10">lisp/zork/meta.lisp</A>
+  <LI><A HREF="#file11">lisp/zork/parser.lisp</A>
+  <LI><A HREF="#file12">lisp/zork/printing.lisp</A>
+  <LI><A HREF="#file13">lisp/zork/taxonomy.txt</A>
+  <LI><A HREF="#file14">lisp/zork/transcript.zork1</A>
+  <LI><A HREF="#file15">lisp/zork/zorksim.lisp</A>
+  <LI><A HREF="#file16">lisp/zork/zork.xls</A>
+</OL>
+<HR>
+<A NAME="file1">
+<H1>lisp/zork 1/16</H1>
+[<A HREF="#top">top</A>][prev][<A HREF="#file2">next</A>]
+<PRE>
+</PRE>
+<HR>
+<A NAME="file2">
+<H1>lisp/zork/advflow.txt 2/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file1">prev</A>][<A HREF="#file3">next</A>]
+<PRE>
+Describe Location
+- List room features (describe)
+- List obvious escape routes [There are doors to the North <B><FONT COLOR="#A020F0">and</FONT></B> to the East.]
+- List observable objects [Sitting on the table is a candlestick.]
+- Notify of any change in status of Adventurer [You begin to feel hungry.]
+
+Prompt for Input
+- Accept statement
+- Break into manageable parts
+  - Break the sentence after commas <B><FONT COLOR="#A020F0">and</FONT></B> (sometimes) conjunctions <B><FONT COLOR="#A020F0">and</FONT></B> treat each as a separate
+    part.
+- Check part for unrecognized terms (incl. interjections <B><FONT COLOR="#A020F0">and</FONT></B> pronouns)
+  - Notify User [I don't know the word . . .]
+  - GOTO Section II.
+- Identify Action Verb, Direct Object, (usu. noun/adjective combo.), Preposition , <B><FONT COLOR="#A020F0">and</FONT></B> the
+  Indirect Object (usu. noun/adjective combo.). [Put the bloody knife on the brown table.]
+- Report any incomplete sentence
+  - GOTO Sect. II
+- Discard any unecessary parts of speech (adverbs {very}, participles {the})
+- Loop to Pgph. C for each part of input left
+
+Process each part of the sentence, <B><FONT COLOR="#A020F0">and</FONT></B> act upon it
+- Announce (<B><FONT COLOR="#A020F0">and</FONT></B> record) any change in status of an object [You <B><FONT COLOR="#A020F0">throw</FONT></B> the Lamp against the wall,
+  breaking it.]
+  - If any change in location of object, update record [You put the chicken in the barrel.]
+- Announce (<B><FONT COLOR="#A020F0">and</FONT></B> record) any change in status of the room [As you push the beam, the ceiling
+  begins to sag.]
+- Announce (<B><FONT COLOR="#A020F0">and</FONT></B> record) any change in status of the Adventurer [Drinking the liquid makes you
+  feel dizzy.]
+  - Record change in location of Adventurer. GOTO Sect. I.
+- Provide the information requested [You are in perfect health.]
+- Perform the operation requested [Insert Save disk in drive A.]
+</PRE>
+<HR>
+<A NAME="file3">
+<H1>lisp/zork/all.lisp 3/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file2">prev</A>][<A HREF="#file4">next</A>]
+<PRE>
+(defmethod nosuch ((player IsPlayer) name)
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;You don't see any ~A here.~&amp;&quot;</FONT></B> (string-downcase name)))
+
+(defmethod nosuch ((player IsPlayer) (obj (eql 'it)))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;You'll have to be more specific.~&amp;&quot;</FONT></B>))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Exiting
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defmethod north ((player IsPlayer))
+</FONT></I><I><FONT COLOR="#B22222">;  (let ((destination (traverse (location player) 'north)))
+</FONT></I><I><FONT COLOR="#B22222">;    (if destination
+</FONT></I><I><FONT COLOR="#B22222">;	(setf (location player) destination)
+</FONT></I><I><FONT COLOR="#B22222">;      (player-format player &quot;You can't go that way.&quot;))))
+</FONT></I>
+(defmacro defdirection (direction)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((dest (gensym)))
+    `(defun ,direction (player)
+       (<B><FONT COLOR="#A020F0">let</FONT></B> ((,dest (traverse (location player) ',direction)))
+	 (<B><FONT COLOR="#A020F0">if</FONT></B> ,dest
+	     (setf (location player) ,dest)
+	   (player-format player <B><FONT COLOR="#BC8F8F">&quot;You can't go that way.&quot;</FONT></B>))))))
+
+(defdirection up)
+(defdirection down)
+
+(defdirection in)
+(defdirection out)
+
+(defdirection north)
+(defdirection east)
+(defdirection south)
+(defdirection west)
+
+(defdirection northeast)
+(defdirection southeast)
+(defdirection northwest)
+(defdirection southwest)
+
+(def-method-alias north n)
+(def-method-alias south s)
+(def-method-alias east e)
+(def-method-alias west w)
+(def-method-alias northeast ne)
+(def-method-alias northwest nw)
+(def-method-alias southeast se)
+(def-method-alias southwest sw)
+(def-method-alias up u)
+(def-method-alias down d)
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Dropping
+</FONT></I>
+(defmethod drop ((player IsPlayer) (objs (eql 'all)))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((all (contents player)))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> all
+	(drop player all)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;You have nothing to drop!&quot;</FONT></B>))))
+
+(defmethod drop ((player IsPlayer) (objs cons))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (second objs)
+      (dolist (each objs nil)
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;~A: &quot;</FONT></B> each)
+	(drop player each))
+    (drop player (first objs))))
+
+(defmethod drop (player (obj HasLocation))
+  (move-obj player obj (location obj) (location player)))
+
+(defmethod move-obj ((player IsPlayer) (obj HasLocation) (from IsAnimal) (to IsRoom))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (eql player from)
+      (<B><FONT COLOR="#A020F0">progn</FONT></B>
+	(setf (location obj) (location player))
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;Dropped.&quot;</FONT></B>))
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;Just how do you propose to do that?&quot;</FONT></B>)))
+
+(defmethod move-obj ((player IsPlayer) (obj HasLocation) (from HasContents) (to IsRoom))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (is-carrying player from)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;You must first remove it from the ~A.&quot;</FONT></B>
+	      (name from))
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;You are not carrying it.&quot;</FONT></B>)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Taking
+</FONT></I>
+(defmethod take ((player IsPlayer) (objs (eql 'all)))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((all (remove player (contents (location player)))))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> all
+	(take player all)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;There is nothing to take!&quot;</FONT></B>))))
+
+(defmethod take ((player IsPlayer) (objs cons))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (second objs)
+      (dolist (each objs nil)
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;~A: &quot;</FONT></B> each)
+	(take player each))
+    (take player (first objs))))
+
+(defmethod take (player (obj HasLocation))
+  (move-obj player obj (location obj) player))
+
+(defmethod move-obj ((player IsPlayer) (obj IsImmobile) from (to IsPlayer))
+  (player-format player (immobile-because obj)))
+
+(defmethod move-obj (player obj from to)
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;You can't move that!~&amp;&quot;</FONT></B>))
+
+(defmethod move-obj ((player IsPlayer) (obj IsImmobile) (from IsPlayer) to)
+  (player-format player (immobile-because obj)))
+
+(defmethod move-obj ((player IsPlayer) (obj HasLocation) (from IsAnimal) (to IsPlayer))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (eql from to)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;You are already carrying it.&quot;</FONT></B>)
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;If you want to fight the ~A, just say so.&quot;</FONT></B> (name from))))
+
+(defmethod move-obj ((player IsPlayer) (obj HasLocation) (from HasContents) (to IsPlayer))
+  (setf (location obj) player)
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (is-carrying player from)
+      (<B><FONT COLOR="#A020F0">progn</FONT></B>
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;You remove the ~A from the ~A.&quot;</FONT></B> 
+		       (name obj) 
+		       (name from)))
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;Taken.&quot;</FONT></B> (name obj))))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Reachability
+</FONT></I>
+(defmethod can-reach ((animal IsAnimal) obj)
+  (can-reach-in animal obj (location obj)))
+
+(defmethod can-reach ((animal IsAnimal) (obj isGame))
+  (eql (game animal) obj))
+
+(defmethod can-reach-in ((animal IsAnimal) obj (container HasContents))
+  (can-reach-in animal container (location container)))
+
+(defmethod can-reach-in <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((animal IsAnimal) obj (container IsCloseable))
+  (<B><FONT COLOR="#A020F0">and</FONT></B> (is-open container)
+       (call-next-method animal obj container)))
+
+(defmethod can-reach-in ((animal IsAnimal) obj (container IsAnimal))
+  (eql container animal))
+
+(defmethod can-reach-in ((animal IsAnimal) obj (container IsRoom))
+  (eql container (room-with animal)))
+
+(defmethod can-reach-in ((animal IsAnimal) obj (container IsDungeon))
+  (eql container (dungeon-with animal)))
+
+(defmethod can-reach-in ((animal IsAnimal) obj (container IsGame))
+  (eql container (game animal)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Opening and Closing
+</FONT></I>
+(defmethod open-container <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((player IsPlayer) (obj IsPiece))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (can-reach player obj)
+      (call-next-method player obj)
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;You aren't carrying the ~A.&quot;</FONT></B> (name obj))))
+
+(defmethod open-container ((player IsPlayer) (obj IsPiece))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;You can't open ~A!&quot;</FONT></B> (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then obj)))
+
+(defmethod close-container ((player IsPlayer) (obj IsPiece))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;You can't close ~A!&quot;</FONT></B> (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then obj)))
+
+(defreduction open-container (animal (objs cons)) objs)
+
+(defreduction close-container (animal (objs cons)) objs)
+
+(defmethod open-container ((player IsPlayer) (container IsCloseable))
+  <I><FONT COLOR="#B22222">; must be reachable
+</FONT></I>  (<B><FONT COLOR="#A020F0">if</FONT></B>-open container
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;It is already open!&quot;</FONT></B>)
+    (<B><FONT COLOR="#A020F0">progn</FONT></B>
+      (setf (is-open container) T)
+      (<B><FONT COLOR="#A020F0">if</FONT></B> (contents container)
+	  (<B><FONT COLOR="#A020F0">progn</FONT></B> 
+	    (player-format player <B><FONT COLOR="#BC8F8F">&quot;Opening the ~A reveals &quot;</FONT></B> container)
+	    (print-object-list (contents container) t)
+	    
+	    <I><FONT COLOR="#B22222">; If the list has more than one item, then &quot;it&quot; is ambiguous
+</FONT></I>	    <I><FONT COLOR="#B22222">; &quot;it&quot; is unambiguous for one item or empty container
+</FONT></I>	    (<B><FONT COLOR="#A020F0">if</FONT></B> (second (contents container))
+		(setf (it player) nil)
+	      (setf (it player) (first (contents container)))))
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;Opened.&quot;</FONT></B>)))))
+
+(defmethod close-container ((player IsPlayer) (container IsCloseable))
+  <I><FONT COLOR="#B22222">; must be reachable
+</FONT></I>  (<B><FONT COLOR="#A020F0">if</FONT></B>-open container
+      (<B><FONT COLOR="#A020F0">progn</FONT></B>
+	(setf (is-open container) nil)
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;Closed.&quot;</FONT></B>))
+    (player-format player <B><FONT COLOR="#BC8F8F">&quot;It is already closed!&quot;</FONT></B>)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Structure
+</FONT></I>
+(defmethod game ((obj HasLocation))
+  (game (location obj)))
+
+(defmethod game ((obj IsGame))
+  obj)
+
+(defmethod dungeon-with ((obj HasLocation))
+  (dungeon-with (location obj)))
+
+(defmethod dungeon-with ((dungeon IsDungeon))
+  dungeon)
+
+(defmethod dungeon-in ((game IsGame) label)
+  (find-in-shallow game label))
+
+(defmethod room-in ((game IsGame) label)
+  (room-in (contents game) label))
+
+(defmethod room-in ((dungeon IsDungeon) label)
+  (find-in-shallow dungeon label))
+
+(defmethod room-in ((dungeon IsDungeon) (room IsRoom))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (eq dungeon (dungeon room))
+      room
+    nil))
+
+(defmethod room-in ((places cons) label)
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (room-in (car places) label)
+      (room-in (cdr places) label)))
+
+(defmethod room-with ((obj HasLocation))
+  (room-with (location obj)))
+
+(defmethod room-with ((room IsRoom))
+  room)
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Containership
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defmethod has-in-hand ((place HasContents) obj)
+</FONT></I><I><FONT COLOR="#B22222">;  (eql place (location obj)))
+</FONT></I>
+(defmethod is-carrying ((animal IsAnimal) obj)
+  (is-in obj animal))
+
+(defmethod is-in (obj (cont cons))
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (is-in obj (car cont))
+      (is-in obj (cdr cont))))
+
+(defmethod is-in (obj1 obj2)
+  nil)
+
+(defmethod is-in ((obj HasLocation) (cont HasContents))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((obj-loc (location obj)))
+    (<B><FONT COLOR="#A020F0">and</FONT></B> obj-loc                      <I><FONT COLOR="#B22222">; if obj is contained, and
+</FONT></I>	 (<B><FONT COLOR="#A020F0">or</FONT></B> (eql cont obj-loc)       <I><FONT COLOR="#B22222">; either it is directly in cont
+</FONT></I>	     (is-in obj-loc cont))))) <I><FONT COLOR="#B22222">; or its container is
+</FONT></I>
+(defmethod is-in (obj (cont HasContents))
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (first (member obj (contents cont)))
+      (is-in obj (contents cont))))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Finding
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defmethod find-for ((player IsPlayer) (obj (eql 'all)))
+</FONT></I><I><FONT COLOR="#B22222">;  'all)
+</FONT></I>
+(defmethod find-for ((player IsPlayer) (obj (eql 'it)))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((real-obj (it player)))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> real-obj (player-format player <B><FONT COLOR="#BC8F8F">&quot;[The ~A] &quot;</FONT></B> (name real-obj)))
+    (find-for player real-obj)))
+
+(defmethod find-for ((animal IsAnimal) obj)
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (find-in animal obj)
+      (find-in (location animal) obj)))
+
+(defmethod find-in ((places cons) obj)
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (find-in (car places) obj)
+      (find-in (cdr places) obj)))
+
+(defmethod find-in <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((place IsCloseable) obj)
+  (<B><FONT COLOR="#A020F0">if</FONT></B>-open place
+	   (call-next-method place obj)
+	   nil))
+
+(defmethod find-in ((place HasContents) obj)
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (find-in-shallow place obj)
+      (find-in (contents place) obj)))
+
+(defmethod find-in (place label)
+  nil)
+
+(defmethod find-in-shallow ((places cons) obj)
+  (<B><FONT COLOR="#A020F0">or</FONT></B> (find-in-shallow (car places) obj)
+      (find-in-shallow (cdr places) obj)))
+
+(defmethod find-in-shallow ((place HasContents) (obj IsPiece))
+  (first (member obj (contents place))))
+
+(defmethod find-in-shallow ((place HasContents) (label symbol))
+  (find-in-shallow place (symbol-name label)))
+
+(defmethod find-in-shallow ((place HasContents) (name string))
+  (debug-<B><FONT COLOR="#A020F0">do</FONT></B> place 
+	    (<B><FONT COLOR="#A020F0">progn</FONT></B> (format t <B><FONT COLOR="#BC8F8F">&quot;Searching ~A.~&amp;&quot;</FONT></B> (name place))
+		   (dolist (each (contents place) nil)
+		     (format t <B><FONT COLOR="#BC8F8F">&quot;    ~A~&amp;&quot;</FONT></B> (label each)))
+		   (format t <B><FONT COLOR="#BC8F8F">&quot;~2&amp;&quot;</FONT></B>)))
+  (find-<B><FONT COLOR="#A020F0">if</FONT></B> #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (x)
+	       (string-equal name (name x)))
+	   (contents place)))
+
+(defmethod find-in-shallow ((place (eql nil)) label)
+  nil)
+
+(defmethod find-in-shallow (place label)
+  nil)
+
+(defmethod find-in-shallow (place (name string))
+  (find-in-shallow place (intern name)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- User Commands
+</FONT></I>
+(defmethod state ((game IsGame))
+  <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)
+
+(defmethod user-quitp ((player IsPlayer))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (debug-on player)
+      (toggle-debug-mode player)
+    (<B><FONT COLOR="#A020F0">progn</FONT></B>
+      (score player)
+      (<B><FONT COLOR="#A020F0">if</FONT></B> (eq 'y 'y)<I><FONT COLOR="#B22222">;(prompt-player game &quot;Really user-quitp?&quot;))
+</FONT></I>	  (exit)))))
+
+(def-method-alias user-quitp q)
+
+(defmethod enter <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((player IsPlayer) (game IsGame))
+  (call-next-method player game)
+  (<B><FONT COLOR="#A020F0">do</FONT></B> ((player-input (next-command player) (next-command player)))
+      (())
+    (eval-input player player-input)))
+
+(defmethod score ((player IsPlayer))
+    (player-format player
+	    <B><FONT COLOR="#BC8F8F">&quot;Your score is ~A out of a possible ~A.~&amp;This gives you the rank of novice.&quot;</FONT></B>
+	    (current-score player)
+	    (max-score (game player))))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; --------------------
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defmethod command-separator ((str string))
+</FONT></I><I><FONT COLOR="#B22222">;  (or (eq str &quot;.&quot;) (eq str &quot;;&quot;) (eq str &quot;then &quot;)))
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defun replace-string (string target replacement &amp;optional &amp;key (start1 0) (start2 0) (start3 0))
+</FONT></I><I><FONT COLOR="#B22222">;  (replace target replacement
+</FONT></I><I><FONT COLOR="#B22222">;	   :start1 (search target string
+</FONT></I><I><FONT COLOR="#B22222">;			   :start1 start2
+</FONT></I><I><FONT COLOR="#B22222">;			   :start2 start1)
+</FONT></I><I><FONT COLOR="#B22222">;	   :start2 start3))
+</FONT></I></PRE>
+<HR>
+<A NAME="file4">
+<H1>lisp/zork/classes.lisp 4/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file3">prev</A>][<A HREF="#file5">next</A>]
+<PRE>
+(load <B><FONT COLOR="#BC8F8F">&quot;directedgraph.lisp&quot;</FONT></B>)
+
+<I><FONT COLOR="#B22222">; -----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Primitive Properties
+</FONT></I>
+(defclass HasLabel ()
+  ((debug-on      <B><FONT COLOR="#5F9EA0">:allocation</FONT></B> <B><FONT COLOR="#5F9EA0">:class</FONT></B>
+		  <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> debug-on     <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:debug-on</FONT></B>
+		  <B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)
+   (label         <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> label        <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:label</FONT></B>
+		  <B><FONT COLOR="#5F9EA0">:initform</FONT></B> 'nolabel)))
+
+(defclass HasLocation ()
+  ((location      <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> location     <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:location</FONT></B>
+		  <B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)))
+
+(defclass HasContents ()
+  ((contents      <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> contents
+		  <B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)))
+
+(defclass IsCloseable ()
+  ((is-open       <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> is-open
+		  <B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)))
+
+(defclass HasDescription ()
+  ((description   <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> description  <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:description</FONT></B>)))
+
+(defclass HasName (HasLabel)
+  ())
+
+(defmethod name ((obj HasName))
+  (symbol-name (label obj)))
+
+(defmethod (setf name) (string (obj HasName))
+  (setf (label obj) (intern (copy-seq string))))
+
+(defclass IsMobile ()
+  (()))
+
+(defclass IsImmobile ()
+  ((immobile-because <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> immobile-because <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:immobile-because</FONT></B>
+		     <B><FONT COLOR="#5F9EA0">:initform</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;remains fixed to the floor.&quot;</FONT></B>)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Object Types
+</FONT></I>
+(defclass IsExaminable (HasName HasDescription HasLocation) ())
+(defclass IsPlace      (HasContents IsExaminable) ())
+(defclass ExitPath     (HasDescription arc) ())
+
+(defclass IsPiece      (IsMobile IsExaminable) ())
+(defclass IsBag        (IsCloseable HasContents IsPiece) ())
+
+(defclass IsFixture    (IsImmobile IsExaminable) ())
+(defclass IsContainer  (IsCloseable HasContents IsFixture) ())
+
+(defclass IsDungeon    (IsPlace)
+   ((entrance          <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> entrance)))
+
+(defclass IsAnimal     (IsPlace) ())
+(defclass IsPlayer     (IsAnimal)
+  ((game               <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> game        <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:game</FONT></B>)
+   (it                 <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> it
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)
+   (prompt             <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> prompt      <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:prompt</FONT></B>
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;&gt;&quot;</FONT></B>)
+   (current-score      <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> current-score
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> 0)
+   (display            <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> display     <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:display</FONT></B>
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> t)
+   (verbose            <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> verbose     <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:verbose</FONT></B>
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> t)))
+
+(defmethod (setf it) <B><FONT COLOR="#5F9EA0">:after</FONT></B> (obj (player IsAnimal))
+  (debug-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;'it set to ~A~&amp;&quot;</FONT></B> obj))
+
+(defclass IsRoom       (IsPlace node) ())
+
+(defclass IsGame       (HasContents HasName HasDescription)
+  ((max-score          <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> max-score   <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:max-score</FONT></B>
+		       <B><FONT COLOR="#5F9EA0">:initform</FONT></B> 100)
+   (entrance           <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> entrance)))
+
+(defmethod (setf entrance) ((name symbol) (dungeon IsDungeon))
+  (setf (entrance dungeon) (room-in dungeon name)))
+
+(defmethod (setf entrance) ((name symbol) (game IsGame))
+  (setf (entrance game) (dungeon-in game name)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Opening / Closing
+</FONT></I>
+(defmethod is-open (obj)
+  T)
+
+(defmethod is-closed (obj)
+  (not (is-open obj)))
+
+(defmethod (setf is-closed) (value (obj IsCloseable))
+  (princ value)
+  (setf (is-open obj) (not value)))
+
+(defmacro <B><FONT COLOR="#A020F0">if</FONT></B>-closed (obj then &amp;optional else)
+  `(<B><FONT COLOR="#A020F0">if</FONT></B>-open ,obj ,else ,then))
+
+(defmacro <B><FONT COLOR="#A020F0">if</FONT></B>-open (obj then &amp;optional else)
+  `(<B><FONT COLOR="#A020F0">if</FONT></B> (is-open ,obj)
+       ,then
+     ,else))
+
+(defmethod is-empty ((container HasContents))
+  (endp (contents container)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Location
+</FONT></I>
+(defmethod put-in (in obj)
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~&amp;put-in ~A ~A&quot;</FONT></B> in obj)
+  (put-in (find-obj in) obj))
+
+(defmethod put-in ((in HasContents) obj)
+  (put-in in (find-obj obj)))
+
+(defmethod put-in ((in HasContents) (obj HasLocation))
+  (setf (location obj) in))
+
+(defmethod find-obj (obj)
+  (find-in *dungeon* obj))
+
+(defmethod location (obj)
+  (location (find-obj obj)))
+
+(defmethod (setf location) (value obj)
+  (setf (location (find-obj obj)) value))
+
+(defmethod (setf location) <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((dest HasContents) (obj IsExaminable))
+  <B><FONT COLOR="#BC8F8F">&quot;Set the bi-directional pointers between an object and its container.&quot;</FONT></B>
+  <I><FONT COLOR="#B22222">;(format t &quot;~&amp;put ~A into ~A&quot; obj dest)
+</FONT></I>  (<B><FONT COLOR="#A020F0">let</FONT></B>* ((src (location obj))
+	(old-contents (<B><FONT COLOR="#A020F0">if</FONT></B> src (contents src))))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> old-contents                <I><FONT COLOR="#B22222">; remove the link from old parent
+</FONT></I>	(setf (contents src) (remove obj old-contents))))
+  (push obj (contents dest))        <I><FONT COLOR="#B22222">; establish link from new parent
+</FONT></I>  (call-next-method dest obj))
+
+(defmethod (setf location) <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((dest IsRoom) (player IsPlayer))
+  (look-at player dest))
+
+(defmethod enter ((player IsPlayer) (location IsRoom))
+  (setf (location player) location))
+
+<I><FONT COLOR="#B22222">;(defmethod enter ((player IsPlayer) (location IsDungeon))
+</FONT></I><I><FONT COLOR="#B22222">;  (enter player (entrance location)))
+</FONT></I>
+(defmethod enter <B><FONT COLOR="#5F9EA0">:before</FONT></B> ((player IsPlayer) (location IsGame))
+  (setf (game player) location))
+
+(defmethod enter ((player IsPlayer) location)
+  (look-at player location)
+  (enter player (entrance location)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Debugging
+</FONT></I>
+<I><FONT COLOR="#B22222">;(defmethod (setf debug-on) :after (value (obj HasLabel))
+</FONT></I><I><FONT COLOR="#B22222">;  (if value
+</FONT></I><I><FONT COLOR="#B22222">;      (format t &quot;Debugging is now on.&quot;)
+</FONT></I><I><FONT COLOR="#B22222">;    (format t &quot;Debugging is now off.&quot;)))
+</FONT></I>
+(defmethod prompt <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((player IsPlayer))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((superprompt (call-next-method player)))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> (debug-on player)
+	(concatenate 'string (state (game player)) <B><FONT COLOR="#BC8F8F">&quot;debug &quot;</FONT></B> superprompt)
+      superprompt)))
+
+(defmacro debug-<B><FONT COLOR="#A020F0">do</FONT></B> (labeled function &amp;optional else)
+  `(<B><FONT COLOR="#A020F0">if</FONT></B> (debug-on ,labeled)
+       ,function
+     ,else))
+
+(defmethod debug-format ((player IsPlayer) &amp;rest rest)
+  (debug-<B><FONT COLOR="#A020F0">do</FONT></B> player (apply 'player-format player rest)))
+
+(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">toggle-debug-mode</FONT></B> (obj)
+  (setf (debug-on obj) (not (debug-on obj))))
+</PRE>
+<HR>
+<A NAME="file5">
+<H1>lisp/zork/directedgraph.lisp 5/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file4">prev</A>][<A HREF="#file6">next</A>]
+<PRE>
+(defclass node ()
+  ((name        <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> name         <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:name</FONT></B>
+		<B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)
+   (arcs        <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> arcs
+	        <B><FONT COLOR="#5F9EA0">:initform</FONT></B> (make-hash-table))))
+
+<I><FONT COLOR="#B22222">; arcs are unidirectional
+</FONT></I>(defclass arc ()
+  ((destination <B><FONT COLOR="#5F9EA0">:accessor</FONT></B> destination  <B><FONT COLOR="#5F9EA0">:initarg</FONT></B> <B><FONT COLOR="#5F9EA0">:to</FONT></B>
+		<B><FONT COLOR="#5F9EA0">:initform</FONT></B> nil)))
+
+<I><FONT COLOR="#B22222">; arcs are labeled uniquely for each node 
+</FONT></I>(defmethod make-arc (&amp;key labeled (from node) (to node))
+  (setf (gethash labeled (arcs from)) 
+	(make-instance 'arc <B><FONT COLOR="#5F9EA0">:to</FONT></B> to)))
+
+(defmethod is-adjacent ((a node) (b node))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((answer nil))
+    (maphash #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (key value)
+		 (<B><FONT COLOR="#A020F0">if</FONT></B> (eq b (destination value))
+		     (setf answer key)))
+	     (arcs a))
+    answer))
+
+(defmethod traverse ((from node) direction)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((anArc (gethash direction (arcs from))))
+    (<B><FONT COLOR="#A020F0">if</FONT></B> anArc
+	(destination anArc))))
+
+(defmethod print-object ((aNode node) str)
+  (format str <B><FONT COLOR="#BC8F8F">&quot;&lt;~A&gt;&quot;</FONT></B> (name aNode)))
+
+'(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">test</FONT></B> ()
+  (setf father (make-instance 'node <B><FONT COLOR="#5F9EA0">:name</FONT></B>  'Paul)
+	mother (make-instance 'node <B><FONT COLOR="#5F9EA0">:name</FONT></B>  'Pat)
+	paul   (make-instance 'node <B><FONT COLOR="#5F9EA0">:name</FONT></B>  'Paul)
+	chris  (make-instance 'node <B><FONT COLOR="#5F9EA0">:name</FONT></B>  'Chris))
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'child   <B><FONT COLOR="#5F9EA0">:from</FONT></B> father <B><FONT COLOR="#5F9EA0">:to</FONT></B> chris)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'child   <B><FONT COLOR="#5F9EA0">:from</FONT></B> father <B><FONT COLOR="#5F9EA0">:to</FONT></B> paul)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'child   <B><FONT COLOR="#5F9EA0">:from</FONT></B> mother <B><FONT COLOR="#5F9EA0">:to</FONT></B> chris)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'child   <B><FONT COLOR="#5F9EA0">:from</FONT></B> mother <B><FONT COLOR="#5F9EA0">:to</FONT></B> paul)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'parent  <B><FONT COLOR="#5F9EA0">:from</FONT></B> chris  <B><FONT COLOR="#5F9EA0">:to</FONT></B> father)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'parent  <B><FONT COLOR="#5F9EA0">:from</FONT></B> chris  <B><FONT COLOR="#5F9EA0">:to</FONT></B> mother)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'parent  <B><FONT COLOR="#5F9EA0">:from</FONT></B> paul   <B><FONT COLOR="#5F9EA0">:to</FONT></B> father)
+  (make-arc <B><FONT COLOR="#5F9EA0">:labeled</FONT></B> 'parent  <B><FONT COLOR="#5F9EA0">:from</FONT></B> paul   <B><FONT COLOR="#5F9EA0">:to</FONT></B> mother)
+    
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent father paul))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent mother paul))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent paul mother))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent paul father))
+
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent father chris))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent mother chris))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent chris mother))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (is-adjacent chris father)))
+</PRE>
+<HR>
+<A NAME="file6">
+<H1>lisp/zork/dungeon1.lisp 6/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file5">prev</A>][<A HREF="#file7">next</A>]
+<PRE>
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Rooms
+</FONT></I>
+(make-room <B><FONT COLOR="#BC8F8F">&quot;West of House&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;You are standing in an open field west of a white house, with a boarded front
+door.&quot;</FONT></B>)
+
+(setf (entrance *dungeon*) '|West of House|)
+
+(make-room <B><FONT COLOR="#BC8F8F">&quot;North of House&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;You are facing the north side of a white house. There is no door here, and all the windows are boarded up. To the north a narrow path winds through the trees.&quot;</FONT></B>)
+
+(make-room <B><FONT COLOR="#BC8F8F">&quot;Behind House&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;You are behind the white house. A path leads into the forest to the east.&quot;</FONT></B>)
+
+(make-room <B><FONT COLOR="#BC8F8F">&quot;Kitchen&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;You are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A dark chimney leads down.&quot;</FONT></B>)
+
+(make-room <B><FONT COLOR="#BC8F8F">&quot;Living Room&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;You are in the living room. There is a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.&quot;</FONT></B>)
+
+(setf *attic* (make-room <B><FONT COLOR="#BC8F8F">&quot;Attic&quot;</FONT></B>
+<B><FONT COLOR="#BC8F8F">&quot;This is the attic.&quot;</FONT></B>))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Paths
+</FONT></I>
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|West of House|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'path
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(north)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|North of House|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|North of House|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'path
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(west)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|West of House|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|North of House|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'path
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(east)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Behind House|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Behind House|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'path
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(north)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|North of House|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>  <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Behind House|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   '|In one corner of the house there is a small window.|
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(in west)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;The window is slightly ajar&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'window
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(out east)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Behind House|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;To the east is a small window which is open.&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'doorway
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(west)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Living Room|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;A doorway leads to the west.&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'staircase
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(up)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Attic|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;A dark staircase can be seen leading upward.&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> #[Living Room]
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'doorway
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(east)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;There is a doorway to the east.&quot;</FONT></B>)
+
+(make-path <B><FONT COLOR="#5F9EA0">:from</FONT></B> '|Attic|
+  <B><FONT COLOR="#5F9EA0">:type</FONT></B>   'stairway
+  <B><FONT COLOR="#5F9EA0">:going</FONT></B>  '(down)
+  <B><FONT COLOR="#5F9EA0">:to</FONT></B>     '|Kitchen|
+  <B><FONT COLOR="#5F9EA0">:desc</FONT></B>   <B><FONT COLOR="#BC8F8F">&quot;The only exit is a stairway leading down.&quot;</FONT></B>)
+
+(make-container <B><FONT COLOR="#BC8F8F">&quot;mailbox&quot;</FONT></B>
+		<B><FONT COLOR="#BC8F8F">&quot;It is rusty, and leans slightly to the left.&quot;</FONT></B>)
+(put-in '|West of House| '|mailbox|)
+
+'(setf (immobile-because '|mailbox|) <B><FONT COLOR="#BC8F8F">&quot;It is securely anchored.&quot;</FONT></B>)
+
+(make-object <B><FONT COLOR="#BC8F8F">&quot;leaflet&quot;</FONT></B>
+	     <B><FONT COLOR="#BC8F8F">&quot;~%\&quot;WELCOME TO ZORKSim!~%ZORKSim is a game of adventure, danger, and low cunning. In it you will explore some of the most amazing territory ever seen by mortals. No computer should be without one!\&quot;&quot;</FONT></B>)
+
+(put-in '|mailbox| '|leaflet|)
+
+(make-object <B><FONT COLOR="#BC8F8F">&quot;broom&quot;</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;It is a roughly-cut shaft of unpolished wood, with a bundle of twigs loosely tied to one end.&quot;</FONT></B>)
+
+(put-in *avatar* '|broom|) 
+
+(make-object-in (location '|mailbox|)
+	     <B><FONT COLOR="#BC8F8F">&quot;apple&quot;</FONT></B>
+	     <B><FONT COLOR="#BC8F8F">&quot;It is firm and dark red, with a brown stem with a small green leaf coming out of the top.&quot;</FONT></B>)
+
+(setf (is-open (find-obj '|mailbox|)) nil)
+
+(setf *burlap-sack* (make-bag-in *avatar*
+	  <B><FONT COLOR="#BC8F8F">&quot;sack&quot;</FONT></B>
+	  <B><FONT COLOR="#BC8F8F">&quot;It is made of worn brown burlap and smells slightly of garlic.&quot;</FONT></B>))
+
+<I><FONT COLOR="#B22222">;(setf (immobile-because *burlap-sack*) &quot;As you are about to set it down, you decide that you'd better hold on to it instead.&quot;)
+</FONT></I>
+(make-object-in *burlap-sack*
+	     <B><FONT COLOR="#BC8F8F">&quot;sword&quot;</FONT></B>
+	     <B><FONT COLOR="#BC8F8F">&quot;It is made of highly-polished steel, with an ornate wooden handle.&quot;</FONT></B>)
+
+(make-object-in *burlap-sack*
+	     <B><FONT COLOR="#BC8F8F">&quot;clove of garlic&quot;</FONT></B>
+	     <B><FONT COLOR="#BC8F8F">&quot;You see nothing special about the garlic.&quot;</FONT></B>)
+
+(setf *purse* (make-bag-in *burlap-sack*
+	  <B><FONT COLOR="#BC8F8F">&quot;purse&quot;</FONT></B>
+	  <B><FONT COLOR="#BC8F8F">&quot;It is small and dirty, with a drawstring around the top.&quot;</FONT></B>))
+
+(make-object-in *purse*
+	     <B><FONT COLOR="#BC8F8F">&quot;Euro&quot;</FONT></B>
+	     <B><FONT COLOR="#BC8F8F">&quot;The coin is made of tarnished gold and has milled edges.&quot;</FONT></B>)
+</PRE>
+<HR>
+<A NAME="file7">
+<H1>lisp/zork/hierarchy 7/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file6">prev</A>][<A HREF="#file8">next</A>]
+<PRE>
+‹      í\Ûr›:}ÏW0ä•Ê—ºN§='sNŸÚédd›Øj±ğ€œÄ/çÛ„ÉÅ\lŒÓ2“Ìoï¥Yk/]’OŸV‘v&amp;)‰éD‡ÀÔ?_]|šü‘/¼Òx MÅo}ÉØúãht¢mŠYœ€ˆl@şÃQ„G&lt;h¤_]hÚËsÌ°¸–_ÅŒ%dºa¡Fñ*œèS&lt;û½Hâë»¨&lt;nGq¢İáh¢_Şf_ú(O3ÚËs ÷¯Ã¤˜vµSÂCØv]
+©É#~¾ˆÉ£RDW—_œËİòÏ¹ªZÂV8YZÆIBín„|Ë²ïÃéSõ‘zˆD=IoÖqÂLXfÇQˆé‰%›°=N:Ãd•Ûg¿%ŒÅGÆ‹£´I»ËOì9•‰‹„Ìq/¢&amp;Ë=™³åÍƒ¢ÛµË¾U”ı¤d…U£'”u–~+™^ösŞy˜ù¤÷cj2-ó°Ñ±Â‹qM+Ø]*4©<B><FONT COLOR="#BC8F8F">&quot;ÂÛ0ÉÓ}nOZ~sÒ¿¸ñôW8cyy×?µÚ5e„mõçÎjê™Oôïæş½)VÃ3qå)İœuüô!Ú†T,·ü9ÖeŸN‹É&gt;vLQø¨ch‚ ğØíĞÂ(\İÌâ„–lGõdmË5=RÖãK¤_†d±dõù!h™}'ó096|@©ô™*¦é­Ìì«¡´	Ä¾};¢`½öŒ×·ôú¯Åœ”•ì ûÿ.ê”Õš8z–ƒvú eõÁá„õTêƒ-ôcŒ}xáW¥&lt;È”ÓDXÎ }•ÂŞ˜0üÀ	#3²ÆŒËB…&gt;XòşÁ–rÿ 0Æ0‘á¯%XÂİx6ğSÊ©Šğ€{0Â99âä:â„„´$!İ¬ª¬ùşkæ×Z²ŸÅGÒõ—9ÏgâyMK,|E[b:Ö™?Ç,Î|°öüêD/ßıŠ÷Âü½pÿ½vÙû$ß–mYÚq3m€*™Ç1  cèè[„*[³dIMº3mİ¹Ÿİù{F¿õgçõgA`dÀÖOiwšÁ&lt;’iM«¨¡U¿f«¶•µêcDDtl±¦¾eg(ch	@«í|º«ªª‹² :eeƒo6ĞR––¶-İó;hWš»Ç¶Ÿˆ5&quot;</FONT></B>$GÉ@„‡v9	l€”šhÙªš-r9ƒ‹î©‹şŠ}Yûö¤½³°¶ĞQ<I><FONT COLOR="#B22222">;Ëæ †°ÏíPéú·lIMäÁuúĞO}ø{CaL{6ÍößÒ2¸Ñ0ÅFG&amp;Ï;¥i5xù×œb{ç÷òA7šl¤¼Ss‰½j‹óĞÈDêÛµDaÃõ;ï×?ãxÕ›Ã,œvãócSyŸ¶x?Cc/;Ğ&quot;(¬V#djôáëÃ?üÕŞèìÆHÀQo$87Ø‘6,ìs	‰Â†íõw._(Yá¨7R!}ğÍ5,±Ö®R'Pæ%²î&gt;†&gt;W
+</FONT></I>˜j•B®®A&amp;Ş¹LüÈşÚ¥72!P˜2LñS¡R˜|ªŒÌØrƒ|OíV£leÍşÜÆq†¹G/µâ_œşSR–öl7:İ¨8Ï ÊØ‡ëm‰Å‘fÇ…ªêªC:²Ñ,dØ\èrsÊœ‚æ«àƒH~õû¬„D+·úöKªpÌtm&amp;#joöÙ'Ñ±ËÊéèv³Xç„Î¶ñîIl16ãcUMõa®yl›¾AŒÄÉ…„$i¾»9.g™¼Ÿœ‹Ì9‹5Õ‡9Ç¸Ö$fàcÇ†¾MBú,Q&amp;HJ¶²,ÈX4v…a•lÄÈrQ5kØAÊ6Ë*8Ù!'-×
+eI¹û=[ª¾ºØûÏMWÿ•hùlÄP  </PRE>
+<HR>
+<A NAME="file8">
+<H1>lisp/zork/hierarchy.txt 8/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file7">prev</A>][<A HREF="#file9">next</A>]
+<PRE>
+HasContents
+	IsGame
+   	IsExaminable
+		IsExit
+		IsObject
+			IsBag
+		IsDungeon
+		IsRoom
+		IsAnimal
+			IsPlayer
+
+IsInventoryable
+	IsObject
+	IsAnimal
+	
+IsGameComponent
+	IsGame
+	IsDungeon
+	
+</PRE>
+<HR>
+<A NAME="file9">
+<H1>lisp/zork/making.lisp 9/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file8">prev</A>][<A HREF="#file10">next</A>]
+<PRE>
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Making
+</FONT></I>
+(defmacro make-obj-of-class-in (class name location &amp;rest rest)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((obj (gensym)))
+    `(<B><FONT COLOR="#A020F0">let</FONT></B> ((,obj (make-instance ,class ,@rest)))
+       (<B><FONT COLOR="#A020F0">if</FONT></B> ,name
+	   (setf (name ,obj) ,name))
+       (<B><FONT COLOR="#A020F0">if</FONT></B> ,location 
+	   (setf (location ,obj) ,location))
+       ,obj)))
+
+(defmacro make-object-in (location name description &amp;rest rest)
+  `(make-obj-of-class-in 'IsPiece
+			 ,name
+			 ,location
+			 <B><FONT COLOR="#5F9EA0">:description</FONT></B> ,description
+			 ,@rest))
+
+(defmacro make-object (name description &amp;rest rest)
+  `(make-obj-of-class-in 'IsPiece
+			 ,name
+			 *dungeon*
+			 <B><FONT COLOR="#5F9EA0">:description</FONT></B> ,description
+			 ,@rest))
+
+(defmacro make-player (name &amp;rest rest)
+  `(make-obj-of-class-in 'IsPlayer
+			 ,name
+			 nil
+			 ,@rest))
+
+(defmethod make-bag-in (location name description &amp;optional contents)
+  (make-obj-of-class-in 'IsBag
+			name
+			location
+			<B><FONT COLOR="#5F9EA0">:description</FONT></B> description))
+
+(defmethod make-container (name description)
+  (make-obj-of-class-in 'IsContainer
+			name
+			*dungeon*
+			<B><FONT COLOR="#5F9EA0">:description</FONT></B> description))
+
+(defmethod make-room (name description)
+  (make-obj-of-class-in 'IsRoom
+			name
+			*dungeon*
+			<B><FONT COLOR="#5F9EA0">:description</FONT></B> description))
+
+(defmethod make-dungeon (name description)
+  (make-obj-of-class-in 'IsDungeon
+			name
+			*game*
+			<B><FONT COLOR="#5F9EA0">:description</FONT></B> description))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Directions
+</FONT></I>
+(defmethod make-path (&amp;key dungeon type from going to desc)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((fromR (room-in (<B><FONT COLOR="#A020F0">or</FONT></B> dungeon *dungeon*) from))
+	(toR (room-in (<B><FONT COLOR="#A020F0">or</FONT></B> dungeon *dungeon*) to)))
+    (make-one-path 
+     <B><FONT COLOR="#5F9EA0">:type</FONT></B>  type
+     <B><FONT COLOR="#5F9EA0">:from</FONT></B>  fromR
+     <B><FONT COLOR="#5F9EA0">:going</FONT></B> going
+     <B><FONT COLOR="#5F9EA0">:to</FONT></B>    toR
+     <B><FONT COLOR="#5F9EA0">:desc</FONT></B>  desc)))
+
+(defmethod make-paths-from (from paths)
+  (make-paths-from (room-in *dungeon* from) paths))
+
+(defmethod make-paths-from ((from IsRoom) paths)
+  (dolist (path paths nil)
+    (dolist (going (car path) nil)
+      (make-one-path
+       <B><FONT COLOR="#5F9EA0">:type</FONT></B>  type
+       <B><FONT COLOR="#5F9EA0">:from</FONT></B>  from
+       <B><FONT COLOR="#5F9EA0">:going</FONT></B> going
+       <B><FONT COLOR="#5F9EA0">:to</FONT></B>    (second path)
+       <B><FONT COLOR="#5F9EA0">:desc</FONT></B>  (<B><FONT COLOR="#A020F0">or</FONT></B> (third path) <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>)))))
+
+(defmethod make-one-path (&amp;key type from going to desc)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((exits (arcs from))
+	(new-arc (make-instance 'ExitPath
+				<B><FONT COLOR="#5F9EA0">:type</FONT></B> type
+				<B><FONT COLOR="#5F9EA0">:to</FONT></B> to
+				<B><FONT COLOR="#5F9EA0">:description</FONT></B> desc)))
+    (dolist (heading going nil)
+      (setf (gethash heading exits) new-arc))))
+</PRE>
+<HR>
+<A NAME="file10">
+<H1>lisp/zork/meta.lisp 10/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file9">prev</A>][<A HREF="#file11">next</A>]
+<PRE>
+(defmacro defreduction (name param-list reduce-name)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((each (gensym)))
+    (<B><FONT COLOR="#A020F0">let</FONT></B> ((reduction-funcall (mapcar (<B><FONT COLOR="#A020F0">lambda</FONT></B> (x)
+				       (<B><FONT COLOR="#A020F0">if</FONT></B> (atom x)
+					   x
+					 (<B><FONT COLOR="#A020F0">if</FONT></B> (eql (first x) `,reduce-name)
+					     `,each
+					   (first x))))
+				     `,param-list)))
+      (push `,name reduction-funcall)
+      <I><FONT COLOR="#B22222">;(prin1 reduction-funcall)
+</FONT></I>      `(defmethod ,name ,param-list
+	 (dolist (,each ,reduce-name nil)
+	   ,reduction-funcall)))))
+
+
+(set-macro-character #\] (get-macro-character #\)))
+
+'(set-dispatch-macro-character #\# #\[
+  #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (stream char1 char2)
+      (<B><FONT COLOR="#A020F0">let</FONT></B>* ((name-list    (read-delimited-list #\] stream t))
+	     (name-str-spc (format nil <B><FONT COLOR="#BC8F8F">&quot;~{~A ~}&quot;</FONT></B> name-list))
+	     (name-str     (string-right-trim <B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B> name-str-spc)))
+	(multiple-value-list (intern name-str)))))
+
+(set-dispatch-macro-character #\# #\[
+  #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (stream char1 char2)
+      (intern 
+       (string-right-trim
+	<B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B> 
+	(format 
+	 nil
+	 <B><FONT COLOR="#BC8F8F">&quot;~{~A ~}&quot;</FONT></B> 
+	 (read-delimited-list #\] stream t))))))
+
+#|(defmacro defreduction (name param-list reduce-name)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((each (gensym))
+	(reduction-funcall (gensym)))
+    `(<B><FONT COLOR="#A020F0">let</FONT></B> ((,reduction-funcall (first-ply ',param-list)))
+      (push ,name ,reduction-funcall)
+      (format t <B><FONT COLOR="#BC8F8F">&quot;reduction-funcall: ~A&quot;</FONT></B> ,reduction-funcall)
+      (defmethod ,name ,param-list
+		(dolist (,each ,reduce-name nil)
+		  ,reduction-funcall)))))
+|#
+
+(defmacro first-ply (args)
+  `(mapcar #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (x)
+	       (<B><FONT COLOR="#A020F0">if</FONT></B> (atom x)
+		   x
+		 (first x)))
+	   ,args))
+
+(defmacro def-method-alias (old &amp;rest new)
+  (dolist (each new nil)
+    (setf (symbol-function each) (symbol-function old))))
+
+(def-method-alias exit x)
+
+<I><FONT COLOR="#B22222">;(defun def-method-alias (old newlist &amp;rest rest)
+</FONT></I><I><FONT COLOR="#B22222">;  (dolist (each newlist nil)
+</FONT></I><I><FONT COLOR="#B22222">;    (setf (symbol-function each) (symbol-function old)))
+</FONT></I><I><FONT COLOR="#B22222">;  (if rest
+</FONT></I><I><FONT COLOR="#B22222">;      (def-method-alias (car rest) (cadr rest) (cddr rest))))
+</FONT></I>
+<I><FONT COLOR="#B22222">;(def-method-alias
+</FONT></I><I><FONT COLOR="#B22222">;  'exit '(x xit)
+</FONT></I><I><FONT COLOR="#B22222">;  'princ '(foo-princ bar-princ))
+</FONT></I>
+<I><FONT COLOR="#B22222">;;;;
+</FONT></I><I><FONT COLOR="#B22222">;;;; Macros from ANSI Common Lisp
+</FONT></I><I><FONT COLOR="#B22222">;;;;
+</FONT></I>
+(defmacro for (var start stop &amp;body body)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((gstop (gensym)))
+    `(<B><FONT COLOR="#A020F0">do</FONT></B> ((,var ,start (1+ ,var))
+          (,gstop ,stop))
+         ((&gt; ,var ,gstop))
+       ,@body)))
+
+(defmacro in (obj &amp;rest choices)
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((insym (gensym)))
+    `(<B><FONT COLOR="#A020F0">let</FONT></B> ((,insym ,obj))
+       (<B><FONT COLOR="#A020F0">or</FONT></B> ,@(mapcar #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (c) `(eql ,insym ,c))
+                     choices)))))
+
+(defmacro random-choice (&amp;rest exprs)
+  `(case (random ,(length exprs))
+     ,@(<B><FONT COLOR="#A020F0">let</FONT></B> ((key -1))
+         (mapcar #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (expr)
+                     `(,(incf key) ,expr))
+                 exprs))))
+
+(defmacro avg (&amp;rest args)
+  `(/ (+ ,@args) ,(length args)))
+
+#|
+(defmacro with-gensyms (syms &amp;body body)
+  `(<B><FONT COLOR="#A020F0">let</FONT></B> ,(mapcar #'(<B><FONT COLOR="#A020F0">lambda</FONT></B> (s)
+                     `(,s (gensym)))
+                 syms)
+     ,@body))
+|#
+
+(defmacro aif (test then &amp;optional else)
+  `(<B><FONT COLOR="#A020F0">let</FONT></B> ((it ,test))
+     (<B><FONT COLOR="#A020F0">if</FONT></B> it ,then ,else)))
+</PRE>
+<HR>
+<A NAME="file11">
+<H1>lisp/zork/parser.lisp 11/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file10">prev</A>][<A HREF="#file12">next</A>]
+<PRE>
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Tokenization and parsing
+</FONT></I>
+(defmethod eval-input ((player IsPlayer) input)
+  (setf all 'all
+	it (it player)
+	self player)
+  <I><FONT COLOR="#B22222">;(ignore-errors 
+</FONT></I>  (eval input))
+
+(defmethod next-command ((player IsPlayer))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((answer (compile-commands player (prompt-player player))))
+    (debug-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;~A~2&amp;&quot;</FONT></B> answer)
+    (cons (car answer)
+	  (cons player (cdr answer)))))
+
+(defmacro direct-object (list)
+  `(car (last ,list)))   <I><FONT COLOR="#B22222">;naive, but works for now
+</FONT></I>
+(defmethod compile-commands ((player IsPlayer) (input sequence))
+  (compile-verbs player input)
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (second input)
+      (<B><FONT COLOR="#A020F0">let</FONT></B>* ((real-obj (find-for player (direct-object input))))
+	(setf (it player) real-obj)
+	(<B><FONT COLOR="#A020F0">if</FONT></B> real-obj
+	    (<B><FONT COLOR="#A020F0">progn</FONT></B>
+	      (debug-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;compiled in object ref to: ~A&quot;</FONT></B> real-obj)
+	      (setf (direct-object input) real-obj)
+	      input)
+	  (<B><FONT COLOR="#A020F0">if</FONT></B> (eql (direct-object input) 'all)
+	      input  <I><FONT COLOR="#B22222">;(setf (direct-object input) nil))))
+</FONT></I>	    `(nosuch (direct-object ',input)))))
+    input))
+
+<I><FONT COLOR="#B22222">;`(or (it ,player)
+</FONT></I><I><FONT COLOR="#B22222">;    (nosuch nil))
+</FONT></I>
+(defmethod compile-verbs ((player IsPlayer) (input sequence))
+  (setf (first input) 
+	(case (first input)
+	  ((open)    'open-container)
+	  ((close)   'close-container)
+	  (t         (first input)))))
+
+(defmethod prompt-player ((player IsPlayer) &amp;optional (aPrompt (prompt player)))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;~2&amp;~A &quot;</FONT></B> aPrompt)
+  (readlist))
+
+(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">readlist</FONT></B> (&amp;rest args)
+  (values (read-from-string
+	   (concatenate 'string <B><FONT COLOR="#BC8F8F">&quot;(&quot;</FONT></B>
+			(apply #'read-line args)
+			<B><FONT COLOR="#BC8F8F">&quot;)&quot;</FONT></B>))))
+
+</PRE>
+<HR>
+<A NAME="file12">
+<H1>lisp/zork/printing.lisp 12/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file11">prev</A>][<A HREF="#file13">next</A>]
+<PRE>
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Looking, examining, describing
+</FONT></I>
+(defmethod player-format ((player IsPlayer) &amp;rest rest)
+  (apply 'format (display player) rest))
+
+(defmethod look ((animal IsAnimal) &amp;optional (thing (location animal)))
+  (look-at animal thing))
+
+(def-method-alias look l)
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:around</FONT></B> ((player IsPlayer) (object HasLabel))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (can-reach player object)
+      (call-next-method player object)
+    (player-format <B><FONT COLOR="#BC8F8F">&quot;You can't see ~A here.&quot;</FONT></B> (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then object))))
+
+(defmethod look-at ((player IsPlayer) (object HasDescription))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;~A~&amp;&quot;</FONT></B> (description object)))
+
+(defreduction look-at ((animal IsAnimal) (objs cons)) objs)
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((player IsPlayer) (obj IsBag))
+  (<B><FONT COLOR="#A020F0">if</FONT></B>-open obj
+	   (print-contents obj (display player))
+	   (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;The ~A is closed.&quot;</FONT></B> obj)))
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((player IsPlayer) (obj IsContainer))
+  (<B><FONT COLOR="#A020F0">if</FONT></B>-open obj
+	   (print-contents obj (display player))
+	   (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;The ~A is closed.&quot;</FONT></B> obj)))
+
+(defmethod look-at ((player IsPlayer) (room IsRoom))
+  (print-object room (display player))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;~A&quot;</FONT></B> (description room))
+  (<B><FONT COLOR="#A020F0">let</FONT></B> ((exits nil))
+    (maphash (<B><FONT COLOR="#A020F0">lambda</FONT></B> (key value)
+	       (<B><FONT COLOR="#A020F0">unless</FONT></B> (member value exits)
+		 (player-format player <B><FONT COLOR="#BC8F8F">&quot; ~A&quot;</FONT></B> (description value))
+		 (push value exits)))
+	     (arcs room))
+    '(print-object-list exits (display player)))
+  (dolist (item (contents room) nil)
+    (<B><FONT COLOR="#A020F0">unless</FONT></B> (eql item player)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;There is ~A~A here.~&amp;&quot;</FONT></B> (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an item) item)
+      (print-contents item t))))
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:before</FONT></B> ((player IsPlayer) (game IsGame))
+  (clear-display player))
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((player IsPlayer) (game IsGame))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;~3&amp;&quot;</FONT></B>))
+
+(defmethod look-at <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((player IsPlayer) (dungeon IsDungeon))
+  (player-format player <B><FONT COLOR="#BC8F8F">&quot;~3&amp;&quot;</FONT></B>))
+
+(defmethod inventory ((player IsPlayer))
+  (print-contents player (display player)))
+
+(def-method-alias inventory i)
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Printing
+</FONT></I>
+(defmethod print-object ((thing HasName) str)
+  (debug-<B><FONT COLOR="#A020F0">do</FONT></B> thing 
+	    (print-attributes thing str)
+	    (format str (name thing))))
+
+(defmethod print-contents (item str) nil)
+
+(defmethod print-contents ((item HasContents) str)
+  (<B><FONT COLOR="#A020F0">unless</FONT></B> (<B><FONT COLOR="#A020F0">or</FONT></B> (is-empty item)
+	      (is-closed item))
+    (format str <B><FONT COLOR="#BC8F8F">&quot;~&amp;The ~A contains:~&amp;&quot;</FONT></B> (name item))
+    (dolist (each (contents item) nil)
+      (format str <B><FONT COLOR="#BC8F8F">&quot;  ~A~A~&amp;&quot;</FONT></B> (capital-a-<B><FONT COLOR="#A020F0">or</FONT></B>-an each) each)
+      (print-contents each str))))
+
+(defmethod print-contents ((player IsPlayer) str)
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (is-empty player)
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;You are empty-handed.~&amp;&quot;</FONT></B>)
+    (<B><FONT COLOR="#A020F0">progn</FONT></B>
+      (player-format player <B><FONT COLOR="#BC8F8F">&quot;~&amp;You are carrying:~&amp;&quot;</FONT></B>)
+      (dolist (each (contents player) nil)
+	(player-format player <B><FONT COLOR="#BC8F8F">&quot;~2T~A~A~&amp;&quot;</FONT></B> (capital-a-<B><FONT COLOR="#A020F0">or</FONT></B>-an each) each)
+	(print-contents each str)))))
+
+(defmethod print-object-list ((items cons) str)
+    (apply 'format str
+	   <B><FONT COLOR="#BC8F8F">&quot;~#[none~;~A~;~A and ~A~:;~@{~#[~;and ~]~A~^, ~}~].&quot;</FONT></B>
+	   (mapcar (<B><FONT COLOR="#A020F0">lambda</FONT></B> (each)
+		     (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then each))
+		   items)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- &quot;A &lt;object&gt;&quot; or &quot;An &lt;object&gt;&quot;?
+</FONT></I>
+(defmethod capital-a-<B><FONT COLOR="#A020F0">or</FONT></B>-an ((obj HasName))
+  (capital-a-<B><FONT COLOR="#A020F0">or</FONT></B>-an (name obj)))
+
+(defmethod capital-a-<B><FONT COLOR="#A020F0">or</FONT></B>-an (string)
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (begins-with-vowel-sound string)
+      <B><FONT COLOR="#BC8F8F">&quot;An &quot;</FONT></B>
+    <B><FONT COLOR="#BC8F8F">&quot;A &quot;</FONT></B>))
+
+(defmethod a-<B><FONT COLOR="#A020F0">or</FONT></B>-an ((obj HasName))
+  (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an (name obj)))
+
+(defmethod a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then ((obj HasName))
+  (concatenate 'string (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an (name obj)) (name obj)))
+
+(defmethod a-<B><FONT COLOR="#A020F0">or</FONT></B>-an-then ((obj arc))
+  (setf desc (description obj))
+  (<B><FONT COLOR="#A020F0">if</FONT></B> desc
+      (concatenate 'string (a-<B><FONT COLOR="#A020F0">or</FONT></B>-an desc) desc)
+    <B><FONT COLOR="#BC8F8F">&quot;an exit&quot;</FONT></B>))
+
+(defmethod a-<B><FONT COLOR="#A020F0">or</FONT></B>-an (string)
+  (<B><FONT COLOR="#A020F0">if</FONT></B> (begins-with-vowel-sound string)
+      <B><FONT COLOR="#BC8F8F">&quot;an &quot;</FONT></B>
+    <B><FONT COLOR="#BC8F8F">&quot;a &quot;</FONT></B>))
+
+(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">begins-with-vowel-sound</FONT></B> (str)
+  (member (aref str 0) '(#\a #\e #\i #\o #\u #\A #\E #\I #\O #\U)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Printing Attributes
+</FONT></I>
+(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">print-attribute</FONT></B> (attribute obj str)
+  (debug-<B><FONT COLOR="#A020F0">do</FONT></B> obj
+	(<B><FONT COLOR="#A020F0">progn</FONT></B>
+	  (prin1 attribute)
+	  (prin1 (funcall attribute obj)))))
+
+(defmethod print-attributes (thing str) nil)
+
+(defmethod print-attributes <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((thing HasLabel) str)
+  (prin1 (label thing) str))
+
+(defmethod print-attributes <B><FONT COLOR="#5F9EA0">:after</FONT></B> ((thing HasName) str)
+  (prin1 (name thing) str))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- Display
+</FONT></I>
+(defmethod clear-display ((display (eql t)))
+  (format t <B><FONT COLOR="#BC8F8F">&quot;~3&amp;&quot;</FONT></B>))
+
+(defmethod clear-display ((player IsPlayer))
+  (clear-display (display player)))
+
+<I><FONT COLOR="#B22222">; ----------------------------------------------------------------------
+</FONT></I><I><FONT COLOR="#B22222">; -------------------- 
+</FONT></I>
+#|
+'(defparameter text <B><FONT COLOR="#BC8F8F">&quot;Folding and splicing is the work of an editor, not a mere collection of silicon and mobile electrons!&quot;</FONT></B>)
+
+'(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">wrap</FONT></B> (str max-col)
+  (<B><FONT COLOR="#A020F0">let</FONT></B>* ((words (string-tokenize str))
+         (all nil)
+         (first (car words))
+         (col (string-length first))
+         (line (list first)))
+    (mapcar
+	(<B><FONT COLOR="#A020F0">lambda</FONT></B> (x)
+	  (<B><FONT COLOR="#A020F0">let</FONT></B>* ((len (string-length x))
+		 (new-col (+ col len 1)))
+	    (<B><FONT COLOR="#A020F0">cond</FONT></B> ((&gt; new-col max-col)
+		   (setf all (cons (string-join (reverse! line) <B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B>) all))
+		   (setf line (list x))
+		   (setf col len))
+		  (else
+		   (setf line (cons x line))
+		   (setf col new-col)))))
+      (cdr words))
+    (setf all (cons (string-join (reverse line) <B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B>) all))
+    (string-join (reverse all) <B><FONT COLOR="#BC8F8F">&quot;\n&quot;</FONT></B>)))
+
+'(display (wrap text 20))
+|#
+</PRE>
+<HR>
+<A NAME="file13">
+<H1>lisp/zork/taxonomy.txt 13/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file12">prev</A>][<A HREF="#file14">next</A>]
+<PRE>
+chemical
+	acidity =
+	form in {solid, liquid, gas}
+	nutritionalValue = +10%
+
+physical
+	sensual
+		color in {transparent, translucent, red, green, blue, ....}
+		flavor in {}
+		odor in
+		noise = none
+	solubility
+	strength
+		compressiveStrength
+		shearStrength
+	subatomic
+		conductivity
+		magnetism
+		radioactivity
+	temperature
+		current = 75F
+		flashPoint = none
+		freezingPoint = 0F
+		meltingPoint = 275F
+	texture = {soft, rough, mottled, ...}
+	volume
+
+consumable
+	consumptionPerUse
+
+consumer
+	animal
+	plant
+	environment
+
+age
+	current
+	expectancy
+
+solid is physical
+	composition in {wood, metal, plastic, stone, textile, ...}
+	dimensions
+		l
+		w
+		h
+		volume = l * w * h
+		mass
+		density
+	strength
+		tensileStrength
+	durability
+		wear
+		peak
+
+nonsolid
+	dispersionRate =
+	volume
+
+gaseous is nonsolid
+liquid is nonsolid
+	consistency = {thick, lumpy, slushy, ...}
+
+ephemeral
+
+container is physical
+	upToWeight
+	upToSize
+	leakageRate = 10%
+
+composition is physical
+
+wood is composition
+	type in {balsa, oak, maple, ...}
+	flashpoint = 275F
+
+metal is composition
+	type in {gold, silver, aluminum, bronze, platinum, iron, steel, magnesium}
+	meltingPoint = 300F
+	flashpoint = 500F
+
+plastic is composition
+	type in {}
+	flashpoint = 200F
+
+stone is composition
+	type in {marble, granite, basalt, pumice, limestone, slate, shale, coal}
+	meltingPoint = 2500F
+
+textile is composition
+	type is {reed, grass, cotton, wool, cashmere, flax}
+	flashpoint = 200F
+
+cotton
+	burnsAt 100F
+	leaks liquid at 10% per turn
+	leaks gas at 90% per turn
+
+satchel
+	is brown, cotton, 1Kg
+	smells like garlic
+	holds 30Kg, 100cc
+	holds NastyKnife, CloveOfGarlic
+
+lamp
+	is yellow, plastic, 2Kg
+	holds battery
+	uses 1Kw/hr
+	shatters <B><FONT COLOR="#A020F0">if</FONT></B> thrown
+	shatters <B><FONT COLOR="#A020F0">if</FONT></B> droppped at 20%
+
+sword
+	is shiny, steel, sharp, 10Kg, 25cc
+	is held
+	glows within 100m
+
+object
+	is descriptor
+	attracts/seeks/wants &lt;obj&gt;
+	repels/avoids &lt;obj&gt;
+	has &lt;obj&gt;
+	consumes &lt;obj&gt; at rate
+	can &lt;ability&gt;
+	interacts with &lt;obj&gt;</PRE>
+<HR>
+<A NAME="file14">
+<H1>lisp/zork/transcript.zork1 14/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file13">prev</A>][<A HREF="#file15">next</A>]
+<PRE>
+ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.
+ZORK is a registered trademark of Infocom, Inc
+Revision 88 / Serial number 840726
+
+West of House
+You are standing in an open field west of a white house, with a boarded front
+door.
+There is a small mailbox here.
+
+&gt;open mailbox
+Opening the small mailbox reveals a leaflet.
+
+&gt;read leaflet
+(Taken)
+<B><FONT COLOR="#BC8F8F">&quot;WELCOME TO ZORK!
+
+ZORK is a game of adventure, danger, and low cunning. In it you will explore
+some of the most amazing territory ever seen by mortals. No computer should be
+without one!&quot;</FONT></B>
+
+&gt;n
+North of House
+You are facing the north side of a white house. There is no door here, <B><FONT COLOR="#A020F0">and</FONT></B> all
+the windows are boarded up. To the north a narrow path winds through the trees.
+
+&gt;s
+The windows are all boarded.
+
+&gt;e
+Behind House
+You are behind the white house. A path leads into the forest to the east. In one
+corner of the house there is a small window which is slightly ajar.
+
+&gt;open windoew
+I don't know the word <B><FONT COLOR="#BC8F8F">&quot;windoew&quot;</FONT></B>.
+
+&gt;open window
+With great effort, you open the window far enough to allow entry.
+
+&gt;in
+Kitchen
+You are in the kitchen of the white house. A table seems to have been used
+recently for the preparation of food. A passage leads to the west <B><FONT COLOR="#A020F0">and</FONT></B> a dark
+staircase can be seen leading upward. A dark chimney leads down <B><FONT COLOR="#A020F0">and</FONT></B> to the east
+is a small window which is open.
+On the table is an elongated brown sack, smelling of hot peppers.
+A bottle is sitting on the table.
+The glass bottle contains:
+  A quantity of water
+
+&gt;take sack
+Taken.
+
+&gt;look in sack
+The brown sack is closed.
+
+&gt;open sack
+Opening the brown sack reveals a lunch, <B><FONT COLOR="#A020F0">and</FONT></B> a clove of garlic.
+
+&gt;up
+You have moved into a dark place.
+It is pitch black. You are likely to be eaten by a grue.
+
+&gt;d
+Kitchen
+A bottle is sitting on the table.
+The glass bottle contains:
+  A quantity of water
+
+&gt;w
+Living Room
+You are in the living room. There is a doorway to the east, a wooden door with
+strange gothic lettering to the west, which appears to be nailed shut, a trophy
+case, <B><FONT COLOR="#A020F0">and</FONT></B> a large oriental rug in the center of the room.
+Above the trophy case hangs an elvish sword of great antiquity.
+A battery-powered brass lantern is on the trophy case.
+
+&gt;take lamp
+Taken.
+
+&gt;look at lamp
+The lamp is turned off.
+
+&gt;look at sword
+There's nothing special about the sword.
+
+&gt;look at lettin
+I don't know the word <B><FONT COLOR="#BC8F8F">&quot;lettin&quot;</FONT></B>.
+
+&gt;look at lettering
+The engravings translate to <B><FONT COLOR="#BC8F8F">&quot;This space intentionally left blank.&quot;</FONT></B>
+
+&gt;
+&gt;move
+What <B><FONT COLOR="#A020F0">do</FONT></B> you want to move?
+
+&gt;take
+(sword)
+Taken.
+
+&gt;take
+What <B><FONT COLOR="#A020F0">do</FONT></B> you want to take?
+
+&gt;rug
+The rug is extremely heavy <B><FONT COLOR="#A020F0">and</FONT></B> cannot be carried.
+
+&gt;move rug
+With a great effort, the rug is moved to one side of the room, revealing the
+dusty cover of a closed trap door.
+
+&gt;open door
+Which door <B><FONT COLOR="#A020F0">do</FONT></B> you mean, the wooden door <B><FONT COLOR="#A020F0">or</FONT></B> the trap door?
+
+&gt;trap
+The door reluctantly opens to reveal a rickety staircase descending into
+darkness.
+
+&gt;score
+Your score is 10 (total of 350 points), in 19 moves.
+This gives you the rank of Beginner.
+
+&gt;e
+Kitchen
+A bottle is sitting on the table.
+The glass bottle contains:
+  A quantity of water
+
+&gt;u
+You have moved into a dark place.
+It is pitch black. You are likely to be eaten by a grue.
+
+&gt;turn on lamp
+The brass lantern is now on.
+
+Attic
+This is the attic. The only exit is a stairway leading down.
+A large coil of rope is lying in the corner.
+On a table is a nasty-looking knife.
+
+&gt;&gt;w
+Living Room
+
+&gt;d
+The trap door crashes shut, <B><FONT COLOR="#A020F0">and</FONT></B> you hear someone barring it.
+
+Cellar
+You are in a dark <B><FONT COLOR="#A020F0">and</FONT></B> damp cellar with a narrow passageway leading north, <B><FONT COLOR="#A020F0">and</FONT></B> a
+crawlway to the south. On the west is the bottom of a steep metal ramp which is
+unclimbable.
+Your sword is glowing with a faint blue glow.
+
+&gt;s
+East of Chasm
+You are on the east edge of a chasm, the bottom of which cannot be seen. A
+narrow passage goes north, <B><FONT COLOR="#A020F0">and</FONT></B> the path you are on continues to the east.
+Your sword is no longer glowing.
+
+&gt;e
+Gallery
+This is an art gallery. Most of the paintings have been stolen by vandals with
+exceptional taste. The vandals left through either the north <B><FONT COLOR="#A020F0">or</FONT></B> west exits.
+Fortunately, there is still one chance for you to be a vandal, for on the far
+wall is a painting of unparalleled beauty.
+
+&gt;n
+Studio
+This appears to have been an artist's studio. The walls <B><FONT COLOR="#A020F0">and</FONT></B> floors are
+splattered with paints of 69 different colors. Strangely enough, nothing of
+value is hanging here. At the south end of the room is an open door (also
+covered with paint). A dark <B><FONT COLOR="#A020F0">and</FONT></B> narrow chimney leads up from a fireplace<I><FONT COLOR="#B22222">;
+</FONT></I>although you might be able to get up it, it seems unlikely you could get back
+down.
+Loosely attached to a wall is a small piece of paper.
+
+&gt;take paper
+Taken.
+
+&gt;read paper
+
+Congratulations!
+
+You are the privileged owner of ZORK I: The Great Underground Empire, a self-
+contained <B><FONT COLOR="#A020F0">and</FONT></B> self-maintaining universe. If used <B><FONT COLOR="#A020F0">and</FONT></B> maintained in accordance
+with normal operating practices for small universes, ZORK will provide many
+months of trouble-free operation.
+
+</PRE>
+<HR>
+<A NAME="file15">
+<H1>lisp/zork/zorksim.lisp 15/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file14">prev</A>][<A HREF="#file16">next</A>]
+<PRE>
+(load <B><FONT COLOR="#BC8F8F">&quot;meta.lisp&quot;</FONT></B>)
+(load <B><FONT COLOR="#BC8F8F">&quot;classes.lisp&quot;</FONT></B>)
+(load <B><FONT COLOR="#BC8F8F">&quot;printing.lisp&quot;</FONT></B>)
+(load <B><FONT COLOR="#BC8F8F">&quot;parser.lisp&quot;</FONT></B>)
+(load <B><FONT COLOR="#BC8F8F">&quot;all.lisp&quot;</FONT></B>)
+(load <B><FONT COLOR="#BC8F8F">&quot;making.lisp&quot;</FONT></B>)
+
+<I><FONT COLOR="#B22222">; --------------------- Make game and player
+</FONT></I>
+(defparameter *avatar* (make-player <B><FONT COLOR="#BC8F8F">&quot;Avatar&quot;</FONT></B>))
+
+(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">this-room</FONT></B> ()
+  (location *avatar*))
+
+(defparameter *game* (make-instance 
+   'IsGame
+   <B><FONT COLOR="#5F9EA0">:label</FONT></B> '|ZorkSim|
+   <B><FONT COLOR="#5F9EA0">:max-score</FONT></B> 200
+   <B><FONT COLOR="#5F9EA0">:description</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;Welcome to ZorkSim, the land of adventure and low cunning.&quot;</FONT></B>))
+
+(def-method-alias toggle-debug-mode g)
+
+'(<B><FONT COLOR="#A020F0">defun</FONT></B> <B><FONT COLOR="#0000FF">toggle-debug</FONT></B> ()
+  (toggle-debug-mode *avatar*))
+
+<I><FONT COLOR="#B22222">; -------------------- Make dungeon and rooms
+</FONT></I>
+(defparameter *dungeon* 
+  (make-dungeon
+   <B><FONT COLOR="#BC8F8F">&quot;Zork 1&quot;</FONT></B>
+   <B><FONT COLOR="#BC8F8F">&quot;You awaken, unsure whether your dream has ended...&quot;</FONT></B>))
+
+(load <B><FONT COLOR="#BC8F8F">&quot;dungeon1.lisp&quot;</FONT></B>)
+(setf (entrance *game*) *dungeon*)
+
+<I><FONT COLOR="#B22222">; -------------------- Begin the game!
+</FONT></I>
+(enter *avatar* *game*)
+</PRE>
+<HR>
+<A NAME="file16">
+<H1>lisp/zork/zork.xls 16/16</H1>
+[<A HREF="#top">top</A>][<A HREF="#file15">prev</A>][next]
+<PRE>
+ĞÏà¡±á                &gt;  şÿ	                               şÿÿÿ        ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿıÿÿÿ(   G                  	   
+                                                                      !   <B><FONT COLOR="#BC8F8F">&quot;   #   $   %   &amp;   '   şÿÿÿ;   *   +   /   -   .   şÿÿÿ0   1   &lt;   3   4   5   6   7   8   9   :   ,   B   =   &gt;   ?   @   A   C   M   D   E   F   H   şÿÿÿI   J   K   L   N   T   O   P   Q   R   S   U   şÿÿÿV   şÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿR o o t   E n t r y                                               ÿÿÿÿÿÿÿÿ         À      F    €ÛqãMBÂ`­şfoÂ)   @9      W o r k b o o k                                                     ÿÿÿÿÿÿÿÿ                                       ùH      _ V B A _ P R O J E C T _ C U R                                 &quot;</FONT></B>                               ¼ÁOEÂĞ÷hÁOEÂ            V B A                                                             ÿÿÿÿÿÿÿÿ                        ¼ÁOEÂĞÂ\ÁOEÂ                                    	   
+                     şÿÿÿ                                              !   <B><FONT COLOR="#BC8F8F">&quot;   #   $   %   şÿÿÿ'   (   )   *   şÿÿÿ,   -   .   /   0   1   2   3   4   5   6   7   8   9   :   ;   &lt;   =   &gt;   ?   @   şÿÿÿB   C   D   şÿÿÿşÿÿÿG   H   I   J   K   L   M   N   O   P   Q   R   S   T   U   V   W   X   Y   şÿÿÿ[   \   ]   şÿÿÿşÿÿÿ`   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o   p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~      €    (  q  m  ¶  È  ŒÇ  T Z  £°3‹ Ç ?¨w        0sT0(Ğ0ŒÇ     à‹                                ´0şÿÿÿ°î         “µ0ì}°î     IK)0    ht     azp0–c   Ç          Ç –c   2         à?      à? ~ O € — Ê    š Ê @ @ °c„öS0ÈÆ t        Ç0  Å0  Í0sŞ   !  ^á&lt;m0 Ç0Ñ   
+Ç ü   	   Í0  Å0ì£Ç0Ñ   
+Ç ı   
+Ç É ìê0
+Ç °c    É t       0    Ç    ÿÿÿÿP;HÉ      P e r c e n t       0 ]   à*‹              \Ç À§w    X`   œÈ            ï0    Ø6‹˜È                  ?   0sT0                    ØÇ í¨w                       ô‹hÈ         X‹°3‹ôÇ ¾¨w        0sT0   hÈ È ‰¨w        0sT0ğÉ§w`È »§w6»§w  Ó    @È °»§w    ‹¿¨w0{T00sT0    € &lt;‹             &lt;‹$       xÈ XÁ0   0{T0    „È fNp0H×0'Np0q 0˜È    X`T¯ˆ…X`T¯¨h0X`´š w     É       $É À¯bÉ º¿0HÉ       HÉ ël0      „ w     –Å ÿÿÿÿ „    ¤          ÿÿÿÿhé    ¤       ü   ê nx0·	             ‰  ¤     bag  color  mass  volume  capacity  location  con
+   	   ÓÌÉ                  á  *       d          ü©ñÒMbP?_   *    +    ‚   €          %   ÿ   Á      ƒ    „    ¡ &quot;</FONT></B>   ÿ     È       à?      à?ğÉU   }    ¶       
+   (Column B)                       T0      ÿ                                ÿ   Ò      ÿ             ÿ      Å      ÿ           ÿ        	    ÿ        
+    ÿ      T      ÿ      ‹     ÿ             ÿ             ÿ       ı 
+     , }       + ¾ 
+    *   ¾ 
+    *        ,   l2ÿÿ    àı Z   À   Gası 
+   + |   ı 
+    * |   ı 
+       ı 
+    * |   ı 
+            -   t2ÿÿ    ÿ Z   À	   Liquidı 
+    |   ı 
+    * |   ı 
+       ı 
+    * |   ı 
+         	   -   „2ÿÿ    ş Z       Solidı 
+ 	   |   ı 
+ 
+   * |   ı 
+ 
+      ı 
+    * |   ı 
+    ˆ   ı 
+    * |   ı 
+       ı 
+    * |   	   ÓÌÉ      á  °Á    â   \ p   P.G. Schaaf x1642                                                                                            B  °a   = 	 
+   Ó   º   ThisWorkbookœ               ¯   ¼   =  h,E”/8     X@        <B><FONT COLOR="#BC8F8F">&quot;       ·   Ú    1  È   ÿ      A r i a l 1  È   ÿ      A r i a l 1  È   ÿ      A r i a l 1  È   ÿ      A r i a l 1  È  ÿ¼     A r i a l 1  È   ÿ     A r i a l 1  È  	 ¼     A r i a l 1  È   	      A r i a l 1  È  &lt;      A r i a l     &quot;</FONT></B>$<B><FONT COLOR="#BC8F8F">&quot;#,##0_);\(&quot;</FONT></B>$<B><FONT COLOR="#BC8F8F">&quot;#,##0\)!    &quot;</FONT></B>$<B><FONT COLOR="#BC8F8F">&quot;#,##0_);[Red]\(&quot;</FONT></B>$<B><FONT COLOR="#BC8F8F">&quot;#,##0\)&quot;</FONT></B>    <B><FONT COLOR="#BC8F8F">&quot;$&quot;</FONT></B>#,##0.00_)<I><FONT COLOR="#B22222">;\(&quot;$&quot;#,##0.00\)'  &quot;  &quot;$&quot;#,##0.00_);[Red]\(&quot;$&quot;#,##0.00\)7 * 2  _(&quot;$&quot;* #,##0_);_(&quot;$&quot;* \(#,##0\);_(&quot;$&quot;* &quot;-&quot;_);_(@_). ) )  _(* #,##0_);_(* \(#,##0\);_(* &quot;-&quot;_);_(@_)? , :  _(&quot;$&quot;* #,##0.00_);_(&quot;$&quot;* \(#,##0.00\);_(&quot;$&quot;* &quot;-&quot;??_);_(@_)6 + 1  _(* #,##0.00_);_(* \(#,##0.00\);_(* &quot;-&quot;??_);_(@_)à      õÿ            À à     õÿ   ô        À à     õÿ   ô        À à     õÿ   ô        À à     õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à      õÿ   ô        À à                   À à   + õÿ   ø        À à   ) õÿ   ø        À à   , õÿ   ø        À à   * õÿ   ø        À à   	 õÿ   ø        À à                 À à                 À à          `        à      	    `        à         h      &gt; à     	    h      &gt; à      	    `       à          ` @     à     	    h @    &gt; à      	    ` @     à      &quot;  8       À à      &quot;  8 @     À à          ` @    H@à  	   	    h @     à  	       h @     à  	   	    h       à      	    ` @    H@à  	       h @    H@à  	   	    h @    H@à  	   	    h      H@à          `       à     	    h       à     	    h@ @  &gt; à         h  @  H@à         h      H@à         h @    H@à         h      H@à      	    `      H@à         h      H@à         h       à      &quot;  8Q @     À à     	    hQ @    &gt; à      	    `Q @     à          `Q @     à         hQ @     à         hQ @    &gt; “ €ÿ“ €ÿ“ €ÿ“ €ÿ“  € ÿ“ €ÿ`  …  %     form…  }     material…  &gt;(     classes…  çD     enumsŒ    ®                       ü À‰  ¤     bag  color  mass  volume  capacity  location  contents  texture  smell  sound  flavor  nourishment  material
+</FONT></I>  flashPoint  freezingPoint  restriction  from  to  paths  effect  height	  Container  Thing  Edible  Clothing  Material  Moveable  Path  Tool  temperature  termperature  humidity  Room  Actor
+  Dimensions  Interaction  Form  BodyPart  head  waist  neck  shoulder  wrist  hand  finger  chest  knee  thigh  shin  foot  toe  eye  ear  nose  mouth  tooth  upperArm  forearm  thumb  hip  groin  buttocks  lamp  rope  garlic  stream  sword  hemlock  wood  cotton  helmet  sack  wornOn  Length  Mass  cm  in  kg  lb  Volume  liter (=1000 cc)  can  16 cm  8 cm  355 ml  0.23 kg  green  metallic  aluminum  200 c  -200 c  400 c  table  30 c  smooth  gray  MaterialType  metal  fiber  c  garlic clove  mountain dew  lime  soda  fizzing  +0/ml  water  n/a  0 c  meltBoilPoint  2 m  1 m  -20/g  +0.5/g  1000 cc  burlap  stone  dirt  sweet  woody  brown  Solid  Liquid  Gas     Energy  scabbard  avatar  all  45 kg  temp &lt; 90 c  160 lbs  18 ft^3  6 ft  2 ft  1 ft  length/breadth  width/depth  plastic  200 f  hemp
+  Subjective	  off-white  fibrous  silvery  201 c  plant  gold  ceramic  musty  rough  dirty  garlicky  rubber  black  rubbery  plasticy  bumpy  +1/g  lettuce leaf  crunchy  crisp  fresh  testÿ ¢ Ã	   `Å
+  U   i
+  ² Ş¬
+  õ `Å  L  N  —    Øì5Æ  ÿ
+  S	 N  —  „  Í0sÒ     ^ d  ­	¦  ïcé  2 ı 
+       ı 
+    * |   ı 
+    ‰   × <B><FONT COLOR="#BC8F8F">&quot;      9   &lt;   ;     &gt; ¶     @                      ÿ
+   	   ÓÌÉ                  9  ã'       d          ü©ñÒMbP?_   *    +    ‚   €          %   ÿ   Á      ƒ    „    ¡ &quot;</FONT></B>   ÿ       ÿÿ      à?      à? ÉU   }      $   }        }  
+ 
+ $
+   }    $                       ÿ   T0       ÿ           ÿ            ÿ            ÿ            ÿ             ÿ      Å      ÿ           ÿ        	    ÿ        
+    ÿ      T      ÿ      ‹     ÿ             ÿ             ÿ            ÿ   €      ÿ      t      ÿ   €      ÿ       ¾ 
+         ı 
+      ”   ı 
+     a   ı 
+      ’   ı 
+     Š   ı 
+     ™   ı 
+     t   ı 
+     j   ı 
+   	 3 D   ı 
+   
+  X   ı 
+      s   ı 
+      E   ı 
+      @   ı 
+      “   ı 
+      C   ı 
+      Œ   ı 
+     Ÿ   ı 
+     g        -   2ÿÿ   ÿ Z   À	   Edible    .   2ÿÿ    ÿ Z  À¾ (          4                /  ¤2ÿÿ   ÿ Z   À    !   ¨2ÿÿ    ÿ Z  À   nourishment¾           ı 
+    i   ¾   	 5     ı 
+    q       ı 
+    p       ı 
+       ı 
+    i        -   À2ÿÿ   ÿ Z   À   Interaction    .  Ø2ÿÿ    ÿ Z  À¾ (          4                /  Ü2ÿÿ   ÿ Z   À    !  à2ÿÿ  
+  ÿ Z  À¾ (          5           ı 
+        ı 
+    |   ¾ (          4           ı 
+    * |   ı 
+       ı 
+    c   ı 
+    [   ı 
+    ‘   ı 
+   ) ‹   ı 
+    c   ı 
+    c   ı 
+    k   ı 
+  	 6 c   ¾   
+        )   ı 
+    * |   ı 
+       ı 
+    c   ı 
+    Z   ı 
+    Z   ı 
+    Z   ı 
+    c   ı 
+    c   ı 
+    l   ı 
+  	 6 c   ¾   
+        )   ı 
+    * |   ı 
+    m   ı 
+    c   ı 
+    Y       ı 
+   ) Y   ı 
+    c   ı 
+    c   ı 
+    l   ı 
+  	 6 c   ¾   
+        )   ı 
+ 	   * |   ı 
+ 	      ¾  	  &amp;       5 	   	 
+ (   ä2ÿÿ  	 ÿ D  À   metal  	  &amp;   ğ2ÿÿ  	 
+ÿ D  À   plant  	  &amp;   ü2ÿÿ    ÿ D  À   plant  	  &amp;   2ÿÿ  	 ÿ D  À   plant  	  &amp;   2ÿÿ  	 ÿ D  À   metal  	  &amp;    2ÿÿ  	 ÿ D  À   plant  	  &amp;   ,2ÿÿ  	 ÿ D  À   plant  	  &amp;   82ÿÿ  	 ş D  À   plant  	  (   D2ÿÿ  	 ÿ D  À   water  
+   -   P2ÿÿ  
+ ÿ Z   À 
+  Subjective  
+  .  h2ÿÿ    ÿ Z  À¾ ( 
+         4                /  l2ÿÿ   ÿ Z   À    !   p2ÿÿ    ÿ Z  À   colorı 
+    _   ı 
+   )    ı 
+    V   ı 
+   ) š   ı 
+   ) š   ı 
+   ) x       ı 
+  	 6 w   ¾   
+      ı 
+    “   ¾        ı 
+   ) v        /  |2ÿÿ   ÿ Z    À    !   €2ÿÿ    ÿ Z   À	   flavor¾        ı 
+   ) œ   ı 
+   ) ›   ¾ 
+      ı 
+  	 6 w   ¾   
+     ı 
+    ˜   ¾        ı 
+   ) ¡   ı 
+   ) v        /  2ÿÿ   ÿ Z !  À    !   ”2ÿÿ    ÿ Z ! À   smellı 
+    •   ¾        ı 
+   ) ›   ı 
+   ) —       ı 
+  	 6 k   ¾   
+     ı 
+    ˜   ¾        ı 
+   ) ¢   ı 
+   ) h        /   2ÿÿ   ÿ Z <B><FONT COLOR="#BC8F8F">&quot;  À    !   ¤2ÿÿ    ÿ Z &quot;</FONT></B> À   sound¾ (          5                1  °2ÿÿ   ÿ Z #  À    1   ´2ÿÿ    ÿ Z # À
+   textureı 
+   2 –   ı 
+   2 ^   ı 
+   2       2 ı 
+   2 ^   ı 
+   2       2 ı 
+  	 7 ’   ¾   
+ 2 2 2 2 2 2 2  ı 
+   2        2      -   Ä2ÿÿ   ÿ Z '  À   Tool    -  Ğ2ÿÿ    ÿ Z ' À¾ (          8                1  Ô2ÿÿ   ÿ Z (  À    1   Ø2ÿÿ   ı Z ( À	   effect¾ (   2 2 2 2 2 2 2 7 2 2 2 2 2 2 2 2 2  ı 
+     £   × * R  hü { Ö € n H ¨ ¨ ¤ ¹ ø á ê z è y { &gt; ¶    @                       
+   	   ÓÌÉ               )   ş(  6&gt;  “D       d          ü©ñÒMbP?_   *    +    ‚   €          %   ÿ   Á      ƒ    „    ¡ <B><FONT COLOR="#BC8F8F">&quot;   ÿ              à?      à?2 U   }      m  }    ¶  }       }    ’  }    Û  }    ’  }       }    I  }    m  }  	 	 $  }  
+ 
+    }    $
+  }    $  }    m  }    ¶         Column B       )              ÿ   T0       ÿ           ÿ            ÿ            ÿ            ÿ             ÿ      Å      ÿ           ÿ        	    ÿ        
+    ÿ      T      ÿ      ‹     ÿ             ÿ             ÿ            ÿ          ÿ      t      ÿ          ÿ            ÿ   0        ÿ             ÿ   €  Ê      ÿ   @       ÿ   Ù        ÿ      ‹     ÿ             ÿ      T      ÿ             ÿ     ¨G     ÿ      ‹     ÿ   ‹       ÿ        ¾ 
+         ı 
+         ı 
+          ı 
+      Q   ı 
+      d   ı 
+      e   ı 
+      F   ı 
+      &gt;   ı 
+   	   ?   ı 
+   
+  G   ı 
+     ~   ı 
+      A   ı 
+      B   ı 
+     \   ı 
+     !   ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |    )   !   è2ÿÿ  	 ÿ Z     À@  sBP 	  BodyPartsı 
+    €   ¾                 ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+       ¾                   ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+    H   ¾              %   ü2ÿÿ   ÿ Z    À   head¾       
+     0   2ÿÿ   ÿ Z    À   hip        %   2ÿÿ   ÿ Z    À   hand    ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |       ı 
+    * |   ı 
+       ı 
+       ı 
+    r   ı 
+    T   ¾               ı 
+ 	   * |   ı 
+ 	        	  #   2ÿÿ  
+ ÿ D  À   bag 	     	  &quot;</FONT></B>   $2ÿÿ   ÿ D  À   mountain dew¾  	             ı 
+ 
+   * |   ı 
+ 
+      ı 
+ 
+   ‚   ¾  
+          
+  ' 
+  $   @2ÿÿ   ÿ D  À  onlyBP 
+  sword only¾  
+      ı 
+     <B><FONT COLOR="#BC8F8F">&quot;   ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |           *     !   X2ÿÿ   ÿ Z 
+ À	   heightı 
+    …       ı 
+    R   ¾            ı 
+    o   ¾ 
+          *     !   h2ÿÿ  	 ÿ Z  À   length/breadthı 
+    †       ı 
+    S   ¾            ı 
+    k   ¾ 
+      ı 
+    * |       !   ˆ2ÿÿ   ÿ Z  À   massı 
+    ƒ       ı 
+    U   ¾                   *     !  zìÿÿ   ı &lt;  À¾                   ı 
+    * |       !   ”2ÿÿ   ÿ Z  À	   volumeı 
+    „       ı 
+    T   ¾                   *     !   ¤2ÿÿ   ÿ Z  À   width/depthı 
+    ‡       ı 
+    S   ¾            ı 
+    n   ¾ 
+      ı 
+     #   ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+   * |   ¾     *              ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+       ¾ 
+          &quot;</FONT></B>   ¼2ÿÿ   ÿ D  À   table    <B><FONT COLOR="#BC8F8F">&quot;   È2ÿÿ  % ÿ D  À   bag¾              ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+       ¾                   ı 
+    * |   ı 
+       ¾                   ı 
+    * |   ı 
+       ¾                   ı 
+         ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+       ¾                   ı 
+    * |   ı 
+       ¾                   ı 
+    * |   ı 
+       ¾                   ı 
+        ı 
+    |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    |   ı 
+  	  |   ı 
+  
+  |       ı 
+    |   ı 
+    |   ı 
+    |   ı 
+    * |   ı 
+       ¾ 
+      ı 
+    V   ı 
+       ı 
+    V   ¾             × D   lÄ Ê { Ê @ Ê × Æ d Ÿ  Æ ’ š ~ O € — Ê @ Ê š Ê @ @ @ Ê @ @ @ Ê       ÿ   T0   !    ÿ       &quot;</FONT></B>    ÿ        #    ÿ        $    ÿ        %    ÿ         &amp;    ÿ      Å  '    ÿ       (    ÿ       ı 
+     * |   ı 
+     
+   ¾ 
+       ı 
+     W   ı 
+     @   ı 
+     f   ¾              ı 
+ !   * |   ı 
+ !      ¾  !      ı 
+ !   @   ı 
+ !   f   ¾  !           ı 
+ <B><FONT COLOR="#BC8F8F">&quot;   * |   ı 
+ &quot;</FONT></B>   	   ¾  <B><FONT COLOR="#BC8F8F">&quot;       ı 
+ &quot;</FONT></B>   h   ¾  <B><FONT COLOR="#BC8F8F">&quot;           ı 
+ #   * |   ı 
+ #      ¾ 
+ #     ı 
+ #   ^   ı 
+ #      ¾  #            ı 
+ $       ı 
+ $   |    $   ı 
+ $   |   ı 
+ $   |   ı 
+ $   |   ı 
+ $   |   ı 
+ $   |   ı 
+ $   |   ı 
+ $ 	  |   ı 
+ $ 
+  |    $   ı 
+ $   |   ı 
+ $   |   ı 
+ $   |   ı 
+ %   * |   ı 
+ %       %     %  &amp;   Ğ2ÿÿ  % ÿ Z   À	   burlap  %  '   à2ÿÿ  % ÿ Z   
+À   aluminum  %  &amp;   ô2ÿÿ  % ÿ Z   À	   garlic  %  '   	2ÿÿ  % ÿ Z   À   soda  %  %   	2ÿÿ   ÿ Z   À
+   plastic  %  %    	2ÿÿ  % ş Z   À
+   plastic¾  % 	       %  '   0	2ÿÿ  % ÿ Z   À   water %     %  (   &lt;	2ÿÿ   ÿ Z   	À   woodı 
+ &amp;   * |   ı 
+ &amp;      ¾  &amp;       ı 
+ &amp;   ]   ¾  &amp;           ı 
+ '       ı 
+ '   |    '   ı 
+ '   |   ı 
+ '   |   ı 
+ '   |   ı 
+ '   |   ı 
+ '   |   ı 
+ '   |   ı 
+ ' 	  |   ı 
+ ' 
+  |    '   ı 
+ '   |   ı 
+ '   |   ı 
+ '   |   ı 
+ (   * |   ı 
+ (      ¾   (                ×      n b V b Ê ¯V Ê &gt; ¶     @             %     % % º	   Sheet1
+   	   ÓÌÉ                  £E  «H       d          ü©ñÒMbP?_   *    +    ‚   €          %   ÿ   Á      ƒ    „    ¡ &quot;</FONT></B>   ÿ           à?      à? U   }      $	                       ÿ   T0       ÿ           ÿ            ÿ            ÿ            ÿ        ı 
+      %   ı 
+     &amp;   ı 
+     3   ı 
+     4   ı 
+     5   ı 
+     6   ı 
+     7   ı 
+     (   ı 
+     )   ı 
+   	  8   ı 
+   
+  9   ı 
+     *   ı 
+     +   ı 
+     ,   ı 
+     :   ı 
+     -   ı 
+     '   ı 
+     <I><FONT COLOR="#B22222">;   ı 
+</FONT></I>     &lt;   ı 
+     =   ı 
+     /   ı 
+     .   ı 
+     0   ı 
+     1   ı 
+     2   ı 
+     $   ı 
+    y   ı 
+    z   ı 
+    {   ı 
+    }   ı 
+     I   ı 
+    K   ı 
+    L   ı 
+     J   ı 
+    M   ı 
+    N   ı 
+     `   ı 
+    a   ı 
+    b   ı 
+    D   ı 
+    t   ı 
+    u   ı 
+     O   ı 
+    P   ×  à  d ^F * * T &gt; ¶     @                    º	   Sheet2
+                                                                                                                                                                                                                                                                          T h i s W o r k b o o k                                          
+      ÿÿÿÿ                                        	      M o d u l e 1                                                     ÿÿÿÿÿÿÿÿÿÿÿÿ                                    2   ”      _ _ S R P _ 2                                                       	   ÿÿÿÿ                                       @      _ _ S R P _ 3                                                     ÿÿÿÿÿÿÿÿÿÿÿÿ                                    &amp;   -       ¶ ÿÿ    ÿÿÿÿ    ÿÿÿÿÿÿ                                                                ÿÿÿÿÿÿÿÿ   ÿÿÿÿx   Ş   ¿  õ  ÿÿÿÿ       À~´©  ÿÿ#   ˆ                                   ÿÿ  Û  Ö   Ö   O    ÿÿÿÿ    ß ÿÿ     ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ(    SLÿÿÿÿ   Sÿÿÿÿ   S”ÿÿÿÿ    &lt;ÿÿÿÿ  ÿÿ     N 0 { 0 0 0 2 0 8 1 9 - 0 0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } £AX= ß   ÿÿÿÿH   şÿÿÿÿÿÿÿÿÿ(     ÿÿ        ÿÿÿÿÿÿÿÿ       $   ÿÿÿÿH   ÿÿÿÿ0   ÿÿÿÿ(                ÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ        ÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ 8   ME  ÿÿÿÿÿÿ    ÿÿ    ÿÿ                                                              şÊ   €         €	     ÿÿÿÿÿÿÿÿ   Åÿÿx   ÿÿÿÿp   ¶° Attribut e VB_Nam e = <B><FONT COLOR="#BC8F8F">&quot;Thi sWorkbook&quot;</FONT></B>
+
+ŒBasŒ0{00020P819- 0C $0046}|Creatab‚l†False^ Predecla‰ Id ‹Tru<B><FONT COLOR="#BC8F8F">&quot;@ExposeT emplateD0eriv$eCuÀstomizˆ2€Option  / licit
+ 
+                                                       rU€   €   €   €     ~}         	       	                 á      !	      ù      I	      Á      Ñ      I      ù      q	      ™	      !     Á	      Ù	      ù	      
+      9
+      Y
+      ”   P     2pÿtÿ&quot;</FONT></B>    $ H  tÿ Qpÿ[lÿxÿtÿşˆhÿ K  
+xÿ
+   xÿş‹hÿ 4           P 0                      lÿ hÿ xÿ           tÿ pÿ 0      üÆ                                         0  ì     Kä  6şÁ`ÿåïÿÿ%(Pÿ %p !=  L! P$ N ®  !<B><FONT COLOR="#BC8F8F">&quot;  L! P$ N  ®  !   L! P$ N  ®  !&lt;  L! P$ N   
+ • ¯' &lt;  a ÿÿ   ¯ ' &lt;  h ÿÿğ   f ÿÿè       Z ê  ê(  ÿÿ¤   ' N  R®    ” F s g ÿÿÿÿÿÿ¤  ' V¤  ' X  X¤    _ ÿÿÿÿ  V  T  R  Z ' Xÿÿ  X  R  ' V  X¤    ” F   N¤   ' Ng ÿÿ± ÿÿ@   f ÿÿ8   ÿÿÿÿ0   ¯  .! D( \_(ÿÿÿÿè      Z ê@  ÷   ,ö   b! dŒ u ssu   ,A *   ch  ÷ ¿ ˆ  l ÿÿ€  ÿÿÿÿˆ  ï² Attribut e VB_Nam e = &quot;</FONT></B>Mod ule1<B><FONT COLOR="#BC8F8F">&quot;
+S ub Highl tAllFor mulas()
+   Dim a Sheet AsÀ Works8ƒ
+ d EachN In Activ‚eZbook.6†s1XCally1vIn(m~Ne xt
+
+Enüd  ª
+
+±7®UÿƒHd -'C
+z„I‰ce€^ ˆRangöejf„ On Error  GoToHa`ndlerƒƒSK€´#=„©.C€7s .Special	(x‚Typeá‚, 23„Q 	ƒÉT@d…`If Referen cesOtherBH(A) ThenÇÁÁ.Int erior.Pa
+t@n ”xlGrˆay8Els„E†Font.I talic@Tru	ColorIndex 
+53H9@‚IfÃC‡E  À‰XDU:xit#ÃH~Fun€©on-—AaHÆr)ABopolea„E ROccurDQf(&quot;</FONT></B>P!<B><FONT COLOR="#BC8F8F">&quot;, Â.„f)P &gt; (	=O	+ª N&quot;</FONT></B>a	 !	&lt;ŸM&lt;õAj5K<I><FONT COLOR="#B22222">;XFa†@¡.6á Å.ayF0Ësbm€ƒStr.À i€ng, big*¢1AQgëg¢somp areStart , foundAßÀˆEC6Ê 0&amp;9Få ¤&quot;&quot;` EG§§vcÈ€1ƒÄD€o Whilep &lt;&gt; a	çIšn (©
+</FONT></I>Å, å , vbT€¢CcÄ}á¬Å
++ Leün(ÅèÀVec#ë+ dLoopƒ²ç<B><FONT COLOR="#BC8F8F">&quot;á9 ÿÿÿÿÿÿÿÿÿÿÿÿf     `    ÿÿÿÿÿÿÿÿ    €  hÿk ÿÿÿÿÿÿÿÿÿÿ  	 	   „    ÿÿÿÿƒ ÿÿÿÿ ÿÿx    ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿ  $   ÿÿÿÿ@  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ8  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿh  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   €  ÿÿÿÿb*ÿÿÿÿÿÿÿÿÿÿÿÿ ÿÿ@şÿP  tÿÿÿ	 ÿÿ    ÿÿÿÿ@şÿÿÿÿÿpÿÿÿ	 ÿÿ    ÿÿÿÿ@şÿ ÿH Ğ  pÿş¢@ÿš   ıó tÿpÿ5@ÿ ltÿxÿşˆ&lt;ÿ ä  xÿ  ‡  *şÁ`ÿ   %xÿa@ÿ   ıó pÿpÿ,_   pÿ5@ÿÕ   %c`ÿ%xÿa@ÿ’   ıó	 pÿpÿ,e   pÿ5@ÿ '(`ÿ5 %xÿa@ÿ’   ıó	 pÿpÿ,a   pÿ5@ÿ  xÿş‹&lt;ÿ M    Â     @ ì 0      ä               &lt;ÿ tÿ xÿ           pÿ @ÿ `  ô     ×H adÿ  ü‹H aLÿ  ü‹H a4ÿ  ü‹H aÿ  ü‹H aÿ  ü‹dÿ`ıÇ`ÿ Ctÿtÿ
+  Lÿ`ıÇHÿ C\ÿ\ÿ
+  4ÿ`ıÇ0ÿ CDÿDÿ
+  ©ÿ`ıÇÿ C,ÿ,ÿ
+  ©ÿ`ıÇ ÿ Cÿÿ
+  ©Ú2 tÿ`ÿ\ÿHÿDÿ0ÿ,ÿÿÿ ÿ6
+ dÿLÿ4ÿÿÿã  ôÿpzÿì   ô pzÿ           | ô $      ì                H          tÿ `ÿ \ÿ Hÿ Dÿ 0ÿ ,ÿ ÿ ÿ  ÿ dÿ Lÿ 4ÿ ÿ ÿ Ô   ˜     ô pzÿ €  û0   (Hÿ üöhÿ (Hÿ üöXÿ Xÿ(Hÿ  ]û&lt;8ÿ\”  hÿü&quot;</FONT></B>€ € õ   şııiHÿüöXÿ Xÿ€ JıiHÿû”8ÿüöhÿ Xÿ(Hÿ  ]û&lt;8ÿ\  kzÿô©pzÿ /         D ˜ ,      ’               hÿ Xÿ           8ÿ                 W      rU€       €   €          	      ÿÿÿÿÿÿÿÿ        $          `  ıÿÿÿÿÿÿÿÿÿÿÿ         $ ©        `  ıÿÿÿÿÿÿÿÿÿÿÿ         , Ñ        ` ıÿÿÿÿÿÿÿÿÿÿÿ               =a      , ù        ` ıÿÿÿÿÿÿÿÿÿÿÿ    ¹          =™      , !       ` ıÿÿÿÿÿÿÿÿÿÿÿ    Ñ      ñ          00    p      ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ`  ¶ ÿÿ    ÿÿÿÿ    ÿÿ&lt; ÿÿ  +(´S¶×NšWìİ2I'ö      À      F                 $!P$Ó†I²ï&lt;
+æÖG+            ÿÿÿÿÿÿÿÿ   ÿÿÿÿx   ú   <B><FONT COLOR="#BC8F8F">&quot;  8  ÿÿÿÿ       À~‡&amp;  ÿÿ#   ˆ   $!P$Ó†I²ï&lt;
+æÖG++(´S¶×NšWìİ2I'öÿÿ  &gt;  ò   ò   ²       ÿÿÿÿ4   ÿÿÿÿ    ß ÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ ¶ ÿÿ    ÿÿÿÿ    ÿÿ ÿÿ                                                                ÿÿÿÿÿÿÿÿ   ÿÿÿÿx   Ş   M  C  ÿÿÿÿ      À~2  ÿÿ                                       ÿÿ  i  Ö   Ö   ¡    ÿÿÿÿ    ß ÿÿ    8 ÿÿÿÿÿÿ  ÿÿÿÿ ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ     0”ÿÿ   8ÿÿ0    &gt;
+ÿÿÿÿ     ÿÿÿÿ     ÿÿÿÿ    Lÿÿÿÿ    Lÿÿÿÿ    Lÿÿÿÿ    ”ÿÿÿÿ    Lÿÿÿÿ    ”ÿÿÿÿ    ÿÿÿÿ    ÿÿÿÿ     ÿÿÿÿ    &lt;&lt; ÿÿ    &lt;ÿÿÿÿ  ÿÿ      £AX=  * \ R 1 * # 2 0 a  * \ R 1 * # 1 5 d $ * \ R f f f f * 7 6 3 d 5 8 4 1 a a  * \ R 1 * # b  * \ R 1 * # 5 e  * \ R 1 * # b 4  * \ R 1 * # a c  * \ R 1 * # c 1  * \ R 1 * # 2 0 c  * \ R 1 * # b 8  * \ R 1 * # 2 0 b  * \ R 1 * # 1 d 7  * \ R 1 * # 1 5 8  * \ R 0 * # 9 ß   ÿÿÿÿˆ	    $   ƒ ÿÿÿÿ ÿÿ0     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ† 1   $   *x    `    ÿÿÿÿÿÿÿÿ    È  &lt;ÿk ¨   ÿÿÿÿÿÿ    „   s   ƒ ÿÿÿÿ ÿÿ      ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ       $   )ƒ-ÿÿÿÿ ÿÿ        ÿÿÿÿ€  by P „.ÿÿÿÿxÿÿÿà             $    „2ÿÿÿÿtÿÿÿ             $   H8     `    ÿÿÿÿÿÿÿÿ    ÿÿÿÿtÿJ ÿÿÿÿÿÿÿÿÿÿ   	 „    ÿÿÿÿÿÿÿÿ°     $      $   ƒ ÿÿÿÿ ÿÿˆ    ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿ  $   +Nÿÿÿÿ  `    ÿÿÿÿÿÿÿÿ    ˜  8ÿ+ Ğ   ÿÿÿÿ   * Œ   ÿÿÿÿiƒRÿÿÿÿ ÿÿÿÿ    ğ  €  ÿÿÿÿiƒTÿÿÿÿ ÿÿÿÿ    ÿÿÿÿ€  ÿÿÿÿ@„Vÿÿÿÿhÿÿÿ ÿÿ    ÿÿÿÿ@„XÿÿÿÿXÿÿÿ ÿÿ         „-ÿÿÿÿxÿÿÿX      x      8     ÿÿÿÿÿÿÿÿÿÿÿÿx  +&lt;    `    ÿÿÿÿÿÿÿÿ       ÿk ¸   ÿÿÿÿ 	 	 ! Œ   È   )ƒLÿÿÿÿ ÿÿØ      ÿÿÿÿ€  ÿÿÿÿ $   ÿÿÿÿX  ƒ ÿÿÿÿ ÿÿP    ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿf     `    ÿÿÿÿÿÿÿÿ    €  hÿk ÿÿÿÿÿÿÿÿÿÿ  	 	   „    ÿÿÿÿƒ ÿÿÿÿ ÿÿx    ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿ  $   ÿÿÿÿ@  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ8  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿh  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   €  ÿÿÿÿb*ÿÿÿÿÿÿÿÿÿÿÿÿ ÿÿ@şÿP  tÿÿÿ	 ÿÿ    ÿÿÿÿ@şÿÿÿÿÿpÿÿÿ	 ÿÿ    ÿÿÿÿ@şÿ  lÿÿÿ	 ÿÿ      ¨  h      ğ @şÿÿÿÿÿhÿÿO	 ÿÿ    	 ÿÿ¸     şÿ   ÿÿÿÿ       ğ ÿÿÿÿ¨   ÿÿÿÿÿÿÿÿè   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÈ   ÿÿÿÿÿÿÿÿ€  È  ÿÿÿÿ˜  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿà  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿh  ø  ÿÿÿÿ:&lt;Bÿÿÿÿÿÿÿÿÿÿ ÿÿ@şÿÿÿÿÿpÿÿÿ	 ÿÿ    ÿÿÿÿ@şÿ°  `ÿÿÿ ÿÿ    ÿÿÿÿ@şÿÿÿÿÿPÿÿÿ ÿÿ    Ğ  @şÿÿÿÿÿ@ÿÿÿ ÿÿ     ÿÿ@şÿÿÿÿÿ&lt;ÿÿO	 ÿÿ          à     ÿÿ  ÿÿÿÿà     `  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¸  ÿÿÿÿ¸  ÿÿÿÿø  ÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ¸  à  Ğ  `&lt;ÿÿÿÿzÿÿÿ ÿÿ       ÿÿÿÿ¸  ! ÿÿ ÿÿÿÿÿÿN  @şÿ   ,ÿÿÿ ÿÿ@şÿ(  tÿÿÿ ÿÿ     ÿÿ@şÿX  dÿÿÿ ÿÿ     ÿÿ@şÿ@  `ÿÿÿ ÿÿ     ÿÿ@şÿp  \ÿÿÿ ÿÿ     ÿÿ@şÿ   Lÿÿÿ ÿÿ     ÿÿ@şÿˆ  Hÿÿÿ ÿÿ      @şÿ¸  Dÿÿÿ ÿÿ    ğ  @şÿè  4ÿÿÿ ÿÿ    ÿÿÿÿ@şÿĞ  0ÿÿÿ ÿÿ    ÿÿÿÿ@şÿ   ,ÿÿÿ ÿÿ    ÿÿÿÿ@şÿ0  ÿÿÿ ÿÿ    ÿÿÿÿ@şÿ  ÿÿÿ ÿÿ    0  @şÿH  ÿÿÿ ÿÿ        @şÿÿÿÿÿÿÿÿ ÿÿ    @   @şÿÿÿÿÿ ÿÿÿ ÿÿ       `Nÿÿÿÿzÿÿÿ ÿÿ      ÿÿÿÿ`  *      ÿÿÿÿ  ÿÿÿÿˆ  ÿÿÿÿÿÿÿÿ`    ÿÿÿÿÿÿÿÿĞ  ÿÿÿÿÿÿÿÿğ  (  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿP	  ÿÿÿÿ8	  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ`  h	  x  @şÿÿÿÿÿHÿÿÿ ÿÿ      @şÿÿÿÿÿ8ÿÿÿ ÿÿ    !ÿÿÿÿZ  ÿÿ     
+      ÿÿÿÿ¨                ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿP            ÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ X  ME  ÿÿÿÿÿÿ    ÿÿ    ÿÿ                                                                şÊ ; &quot;</FONT></B>   Ø   €   à   €	    ÿÿÿÿ  2 è   
+ 
+          €	     ÿÿÿÿ      €	     ÿÿÿÿ<B><FONT COLOR="#BC8F8F">&quot;   @   
+ + H     X   €	     ÿÿÿÿ&quot;</FONT></B>        €   ˜    €        €	    ÿÿÿÿ   ¨    €	    ÿÿÿÿ  6 °      Ğ      à     * ğ           % À    '               €	
+    ÿÿÿÿ €    (     0     8   €	     ÿÿÿÿB   h   €	    ÿÿÿÿ p × p     à     è     ğ     ø         €	     ÿÿÿÿB      €	    ÿÿÿÿ €      €	    ÿÿÿÿ         (   €	    ÿÿÿÿ   @     H     P     `     x     ˆ     ¨     °   €	     ÿÿÿÿ €	     ÿÿÿÿÿÿÿÿ(  8     8     l ÿÿh   Ø       Ø     Macro1 Macro     Ø   -  Macro recorded 08-12-02 by P.G. Schaaf x1642  zorØ       Ø         (A &amp; Â  €l ÿÿh   Z êÈ   Z êè   Á 4P   å   :¤    ,! 6% 8 . 2  €÷   .ö   2Œ €  .$ &lt; •     B  .! &gt;( @a ÿÿø   ¤ 5   .! D( Fh ÿÿÀ   ÷ ¿ ¸   › 4°   u ÿÿ¨   l ÿÿ          (A * .    l ÿÿ€   ÿÿÿÿx   x    ®  !   L! P$ N ® S h e e t 2                                                            ÿÿÿÿ                                    +   d      _ _ S R P _ 8                                                          ÿÿÿÿ                                    A   Ú       _ _ S R P _ 9                                                     ÿÿÿÿÿÿÿÿÿÿÿÿ                                    E   @       S h e e t 1                                                         ÿÿÿÿÿÿÿÿ                                    F   Ü      ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ(    SLÿÿÿÿ   Sÿÿÿÿ   S”ÿÿÿÿ    6<B><FONT COLOR="#BC8F8F">&quot;ÿÿÿÿ  ÿÿ     N 0 { 0 0 0 2 0 8 2 0 - 0 0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } £AX= $ * \ R f f f f * 7 9 3 d 5 8 4 c 7 3 ß   ÿÿÿÿh  şÿÿÿÿÿÿÿÿÿ(     ÿÿ        ÿÿÿÿÿÿÿÿ       $   ÿÿÿÿ    ƒşÿÿÿÿÿ ÿÿ`     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ‚ ÿÿÿÿşÿÿÿ    ÿÿşÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ƒşÿÿÿÿÿ ÿÿÀ     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ÿÿÿÿ0   ƒşÿÿÿÿÿ ÿÿø     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ‚ ÿÿÿÿşÿÿÿ(   ÿÿşÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ƒşÿÿÿÿÿ ÿÿX    ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ÿÿÿÿ8                ÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ   0          @      ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  0   ME  ÿÿÿÿÿÿ    ÿÿ    ÿÿ                                                              şÊ   €         €	     ÿÿÿÿÿÿÿÿ   Åÿÿx   ÿÿÿÿp   ®° Attribut e VB_Nam e = &quot;</FONT></B>She@et2<B><FONT COLOR="#BC8F8F">&quot;
+
+èBast0{000À20820-  C $0046}|Creatabl†False¼Predecla Id …Tru&quot;</FONT></B>Expose Template`Deriv$eC€ustomizˆdOption  /licit
+ 
+                            rU€       €   €          	       	     	                   ¡      ™
+      É      ÿÿÿÿÁ        4   é
+      	           ÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  { c                                            rU€       €   €          	      ÿÿÿÿÿÿÿÿ    @        p       ¶ ÿÿ    ÿÿÿÿ    ÿÿ&lt; ÿÿ  $$åîP«K±ò]cMí÷      À      F                 T£vlÃ:ìCœíéjşš            ÿÿÿÿÿÿÿÿ   ÿÿÿÿx   ú   š  8  ÿÿÿÿ       À~yö  ÿÿ#   ˆ   T£vlÃ:ìCœíéjşš$$åîP«K±ò]cMí÷ÿÿ  ¶  ò   ò   *       ÿÿÿÿ4   ÿÿÿÿ    ß ÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ(    SLÿÿÿÿ   Sÿÿÿÿ   S”ÿÿÿÿ    6<B><FONT COLOR="#BC8F8F">&quot;ÿÿÿÿ  ÿÿ     N 0 { 0 0 0 2 0 8 2 0 - 0 0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } £AX= $ * \ R f f f f * 7 7 3 d 5 8 4 c 7 3 ß   ÿÿÿÿà   şÿÿÿÿÿÿÿÿÿ(     ÿÿ        ÿÿÿÿÿÿÿÿ       $   ÿÿÿÿH   ÿÿÿÿ0   ÿÿÿÿ(   ƒşÿÿÿÿÿ ÿÿp     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ‚ ÿÿÿÿşÿÿÿ     ÿÿşÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ƒşÿÿÿÿÿ ÿÿĞ     ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿ      $   ÿÿÿÿ@                ÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿx   ¨          @      ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  8   ME  ÿÿÿÿÿÿ    ÿÿ    ÿÿ                                                              şÊ   €         €	     ÿÿÿÿÿÿÿÿ   Åÿÿx   ÿÿÿÿp   ®° Attribut e VB_Nam e = &quot;</FONT></B>She@et1<B><FONT COLOR="#BC8F8F">&quot;
+
+èBast0{000À20820-  C $0046}|Creatabl†False¼Predecla Id …Tru&quot;</FONT></B>Expose Template`Deriv$eC€ustomizˆdOption  /licit
+ 
+                                    rU€       €   €          	       	      °                  q
+      ™
+      Á
+      ÿÿÿÿÁ        4   é
+      	           ÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  { c                                            rU€       €   €          	      ÿÿÿÿÿÿÿÿ    @        p      Ìa^   ÿ	  	  ä            * \ G { 0 0 0 2 0 4 E F - 0 _ _ S R P _ 4                                                          ÿÿÿÿ                                    Z   Ú       _ _ S R P _ 5                                                     ÿÿÿÿÿÿÿÿÿÿÿÿ                                    ^   @       _ V B A _ P R O J E C T                                           ÿÿÿÿÿÿÿÿÿÿÿÿ                                    _   ¯      d i r                                                             ÿÿÿÿÿÿÿÿÿÿÿÿ                                    š   İ      0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } # 3 . 0 # 9 # C : \ P r o g r a m   F i l e s \ C o m m o n   F i l e s \ M i c r o s o f t   S h a r e d \ V B A \ V B A 3 3 2 . d l l # V i s u a l   B a s i c   F o r   A p p l i c a t i o n s             * \ G { 0 0 0 2 0 8 1 3 - 0 0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } # 1 . 2 # 0 # D : \ P r o g r a m   F i l e s \ M i c r o s o f t   O f f i c e \ O f f i c e \ E X C E L 8 . O L B # M i c r o s o f t   E x c e l   8 . 0   O b j e c t   L i b r a r y             ¸ * \ G { 0 0 0 2 0 4 3 0 - 0 0 0 0 - 0 0 0 0 - C 0 0 0 - 0 0 0 0 0 0 0 0 0 0 4 6 } # 2 . 0 # 0 # C : \ W I N N T \ S y s t e m 3 2 \ s t d o l e 2 . t l b # O L E   A u t o m a t i o n             à * \ G { 3 9 2 7 1 9 2 2 - 3 E 9 5 - 4 5 3 4 - 9 8 9 1 - C 6 9 4 4 4 6 2 9 D B 6 } # 2 . 0 # 0 # C : \ W I N N T \ S y s t e m 3 2 \ M S F o r m s . T W D # M i c r o s o f t   F o r m s   2 . 0   O b j e c t   L i b r a r y            Ô * \ G { 7 F E 6 D 4 7 A - C 4 5 E - 4 D 5 D - 9 D F A - E 8 4 4 4 6 7 D 4 8 6 1 } # 2 . 0 # 0 # e : \ t e m p \ V B E \ M S F o r m s . E X D # M i c r o s o f t   F o r m s   2 . 0   O b j e c t   L i b r a r y              á.Eà….`ŒM´  * \ G { 2 D F 8 D 0 4 C - 5 B F A - 1 0 1 B - B D E 5 - 0 0 A A 0 0 4 4 D E 5 2 } # 2 . 0 # 0 # D : \ P r o g r a m   F i l e s \ M i c r o s o f t   O f f i c e \ O f f i c e \ M S O 9 7 . D L L # M i c r o s o f t   O f f i c e   8 . 0   O b j e c t   L i b r a r y                        ÿÿÿÿÿÿ    ÿÿ  £AX=  ÿÿÿÿÿÿÿÿÿÿ ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ ÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ                   À~  T h i s W o r k b o o k 
+ 593d5827e6 *Dÿÿ´©          O  ÿÿ M o d u l e 1 
+ 763d5841aa *D ÿÿ2      P   ¡  ÿÿ S h e e t 2 
+ 793d584c73 *Dÿÿ‡&amp;      0   ²  ÿÿ S h e e t 1 
+ 773d584c73 *Dÿÿyö         *  ÿÿp    ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ0  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   ‚   ƒ   „   …   †   ‡   ˆ   ‰   Š   ‹   Œ               ‘   ’   “   ”   •   –   —   ˜   ™   şÿÿÿ›   œ         Ÿ       ¡   ¢   £   ¤   ¥   şÿÿÿ§   ¨   ©   ª   «   ¬   ­   ®   ¯   °   ±   ²   ³   ´   µ   ¶   ·   ¸   ¹   º   »   ¼   ½   ¾   ¿   À   Á   Â   Ã   Ä   Å   Æ   şÿÿÿÈ   É   Ê   şÿÿÿÌ   şÿÿÿÎ   Ï   Ğ   Ñ   Ò   Ó   Ô   şÿÿÿÖ   ×   Ø   şÿÿÿÚ   Û   Ü   İ   Ş   ß   à   á   â   şÿÿÿä   şÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ   ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿP  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ©¬ƒÀ‰0[I‡Ë£ÒÕ¾Â¶ÿÿÿÿ   42h¨5bF£t¨±ê&gt;„Èÿÿÿÿ   –ŠŸµ„¨E®I˜_®-²ÿÿÿÿ   ÿÿÿÿ0   |ïÅièC“ª}¼Ñÿÿÿÿ   ÿÿÿÿ0  ÿÿÿÿ   ¾¨PÖ»êÛÓÿÿÿÿ    ÿÿÿÿP  €     34 ÿ ü+  Excel€+ VBA÷â Win16Á~ Win32 Mac³² Project1
+ stdole“`  MSFormsC 
+VBAProject¾¿ Officeu ThisWorkbook|ã 	€  ÿ _EvaluateÙ Sheet1è Sheet2é Workbookk 	WorksheetÁş Module1b „ ÿÿÿMacro1ÕN ApplyOnlinkStyles9¼  ApplyOnlinkStylesTo €  ÿ ActiveSheet%N HighlightFormulasInÈÅ aSheet cell¯‰ €  ÿ RangeÚ formulas´ê ErrorHandlerO €  ÿ Cells €  ÿ SpecialCells¥¾ €  ÿ xlCellTypeFormulas# CellReferencesOtherSheet¿™ €  ÿ Interior<I><FONT COLOR="#B22222">;ä €  ÿ PatterniĞ €  ÿ xlGray8J¯ €  ÿ FontU 
+</FONT></I>€  ÿ ColorIndexÓã HighlightFormulas ë €  ÿÿÿ_B_var_CellReferencesOtherSheet* aCell¸ OccurrencesOf<B><FONT COLOR="#BC8F8F">&quot;Ï €  ÿ FormulaqY smallStr–… bigStrY compareStart? foundAtŠx  vbTextCompare	Q €  ÿ Italic! Sheet3ê ApplyOnlinkStylesToAll‘Å €  ÿ ActiveWorkbook¢ 
+€  ÿ Worksheets¼ø HighlightAllFormulasØe ÿÿx   ÿÿÿÿÿÿÿÿÿÿÿÿ ÿÿ ÿÿÿÿÿÿ ÿÿ   ÿÿÿÿÿÿ    ÿÿÿÿÿÿÿÿÿÿÿÿ! 	 ÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿÿ  ÿÿ  ÿÿÿÿÿÿÿÿÿÿÿÿÿÿ     H                          €                                                            Ù²€     0*	 pH ‚ dä 
+  VBAProjeˆct 4  @j
+=
+r	£AX=” J&lt;
+ r€stdole&gt; s t d o €l e  f %\ *\G{00€020430- C 
+004 6}#2.0#0 #C:\WINN T\System32\c2.tl b#OLE Au tomation# ^  €MS Forms&gt; ! S F Er €m s / z€	p€F39271 922-3E95 -4534-98 91-C6944À4629DBF3 .TWD#Mic€rosoft =&quot;</FONT></B>  ` Ob° LÀibrary 9 ÑP0 ˆ j€P 7FE6D47A -C45E-4D 5D-9DFA-E8O7D486<B><FONT COLOR="#BC8F8F">&quot;1…–e:\ Ip\VBE\…&amp;EX§&amp; á.Eà ….`ŒM´ƒA’CvOfficDv‚O@sf i cBv
+À)†Ä*2DF8€D04C-5B@( 101B-BDER5@vAA@u4À2Å*D:\ÀŸgra m Files\ÇO\„MSO9`7.DLLHXƒ (8.0’XBº &quot;</FONT></B>ÂÀ~B¤Th isWorkboˆokN2 @1ˆT h@6s W‚‹k bÀo k ¢À  HB1ÂÀ`O  B,QB´©<B><FONT COLOR="#BC8F8F">&quot;B+BC¢odule1U	2„¥o@ÈuBÈ1‰P¡O2!JAİSheet2«Bàc2¢S`e`4ht 2°²`ƒí‡~&amp;ë¦Àg­q*)°yö©â                                   “K)^    ÿÿ      ÿÿ                                                            rU€  €   €   €     ~_ _ S R P _ 0                                                          ÿÿÿÿ                                    ¦   ,      _ _ S R P _ 1                                                     ÿÿÿÿÿÿÿÿÿÿÿÿ                                    Ç   ó       P R O J E C T w m                                                 ÿÿÿÿÿÿÿÿÿÿÿÿ                                    Ë   k       P R O J E C T                                                          ÿÿÿÿ                                    Í   ß        ~  ~  ~  ~  ~  ~  ~  ~  ~  ~  ~[         	             1      ¦_ÿŞKN‰ƒ”1%ml 	  	  ä        
+  ÿÿÿÿÿÿÿÿÿÿÿÿ    ©       ˆa 	      ™      ÿÿÿÿˆ       ÿÿÿÿ )      a      ‘      	      q      ÿÿ  Ñ       ƒŠa 	      1      ÿÿÿÿ  ÿÿ  é       ƒŠa 	      1      ÿÿÿÿ  ÿÿ                                                     	                      é                      Ñ                           ThisWorkbook     Module1     Sheet2     Sheet1     Sheet3  
+   VBAProject  ï     À      F  =   C:\Program Files\Common Files\Microsoft Shared\VBA\VBA332.dll     VBA
+  
+Q      ÿÿÿÿ   	   y            (                    À      F  3   D:\Program Files\Microsoft Office\Office\EXCEL8.OLB     Excel
+  
+i      ÿÿÿÿ      ‘            8               0     À      F     C:\WINNT\System32\stdole2.tlb     stdole  
+  
+q      ÿÿÿÿ       ™      á      H               &quot;</FONT></B>'9•&gt;4E˜‘Æ”Db¶     C:\WINNT\System32\MSForms.TWD     MSForms
+  
+a      A             ‰      Ñ      X              á.Eà….`ŒM´  zÔæ^Ä]MúèDF}Ha     e:\temp\VBE\MSForms.EXD
+  
+i      A             ‘      Ñ      h             LĞø-ú[½å ª DŞR  2   D:\Program Files\Microsoft Office\Office\MSO97.DLL     Office
+  
+!      ÿÿÿÿ       I      ¹      x                  HighlightAllFormulas     HighlightFormulas     HighlightFormulasIn  Ø     À      F       CellReferencesOtherSheet  F     À      F     OccurrencesOf                    À      F  ¹                Ù     À      F   ¹      ù      ÿÿÿÿ  Ú     À      F  p     À      F  M     À      F     !     !=     !<B><FONT COLOR="#BC8F8F">&quot;     !      !&lt;        $$åîP«K±ò]cMí÷        À      F  T£vlÃ:ìCœíéjşš  D     À      F  	   Worksheet    @           ºgbG=PEş‹±›s¦ë  4µj§J‰@²ŞÈ]ø=1ä  +(´S¶×NšWìİ2I'ö  $!P$Ó†I²ï&lt;
+æÖG+                          rU€   €   €   €     ~  ~  ~y      
+   	       ÿÿÿÿÿÿÿÿÿÿÿÿ    ÿÿÿÿ	      	     	 	        	      Á                 aSheet  	      I                 aCell     smallStr     bigStr  	      é
+      (      [                   ThisWorkbook T h i s W o r k b o o k   Sheet2 S h e e t 2   Module1 M o d u l e 1   Sheet1 S h e e t 1                          ID=&quot;</FONT></B>{11C32FB5-ADBC-47E8-AD27-241BDA5BDE25}<B><FONT COLOR="#BC8F8F">&quot;
+Document=ThisWorkbook/&amp;H00000000
+Document=Sheet2/&amp;H00000000
+Module=Module1
+Document=Sheet1/&amp;H00000000
+Name=&quot;</FONT></B>VBAProject<B><FONT COLOR="#BC8F8F">&quot;
+HelpContextID=&quot;</FONT></B>0<B><FONT COLOR="#BC8F8F">&quot;
+CMG=&quot;</FONT></B>0C0E142A2C3230323032303230<B><FONT COLOR="#BC8F8F">&quot;
+DPB=&quot;</FONT></B>181A003301330133<B><FONT COLOR="#BC8F8F">&quot;
+GC=&quot;</FONT></B>24263C32443F453F45C0<B><FONT COLOR="#BC8F8F">&quot;
+
+[Host Extender Info]
+&amp;H00000001={3832D640-CF90-11CF-8E43-00A0C911005A};VBE;&amp;H00000000
+
+[Workspace]
+ThisWorkbook=0, 0, 0, 0, C
+Sheet2=0, 0, 0, 0, C
+Module1=0, 0, 1076, 592, Z
+Sheet1=0, 0, 0, 0, C
+                                 şÿ                       à…ŸòùOh«‘ +'³Ù0   ¤         8      @      \      x            œ      ä        P.G. Schaaf x1642 e       P.G. Schaaf x1642 e       Microsoft Excel  S u m m a r y I n f o r m a t i o n                           ( ÿÿÿÿ   ÿÿÿÿ                                    Õ   Ô        D o c u m e n t S u m m a r y I n f o r m a t i o n           8  ÿÿÿÿÿÿÿÿÿÿÿÿ                                    Ù   \       C o m p O b j                                                   ÿÿÿÿÿÿÿÿÿÿÿÿ                                    ã   f                                                                           ÿÿÿÿÿÿÿÿÿÿÿÿ                                                @    h:ABÂ                                                   şÿ                       ÕÍÕœ.“— +,ù®D   ÕÍÕœ.“— +,ù®8  ô   	      P      X      t      |      „      Œ      ”      œ      Ğ      ä        Versant Corporation    j                                     form 	   material    classes    enums            Worksheets        $         0      q      y      Ñ              
+   _PID_GUID       QSHFileName[1]       QSHFileName    ä  A   N   { E C 9 4 2 0 5 2 - 9 8 4 D - 4 C 1 2 - 8 0 7 0 - 6 3 7 E 9 7 4 A D 2 2 0 }        )   C:\Palm\SchaafP\qsheet\Personal\Zork.qsh KS=      PROPERTY_CHUNKS=1 he                                        şÿ
+  ÿÿÿÿ      À      F   Microsoft Excel Worksheet    Biff8    Excel.Sheet.8 ô9²q                                                                                                                                                                                                                                      </FONT></B></PRE>
+<HR>
+<ADDRESS>Generated by <A HREF="http://www.iki.fi/~mtr/genscript/">GNU Enscript 1.6.5.90</A>.</ADDRESS>
+</BODY>
+</HTML>

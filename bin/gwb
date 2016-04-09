@@ -112,13 +112,18 @@ case $UNAME in
         [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
         ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
         echo In `pwd`
-        echo $CMD
         if [ -z $_dry_run ]; then
-            # if [[ "$CMD" =~ studio ]]; then
-            #     eval $CMD &
-            # else
+            set -x
+            if [[ "$CMD" =~ studio ]]; then
+                #CMD=$CMD' &'
+                echo $CMD
+                eval source $CMD
+            else
+                echo $CMD
                 eval $CMD
-            # fi
+            fi
+        else
+            echo $CMD
         fi
         ;;
 esac

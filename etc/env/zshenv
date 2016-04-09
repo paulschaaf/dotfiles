@@ -208,8 +208,6 @@ export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd
 
 export LS_FLAGS=${LS_COLORS:+--color }-BCFbh
 $ifZsh export LS_FLAGS=${LS_FLAGS}H
-export LA_FLAGS=${LS_FLAGS}A
-export LL_FLAGS=${LS_FLAGS}l
 
 export PAGER=less
 
@@ -293,7 +291,7 @@ echoList () {
                 system(show_type matches)
             }
         }
-    }' RS=${RS:-:} file=${@} ls="ls ${LL_FLAGS}U" show_type=${show_type}
+    }' RS=${RS:-:} file=${@} ls="ls ${LS_FLAGS}Ul" show_type=${show_type}
 }
 
 if [ -z "$ifZsh" ]; then
@@ -372,23 +370,27 @@ wless ()  {
 }
 
 # ======== ls Aliases and Functions
-unalias l la ll ls lsd rm d s p rd 2>/dev/null
-alias l='/bin/ls'
-alias la='l '${LA_FLAGS}
-alias ll='l '${LL_FLAGS}
+unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
+alias l=/bin/ls
+
+ls () {
+    eval l ${LS_FLAGS} $@
+}
+
+alias la='l '${LS_FLAGS}A
+alias ll='l '${LS_FLAGS}l
 alias lla='la -l'
-alias lld="l ${LL_FLAGS/F/}d */"
-alias lls=ll
+
 alias llt='ll -rt'
 alias lr='ls -R'
-alias ls='l '${LS_FLAGS}
 alias lsd="l ${LS_FLAGS/F/}d */"
-alias lsda='lsd .*/'
+alias lld="l ${LS_FLAGS/F/}ld */"
+alias lsda="l ${LS_FLAGS/F/}ld */(D)"
+alias llda='lsda -l'
 
 lsf () {
     local x
-    for x in ${*:-*}
-    do
+    for x in ${*:-*}; do
         echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
     done | column -t -s ':'
 }
@@ -404,7 +406,7 @@ alias pgrep='ps -aef | grep'
 alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
 alias run=''
-alias tree="tree -Aa --dirsfirst --ignore_backups --ignore_regex '\\.svn|\\.git'"
+alias tree="tree -a --dirsfirst --ignore_backups --ignore_regex '\\.svn|\\.git'"
 
 # function m4aflac() {
 #     if [ $# -eq 0 ]; then

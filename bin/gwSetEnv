@@ -1,36 +1,36 @@
 #!/bin/bash
 
-# case $PWD in
-#     */carbon/*)
-#         export GW_PLATFORM=carbon
-#         ;;
-#     */diamond/*)
-#         export GW_PLATFORM=diamond
-#         ;;
-#     */emerald/*)
-#         export GW_PLATFORM=emerald
-#         ;;
-#     */ferrite/*)
-#         export GW_PLATFORM=ferrite
-#         ;;
-#     *)
-#         echo "Could not determine platform version!" >&2
-#         exit 1
-#         ;;
-# esac
+case $PWD in
+    */carbon/*)
+        export GW_PLATFORM=carbon
+        ;;
+    */diamond/*)
+        export GW_PLATFORM=diamond
+        ;;
+    */emerald/*)
+        export GW_PLATFORM=emerald
+        ;;
+    */ferrite/*)
+        export GW_PLATFORM=ferrite
+        ;;
+    *)
+        echo "Could not determine platform version!" >&2
+        exit 1
+        ;;
+esac
 
-# export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
+export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
 
 # # take the uppercase of the first char
-# export GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
-# export TITLE="$GW_PL:$GW_PRODUCT"
+export GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
+export GW_TITLE="$GW_PL:$GW_PRODUCT"
 
 case `uname` in
     CYGWIN*)
         _script_extension=.bat
         ;;
     *)
-        if [ $GW_PLATFORM = "ferrite" ]; then
+        if [ "$GW_PLATFORM" = "ferrite" ]; then
             _script_extension=
         else
             _script_extension=.sh

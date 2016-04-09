@@ -1,0 +1,123 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>2.3.&nbsp;Coding your user script [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;2.&nbsp;Your First User Script">
+      <link rel="prev" href="metadata.html" title="2.2.&nbsp;Describing your user script with metadata">
+      <link rel="next" href="editing.html" title="2.4.&nbsp;Editing your user script">
+   </head>
+   <body id="diveintogreasemonkey-org" class="first-helloworld">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Your First User Script</a> &#8594; <span class="thispage">Coding your user script</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="first.helloworld" class="skip" href="#first.helloworld" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 2.3.&nbsp;Coding your user script
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Our first user script simply displays an alert saying &#8220;<span class="guilabel">Hello world!</span>&#8221; when it is executed.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="example"><a name="example.helloworld.alert" class="skip" href="#example.helloworld.alert" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Display the &#8220;<span class="guilabel">Hello world!</span>&#8221; alert
+                  </h3><pre class="programlisting ">alert('Hello world!');</pre></div>
+               <p>Although this code looks obvious enough, and does exactly what you would expect, Greasemonkey is actually doing a number of
+                  things behind the scenes to ensure that user scripts do not interact badly with other scripts defined by the original page.
+                   Specifically, it automatically wraps your user script in an anonymous function wrapper.  Ordinarily you can ignore this,
+                  but it will eventually creep up and bite you in the ass, so you may as well learn about it now.
+               </p>
+               <p>One of the most common ways this can bite you is that variables and functions that you define in a user script are <span class="emphasis"><em>not</em></span> available to other scripts.  In fact, they are not available at all once the user script has finished running.  This means
+                  that you will run into problems if you are expecting to be able to call your own functions later by using the <code class="methodname">window.setTimeout</code> function, or by setting string-based <code class="systemitem">onclick</code> attributes on links and expecting Javascript to evaluate your function names later.
+               </p>
+               <p>For example, this user script defines a function <code class="function">helloworld</code>, then attempts to set a timer to call it one second later.
+               </p>
+               <div class="example"><a name="example.settimeout.bad" class="skip" href="#example.settimeout.bad" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Bad way to delay calling a function</h3><pre class="programlisting ">function helloworld() {
+    alert('Hello world!');
+}
+
+window.setTimeout("helloworld()", 60);</pre><p>This will not work; no alert will be displayed.  If you open <a href="../debug/javascript-console.html" title="3.1.&nbsp;Tracking crashes with JavaScript Console">JavaScript Console</a>, you will see an exception displayed: <code class="computeroutput">Error: helloworld is not defined.</code>  This is because, by the time the timeout expires and the call to <code class="literal">helloworld()</code> is evaluated, the <code class="function">helloworld</code> function no longer exists.
+                  </p>
+               </div>
+               <p>If you need to reference your user script's variables or functions later, you will need to explicitly define them as properties
+                  of the <code class="varname">window</code> object, which is always available.
+               </p>
+               <div class="example"><a name="example.settimeout.better" class="skip" href="#example.settimeout.better" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Better way to delay calling a function</h3><pre class="programlisting ">window.helloworld = function() {
+    alert('Hello world!');
+}
+
+window.setTimeout("helloworld()", 60);</pre><p>This works as expected: one second after the page loads, an alert pops up proudly displaying &#8220;<span class="guilabel">Hello world!</span>&#8221;
+                  </p>
+               </div>
+               <p>However, setting properties on <code class="varname">window</code> is still not ideal; it's a bit like using a global variable when a local one will do.  (Actually, it's exactly like that,
+                  since <code class="varname">window</code> is global and available to all scripts on the page.)  More practically, you could end up interfering with other scripts that
+                  were defined on the page, or even other user scripts.
+               </p>
+               <p>The best solution is to define an anonymous function yourself and pass it as the first argument to <code class="function">window.setTimeout</code>.
+               </p>
+               <div class="example"><a name="example.settimeout.best" class="skip" href="#example.settimeout.best" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Best way to delay calling a function</h3><pre class="programlisting ">window.setTimeout(function() { alert('Hello world!') }, 60);</pre><p>What I'm doing here is creating a function without a name (an &#8220;<span class="quote">anonymous function</span>&#8221;), then immediately passing the function itself to <code class="function">window.setTimeout</code>.  This accomplishes the same thing as the previous example, but it leaves no trace, i.e. it's undetectable to other scripts.
+                  </p>
+                  <p>I find that I use anonymous functions regularly while writing user scripts.  They are ideal for creating &#8220;<span class="quote">one-off</span>&#8221; functions and passing them as arguments to things like <code class="function">window.setTimeout</code>, <code class="function">document.addEventListener</code>, or assigning to event handlers like <code class="systemitem">click</code> or <code class="systemitem">submit</code>.
+                  </p>
+               </div>
+               <div class="furtherreading"><a href="../appendix/furtherreading.html" title="List of &#8220;further reading&#8221; links">
+                     <h3>Further reading</h3></a><ul>
+                     <li><a href="http://novemberborn.net/sifr/explained/terminology">Anonymous functions in Javascript</a></li>
+                     <li><a href="http://youngpup.net/2004/jsblockscope">Block Scope in Javascript</a> and <a href="http://youngpup.net/2004/jsblockscope/comments">associated discussion thread</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="metadata.html">Describing your user script with metadata</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="editing.html">Editing your user script</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

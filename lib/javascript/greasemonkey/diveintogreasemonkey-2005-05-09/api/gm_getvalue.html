@@ -1,0 +1,111 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>GM_getValue [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Greasemonkey API Reference">
+      <link rel="prev" href="gm_log.html" title="GM_log">
+      <link rel="next" href="gm_setvalue.html" title="GM_setValue">
+   </head>
+   <body id="diveintogreasemonkey-org" class="api-gmgetvalue">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Greasemonkey API Reference</a> &#8594; <span class="thispage">GM_getValue</span></p>
+            <div class="refentry" lang="en"><a name="api.gmgetvalue" class="skip" href="#api.gmgetvalue" title="link to this refentry"><img src="../images/permalink.gif" alt="[link]" title="link to this refentry" width="8" height="9"></a> 
+               <div class="titlepage"></div>
+               <div class="refnamediv">
+                  <h2>Name</h2>
+                  <p>GM_getValue &#8212; get script-specific configuration value</p>
+               </div>
+               <div class="refsynopsisdiv">
+                  <h2>Synopsis</h2>
+                  <div class="funcsynopsis"><pre class="funcsynopsisinfo"></pre><p><code class="funcdef">returntype <b class="fsfunc">GM_getValue</b>(</code><var class="pdparam">key</var>, <var class="pdparam">defaultValue</var><code>)</code>;
+                     </p>
+                  </div>
+               </div>
+               <div class="refsection" lang="en"><a name="d0e5110" class="skip" href="#d0e5110" title="link to this refsection"><img src="../images/permalink.gif" alt="[link]" title="link to this refsection" width="8" height="9"></a> 
+                  
+                  <h2>Description</h2>
+                  
+                  <p><code class="function">GM_getValue</code> retrieves a script-specific configuration value.  The return value may be a string, boolean, or integer.  The <em class="parameter"><code>key</code></em> argument is a string of no fixed format.  The <em class="parameter"><code>defaultValue</code></em> argument is optional; if present, it will be returned if the requested <em class="parameter"><code>key</code></em> does not exist.  If no <em class="parameter"><code>defaultValue</code></em> is given and the requested <em class="parameter"><code>key</code></em> does not exist, <code class="function">GM_getValue</code> will return <code class="returnvalue">undefined</code>.
+                  </p>
+                  
+                  <p>Greasemonkey configuration values are similar to browser cookies, but there are important differences.  Both are stored on
+                     the local machine, but while cookies are domain-specific and can only be accessed from their originating domain, Greasemonkey
+                     configuration values are script-specific and can only be accessed by the user script that created them (regardless of the
+                     address the user script is currently running on).  And unlike cookies, configuration values are never transmitted to remote
+                     servers.
+                  </p>
+                  
+                  <div class="tip">
+                     <table class="admon" summary="">
+                        <tr>
+                           <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Tip]" src="../images/tip.png" width="24" height="24" title=""></a></td>
+                           <td class="admontext">
+                              <p>You can see all the stored configuration values by visiting <code class="systemitem">about:config</code> and filtering on <code class="literal">greasemonkey.scriptvals</code>.
+                              </p>
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+                  
+               </div>
+               <div class="refsection" lang="en"><a name="d0e5155" class="skip" href="#d0e5155" title="link to this refsection"><img src="../images/permalink.gif" alt="[link]" title="link to this refsection" width="8" height="9"></a> 
+                  
+                  <h2>History</h2>
+                  
+                  <p><code class="function">GM_getValue</code> was introduced in Greasemonkey 0.3.
+                  </p>
+                  
+                  <div class="seealso">
+                     <h3>See also</h3>
+                     <ul>
+                        <li><a href="gm_setvalue.html" title="GM_setValue"><span class="refentrytitle">GM_setValue</span></a></li>
+                     </ul>
+                  </div>
+                  
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="gm_log.html">GM_log</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="gm_setvalue.html">GM_setValue</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

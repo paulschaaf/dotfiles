@@ -1,0 +1,113 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>6.1.&nbsp;Storing and retrieving persistent data [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;6.&nbsp;Advanced Topics">
+      <link rel="prev" href="index.html" title="Chapter&nbsp;6.&nbsp;Advanced Topics">
+      <link rel="next" href="gm_registermenucommand.html" title="6.2.&nbsp;Adding items to the menubar">
+   </head>
+   <body id="diveintogreasemonkey-org" class="advanced-getvalue">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Advanced Topics</a> &#8594; <span class="thispage">Storing and retrieving persistent data</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="advanced.getvalue" class="skip" href="#advanced.getvalue" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 6.1.&nbsp;Storing and retrieving persistent data
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Greasemonkey defines two functions, <code class="function">GM_setValue</code> and <code class="function">GM_getValue</code>, that allow user scripts to store and retrieve &#8220;<span class="quote">private</span>&#8221; data that only the user script can access.  (Other scripts can't access them, not even other user scripts.)  You can use
+                              these functions to store script-specific configuration, to maintain a cache that persists between pages, or to keep a permanent
+                              activity log.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="note">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Note]" src="../images/note.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>Data stored with <code class="function">GM_setValue</code> and retrieved with <code class="function">GM_getValue</code> are similar to browser cookies, but there are important differences.  Both are stored on the local machine, but while cookies
+                              are <span class="emphasis"><em>domain-specific</em></span> and can only be accessed from their originating domain, Greasemonkey configuration values are <span class="emphasis"><em>script-specific</em></span> and can only be accessed by the user script that created them (regardless of the <acronym title="Uniform Resource Locator">URL</acronym> that the user script is currently running on).  And unlike cookies, user script data are never transmitted to remote servers.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <p><code class="function">GM_setValue</code> stores a script-specific configuration value, and <code class="function">GM_getValue</code> retrieves it.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">function GM_setValue(key, value);
+
+function GM_getValue(key, defaultValue);</pre></div>
+               <p><em class="parameter"><code>key</code></em> argument is a string of no fixed format.  <em class="parameter"><code>value</code></em> may be a string, boolean, or integer.  The <em class="parameter"><code>defaultValue</code></em> argument of <code class="function">GM_getValue</code> is optional; if present, it will be returned if the requested <em class="parameter"><code>key</code></em> does not exist.  If no <em class="parameter"><code>defaultValue</code></em> is given and the requested <em class="parameter"><code>key</code></em> does not exist, <code class="function">GM_getValue</code> will return <code class="returnvalue">undefined</code>.
+               </p>
+               <p>These functions were introduced in Greasemonkey 0.3.  You should <a href="../patterns/function-exists.html" title="4.2.&nbsp;Testing whether a Greasemonkey function is available">test whether they exist</a> and degrade gracefully if they do not.
+               </p>
+               <div class="furtherreading"><a href="../appendix/furtherreading.html" title="List of &#8220;further reading&#8221; links">
+                     <h3>Further reading</h3></a><ul>
+                     <li><a href="http://dunck.us/code/greasemonkey/mypipstag.user.js">MyPIPsTag</a> prompts you for a username the first time you run it.
+                     </li>
+                     <li><a href="http://kailasa.net/prakash/greasemonkey/post-interceptor.user.js">POST Interceptor</a> adds menu items (with <a href="gm_registermenucommand.html" title="6.2.&nbsp;Adding items to the menubar"><code class="function">GM_registerMenuCommand</code></a>) to toggle whether the script is active.
+                     </li>
+                     <li><a href="http://blog.monstuff.com/archives/images/MSDNLanguageFilter.user.js"><acronym title="Microsoft Developer Network">MSDN</acronym> Language Filter</a> inserts its configuration options into the page itself.
+                     </li>
+                  </ul>
+               </div>
+               <div class="seealso">
+                  <h3>See also</h3>
+                  <ul>
+                     <li><a href="../api/gm_getvalue.html" title="GM_getValue"><span class="refentrytitle">GM_getValue</span></a></li>
+                     <li><a href="../api/gm_setvalue.html" title="GM_setValue"><span class="refentrytitle">GM_setValue</span></a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="index.html">Advanced Topics</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="gm_registermenucommand.html">Adding items to the menubar</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

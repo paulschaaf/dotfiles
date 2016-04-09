@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl"?>
+
+<!DOCTYPE config [
+  <!--
+  ....  Configuration
+  -->
+  <!ENTITY nbsp                         " ">
+
+  <!ENTITY max-items                    "120">
+
+  <!ENTITY assignee-field               "assignee">
+  <!ENTITY customer-field               "customfield_10060">
+  <!ENTITY key-field                    "issuekey">
+  <!ENTITY priority-field               "priority">
+
+  <!ENTITY ascending                    "&amp;sorter/order=ASC">
+  <!ENTITY descending                   "&amp;sorter/order=DESC">
+  <!ENTITY sort-by                      "&amp;sorter/field=">
+  <!ENTITY sort-by-assignee             "&sort-by;&assignee-field;&ascending;">
+  <!ENTITY sort-by-customer             "&sort-by;&customer-field;&ascending;">
+  <!ENTITY sort-by-key                  "&sort-by;&key-field;&ascending;">
+  <!ENTITY sort-by-priority             "&sort-by;&priority-field;&descending;">
+  <!-- Jira sorts fields are specified in reverse significance -->
+  <!ENTITY sorted-by-cust-prior-key     "&sort-by-key;&sort-by-priority;&sort-by-customer;">
+  <!ENTITY sorted                       "&sort-by-key;&sort-by-priority;&sort-by-customer;">
+
+  <!ENTITY assigned-to                  "&amp;assignee=">
+  <!ENTITY assignee-type                "&amp;assigneeSelect=">
+  <!ENTITY assigned-to-me               "&assignee-type;issue_current_user">
+  <!ENTITY assigned-to-group            "&assignee-type;specificgroup">
+  <!ENTITY assigned-in-support          "&assigned-to-group;&assigned-to;support">
+  <!ENTITY with-assignee                "&assignee-type;specificuser&assigned-to;">
+  <!ENTITY with-customer                "&amp;&customer-field;=">
+
+  <!ENTITY unresolved                   "&amp;resolution=-1">
+  <!ENTITY with-jira-status             "&amp;statusIds=">
+  <!ENTITY with-open-status             "&with-jira-status;1">
+  <!ENTITY with-in-progress-status      "&with-jira-status;3">
+  <!ENTITY with-reopened-status         "&with-jira-status;4">
+  <!ENTITY with-resolved-status         "&with-jira-status;5">
+  <!ENTITY with-closed-status           "&with-jira-status;6">
+
+  <!ENTITY updated-in-last-7-days       "&amp;updatedPrevious=604800000">
+  <!ENTITY updated-in-last-30-days      "&amp;updatedPrevious=2592000000">
+
+  <!ENTITY in-project                   "&amp;pid=">
+  <!ENTITY in-CC                        "&in-project;10000">
+  <!ENTITY in-FFS                       "&in-project;10040">
+  <!ENTITY in-PG                        "&in-project;10041">
+  <!ENTITY in-SS                        "&in-project;10080">
+
+  <!ENTITY as-rss                       "&amp;decorator=none&amp;view=rss">
+  <!ENTITY jira-home                    "http://jira/jira">
+  <!ENTITY jira-list                    "&jira-home;/secure/IssueNavigator.jspa?reset=true&amp;tempMax=&max-items;">
+  <!ENTITY jira-unresolved              "&jira-list;&unresolved;&sorted;">
+  <!ENTITY jira-with-number             "&jira-home;/browse">
+  <!ENTITY jira-closed-or-resolved      "&jira-list;&with-closed-status;&with-resolved-status;">
+
+]
+>
+
+<feed>
+  <title>Unresolved Jiras</title>
+  <description>Assigned to Support</description>
+  <url>&jira-unresolved;&in-FFS;&in-PG;&in-SS;&assigned-in-support;</url>
+</feed>

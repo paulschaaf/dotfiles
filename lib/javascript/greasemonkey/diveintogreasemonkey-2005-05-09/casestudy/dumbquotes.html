@@ -1,0 +1,215 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>5.5.&nbsp;Case study: Dumb Quotes [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;5.&nbsp;Case Studies">
+      <link rel="prev" href="offsiteblank.html" title="5.4.&nbsp;Case study: Offsite Blank">
+      <link rel="next" href="frownies.html" title="5.6.&nbsp;Case study: Frownies">
+   </head>
+   <body id="diveintogreasemonkey-org" class="casestudy-dumbquotes">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Case Studies</a> &#8594; <span class="thispage">Case study: Dumb Quotes</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="casestudy.dumbquotes" class="skip" href="#casestudy.dumbquotes" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 5.5.&nbsp;Case study: Dumb Quotes
+                        </h2>
+                     </div>
+                     <div>
+                        <h3 class="subtitle">Converting smart quotes to dumb quotes</h3>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>DumbQuotes was born out of a frustration shared by many webloggers: most publishing software can automatically convert straight
+                              ASCII quotes to &#8220;<span class="quote">smart quotes</span>&#8221;, but the same software is stupid about handling &#8220;<span class="quote">smart quotes</span>&#8221; when an author copies and pastes them into an article.  A common example is a blogger who wants to quote a passage from
+                              another site.  They select a few sentences in their web browser, paste it into a web form to post to their own site, and the
+                              passage they pasted ends up looking nothing like the original site because their publishing software doesn't track character
+                              encoding properly.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <p>Well, I can't fix every publishing system in the world, but I can fix the problem for myself by writing a user script that
+                  automatically converts smart quotes and other problematic high-bit characters to their 7-bit ASCII equivalent.
+               </p>
+               <div class="example"><a name="example.casestudy.dumbquotes" class="skip" href="#example.casestudy.dumbquotes" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;<a href="http://diveintogreasemonkey.org/download/dumbquotes.user.js" title="Download Dumb Quotes"><code class="filename">dumbquotes.user.js</code></a></h3><pre class="programlisting ">// ==UserScript==
+// @name          DumbQuotes
+// @namespace     http://diveintogreasemonkey.org/download/
+// @description   straighten curly quotes and apostrophes, simplify fancy dashes, etc.
+// @include       *
+// ==/UserScript==
+
+var replacements, regex, key, textnodes, node, s;
+
+replacements = {
+    "\xa0": " ",
+    "\xa9": "(c)",
+    "\xae": "(r)",
+    "\xb7": "*",
+    "\u2018": "'",
+    "\u2019": "'",
+    "\u201c": '"',
+    "\u201d": '"',
+    "\u2026": "...",
+    "\u2002": " ",
+    "\u2003": " ",
+    "\u2009": " ",
+    "\u2013": "-",
+    "\u2014": "--",
+    "\u2122": "(tm)"};
+regex = {};
+for (key in replacements) {
+    regex[key] = new RegExp(key, 'g');
+}
+
+textnodes = document.evaluate(
+    "//text()",
+    document,
+    null,
+    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+    null);
+for (var i = 0; i &lt; textnodes.snapshotLength; i++) {
+    node = textnodes.snapshotItem(i);
+    s = node.data;
+    for (key in replacements) {
+        s = s.replace(regex[key], replacements[key]);
+    }
+    node.data = s;
+}</pre></div>
+               <p>The code breaks down into four steps:</p>
+               <div class="orderedlist">
+                  <ol type="1">
+                     <li>Define a list of string replacements, mapping certain 8-bit characters to their 7-bit equivalents.</li>
+                     <li>Get all the text nodes of the current page.</li>
+                     <li>Loop through the list of text nodes.</li>
+                     <li>In each text, node, for each 8-bit character, replace it with its 7-bit equivalent.</li>
+                  </ol>
+               </div>
+               <p>The first step is really two steps.  Javascript's string replacement is based on regular expressions.  So in order to replace
+                  8-bit characters with 7-bit equivalents, I really need to create a set of regular expression objects.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">replacements = {
+    "\xa0": " ",
+    "\xa9": "(c)",
+    "\xae": "(r)",
+    "\xb7": "*",
+    "\u2018": "'",
+    "\u2019": "'",
+    "\u201c": '"',
+    "\u201d": '"',
+    "\u2026": "...",
+    "\u2002": " ",
+    "\u2003": " ",
+    "\u2009": " ",
+    "\u2013": "-",
+    "\u2014": "--",
+    "\u2122": "(tm)"};
+regex = {};
+for (key in replacements) {
+    regex[key] = new RegExp(key, 'g');
+}</pre><p>I use the curly braces syntax to quickly create an associative array.  This is equivalent to (but less typing than) assigning
+                     each key-value pair individually:
+                  </p><pre class="programlisting ">replacements["\xa0"] = " ";
+replacements["\xa9"] = "(c)";
+replacements["\xae"] = "(r)";
+// and so forth</pre><p>The individual 8-bit characters are represented by their hexadecimal values, using the escaping syntax <code class="literal">"\xa0"</code> or <code class="literal">"\u2018"</code>.  Once we have an associative array of characters to strings, I loop through the array and create a list of regular expression
+                     objects.  Each regular expression object will search globally for one 8-bit character.  (The <em class="parameter"><code>'g'</code></em> in the second argument means search globally; otherwise each regular expression would only search and replace the first occurrence
+                     of a particular 8-bit character, and I might end up missing some.)
+                  </p>
+               </div>
+               <p>The next step is to get a list of all the text nodes in the current document.  You might be tempted to say to yourself, &#8220;<span class="quote">Hey, I could just use <code class="property">document.body.innerHTML</code> and get the whole page as a single string, and search and replace in that.</span>&#8221;
+               </p>
+               <div class="informalexample"><pre class="programlisting ">var tmp = document.body.innerHTML;
+// do a bunch of search/replace on tmp
+document.body.innerHTML = tmp;</pre></div>
+               <p>But this is a bad habit to get into, because the <code class="property">innerHTML</code> property will return the entire source of the page: all the markup, all the script, all the attributes, everything.  In this
+                  case it probably wouldn't cause a problem (<acronym title="HyperText Markup Language">HTML</acronym> tags themselves do not contain 8-bit characters), but in other cases it could be disastrous, and very difficult to debug.
+                   You need to ask yourself what exactly you are trying to search-and-replace.  If the answer is &#8220;<span class="quote">the raw page source,</span>&#8221; then go ahead and use <code class="property">innerHTML</code>.  However, in this case, the answer is &#8220;<span class="quote">all the text on the page,</span>&#8221; so the correct solution is to use an XPath query to get all the text nodes.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">textnodes = document.evaluate(
+    "//text()",
+    document,
+    null,
+    XPathResult.UNORDERED_NODE_SNAPSHOT_TYPE,
+    null);</pre><p>This works by using an XPath function, <code class="function">text()</code>, which matches any text node.  You're probably more familiar with querying for element nodes: a list of all the <code class="sgmltag-element">&lt;a&gt;</code> elements, or all the <code class="sgmltag-element">&lt;img&gt;</code> elements that have an <code class="sgmltag-attribute">alt</code> attribute.  But the DOM also contains nodes for the actual text content within elements.  (There are other types of nodes
+                     too, like comments and processing instructions.)  And it's the text nodes that we're interested in at the moment.
+                  </p>
+               </div>
+               <p>Step 3 is to loop through all the text nodes.  This is exactly the same as looping through all the elements returned from
+                  an XPath query like <code class="literal">//a[@href]</code>; the only difference is that each item in the loop is a text node, not an element node.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">for (var i = 0; i &lt; textnodes.snapshotLength; i++) {
+    node = textnodes.snapshotItem(i);
+    s = node.data;
+    // do replacements
+    node.data = s;</pre><p><code class="varname">node</code> is the current text node in the loop, and <code class="varname">s</code> is a string that is the actual text of <code class="varname">node</code>.  I'm going to use <code class="varname">s</code> to do the replacements, then copy the result back to the original node.
+                  </p>
+               </div>
+               <p>So now that I have the text of a single node, I need to actually do the replacements.  Since I pre-created a list of regular
+                  expressions and a list of replacement string, this is relatively straightforward.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">    for (key in replacements) {
+        s = s.replace(regex[key], replacements[key]);
+    }</pre></div>
+               <div class="download">
+                  <h3>Download</h3>
+                  <ul>
+                     <li><a href="http://diveintogreasemonkey.org/download/dumbquotes.user.js"><code class="filename">dumbquotes.user.js</code></a></li>
+                  </ul>
+               </div>
+               <div class="seealso">
+                  <h3>See also</h3>
+                  <ul>
+                     <li><a href="../patterns/match-attribute.html" title="4.6.&nbsp;Doing something for every element with a certain attribute">Doing something for every element with a certain attribute</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="offsiteblank.html">Case study: Offsite Blank</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="frownies.html">Case study: Frownies</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

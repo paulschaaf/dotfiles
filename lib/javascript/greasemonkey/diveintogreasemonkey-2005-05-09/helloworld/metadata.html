@@ -1,0 +1,165 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>2.2.&nbsp;Describing your user script with metadata [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;2.&nbsp;Your First User Script">
+      <link rel="prev" href="divein.html" title="2.1.&nbsp;Hello World">
+      <link rel="next" href="code.html" title="2.3.&nbsp;Coding your user script">
+   </head>
+   <body id="diveintogreasemonkey-org" class="first-metadata">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Your First User Script</a> &#8594; <span class="thispage">Describing your user script with metadata</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="first.metadata" class="skip" href="#first.metadata" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 2.2.&nbsp;Describing your user script with metadata
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Every user script has a section of metadata that tells Greasemonkey about the script itself, where it came from, and when
+                              to run it.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="example"><a name="example.helloworld.metadata" class="skip" href="#example.helloworld.metadata" title="link to this example"><img src="../images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Hello World metadata</h3><pre class="programlisting ">// ==UserScript==
+// @name          Hello World
+// @namespace     http://diveintogreasemonkey.org/download/
+// @description   example script to alert "Hello world!" on every page
+// @include       *
+// @exclude       http://diveintogreasemonkey.org/*
+// @exclude       http://www.diveintogreasemonkey.org/*
+// ==/UserScript==</pre></div>
+               <p>There are six separate pieces of metadata here, wrapped in a set of Greasemonkey-specific comments.  Let's take them in order,
+                  starting with the wrapper.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">// ==UserScript==
+//
+// ==/UserScript==</pre><p>These comments are significant, and must match exactly.  Greasemonkey uses them to signal the start and end of your user script
+                     metadata.  This section may be defined anywhere in your script, but is usually near the top.
+                  </p>
+               </div>
+               <p>Within the Greasemonkey metadata section, the first item is the name.</p>
+               <div class="informalexample"><pre class="programlisting ">// @name          Hello World</pre><p>This is the name of your user script.  It is displayed in the install dialog when you first install the script, and later
+                     in the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog.  It should be short and to the point.
+                  </p>
+                  <p><code class="literal">@name</code> is optional.  If present, it may appear only once.  If not present, it defaults to the filename of the user script, minus
+                     the <code class="filename">.user.js</code> extension.
+                  </p>
+               </div>
+               <p>Next comes the namespace.</p>
+               <div class="informalexample"><pre class="programlisting ">// @namespace     http://diveintogreasemonkey.org/download/</pre><p>This is a <acronym title="Uniform Resource Locator">URL</acronym>, and Greasemonkey uses it to distinguish user scripts that have the same name but are written by different authors.  If you
+                     have a domain name, you can use it (or a subdirectory) as your namespace.  Otherwise you can use a <a href="http://taguri.org/"><code class="systemitem">tag:</code> <acronym title="Uniform Resource Identifier">URI</acronym></a>.
+                  </p>
+                  <p><code class="literal">@namespace</code> is optional.  If present, it may appear only once.  If not present, it defaults to the domain from which the user downloaded
+                     the user script.
+                  </p>
+               </div>
+               <div class="tip">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Tip]" src="../images/tip.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>You can specify the items of your user script metadata in any order.  I like <code class="literal">@name</code>, <code class="literal">@namespace</code>, <code class="literal">@description</code>, <code class="literal">@include</code>, and finally <code class="literal">@exclude</code>, but there is nothing special about this order.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <p>Next comes the description.</p>
+               <div class="informalexample"><pre class="programlisting ">// @description   example script to alert "Hello world!" on every page</pre><p>This is a human-readable description of what the user script does.  It is displayed in the install dialog when you first install
+                     the script, and later in the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog.  It should be no more than two sentences.
+                  </p>
+                  <p><code class="literal">@description</code> is optional.  If present, it may appear only once.  If not present, it defaults to an empty string.
+                  </p>
+               </div>
+               <div class="important">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Important]" src="../images/important.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>Don't forget the <code class="literal">@description</code>.  Even if you are only writing user scripts for yourself, you will eventually end up with dozens of them, and administering
+                              them all in the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog will be much more difficult if you don't include a description.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <p>The next three lines are the most important items (from Greasemonkey's perspective): the <code class="literal">@include</code> and <code class="literal">@exclude</code> <acronym title="Uniform Resource Locator">URL</acronym>s.
+               </p>
+               <div class="informalexample"><pre class="programlisting ">// @include       *
+// @exclude       http://diveintogreasemonkey.org/*
+// @exclude       http://www.diveintogreasemonkey.org/*</pre><p>These lines tell Greasemonkey on which sites you want your user script to execute.  Both specify a <acronym title="Uniform Resource Locator">URL</acronym>, with the <code class="literal">*</code> character as a simple wildcard for part of the domain name or path.  In this case, we are telling Greasemonkey to execute
+                     the Hello World script on all sites except <code class="systemitem">http://diveintogreasemonkey.org/</code> and <code class="systemitem">http://www.diveintogreasemonkey.org/</code>.  Excludes take precedence over includes, so even though <code class="systemitem">http://diveintogreasemonkey.org/download/</code> matches <code class="literal">*</code> (all sites), it will be excluded because it also matches <code class="systemitem">http://diveintogreasemonkey.org/*</code>.
+                  </p>
+                  <p><code class="literal">@include</code> and <code class="literal">@exclude</code> are optional.  You may specify as many included and excluded <acronym title="Uniform Resource Locator">URL</acronym>s as you need, but you must specify each on its own line.  If neither is specified, Greasemonkey will execute your user script
+                     on all sites (as if you had specified <code class="literal">@include *</code>).
+                  </p>
+               </div>
+               <div class="note">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Note]" src="../images/note.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>You need to be very specific with your <code class="literal">@include</code> and <code class="literal">@exclude</code> metadata.  Greasemonkey makes no assumptions about <acronym title="Uniform Resource Locator">URL</acronym>s that an end user might consider equivalent.  If a site responds on both <code class="systemitem">http://example.com/</code> and <code class="systemitem">http://www.example.com/</code>, you need to declare both variations.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+               <div class="furtherreading"><a href="../appendix/furtherreading.html" title="List of &#8220;further reading&#8221; links">
+                     <h3>Further reading</h3></a><ul>
+                     <li><a href="http://taguri.org/"><code class="systemitem">tag:</code> <acronym title="Uniform Resource Identifier">URI</acronym>s</a></li>
+                  </ul>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="divein.html">Hello World</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="code.html">Coding your user script</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

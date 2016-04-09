@@ -1,0 +1,113 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>GM_registerMenuCommand [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Greasemonkey API Reference">
+      <link rel="prev" href="gm_setvalue.html" title="GM_setValue">
+      <link rel="next" href="gm_xmlhttprequest.html" title="GM_xmlhttpRequest">
+   </head>
+   <body id="diveintogreasemonkey-org" class="api-gmregistermenucommand">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Greasemonkey API Reference</a> &#8594; <span class="thispage">GM_registerMenuCommand</span></p>
+            <div class="refentry" lang="en"><a name="api.gmregistermenucommand" class="skip" href="#api.gmregistermenucommand" title="link to this refentry"><img src="../images/permalink.gif" alt="[link]" title="link to this refentry" width="8" height="9"></a> 
+               <div class="titlepage"></div>
+               <div class="refnamediv">
+                  <h2>Name</h2>
+                  <p>GM_registerMenuCommand &#8212; add a menu item to the <span><strong class="guisubmenu">User Script <span class="accel">C</span>ommands</strong></span> submenu
+                  </p>
+               </div>
+               <div class="refsynopsisdiv">
+                  <h2>Synopsis</h2>
+                  <div class="funcsynopsis"><pre class="funcsynopsisinfo"></pre><table border="0" summary="Function synopsis" cellspacing="0" cellpadding="0">
+                        <tr>
+                           <td><code class="funcdef">function <b class="fsfunc">GM_registerMenuCommand</b>(</code></td>
+                           <td>&nbsp;</td>
+                           <td><var class="pdparam">menuText</var>, 
+                           </td>
+                        </tr>
+                        <tr>
+                           <td>&nbsp;</td>
+                           <td>&nbsp;</td>
+                           <td><var class="pdparam">callbackFunction</var><code>)</code>;
+                           </td>
+                        </tr>
+                     </table>
+                  </div>
+               </div>
+               <div class="refsection" lang="en"><a name="d0e5264" class="skip" href="#d0e5264" title="link to this refsection"><img src="../images/permalink.gif" alt="[link]" title="link to this refsection" width="8" height="9"></a> 
+                  
+                  <h2>Description</h2>
+                  
+                  <p><code class="function">GM_registerMenuCommand</code> adds a menu item to the <span><strong class="guimenu"><span class="accel">T</span>ools</strong></span> &#8594; <span><strong class="guisubmenu">User Script <span class="accel">C</span>ommands</strong></span> menu.  The <em class="parameter"><code>menuText</code></em> argument is a string, the text of the menu item to add.  The <em class="parameter"><code>callbackFunction</code></em> argument is a function object.  When the menu item is selected, the <code class="function">callbackFunction</code> function is called.
+                  </p>
+                  
+                  <div class="funcsynopsis"><pre class="funcsynopsisinfo"></pre><p><code class="funcdef">function <b class="fsfunc">callbackFunction</b>(</code><var class="pdparam">e</var><code>)</code>;
+                     </p>
+                  </div>
+                  
+                  <p>The <em class="parameter"><code>e</code></em> parameter is the menu selection event.  I'm not sure if this is useful for anything.
+                  </p>
+                  
+               </div>
+               <div class="refsection" lang="en"><a name="d0e5312" class="skip" href="#d0e5312" title="link to this refsection"><img src="../images/permalink.gif" alt="[link]" title="link to this refsection" width="8" height="9"></a> 
+                  
+                  <h2>Bugs</h2>
+                  
+                  <p>There is no way to set a menu accelerator key.  Calling <code class="function">GM_registerMenuCommand('Some &amp;menu text', <em class="replaceable"><code>myFunction</code></em>)</code> will create a menu item titled &#8220;<span class="quote"><code class="literal">Some &amp;menu text</code></span>&#8221;.  (<a href="http://bugzilla.mozdev.org/show_bug.cgi?id=10090">Bug 10090</a>)
+                  </p>
+                  
+               </div>
+               <div class="refsection" lang="en"><a name="d0e5333" class="skip" href="#d0e5333" title="link to this refsection"><img src="../images/permalink.gif" alt="[link]" title="link to this refsection" width="8" height="9"></a> 
+                  
+                  <h2>History</h2>
+                  
+                  <p><code class="function">GM_registerMenuCommand</code> was introduced in Greasemonkey 0.2.6.
+                  </p>
+                  
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="gm_setvalue.html">GM_setValue</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="gm_xmlhttprequest.html">GM_xmlhttpRequest</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

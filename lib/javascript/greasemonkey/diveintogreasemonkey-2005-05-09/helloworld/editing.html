@@ -1,0 +1,108 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>2.4.&nbsp;Editing your user script [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;2.&nbsp;Your First User Script">
+      <link rel="prev" href="code.html" title="2.3.&nbsp;Coding your user script">
+      <link rel="next" href="../debug/index.html" title="Chapter&nbsp;3.&nbsp;Debugging User Scripts">
+   </head>
+   <body id="diveintogreasemonkey-org" class="first-editing">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Your First User Script</a> &#8594; <span class="thispage">Editing your user script</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="first.editing" class="skip" href="#first.editing" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 2.4.&nbsp;Editing your user script
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>For script authors, the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog has a feature that is especially useful: an <span><strong class="guibutton">Edit</strong></span> button to edit an installed script &#8220;<span class="quote">live</span>&#8221;.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <div class="procedure"><a name="procedure.live.edit" class="skip" href="#procedure.live.edit" title="link to this procedure"><img src="../images/permalink.gif" alt="[link]" title="link to this procedure" width="8" height="9"></a> 
+                  <h3 class="title">Procedure:&nbsp;Edit Hello World source code and see the results</h3>
+                  <ol type="1">
+                     <li>
+                        <p>From the menu, select <span><strong class="guimenu"><span class="accel">T</span>ools</strong></span> &#8594; <span><strong class="guimenuitem">Manage <span class="accel">U</span>ser Scripts...</strong></span>.  Greasemonkey will pop up the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog.
+                        </p>
+                     </li>
+                     <li>
+                        <p>In the left-hand pane, select Hello World and click <span><strong class="guibutton">Edit</strong></span>.  This should open the installed version of Hello World in your favorite text editor.  (If it doesn't, verify that <code class="filename">.js</code> files are associated with your favorite text editor.)
+                        </p>
+                     </li>
+                     <li>
+                        <p>Change the <code class="function">alert</code> statement to display &#8220;<span class="guilabel">Live editing!</span>&#8221; instead.
+                        </p>
+                     </li>
+                     <li>
+                        <p>Save your changes in your editor, then go back to your browser and test the change by refreshing any page.  You should see
+                           the results of your change immediately; there is no need to re-install or &#8220;<span class="quote">refresh</span>&#8221; your user script in any way.  You are editing &#8220;<span class="quote">live</span>&#8221;.
+                        </p>
+                     </li>
+                  </ol>
+               </div>
+               <div class="tip">
+                  <table class="admon" summary="">
+                     <tr>
+                        <td class="admonicon"><a href="../appendix/tips.html" title="List of tips"><img alt="[Tip]" src="../images/tip.png" width="24" height="24" title=""></a></td>
+                        <td class="admontext">
+                           <p>When you click <span><strong class="guibutton">Edit</strong></span> in the &#8220;<span class="interface">Manage User Scripts</span>&#8221; dialog, you are &#8220;<span class="quote">live</span>&#8221; editing a copy of your script that is buried deep inside your Firefox profile directory.  I've gotten into the habit, once
+                              I've finished a &#8220;<span class="quote">live</span>&#8221; editing session, of going back to my text editor one last time and selecting <span><strong class="guimenu"><span class="accel">F</span>ile</strong></span> &#8594; <span><strong class="guimenuitem">Save <span class="accel">a</span>s...</strong></span>, and saving the user script in another directory.  While it's not necessary (Greasemonkey only pays attention to the copy
+                              in your profile directory), I prefer to keep the &#8220;<span class="quote">master copy</span>&#8221; of my scripts in another directory with the rest of my work.
+                           </p>
+                        </td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="code.html">Coding your user script</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="../debug/index.html">Debugging User Scripts</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>

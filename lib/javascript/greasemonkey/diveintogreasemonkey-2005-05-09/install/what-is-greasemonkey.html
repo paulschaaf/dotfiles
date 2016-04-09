@@ -1,0 +1,100 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   
+      <title>1.1.&nbsp;What is Greasemonkey? [Dive Into Greasemonkey]</title>
+      <link rel="shortcut icon" href="/favicon.ico">
+      <link rel="stylesheet" href="../css/dig.css" type="text/css">
+      <meta http-equiv="Link" content='&lt;../css/modern.css&gt;; type="text/css"; rel=stylesheet, &lt;../css/empty.css&gt;; type="text/css";
+      rel=stylesheet'>
+      <link rev="made" href="mailto:mark@diveintomark.org">
+      <meta name="generator" content="DocBook XSL Stylesheets V1.68.1">
+      <meta name="keywords" content="Firefox, Greasemonkey, Javascript, user script, userscript">
+      <link rel="start" href="../toc/index.html" title="Dive Into Greasemonkey">
+      <link rel="up" href="index.html" title="Chapter&nbsp;1.&nbsp;Getting Started">
+      <link rel="prev" href="index.html" title="Chapter&nbsp;1.&nbsp;Getting Started">
+      <link rel="next" href="greasemonkey.html" title="1.2.&nbsp;Installing Greasemonkey">
+   </head>
+   <body id="diveintogreasemonkey-org" class="basic-what">
+      <div class="z" id="intro">
+         <div class="sectionInner">
+            <div class="sectionInner2">
+               <div class="s">
+                  <h1><a href="/" accesskey="1">Dive Into Greasemonkey</a></h1>
+                  <p>Teaching an old web new tricks</p>
+               </div>
+               <div class="s">
+                  <ul>
+                     <li><a href="../">Home</a> &middot; 
+                     </li>
+                     <li><a href="../toc/">Table of contents</a> &middot; 
+                     </li>
+                     <li><a href="../download/">Download</a> &middot; 
+                     </li>
+                     <li><a href="http://greasemonkey.mozdev.org/">Get Greasemonkey</a></li>
+                  </ul>
+               </div>
+            </div>
+         </div>
+      </div>
+      <div id="main">
+         <div id="mainInner">
+            <p id="breadcrumb">You are here: <a href="../">Home</a> &#8594; <a href="../toc/index.html">Table of contents</a> &#8594; <a href="index.html">Getting Started</a> &#8594; <span class="thispage">What is Greasemonkey?</span></p>
+            <div class="section" lang="en">
+               <div class="titlepage">
+                  <div>
+                     <div>
+                        <h2 class="title"><a name="basic.what" class="skip" href="#basic.what" title="link to this section"><img src="../images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> 1.1.&nbsp;What is Greasemonkey?
+                        </h2>
+                     </div>
+                     <div>
+                        <div class="abstract">
+                           <h3 class="title"></h3>
+                           <p>Greasemonkey is a Firefox extension that allows you to write scripts that alter the web pages you visit.  You can use it to
+                              make a web site more readable or more usable.  You can fix rendering bugs that the site owner can't be bothered to fix themselves.
+                               You can alter pages so they work better with assistive technologies that speak a web page out loud or convert it to Braille.
+                               You can even automatically retrieve data from other sites to make two sites more interconnected.
+                           </p>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+               <p>Greasemonkey by itself does none of these things.  In fact, after you install it, you won't notice any change at all... until
+                  you start installing what are called &#8220;<span class="quote">user scripts</span>&#8221;.  A user script is just a chunk of Javascript code, with some additional information that tells Greasemonkey where and when
+                  it should be run.  Each user script can target a specific page, a specific site, or a group of sites.  A user script can do
+                  anything you can do in Javascript.  In fact, it can do even more than that, because Greasemonkey provides special functions
+                  that are only available to user scripts.
+               </p>
+               <p>There is a <a href="http://dunck.us/collab/GreaseMonkeyUserScripts">Greasemonkey script repository</a> that contains hundreds of user scripts that people have written to scratch their own personal itches.  Once you write your
+                  own user script, you can add it to the repository if you think others might find it useful.  Or you can keep it to yourself,
+                  content in the knowledge that you've made your own browsing experience is a little better.
+               </p>
+               <p>There is also a <a href="http://greasemonkey.mozdev.org/list.html">Greasemonkey mailing list</a>, where you can ask questions, announce user scripts, and discuss ideas for new features.  The Greasemonkey developers frequent
+                  the list; they may even answer your question!
+               </p>
+               <h3><a name="d0e283" class="skip" href="#d0e283" title="link to this bridgehead"><img src="../images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Why this book?
+               </h3>
+               <p>Dive Into Greasemonkey grew out of discussions on the Greasemonkey mailing list, and out of my own experience in writing user
+                  scripts.  After only a week on the list, I was already seeing questions from new users that had already been answered.  With
+                  only a few user scripts under my belt, I was already seeing common patterns, chunks of reusable code that solved specific
+                  problems that cropped up again and again.  I set out to document the most useful patterns, explain my own coding decisions,
+                  and learn as much as I could in the process.
+               </p>
+               <p>This book would not be half as good as it is today without the help of the Greasemonkey developers, Aaron Boodman and Jeremy
+                  Dunck, and the rest of the people who provided invaluable feedback on my early drafts.  Thank you all.
+               </p>
+            </div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="index.html">Getting Started</a></div>
+            <div style="text-align: right"><a class="NavigationArrow" href="greasemonkey.html">Installing Greasemonkey</a>&nbsp;&#8594;
+            </div>
+            <hr style="clear:both">
+            <div class="footer">
+               <p class="copyright">Copyright &copy; 2005 Mark Pilgrim &middot; <a title="send me feedback about this book" href="mailto:mark@diveintomark.org">mark@diveintomark.org</a> &middot; <a href="../license/gpl.html" title="GNU General Public License">Terms of use</a></p>
+            </div>
+         </div>
+      </div>
+   </body>
+</html>
