@@ -172,8 +172,9 @@ done
 for home in /usr/lib/jvm/java-[0-9]-oracle; do
     local digit=${home##*java-}; digit=${digit%%-*}
     export JAVA${digit}_HOME=$home
+    # keep track of the newest one
+    export JAVA_HOME=$home
 done
-export JAVA_HOME=${JAVA18_HOME}
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
@@ -373,9 +374,7 @@ wless ()  {
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
 alias l=/bin/ls
 
-ls () {
-    eval l ${LS_FLAGS} $@
-}
+alias ls="l ${LS_FLAGS}"
 
 alias la='l '${LS_FLAGS}A
 alias ll='l '${LS_FLAGS}l
@@ -407,40 +406,6 @@ alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
 alias run=''
 alias tree="tree -a --dirsfirst --ignore_backups --ignore_regex '\\.svn|\\.git'"
-
-# function m4aflac() {
-#     if [ $# -eq 0 ]; then
-#         echo Missing the directory argument!
-#     else
-#         for dir in $*; do
-#             pushd $dir
-#             echo '\n# =================' $dir
-#             for src in ./**/*.m4a(N); do
-#                 dest="${src%.*}.flac"
-#                 avconv -i "$src" -c:a flac "${dest}" || echo ERROR! $?
-#                 echo Checking $dest!
-#                 srcSize=`stat -c%s $src`
-#                 destSize=`stat -c%s $dest`
-#                 if [ "$destSize" = "0" ]; then
-#                     echo '[37;1;41mDest is empty![30;0m'
-#                     rm -f $dest
-#                 # multiply everything by 10 so we can use integer comparison
-#                 elif [ $((destSize*10)) -gt $((srcSize*11)) ]; then
-#                     echo '[37;1;41mDest is more than 10% larger than source![30;0m'
-#                     dolphin --select $dest &
-#                 elif [ $((destSize*10)) -lt $((srcSize*9)) ]; then
-#                     echo '[37;1;41mDest is more than 10% smaller than source![30;0m'
-#                     dolphin --select $dest &
-#                 else
-#                     echo Deleting obsolete source file.
-#                     rm -f $src
-#                 fi
-#                 echo; echo
-#              done
-#             popd
-#         done
-#     fi
-# }
 
 case ${UNAME} in
     CYGWIN*)

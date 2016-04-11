@@ -401,6 +401,15 @@ updateGitVars () {
     fi
 }
 
+alias fixPrompt='updateGuidewireVars; updateGitVars'
+
+function git () {
+    command git $*
+    if [[ "$*" =~ "checkout" ]]; then
+        fixPrompt
+    fi
+}
+
 chpwd_functions=(${chpwd_functions[@]} "updateGuidewireVars" "updateGitVars")
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
