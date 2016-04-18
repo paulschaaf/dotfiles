@@ -92,7 +92,8 @@ case $remote_host in
 
         CD_TO=/users/\${USER}
 
-        ssh_flags+='-Y -t -t '
+        add_ssh_flag '-Y' '-t' '-t'
+        # ssh_flags+='-Y -t -t '
         bash_cmd='bash --rcfile .bashrc'
         # [ -z "$cmd" ] && cmd="${bash_cmd}"
         cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
@@ -101,7 +102,8 @@ case $remote_host in
     # Guidewire merge machines
     [a-z]-cc-*)
         remote_host+=@devmerge2
-        ssh_flags+='-X -t -t '
+        add_ssh_flag '-X' '-t' '-t'
+        # ssh_flags+='-X -t -t '
 
         def_switch_p4user='source /etc/profile.d/devmerge.sh; eval \`typeset -f switch-user | sed \"s~switch-user~switch~; s~fi\\$~fix; fi~; s~read NEWUSER~NEWUSER=\\\\\${1:-pschaaf}~\"\`; export -f switch'
 
@@ -113,6 +115,11 @@ case $remote_host in
         #        cmd="/usr/bin/Terminal -x '${bash_cmd}'"
         [ -z "$cmd" ] && cmd="'${bash_cmd}'"
         # typeset -p cmd def_switch_p4user bash_args bash_cmd
+        ;;
+
+    oldSatori)
+        remote_host=192.168.1.107
+        add_ssh_flag '-X'
         ;;
 
     *@ftp)

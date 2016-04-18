@@ -1,3 +1,4 @@
+#-*- mode: Makefile -*-
 RESOURCES=.zprofile .zshrc .zshenv
 COMPILED_RESOURCES=$(patsubst %,%.zwc,$(RESOURCES))
 
@@ -9,3 +10,6 @@ $(COMPILED_RESOURCES):	%.zwc:	%
 
 $(RESOURCES):	%:	~pschaaf/%
 	cp -f $^ $@
+
+clean:
+	rm -f $(RESOURCES) $(COMPILED_RESOURCES)

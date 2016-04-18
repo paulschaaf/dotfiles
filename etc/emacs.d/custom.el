@@ -278,6 +278,7 @@
  '(display-time-mode t nil (time))
  '(enable-local-eval t)
  '(enable-local-variables :all)
+ '(font-use-system-font t)
  '(frame-title-format (list "Emacs: %f") t)
  '(icon-title-format "%b" t)
  '(indent-tabs-mode nil)
@@ -1109,6 +1110,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 71 :width normal))))
  '(cursor ((t (:background "white" :inverse-video nil))))
  '(italic ((t (:slant italic :family "b&h luxi mono"))))
  '(mode-line-buffer-id ((t (:foreground "steelblue1"))))

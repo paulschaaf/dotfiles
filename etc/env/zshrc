@@ -406,7 +406,8 @@ alias fixPrompt='updateGuidewireVars; updateGitVars'
 function git () {
     command git $*
     if [[ "$*" =~ "checkout" ]]; then
-        fixPrompt
+        updateGuidewireVars
+        updateGitVars
     fi
 }
 

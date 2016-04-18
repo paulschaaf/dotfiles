@@ -94,6 +94,10 @@ bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo
 chdir $HOME/IdeaProjects/hunkypunk_newUI
 screen -t HP
 
+# === dotfiles
+chdir $HOME/dotfiles
+screen
+
 # === Diamond
 chdir /diamond/cc/active/core
 screen
@@ -103,7 +107,7 @@ chdir /emerald/cc/active/core
 screen
 
 # === Ferrite
-chdir /ferrite/cc
+chdir $HOME/ferrite/cc
 screen
 
 

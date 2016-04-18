@@ -1,18 +1,33 @@
 #!/usr/bin/env ruby
 
 def printColorCode(code, text=code, pad=4)
-  if code == 8
-    print '*'  # do not format the footnote
-    pad += 1
-  end
   text = code.to_s + ' ' if (text === code)
+  pad = 2 if code == 8
   printf "[%sm%#{pad}s[0m", code, text
+  if code == 8
+    print '* '  # do not format the footnote
+  end
 end
 
+GridSize = 6
 def printColorsForPage(pageName, ground)
-  print "\n", pageName
-  (-2..255).each {|color|
-    print "\n  " if (color-16) % 6 == 0
+  print "\n", pageName, "\n  "
+  # [16, 124].each {|page|
+  #   (0...GridSize).each {|row|
+  #     (0..2).each {|column|
+  #       (0...GridSize).each {|cellNumber|
+  #         color = page + cellNumber + (GridSize*row) + (column*36)
+  #         printColorCode "#{ground};5;#{color}", color > 0 ? color : ''
+  #       }
+  #       print ' '
+  #     }
+  #     print "\n  "
+  #   }
+  # }
+  # print "\n~~\n"
+  line = ''
+  (16..255).each {|color|
+    print "\n  " if (color-16) % (6) == 0
     printColorCode "#{ground};5;#{color}", color > 0 ? color : ''
   }
 end
@@ -33,13 +48,13 @@ end
 
 section("EFFECTS") {
   effects = %w{-none- Bold Dim [Italic] Underline Blink [Fast\ blink] Inverse [Concealed] [Strikeout]}
-  (0...effects.length).each {|color|
-    print "\n" if color % 4 == 0
-    print "  ", color.to_s, ": "
-    printColorCode color, effects[color], -13
+  (0...effects.length).each {|effect|
+    print "\n" if effect % 4 == 0
+    print "  ", effect.to_s, ": "
+    printColorCode effect, effects[effect], -13
   }
   print "\n\n  Usage:         echo \"\\e[<number>mHello world\"' "
-  print "\n\n  * Code #8 may not be visible because it is \"concealed\"."
+  print "\n\n  * The text in code #8 may not be visible because it is \"concealed\"."
 }
 
 section("8-COLOR PALETTE #30-37") {
@@ -51,9 +66,9 @@ section("8-COLOR PALETTE #30-37") {
 }
 
 section("256-COLOR PALETTE") {
-  printColorsForPage "  Foregrounds (use 'echo \"\\e[38;5;<number>mHello world\"')\n", 38
+  printColorsForPage "  Foregrounds (use 'echo \"\\e[38;5;<number>mHello world\"')\n", '38'
   print "\n"
-  printColorsForPage "  Backgrounds (use 'echo \"\\e[48;5;<number>mHello world\"')\n", 48
+  printColorsForPage "  Backgrounds (use 'echo \"\\e[48;5;<number>mHello world\"')\n", '48'
 }
 
 section("USAGE") {
