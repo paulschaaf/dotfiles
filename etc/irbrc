@@ -1,6 +1,6 @@
 $autoload_files = %w(
   date
-  Logger
+  logger
 )
 
 
@@ -30,7 +30,7 @@ puts "$LOAD_PATH=%w(\n\t#{$LOAD_PATH.join("\n\t")}\n)"
 
 %w( irb/completion.rb
     irb/ext/save-history
-	Matrix
+	matrix
     rubygems
     #wirble
 ).concat($autoload_files).each do |lib|
