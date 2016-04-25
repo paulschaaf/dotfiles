@@ -1,10 +1,9 @@
-/bin/all
 /bin/quick-ssh/*
 !/bin/quick-ssh/Makefile
 !/bin/quick-ssh/ssh-to
 /bin/win/Emu48
 
-/etc/emacs.d/auto-save-list/.saves-1468-satori~
+/etc/emacs.d/auto-save-list/*
 /etc/emacs.d/session*
 /etc/emacs.d/site-lisp
 /etc/ssh/androidPrivateKey.ppk
