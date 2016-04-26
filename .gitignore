@@ -4,7 +4,7 @@
 /bin/win/Emu48
 
 /etc/emacs.d/auto-save-list/*
-/etc/emacs.d/session/*
+/etc/emacs.d/session*
 /etc/emacs.d/site-lisp
 /etc/ssh/androidPrivateKey.ppk
 /etc/ssh/id_dsa

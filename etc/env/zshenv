@@ -236,7 +236,6 @@ export MANPAGER=less
 # what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
 export WORDCHARS='|*?.-~\\$%^'
 
-exportDefault ZDOTDIR /home/${USER}
 
 # # ======== Functions
 

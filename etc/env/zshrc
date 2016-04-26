@@ -414,7 +414,7 @@ function git () {
 chpwd_functions=(${chpwd_functions[@]} "updateGuidewireVars" "updateGitVars")
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
-%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[33m%}%62>\>>\$dirs%<<
+%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
 \$GIT_STATUS%{[36m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "

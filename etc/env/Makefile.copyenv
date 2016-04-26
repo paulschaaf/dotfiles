@@ -1,15 +1,22 @@
 #-*- mode: Makefile -*-
-RESOURCES=.zprofile .zshrc .zshenv
-COMPILED_RESOURCES=$(patsubst %,%.zwc,$(RESOURCES))
+ZSH_RESOURCES=zprofile zshrc zshenv
+ZSH_RESOURCE_ROOT=~pschaaf/dotfiles/etc/env
 
-all:	$(COMPILED_RESOURCES)
+LOCAL_ZSH_COPIES=$(patsubst %,.%,$(ZSH_RESOURCES))
+COMPILED_ZSH_RESOURCES=$(patsubst %,%.zwc,$(LOCAL_ZSH_COPIES))
 
-$(COMPILED_RESOURCES):	%.zwc:	%
+all:	$(COMPILED_ZSH_RESOURCES)
+
+$(COMPILED_ZSH_RESOURCES):	%.zwc:	%
 	/usr/bin/zsh -c 'zcompile $^'
 	@echo
 
-$(RESOURCES):	%:	~pschaaf/%
-	cp -f $^ $@
+$(LOCAL_ZSH_COPIES):	.%:	$(ZSH_RESOURCE_ROOT)/%
+ifeq ($(USER),pschaaf)
+		ln -fs $^ $@
+else
+		cp -f $^ $@
+endif
 
 clean:
-	rm -f $(RESOURCES) $(COMPILED_RESOURCES)
+	rm -f $(LOCAL_ZSH_COPIES) $(COMPILED_ZSH_RESOURCES)
