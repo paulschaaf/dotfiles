@@ -15,32 +15,31 @@ end
 def section(header)
   puts
   printColorString 4, header
-  puts "\n\n"
+  puts "\n"
   yield
   puts
 end
 
-section('EFFECTS') {
+section('EFFECTS (0..9, 21..29)') {
   effects = %w{-unset\ all- Bold [Dim] [Italic] Underline Blink [Fast\ blink] Inverse [Concealed[0m]*  [Strikeout]}
   pad = effects.max {|e| e.length}.length + 1
-  (0...effects.length).each {|effect|
-    print "  ", (effect).to_s, ": "
-    printColorString effect, effects[effect], -pad
-    puts if (effect+1) % 4 == 0
+  (0...effects.length).each {|effectNum|
+    print "  #{effectNum}: "
+    printColorString effectNum, effects[effectNum], -pad
+    puts if (effectNum+1) % 4 == 0
   }
+  print "  2X: Unset effect number X"
   puts <<STRING
 
-
-  * The text in code #8 ought to be invisible as it is "concealed".
+     * Effect #8 may be invisible as it is "concealed".
 
   Bracketed effects are not widely supported.
 
   Usage:  echo "\\e[<number>mHello world"
-    To unset an individual effect add 20 to the effect number.
 STRING
 }
 
-section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107))') {
+section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107)') {
   { 0 => 'Foreground', 10 => 'Background' }.each {|ground, groundName|
     { 0 => 'Dim', 60 => 'Bright' }.each {|intensity, intensityName|
       printf '  %-7s ', intensityName
@@ -50,9 +49,9 @@ section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107))') {
       }
       puts
     }
-    puts
+    # puts
   }
-  puts "  Usage:  echo \"\\e[<number>mHello world\"' "
+  puts "\n  Usage:  echo \"\\e[<number>mHello world\"' "
 }
 
 section('256-COLOR PALETTE (16..255)') {
@@ -77,12 +76,13 @@ section('256-COLOR PALETTE (16..255)') {
         color = cell + (row*GridSize)
         printColorString "#{ground};5;#{color}", color
       }
-      print "\n  " if row % 2 == 1
+      print "\n  " if row == 1
     }
     puts
   }
 
   puts <<STRING
+
   Usage:
     Foreground 'echo "\\e[38;5;<number>mHello world"'
     Background 'echo "\\e[48;5;<number>mHello world"'
