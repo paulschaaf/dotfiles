@@ -60,7 +60,8 @@ section('256-COLOR PALETTE (16..255)') {
     (0..2).each {|section|
       rowCounts.each {|row|
         print '  '
-        [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52].each {|cell|
+       [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52, 16].each {|cell|
+       # [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52].each {|cell|
           color = cell + row + (72*section)
           colorCode = "#{ground};5;#{color}"
           colorCode = '30;' + colorCode if [40, 46, 82, 76].include?(cell)
@@ -68,7 +69,7 @@ section('256-COLOR PALETTE (16..255)') {
         }
        puts
       }
-      rowCounts = rowCounts.reverse
+      rowCounts = rowCounts.reverse if section == 0
     }
     print '  '
     (0..3).each {|row|
@@ -101,11 +102,10 @@ section('USAGE') {
   puts '  Begin your text with "\e[<effect*>;<foreground>;<background>m"', ''
 
   printSamples( {
-    '31'               => 'Red foreground',
+    '91'               => 'Bright red foreground',
     '48;5;12'          => 'Light blue background',
     '38;5;94'          => 'Brown foreground',
-    '1;38;5;11'        => 'Boldface gold foreground',
-    '1;4;38;5;55'      => 'Boldface underlined purple foreground',
+    '1;4;38;5;11'      => 'Boldface underlined gold foreground',
     '38;5;171;48;5;11' => 'Pink foreground, gold background'
   })
 }
