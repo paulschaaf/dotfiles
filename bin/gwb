@@ -114,14 +114,14 @@ case $UNAME in
         echo In `pwd`
         if [ -z $_dry_run ]; then
             set -x
-            # if [[ "$CMD" =~ studio ]]; then
-                CMD=$CMD' &'
-            #     echo $CMD
-            #     eval source $CMD
-            # else
+            if [[ "$CMD" =~ studio ]]; then
+                # CMD=$CMD' &'
                 echo $CMD
-                eval nohup $CMD
-            # fi
+                eval source $CMD
+            else
+                echo $CMD
+                eval source $CMD
+            fi
         else
             echo $CMD
         fi

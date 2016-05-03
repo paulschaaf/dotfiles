@@ -19,7 +19,8 @@ unsetenv             SHLVL
 defflow              off
 defmonitor          on
 defscrollback     5000
-term xterm-256color
+term xterm
+#-256color
 
 # hs - The HardStatus Line, followed by escape sequences for various operations:
 #    ts - Enter the hardstatus line

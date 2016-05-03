@@ -54,7 +54,7 @@ appendToVar  () {
     local var=$1; shift; eval "$var=\${$var}$*"
 }
 prependToVar () {
-	 local var=$1; shift; eval "$var=$*\${$var}"
+	local var=$1; shift; eval "$var=$*\${$var}"
 }
 
 member () {
@@ -94,7 +94,7 @@ appendPath       () {
 	appendToList  PATH $*
 }
 prependPath      () {
-	 prependToList PATH $*
+	prependToList PATH $*
 }
 
 appendRubyLib    () {
@@ -160,8 +160,6 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 export GREP_OPTIONS=--color
 export HISTSIZE=1000
 
-export IPOD_MOUNTPOINT=/media/iPod
-
 export ANT_HOME=/depot/ant/apache-ant-1.7.1
 export AARDVARK_HOME=/depot/aardvark/alpha
 
@@ -172,9 +170,12 @@ done
 for home in /usr/lib/jvm/java-[0-9]-oracle; do
     local digit=${home##*java-}; digit=${digit%%-*}
     export JAVA${digit}_HOME=$home
+    local javaDigitHome=JAVA${digit}_HOME
     # keep track of the newest one
     export JAVA_HOME=$home
+    alias java${digit}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; which java; echo; java -version"
 done
+alias whichJava='which java; echo; java -version'
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
