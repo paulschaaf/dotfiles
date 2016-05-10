@@ -120,7 +120,7 @@ PATH=`cleanpath`
 
 # ======== Path
 prependPath $HOME/bin
-appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw
+appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~pschaaf/Android/Sdk/platform-tools
 
 # ======== Environment and Shell Variables
 export BROWSER=chrome
@@ -181,7 +181,7 @@ export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
 
 # export P4CONFIG=<clientSpec>
-export P4CLIENT=pschaaf_satori_1091
+export P4CLIENT=pschaaf_satori_1124
 # export P4PORT=perforce:1666
 # export CATALINA_HOME=<tomcat-root-directory>
 

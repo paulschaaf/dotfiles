@@ -108,7 +108,7 @@ chdir /emerald/cc/active/core
 screen
 
 # === Ferrite
-chdir $HOME/ferrite/cc
+chdir /gw-dev/ferrite/cc
 screen
 
 

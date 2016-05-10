@@ -1,7 +1,6 @@
 #!/bin/zsh
 
 _batchFile=./${0##*/}
-
 UNAME=`uname`
 
 unset _dry_run
@@ -113,9 +112,7 @@ case $UNAME in
         ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
         echo In `pwd`
         if [ -z $_dry_run ]; then
-            set -x
             if [[ "$CMD" =~ studio ]]; then
-                # CMD=$CMD' &'
                 echo $CMD
                 eval source $CMD
             else

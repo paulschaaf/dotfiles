@@ -38,26 +38,45 @@ case `uname` in
         ;;
 esac
 
+setJavaHomeTo() {
+    local newHomeName=$1
+    eval local newHome=\$$newHomeName
+
+    if [ "$newHome" = "" ]; then
+        echo Error: $newHomeName is not set\!
+        exit 1
+    elif [ ! -d ${newHome} ]; then
+        echo Error: $newHomeName directory $newHome does not exist\!
+        exit 1
+    fi
+    echo newHome must exist
+    export JAVA_HOME=$newHome
+}
+
 export GW_START_SCRIPT=./gwb
 case $GW_PLATFORM in
     carbon)
         export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
         export IDEA_HOME=$IDEA11_HOME
         export JAVA_HOME=$JAVA6_HOME
+        setJavaHomeTo JAVA6_HOME
         ;;
     diamond)
         export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
         export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=$JAVA6_HOME
-        ;;
+        setJavaHomeTo JAVA6_HOME
+       ;;
     emerald)
         export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
         export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=$JAVA7_HOME
+        setJavaHomeTo JAVA7_HOME
         ;;
     ferrite)
         export IDEA_HOME=$IDEA15_HOME
         export JAVA_HOME=$JAVA8_HOME
+        setJavaHomeTo JAVA8_HOME
         ;;
     *)
         echo "Could not determine platform version!" >&2

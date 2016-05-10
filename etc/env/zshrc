@@ -74,8 +74,6 @@ if [ -z "$ifZsh" ]; then
         pushd_to_home
 fi
 
-alias adb="~pschaaf/Android/Sdk/platform-tools/adb"
-
 frotz () {
     pushd ~/private/sync/int-fic
     local stories=".*/${1:-.*}\\.\\(dat\\|z5\\)\$"
