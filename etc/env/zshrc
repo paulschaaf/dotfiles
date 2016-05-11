@@ -419,19 +419,7 @@ PS1="%{[4;38;5;235m%}                                                          
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 
-# set up the prompt
-if [ -n "$inScreen" ]; then
-    # cd to the symlinked path to this directory
-    thisDir=`pwd | sed '
-              s_^\(/c\)*'$HOME'\|'$ZDOTDIR'_~_;
-              s_^/c/ferrite_/ferrite_;
-              s_^\(/c\)*/depot/eng/\(diamond\|emerald\)_/\2_;
-              s_ _'"' '"'_g'`
-    eval pcd $thisDir
-else
-    [ $PWD = $HOME ] || pcd .
-fi
-unset thisDir
+[ $PWD = $HOME ] || pcd .
 
 $ifZsh compinit
 
@@ -439,6 +427,6 @@ $ifZsh compinit
 # of code. Make sure to keep the opening tag first, and the closing tag
 # against the left margin on a line by itself. Don't forget that any
 # edits are lost if this file is re-generated.
-#: <<DEBUG_NO_EXEC
-#DEBUG_NO_EXEC
-#
+: <<DEBUG_NO_EXEC
+DEBUG_NO_EXEC
+

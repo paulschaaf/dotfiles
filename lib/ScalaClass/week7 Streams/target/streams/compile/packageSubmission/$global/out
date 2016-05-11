@@ -1,0 +1,17 @@
+[0m[[0minfo[0m] [0mPackaging C:\eclipse\ScalaClass\week7\target\scala-2.9.2\progfun-streams_2.9.2-1.0.0.jar ...[0m
+[0m[[0mdebug[0m] [0mInput file mappings:[0m
+[0m[[0mdebug[0m] [0m	common\package.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\common\package.scala[0m
+[0m[[0mdebug[0m] [0m	streams\Bloxorz.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\streams\Bloxorz.scala[0m
+[0m[[0mdebug[0m] [0m	week7\Pouring.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\week7\Pouring.scala[0m
+[0m[[0mdebug[0m] [0m	streams\InfiniteTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\streams\InfiniteTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	streams\StringParserTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\streams\StringParserTerrain.scala[0m
+[0m[[0mdebug[0m] [0m	streams\Solver.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\streams\Solver.scala[0m
+[0m[[0mdebug[0m] [0m	streams\GameDef.scala[0m
+[0m[[0mdebug[0m] [0m	  C:\eclipse\ScalaClass\week7\src\main\scala\streams\GameDef.scala[0m
+[0m[[0minfo[0m] [0mDone packaging.[0m

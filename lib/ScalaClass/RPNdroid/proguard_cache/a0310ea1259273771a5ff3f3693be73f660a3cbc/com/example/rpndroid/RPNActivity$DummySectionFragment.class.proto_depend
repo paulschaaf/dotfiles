@@ -1,0 +1,4 @@
+classname: com/example/rpndroid/RPNActivity$DummySectionFragment
+visitAsClass_signature*
+visitAsClass_superName*android/support/v4/app/Fragment
+visitTypeInsn*187*android/widget/TextView

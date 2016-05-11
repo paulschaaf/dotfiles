@@ -167,15 +167,20 @@ for home in /opt/idea[1-9][1-9]; do
     export IDEA${home##*idea}_HOME=$home
 done
 
+function whichjava() {
+    which java
+    echo
+    java -version
+}
+
 for home in /usr/lib/jvm/java-[0-9]-oracle; do
     local digit=${home##*java-}; digit=${digit%%-*}
     export JAVA${digit}_HOME=$home
     local javaDigitHome=JAVA${digit}_HOME
     # keep track of the newest one
     export JAVA_HOME=$home
-    alias java${digit}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; which java; echo; java -version"
+    alias java${digit}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; whichjava"
 done
-alias whichJava='which java; echo; java -version'
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
@@ -424,3 +429,10 @@ case ${UNAME} in
     *)
         ;;
 esac
+
+# Move this heredoc around in the file to temporarily disable sections
+# of code. Make sure to keep the opening tag first, and the closing tag
+# against the left margin on a line by itself. Don't forget that any
+# edits are lost if this file is re-generated.
+: <<DEBUG_NO_EXEC
+DEBUG_NO_EXEC
