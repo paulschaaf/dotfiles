@@ -401,7 +401,7 @@ updateGitVars () {
     fi
 }
 
-alias fixPrompt='updateGuidewireVars; updateGitVars'
+alias fixprompt='updateGuidewireVars; updateGitVars'
 
 function git () {
     command git $*
