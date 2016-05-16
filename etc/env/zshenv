@@ -409,7 +409,7 @@ alias perf='./perf -Ddir.user=pschaaf'
 alias pgrep='ps -aef | grep'
 alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
-alias tree="tree -a --dirsfirst --ignore_backups --ignore_regex '\\.svn|\\.git'"
+alias tree="tree -a --dirsfirst"
 
 case ${UNAME} in
     CYGWIN*)

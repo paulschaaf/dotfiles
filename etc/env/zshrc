@@ -141,6 +141,18 @@ setScreenTitle () {
     echo -n "\ek$*\e\\"
 }
 
+splitFlac() {
+    local cue=$1
+    local flac=$2
+    if [ "${2##*.}" = "cue" ]; then
+        cue=$2
+        flac=$1
+    fi
+    echo "    CUE  = $cue"
+    echo "    FLAC = $flac"
+    shnsplit -f $cue -t %n-%t -o flac $flac
+}
+
 wedit () {
     local cmd file x
     for x in $*
