@@ -92,29 +92,32 @@ bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo
 # screen -t '>> |irb' 0 irb
 
 # === HunkyPunk
-chdir $HOME/IdeaProjects/hunkypunk_newUI
+chdir $HOME/IdeaProjects/as_son_of_hunkypunk
 screen -t HP
 
-# === dotfiles
-chdir $HOME/dotfiles
+# === Home
+chdir
 screen
 
-# === Diamond
-chdir /diamond/cc/active/core
-screen
+# # === dotfiles
+# chdir $HOME/dotfiles
+# screen
 
-# === Emerald
-chdir /emerald/cc/active/core
-screen
+# # === Diamond
+# chdir /diamond/cc/active/core
+# screen
+
+# # === Emerald
+# chdir /emerald/cc/active/core
+# screen
 
 # === Ferrite
 chdir /gw-dev/ferrite/cc
 screen
 
-
-# === DOS
-# screen -t 'cmd' 3 /c/Windows/system32/cmd.exe
-
+# === Apollo
+chdir /gw-dev/apollo/cc
+screen
 
 # ======== Wrap things up
 select 1

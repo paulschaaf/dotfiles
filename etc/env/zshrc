@@ -9,6 +9,12 @@
 # ...
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
+### START-Keychain ###
+# Let  re-use ssh-agent and/or gpg-agent between logins
+/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
+source $HOME/.keychain/$HOSTNAME-sh
+### End-Keychain ###
+
 log=:
 #log=echo
 $log '*** In .zshrc'
@@ -357,49 +363,25 @@ ZSH_THEME_GIT_PROMPT_SEPARATOR="%{\e[38;5;245m%}|"
 ZSH_THEME_GIT_PROMPT_STAGED="%{\e[38;5;215m%}%{∘%G%}"
 #ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$bg[red]%}%{✖%G%}"
 ZSH_THEME_GIT_PROMPT_CHANGED="%{\e[38;5;45m%}%{+%G%}"
-# ZSH_THEME_GIT_PROMPT_BEHIND="%{↓%G%}"
-# ZSH_THEME_GIT_PROMPT_AHEAD="%{↑%G%}"
+ZSH_THEME_GIT_PROMPT_BEHIND="%{\e[96m↓\e[0m%G%}"
+ZSH_THEME_GIT_PROMPT_AHEAD="%{\e[96m↑\e[0m%G%}"
 # ZSH_THEME_GIT_PROMPT_UNTRACKED="%{…%G%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX="%{\e[38;5;245m%}"
 # ZSH_THEME_GIT_PROMPT_CLEAN="%{$bg_bold[green]%}%{✔%G%}"
 
 export dirs
 
-updateGuidewireVars () {
-    case $PWD in
-        */carbon/*)
-            export GW_PLATFORM=carbon
-            ;;
-        */diamond/*)
-            export GW_PLATFORM=diamond
-            ;;
-        */emerald/*)
-            export GW_PLATFORM=emerald
-            ;;
-        */ferrite/*)
-            export GW_PLATFORM=ferrite
-            ;;
-        *)
-            unset GW_PLATFORM
-            ;;
-    esac
-
-    if [ -z "$GW_PLATFORM" ]; then
-        unset GW_PL GW_PRODUCT GW_TITLE
-    else
-        export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
-
-        # take the uppercase of the first char
-        export GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
-        export GW_TITLE="$GW_PL:$GW_PRODUCT"
-    fi
-    setScreenTitle $GW_TITLE
+updateDirs () {
+    dirs="`builtin dirs -p |
+       awk 'NR == 2 {printf(\"%s\", \"[0;38;5;243m\")}; {print}' ORS=' '`"
 }
 
-updateGitVars () {
-    dirs="`builtin dirs -p |
-            awk 'NR == 2 {printf(\"%s\", \"[0;38;5;243m\")}; {print}' ORS=' '`"
+updateGuidewireVars () {
+    source gwSetEnv &>> /dev/null
+    setScreenTitle $GW_TITLE
+ }
 
+updateGitVars () {
     local oldStatus=$GIT_SUPER_STATUS
     GIT_SUPER_STATUS=`git_super_status`
 
@@ -423,7 +405,7 @@ function git () {
     fi
 }
 
-chpwd_functions=(${chpwd_functions[@]} "updateGuidewireVars" "updateGitVars")
+chpwd_functions=(${chpwd_functions[@]} "updateDirs" "updateGuidewireVars" "updateGitVars")
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
 %2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
@@ -431,7 +413,7 @@ PS1="%{[4;38;5;235m%}                                                          
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 
-[ $PWD = $HOME ] || pcd .
+pcd .
 
 $ifZsh compinit
 
