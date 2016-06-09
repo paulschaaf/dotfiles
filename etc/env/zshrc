@@ -36,6 +36,8 @@ if [ -z "$ifZsh" ]; then
     zstyle ':completion:*' verbose true
     zstyle  :compinstall filename "$HOME/etc/env/$HOST.zsh"
 
+    fpath=(~/etc/zshcompletion $fpath)
+
     autoload -U compinit
     autoload zed                  && alias fned='zed -f'
     unalias  run-help 2>/dev/null && autoload run-help
@@ -378,7 +380,6 @@ updateDirs () {
 
 updateGuidewireVars () {
     source gwSetEnv &>> /dev/null
-    setScreenTitle $GW_TITLE
  }
 
 updateGitVars () {

@@ -120,7 +120,7 @@ if [ -n "$GW_PLATFORM" ]; then
             ;;
         pc)
             # bright white text on red
-            e$ifCygwin xport GW_COLOR=4F
+            $ifCygwin xport GW_COLOR=4F
             ;;
         *)
             $ifCygwin export GW_COLOR=0F
@@ -138,4 +138,6 @@ if [ -n "$GW_PLATFORM" ]; then
     }
 
     echoList PATH CLASSPATH
+
+    setScreenTitle $GW_TITLE
 fi

@@ -111,16 +111,26 @@ case $UNAME in
         [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
         ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
         echo In `pwd`
+        echo $CMD
         if [ -z $_dry_run ]; then
-            if [[ "$CMD" =~ studio ]]; then
-                echo $CMD
-                eval source $CMD
+            local success=0
+            eval "source $CMD || success=1"
+
+            local iconDir=/usr/share/icons/oxygen/48x48
+            local failIcon=$iconDir/actions/process-stop.png
+            # local successIcon=$iconDir/actions/flag-green.png
+            local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
+
+            local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
+
+            if [ $success -eq 0 ]; then
+                # Don't bother to notify of common successes
+                if [[ ! "$CMD" =~ studio && ! "$CMD" =~ tasks ]]; then
+                    notify-send -t 5000 -i $successIcon "Completed '$CMD'" $message
+                fi
             else
-                echo $CMD
-                eval source $CMD
+                notify-send -t 10000 -u critical -i $failIcon "Failed '$CMD'" $message
+                return 1
             fi
-        else
-            echo $CMD
         fi
-        ;;
 esac

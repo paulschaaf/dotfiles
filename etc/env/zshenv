@@ -38,6 +38,7 @@ exportDefault () {
     export $1
 }
 
+export CLASSPATH
 exportDefault UNAME    `uname`
 exportDefault HOSTNAME `hostname`
 
@@ -167,6 +168,12 @@ for home in /opt/idea[1-9][1-9]; do
     export IDEA${home##*idea}_HOME=$home
 done
 
+local iconDir=/usr/share/icons/oxygen/48x48
+local failIcon=$iconDir/actions/process-stop.png
+# local successIcon=$iconDir/actions/flag-green.png
+local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
+
+
 function whichjava() {
     which java
     echo
@@ -228,7 +235,7 @@ export MANPAGER=less
 
 exportDefault SCREENDIR ${HOME}/tmp
 
-export SHELL=zsh
+export SHELL=/usr/bin/zsh
 
 export STUDIO_JDK=$JAVA8_HOME_noDCEVM
 

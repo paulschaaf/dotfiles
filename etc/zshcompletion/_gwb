@@ -1,0 +1,3 @@
+#compdef gwb
+ 
+_arguments "*: :(clean codegen compile dropDb genWsiLocal idea studio tasks)"
