@@ -9,12 +9,6 @@
 # ...
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-### START-Keychain ###
-# Let  re-use ssh-agent and/or gpg-agent between logins
-/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
-source $HOME/.keychain/$HOSTNAME-sh
-### End-Keychain ###
-
 log=:
 #log=echo
 $log '*** In .zshrc'
@@ -383,13 +377,13 @@ updateGuidewireVars () {
  }
 
 updateGitVars () {
-    local oldStatus=$GIT_SUPER_STATUS
+    # local oldStatus=$GIT_SUPER_STATUS
     GIT_SUPER_STATUS=`git_super_status`
 
     if [ -z "$GIT_SUPER_STATUS" ]; then
         unset GIT_STATUS
-    elif [ "$GIT_SUPER_STATUS" = "$oldStatus" ]; then
-        # nothing has changed
+    # elif [ "$GIT_SUPER_STATUS" = "$oldStatus" ]; then
+    #     # nothing has changed
     else
         GIT_STATUS="$GIT_SUPER_STATUS  `git config branch.$GIT_BRANCH.description`
 "
@@ -417,6 +411,12 @@ PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 pcd .
 
 $ifZsh compinit
+
+### START-Keychain ###
+# Let  re-use ssh-agent and/or gpg-agent between logins
+/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
+source $HOME/.keychain/$HOSTNAME-sh
+### End-Keychain ###
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag

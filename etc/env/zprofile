@@ -14,8 +14,8 @@ loginsh=1
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
-/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
-source $HOME/.keychain/$HOSTNAME-sh
+#/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
+#source $HOME/.keychain/$HOSTNAME-sh
 ### End-Keychain ###
 
 # ======== Terminal Settings

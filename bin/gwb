@@ -75,6 +75,10 @@ _iconBase=/Guidewire/icons/${_gwProduct_upcase}_favicon
 
 [ -n "$_dry_run" ] && set -x
 
+setScreenTitle () {
+    echo -n "\ek$*\e\\"
+}
+
 case $UNAME in
     CYGWIN*)
         if [ ${GW_START_DIR} = "." ]; then
@@ -114,23 +118,29 @@ case $UNAME in
         echo $CMD
         if [ -z $_dry_run ]; then
             local success=0
-            eval "source $CMD || success=1"
-
             local iconDir=/usr/share/icons/oxygen/48x48
             local failIcon=$iconDir/actions/process-stop.png
             # local successIcon=$iconDir/actions/flag-green.png
             local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
 
-            local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
+            for task in `echo $_userCmd`; do
+                local fullTask="$GW_START_SCRIPT $task"
+                echo fullTask=$fullTask
+                setScreenTitle $fullTask
+                eval "source $fullTask || success=1"
+                # eval "source $CMD || success=1"
+                local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
 
-            if [ $success -eq 0 ]; then
-                # Don't bother to notify of common successes
-                if [[ ! "$CMD" =~ studio && ! "$CMD" =~ tasks ]]; then
-                    notify-send -t 5000 -i $successIcon "Completed '$CMD'" $message
+                if [ $success -eq 0 ]; then
+                    # Don't bother to notify of common successes
+                    if [[ ! "$task" =~ studio && ! "$task" =~ tasks ]]; then
+                        notify-send -t 5000 -i $successIcon "Completed '$fullTask'" $message
+                    fi
+                else
+                    notify-send -t 10000 -u critical -i $failIcon "Failed '$fullTask'" $message
                 fi
-            else
-                notify-send -t 10000 -u critical -i $failIcon "Failed '$CMD'" $message
-                return 1
-            fi
+            done
+            setScreenTitle
         fi
+        ;;
 esac

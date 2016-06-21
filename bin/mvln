@@ -1,13 +1,9 @@
 #!/bin/bash
 
 #set -x
-for _file in $@; do
-    typeset -p _file
-    _old=`readlink -f $_file | sed 's_/home/pschaaf/__'`
-    _new=dotfiles/${_old}
-    typeset -p _old _new
-    echo
-    echo mv $_old $_new
-    echo ln -s $_new $_old
-done
 
+src=$1
+dest=$2
+
+mv -f $1 $2
+ln -fs $2/$1 .
