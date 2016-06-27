@@ -121,7 +121,7 @@ PATH=`cleanpath`
 
 # ======== Path
 prependPath $HOME/bin
-appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~pschaaf/Android/Sdk/platform-tools
+appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw /gw-dev/Android/Sdk/platform-tools
 
 # ======== Environment and Shell Variables
 export BROWSER=chrome
