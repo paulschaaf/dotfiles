@@ -92,7 +92,7 @@ bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo
 # screen -t '>> |irb' 0 irb
 
 # === HunkyPunk
-chdir $HOME/IdeaProjects/as_son_of_hunkypunk
+chdir $HOME/IdeaProjects/sonofhunkypunk
 screen -t HP
 
 # === Home

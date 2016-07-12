@@ -6,41 +6,41 @@ UNAME=`uname`
 unset _dry_run
 
 while [ -n "$*" ]; do
-    case $1 in
-        --dry-run)
-            _dry_run=': '
-            ;;
-        --keep)
-            _terminate=/K
-            ;;
-        --max)
-            _size=' /MAX'
-            ;;
-        --min)
-            _size=' /MIN'
-            ;;
-        --nokeep)
-            _terminate=/C
-            ;;
-        --)
-            ;;
-        *)
-            break
-            ;;
-    esac
-    shift
+  case $1 in
+    --dry-run)
+      _dry_run=': '
+      ;;
+    --keep)
+      _terminate=/K
+      ;;
+    --max)
+      _size=' /MAX'
+      ;;
+    --min)
+      _size=' /MIN'
+      ;;
+    --nokeep)
+      _terminate=/C
+      ;;
+    --)
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
 done
 
 _userCmd=$*
 
 # if [ "${0##*/}" = "perf" ]; then
-#     echo called perf!
-#     _userCmd='-Ddir.user=pschaaf '$_userCmd
+#   echo called perf!
+#   _userCmd='-Ddir.user=pschaaf '$_userCmd
 # fi
 
 # Close window afterward if _terminate is unset AND command ends in 'studio'
 if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
-    _terminate=/C
+  _terminate=/C
 fi
 
 source ~/bin/gwSetEnv
@@ -51,17 +51,17 @@ GW_START_DIR=${GW_START_DIR:-.}   # default it to '.'
 GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
 
 case $UNAME in
-    CYGWIN*)
-        export GW_TITLE="${GW_TITLE}${_userCmd:+ '$_userCmd'}"
-        ;;
-    *)
-        export GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
-        ;;
+  CYGWIN*)
+    export GW_TITLE="${GW_TITLE}${_userCmd:+ '$_userCmd'}"
+    ;;
+  *)
+    export GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
+    ;;
 esac
 
 echoVar() {
-    typeset -p $* | sed 's/^declare\( -x\)* / /'
-    echo
+  typeset -p $* | sed 's/^declare\( -x\)* / /'
+  echo
 }
 
 export CMD="$GW_START_SCRIPT ${_userCmd}"
@@ -71,76 +71,74 @@ echo " # Execute \$CMD in a high-priority window ${GW_TITLE:+titled \$GW_TITLE}$
 echoVar CMD GW_TITLE
 
 _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
-_iconBase=/Guidewire/icons/${_gwProduct_upcase}_favicon
+_icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
 
 [ -n "$_dry_run" ] && set -x
 
 setScreenTitle () {
-    echo -n "\ek$*\e\\"
+  echo -n "\ek$*\e\\"
 }
 
 case $UNAME in
-    CYGWIN*)
-        if [ ${GW_START_DIR} = "." ]; then
-            GW_START_DIR=`pwd`
+  CYGWIN*)
+    if [ ${GW_START_DIR} = "." ]; then
+      GW_START_DIR=`pwd`
+    fi
+    _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
+    echoVar _shell
+    _priority=' /HIGH'
+    if [ ! -e $_shell ]; then
+      echo '# Creating shortcut...'
+      COMSPEC=`cygpath -au $COMSPEC`
+      _desc="${GW_PLATFORM}_${GW_PRODUCT}"
+      _icon=/c${_icon}
+
+      _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
+      echo ${_mkshortcut}
+      echo
+      ${_dry_run:-eval} $_mkshortcut
+    fi
+    _start='cmd.exe /C start'
+    if [ -z "$ifGit" ]; then
+      _start='start'
+    fi
+
+    ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
+    ;;
+
+  Linux)
+    if [ -n ${GW_START_DIR} -a ${GW_START_DIR} != "." ]; then
+      cd $GW_START_DIR
+    fi
+
+    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
+    ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+    echo In `pwd`
+    echo $CMD
+    if [ -z $_dry_run ]; then
+      local fullTask_failed=0
+      local iconDir=/usr/share/icons/oxygen/48x48
+      local failIcon=$iconDir/actions/process-stop.png
+      # local successIcon=$iconDir/actions/flag-green.png
+      local successIcon=$_icon
+
+      for task in `echo $_userCmd`; do
+        local fullTask="$GW_START_SCRIPT $task"
+        echo fullTask=$fullTask
+        setScreenTitle $fullTask
+
+        eval "source $fullTask || fullTask_failed=1"
+        local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
+
+        if [ $fullTask_failed ]; then
+          notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$fullTask'" $message
+        elif [[ "$task" =~ studio || "$task" =~ tasks ]]; then
+            # Don't bother to notify when success would be obvious
+        else
+            notify-send -c idea -t 5000 -i $successIcon "Completed '$fullTask'" $message
         fi
-        _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
-        echoVar _shell
-        _priority=' /HIGH'
-        if [ ! -e $_shell ]; then
-            echo '# Creating shortcut...'
-            COMSPEC=`cygpath -au $COMSPEC`
-            _desc="${GW_PLATFORM}_${GW_PRODUCT}"
-            _icon=/c${_iconBase}.ico
-
-            _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
-            echo ${_mkshortcut}
-            echo
-            ${_dry_run:-eval} $_mkshortcut
-        fi
-        _start='cmd.exe /C start'
-        if [ -z "$ifGit" ]; then
-            _start='start'
-        fi
-
-        ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
-        ;;
-
-    Linux)
-        if [ -n ${GW_START_DIR} -a ${GW_START_DIR} != "." ]; then
-            cd $GW_START_DIR
-        fi
-
-        _icon=/windows${_iconBase}.png
-        [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
-        ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
-        echo In `pwd`
-        echo $CMD
-        if [ -z $_dry_run ]; then
-            local success=0
-            local iconDir=/usr/share/icons/oxygen/48x48
-            local failIcon=$iconDir/actions/process-stop.png
-            # local successIcon=$iconDir/actions/flag-green.png
-            local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
-
-            for task in `echo $_userCmd`; do
-                local fullTask="$GW_START_SCRIPT $task"
-                echo fullTask=$fullTask
-                setScreenTitle $fullTask
-                eval "source $fullTask || success=1"
-                # eval "source $CMD || success=1"
-                local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
-
-                if [ $success -eq 0 ]; then
-                    # Don't bother to notify of common successes
-                    if [[ ! "$task" =~ studio && ! "$task" =~ tasks ]]; then
-                        notify-send -t 5000 -i $successIcon "Completed '$fullTask'" $message
-                    fi
-                else
-                    notify-send -t 10000 -u critical -i $failIcon "Failed '$fullTask'" $message
-                fi
-            done
-            setScreenTitle
-        fi
-        ;;
+      done
+      setScreenTitle
+    fi
+    ;;
 esac

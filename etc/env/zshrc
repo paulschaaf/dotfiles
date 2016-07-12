@@ -349,7 +349,7 @@ case $UNAME in
         ;;
 esac
 
-source /home/pschaaf/bin/git_zshrc.sh
+source /home/pschaaf/etc/env/git_zshrc.sh
 
 # ZSH_THEME_GIT_PROMPT_PREFIX="%{\e[38;5;245m%}᚛➝([7m▶" # pennant style
 ZSH_THEME_GIT_PROMPT_PREFIX="%{\e[38;5;245m%}᚛➝ " # feather mark plus arrow
@@ -394,10 +394,7 @@ alias fixprompt='updateGuidewireVars; updateGitVars'
 
 function git () {
     command git $*
-    if [[ "$*" =~ "checkout" ]]; then
-        updateGuidewireVars
-        updateGitVars
-    fi
+    echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
 }
 
 chpwd_functions=(${chpwd_functions[@]} "updateDirs" "updateGuidewireVars" "updateGitVars")

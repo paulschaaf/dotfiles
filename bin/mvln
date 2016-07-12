@@ -2,8 +2,7 @@
 
 #set -x
 
-src=$1
-dest=$2
+fileName=$1
+destDir=$2
 
-mv -f $1 $2
-ln -fs $2/$1 .
+mv -f $fileName $destDir && ln -fs $destDir/$fileName .
