@@ -116,7 +116,7 @@ case $UNAME in
     echo In `pwd`
     echo $CMD
     if [ -z $_dry_run ]; then
-      local fullTask_failed=0
+      local fullTask_failed=
       local iconDir=/usr/share/icons/oxygen/48x48
       local failIcon=$iconDir/actions/process-stop.png
       # local successIcon=$iconDir/actions/flag-green.png

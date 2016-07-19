@@ -1,6 +1,9 @@
 #!/bin/bash
 
 unset GW_PLATFORM
+setScreenTitle () {
+  echo -n "\ek$*\e\\"
+}
 case $PWD in
     */carbon/*)
         export GW_PLATFORM=carbon
