@@ -99,9 +99,9 @@ screen -t HP
 chdir
 screen
 
-# # === dotfiles
-# chdir $HOME/dotfiles
-# screen
+# === dotfiles
+chdir $HOME/dotfiles
+screen
 
 # # === Diamond
 # chdir /diamond/cc/active/core
@@ -112,8 +112,8 @@ screen
 # screen
 
 # === Ferrite
-chdir /gw-dev/ferrite/cc
-screen
+# chdir /gw-dev/ferrite/cc
+# screen
 
 # === Apollo
 chdir /gw-dev/apollo/cc

@@ -6,139 +6,192 @@ UNAME=`uname`
 unset _dry_run
 
 while [ -n "$*" ]; do
-  case $1 in
-    --dry-run)
-      _dry_run=': '
-      ;;
-    --keep)
-      _terminate=/K
-      ;;
-    --max)
-      _size=' /MAX'
-      ;;
-    --min)
-      _size=' /MIN'
-      ;;
-    --nokeep)
-      _terminate=/C
-      ;;
-    --)
-      ;;
-    *)
-      break
-      ;;
-  esac
-  shift
+    case $1 in
+        --dry-run)
+            _dry_run=': '
+            ;;
+        # --keep)
+        #     _terminate=/K
+        #     ;;
+        # --max)
+        #     _size=' /MAX'
+        #     ;;
+        # --min)
+        #     _size=' /MIN'
+        #     ;;
+        # --nokeep)
+        #     _terminate=/C
+        #     ;;
+        --)
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
 done
 
 _userCmd=$*
 
-# if [ "${0##*/}" = "perf" ]; then
-#   echo called perf!
-#   _userCmd='-Ddir.user=pschaaf '$_userCmd
+# # Close window afterward if _terminate is unset AND command ends in 'studio'
+# if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
+#     _terminate=/C
 # fi
-
-# Close window afterward if _terminate is unset AND command ends in 'studio'
-if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
-  _terminate=/C
-fi
 
 source ~/bin/gwSetEnv
 
 # Separate the directory name
 GW_START_DIR=${GW_START_SCRIPT%/*}
-GW_START_DIR=${GW_START_DIR:-.}   # default it to '.'
+[ -d ${GW_START_DIR} ] && cd $GW_START_DIR
+echo In `pwd`
+
 GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
-
-case $UNAME in
-  CYGWIN*)
-    export GW_TITLE="${GW_TITLE}${_userCmd:+ '$_userCmd'}"
-    ;;
-  *)
-    export GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
-    ;;
-esac
-
-echoVar() {
-  typeset -p $* | sed 's/^declare\( -x\)* / /'
-  echo
-}
-
-export CMD="$GW_START_SCRIPT ${_userCmd}"
-
-echo
-echo " # Execute \$CMD in a high-priority window ${GW_TITLE:+titled \$GW_TITLE}${GW_COLOR:+ and colored \$GW_COLOR}"
-echoVar CMD GW_TITLE
-
+#GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
 _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
+
 _icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
+iconDir=/usr/share/icons/oxygen/48x48
+failIcon=$iconDir/actions/process-stop.png
+passIcon=$_icon
+
+javaExec=$JAVA_HOME/bin/java
+whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
+jvmProcess="'$javaExec .*-Dgw.port=${GW_PORT_DEBUG}'"
 
 [ -n "$_dry_run" ] && set -x
 
-setScreenTitle () {
-  echo -n "\ek$*\e\\"
+echoVar() {
+    typeset -p $* | sed 's/^declare\( -x\)* / /'
+    echo
 }
 
-case $UNAME in
-  CYGWIN*)
-    if [ ${GW_START_DIR} = "." ]; then
-      GW_START_DIR=`pwd`
-    fi
-    _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
-    echoVar _shell
-    _priority=' /HIGH'
-    if [ ! -e $_shell ]; then
-      echo '# Creating shortcut...'
-      COMSPEC=`cygpath -au $COMSPEC`
-      _desc="${GW_PLATFORM}_${GW_PRODUCT}"
-      _icon=/c${_icon}
+setGnuScreenTitle() {
+    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
+}
 
-      _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
-      echo ${_mkshortcut}
-      echo
-      ${_dry_run:-eval} $_mkshortcut
-    fi
-    _start='cmd.exe /C start'
-    if [ -z "$ifGit" ]; then
-      _start='start'
-    fi
+log_section() {
+    local _color=$1
+    local _status=$2
+    local _taskDesc=$3
 
-    ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
-    ;;
+    _status="$(date '+%R') ${_status}"
+    printf "\e[4m%${COLUMNS}s\e[0;1;${_color}m%-${COLUMNS}s\n\e[4m%-${COLUMNS}s\e[0m\n" '' $_status '$ '$_taskDesc
+}
 
-  Linux)
-    if [ -n ${GW_START_DIR} -a ${GW_START_DIR} != "." ]; then
-      cd $GW_START_DIR
-    fi
+runTask() {
+    local task=$1
+    local successIcon=$2
+    local failIcon=$3
 
-    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE}\e\\"
-    ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
-    echo In `pwd`
-    echo $CMD
-    if [ -z $_dry_run ]; then
-      local fullTask_failed=
-      local iconDir=/usr/share/icons/oxygen/48x48
-      local failIcon=$iconDir/actions/process-stop.png
-      # local successIcon=$iconDir/actions/flag-green.png
-      local successIcon=$_icon
+    setGnuScreenTitle ${task}
 
-      for task in `echo $_userCmd`; do
-        local fullTask="$GW_START_SCRIPT $task"
-        echo fullTask=$fullTask
-        setScreenTitle $fullTask
+    log_section 44 'STARTING' $task
+    eval ${task/.\/gwb/source ./gwb} | sed "/java / { s/ -/\n   -/g }"
+    exitCode=$pipestatus[1] # code for the first command in the chain (eval)
 
-        eval "source $fullTask || fullTask_failed=1"
-        local message="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
-
-        if [ $fullTask_failed ]; then
-          notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$fullTask'" $message
-        elif [[ "$task" =~ studio || "$task" =~ tasks ]]; then
-            # Don't bother to notify when success would be obvious
-        else
-            notify-send -c idea -t 5000 -i $successIcon "Completed '$fullTask'" $message
+    if [ $exitCode -eq 0 ]; then
+        log_section 42 COMPLETED $task
+        if [ $successIcon ]; then
+            notify-send -c idea -t 5000 -i $successIcon "Completed '$task'" $whichJava
         fi
-      done
-      setScreenTitle
+    else
+        log_section 101 "FAILED with exit code $exitCode" $task
+        if [ $failIcon ]; then
+            notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$task' (exit code $exitCode)" $whichJava
+        fi
     fi
-    ;;
-esac
+
+    setGnuScreenTitle
+}
+
+${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+
+if [ -z $_dry_run ]; then
+    for task in `echo $_userCmd`; do
+        fullTask_failed=
+        fullTask="$GW_START_SCRIPT $task"
+        taskFailIcon=$failIcon
+        # taskPassIcon=$iconDir/actions/flag-green.png
+        taskPassIcon=$passIcon
+        case $task in
+            fixPort*)
+                taskFailIcon=
+                ;;
+            dropDb*)
+                taskPassIcon=
+                ;;
+            pgrep*)
+                fullTask="pgrep -af $jvmProcess"
+                taskFailIcon=
+                taskPassIcon=
+                ;;
+            pkill*)
+                pgrep -af $jvmProcess
+                fullTask="pgrep -af $jvmProcess && pkill -f $jvmProcess"
+                taskFailIcon=
+                taskPassIcon=
+                ;;
+            fixport*)
+                fullTask="ruby -pi -e 'gsub(%q(:null/cc/), %q(:$GW_PORT_DEBUG/cc/))' /tmp/*.html && chrome file:///tmp"
+                source=
+                ;;
+            studio*)
+                taskPassIcon=
+                ;;
+            tasks*)
+                taskPassIcon=
+                ;;
+            testFail*)
+                fullTask='ls wojaljg209; sleep 5s'
+                ;;
+            testPass*)
+                fullTask='date; sleep 5s'
+                taskPassIcon=$iconDir/actions/flag-green.png
+                ;;
+            *)
+                ;;
+        esac
+
+        # append 'Loud' or 'Quiet' to any task name to override the task default for OS notification
+        if [[ ${task} =~ "Quiet$" ]]; then
+            taskPassIcon=
+            taskFailIcon=
+            fullTask=${fullTask%Quiet}
+        elif [[ ${task} =~ "Loud$" ]]; then
+            taskPassIcon=$passIcon
+            taskFailIcon=$failIcon
+            fullTask=${fullTask%Loud}
+        fi
+
+        runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
+    done
+fi
+
+
+# for CYGWIN
+#     if [ ${GW_START_DIR} = "." ]; then
+#         GW_START_DIR=`pwd`
+#     fi
+#     _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
+#     echoVar _shell
+#     _priority=' /HIGH'
+#     if [ ! -e $_shell ]; then
+#         echo '# Creating shortcut...'
+#         COMSPEC=`cygpath -au $COMSPEC`
+#         _desc="${GW_PLATFORM}_${GW_PRODUCT}"
+#         _icon=/c${_icon}
+
+#         _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
+#         echo ${_mkshortcut}
+#         echo
+#         ${_dry_run:-eval} $_mkshortcut
+#     fi
+#     _start='cmd.exe /C start'
+#     if [ -z "$ifGit" ]; then
+#         _start='start'
+#     fi
+
+#     ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
+#     ;;
+
+# Linux)

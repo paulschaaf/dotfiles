@@ -80,7 +80,7 @@ fi
 
 case "__${options}${files}__" in
     ____)
-        cmd=${emacs} -rv
+        cmd=${emacs}\ -rv
         ;;
     __*-batch*__)
         cmd="${emacs} ${options} ${files}"

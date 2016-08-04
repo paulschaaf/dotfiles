@@ -419,7 +419,6 @@ alias ..='pushd ..'
 alias df='df -h -x supermount'
 alias du='du -h'
 alias perf='./perf -Ddir.user=pschaaf'
-alias pgrep='ps -aef | grep'
 alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
 alias tree="tree -a --dirsfirst"

@@ -21,7 +21,7 @@ case $PWD in
         export GW_PLATFORM=apollo
         ;;
     *)
-        echo "${0//$HOME/~}: Could not determine platform version!" >&2
+        echo "~${0##$HOME}: Could not determine platform version!" >&2
         unset GW_COLOR GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
         ;;
 esac
@@ -112,18 +112,26 @@ if [ -n "$GW_PLATFORM" ]; then
         ab)
             # bright white text on aqua
             $ifCygwin export GW_COLOR=3F
+            export GW_PORT=8080
+            export GW_PORT_DEBUG=8090
             ;;
         bc)
             # bright white text on red
             $ifCygwin export GW_COLOR=2F
+            export GW_PORT=8080
+            export GW_PORT_DEBUG=8090
             ;;
         cc)
             # bright white text on blue
             $ifCygwin export GW_COLOR=1F
+            export GW_PORT=8080
+            export GW_PORT_DEBUG=8090
             ;;
         pc)
             # bright white text on red
             $ifCygwin xport GW_COLOR=4F
+            export GW_PORT=8080
+            export GW_PORT_DEBUG=8090
             ;;
         *)
             $ifCygwin export GW_COLOR=0F
