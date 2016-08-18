@@ -1,21 +1,27 @@
 #!/usr/bin/env ruby
 
-require 'matrix'
-
+#require 'matrix'
+Lookup = (ARGV[0] || 0).to_i
+$success = Lookup == 0
+Pad = 4
 GridSize = 6
 
-def getColorString(code, text=code, pad=4)
+def getColorString(code, text=code, pad=Pad)
+  if text == Lookup
+    $success = true
+    pad -= 1
+    print "[5m>[0m"
+  end
   return sprintf "[%sm%#{pad}s[0m", code, text
 end
 
-def printColorString(code, text=code, pad=4)
+def printColorString(code, text=code, pad=Pad)
   printf getColorString code, text, pad
 end
 
 def section(header)
   puts
-  printColorString 4, header
-  puts "\n"
+  printColorString 4, header + "\n"
   yield
   puts
 end
@@ -28,7 +34,7 @@ section('EFFECTS (0..9, 21..29)') {
     printColorString effectNum, effects[effectNum], -pad
     puts if (effectNum+1) % 4 == 0
   }
-  print "  2X: Unset effect number X"
+  print "  2x: [Unset effect number x]"
   puts <<STRING
 
      * Effect #8 may be invisible as it is "concealed".
@@ -40,7 +46,7 @@ STRING
 }
 
 section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107)') {
-  { 0 => 'Foreground', 10 => 'Background' }.each {|ground, groundName|
+  [0, 10].each {|ground|
     { 0 => 'Dim', 60 => 'Bright' }.each {|intensity, intensityName|
       printf '  %-7s ', intensityName
       (30..37).each {|cell|
@@ -51,7 +57,7 @@ section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107)') {
     }
     # puts
   }
-  puts "\n  Usage:  echo \"\\e[<number>mHello world\"' "
+  puts "\n  Usage:  echo \"\\e[<color>mHello world\"' "
 }
 
 section('256-COLOR PALETTE (16..255)') {
@@ -61,7 +67,6 @@ section('256-COLOR PALETTE (16..255)') {
       rowCounts.each {|row|
         print '  '
        [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52, 16].each {|cell|
-       # [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52].each {|cell|
           color = cell + row + (72*section)
           colorCode = "#{ground};5;#{color}"
           colorCode = '30;' + colorCode if [40, 46, 82, 76].include?(cell)
@@ -71,6 +76,8 @@ section('256-COLOR PALETTE (16..255)') {
       }
       rowCounts = rowCounts.reverse if section == 0
     }
+
+    # now do the grayscales
     print '  '
     (0..3).each {|row|
       (232..237).each {|cell|
@@ -85,68 +92,29 @@ section('256-COLOR PALETTE (16..255)') {
   puts <<STRING
 
   Usage:
-    Foreground 'echo "\\e[38;5;<number>mHello world"'
-    Background 'echo "\\e[48;5;<number>mHello world"'
+    Foreground 'echo "\\e[38;5;<color>mHello world"'
+    Background 'echo "\\e[48;5;<color>mHello world"'
 STRING
 }
 
 def printSamples(codeToDesc)
   codeToDesc.each {|code, desc|
-    print "  echo \"\\e[#{code}m"
+    print '  echo "\e[' + code + 'm'
     printColorString code, desc
     puts '"'
   }
 end
 
-section('USAGE') {
+section('APPLICATION') {
   puts '  Begin your text with "\e[<effect*>;<foreground>;<background>m"', ''
 
-  printSamples( {
-    '91'               => 'Bright red foreground',
-    '48;5;12'          => 'Light blue background',
+  printSamples({
+    '91'               => 'Bright red foreground (short 8-color notation)',
     '38;5;94'          => 'Brown foreground',
-    '1;4;38;5;11'      => 'Boldface underlined gold foreground',
+    '38;5;94;48;5;33'  => 'Brown foreground, light blue background',
+    '1;4;38;5;11'      => 'Gold foreground, boldface underlined',
     '38;5;171;48;5;11' => 'Pink foreground, gold background'
   })
 }
 
-showColor = ARGV[0] != '-n'
-
-#
-# CONSTRUCT THE VALUES
-#
-# sections = []
-# [38, 48].each {|ground|
-#   (0...GridSize).each {|sectionNum|
-#     section = []
-#     (0...GridSize).each {|rowNum|
-#       row = []
-#       (0...GridSize).each {|cellNum|
-#         color = 16 + cellNum + (GridSize * (rowNum + (sectionNum*GridSize)))
-#         colorCode = "#{ground};5;#{color}"
-#         colorCode += ';0' if not showColor
-#         row.push(getColorString colorCode, color)
-#       }
-#       # if sectionNum % 2 == 1 then
-#       #   section.unshift(row)
-#       # else
-#         section.push(row)
-#       # end
-#     }
-#     sections.push((section))
-#   }
-# }
-#sections = Matrix[*sections]
-
-#
-# DISPLAY THE VALUES
-#
-
-# Naive linear
-# sections.each_with_index {|section, sectionIndex|
-#   section.each_with_index {|cell, cellIndex|
-#     print cell.join
-#     puts if cellIndex+1 == GridSize/2
-#   }
-#   puts
-# }
+abort "[101mERROR:[0m No such color #{Lookup}!" unless $success

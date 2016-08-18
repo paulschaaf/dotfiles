@@ -10,19 +10,9 @@ while [ -n "$*" ]; do
         --dry-run)
             _dry_run=': '
             ;;
-        # --keep)
-        #     _terminate=/K
-        #     ;;
-        # --max)
-        #     _size=' /MAX'
-        #     ;;
-        # --min)
-        #     _size=' /MIN'
-        #     ;;
-        # --nokeep)
-        #     _terminate=/C
-        #     ;;
         --)
+            echo Unknown option $1
+            exit 1
             ;;
         *)
             break
@@ -33,11 +23,6 @@ done
 
 _userCmd=$*
 
-# # Close window afterward if _terminate is unset AND command ends in 'studio'
-# if [ "${_terminate}${_userCmd##* }" = "studio" ]; then
-#     _terminate=/C
-# fi
-
 source ~/bin/gwSetEnv
 
 # Separate the directory name
@@ -46,7 +31,6 @@ GW_START_DIR=${GW_START_SCRIPT%/*}
 echo In `pwd`
 
 GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
-#GW_TITLE="${GW_TITLE}${_userCmd:+➝ $_userCmd}"
 _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
 
 _icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
@@ -74,8 +58,16 @@ log_section() {
     local _status=$2
     local _taskDesc=$3
 
-    _status="$(date '+%R') ${_status}"
-    printf "\e[4m%${COLUMNS}s\e[0;1;${_color}m%-${COLUMNS}s\n\e[4m%-${COLUMNS}s\e[0m\n" '' $_status '$ '$_taskDesc
+    local _status="⎹$(date '+%R') - ${_status} "
+
+    # indent, then draw an underline the length of the status message
+    printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
+
+    # indent with ul, turn ul off & color on, show status, fill remainder with ul
+    printf "  \e[0;1;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
+
+    # turn off bold and show the task description
+    printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
 }
 
 runTask() {
@@ -85,17 +77,24 @@ runTask() {
 
     setGnuScreenTitle ${task}
 
-    log_section 44 'STARTING' $task
-    eval ${task/.\/gwb/source ./gwb} | sed "/java / { s/ -/\n   -/g }"
+    log_section 44 'START' $task
+
+    # if we want to run the gwb script, make sure we source it instead
+    task=${task/.\/gwb/source ./gwb}
+
+    SECONDS=0
+    # if it's a Java cmd, display each option indented on a separate line
+    eval $task | sed '/java / { s/ -/\n   -/g }'
     exitCode=$pipestatus[1] # code for the first command in the chain (eval)
+    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
     if [ $exitCode -eq 0 ]; then
-        log_section 42 COMPLETED $task
+        log_section 42 "DONE $elapsedTime" $task
         if [ $successIcon ]; then
             notify-send -c idea -t 5000 -i $successIcon "Completed '$task'" $whichJava
         fi
     else
-        log_section 101 "FAILED with exit code $exitCode" $task
+        log_section 101 "FAIL exit($exitCode) $elapsedTime" $task
         if [ $failIcon ]; then
             notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$task' (exit code $exitCode)" $whichJava
         fi
@@ -108,47 +107,38 @@ ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
 
 if [ -z $_dry_run ]; then
     for task in `echo $_userCmd`; do
-        fullTask_failed=
         fullTask="$GW_START_SCRIPT $task"
-        taskFailIcon=$failIcon
-        # taskPassIcon=$iconDir/actions/flag-green.png
-        taskPassIcon=$passIcon
+        taskFailIcon=
+        taskPassIcon=
         case $task in
-            fixPort*)
-                taskFailIcon=
-                ;;
             dropDb*)
-                taskPassIcon=
+                taskFailIcon=$failIcon
                 ;;
             pgrep*)
                 fullTask="pgrep -af $jvmProcess"
-                taskFailIcon=
-                taskPassIcon=
                 ;;
             pkill*)
                 pgrep -af $jvmProcess
                 fullTask="pgrep -af $jvmProcess && pkill -f $jvmProcess"
-                taskFailIcon=
-                taskPassIcon=
                 ;;
             fixport*)
                 fullTask="ruby -pi -e 'gsub(%q(:null/cc/), %q(:$GW_PORT_DEBUG/cc/))' /tmp/*.html && chrome file:///tmp"
-                source=
                 ;;
             studio*)
-                taskPassIcon=
+                taskFailIcon=$failIcon
                 ;;
             tasks*)
-                taskPassIcon=
+                taskFailIcon=$failIcon
                 ;;
             testFail*)
-                fullTask='ls wojaljg209; sleep 5s'
+                fullTask='time && sleep 1 && ls *wojaljg209'
                 ;;
             testPass*)
-                fullTask='date; sleep 5s'
-                taskPassIcon=$iconDir/actions/flag-green.png
+                fullTask='time && sleep 1s'
                 ;;
             *)
+                taskPassIcon=$passIcon
+                taskFailIcon=$failIcon
                 ;;
         esac
 
@@ -167,11 +157,7 @@ if [ -z $_dry_run ]; then
     done
 fi
 
-
 # for CYGWIN
-#     if [ ${GW_START_DIR} = "." ]; then
-#         GW_START_DIR=`pwd`
-#     fi
 #     _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
 #     echoVar _shell
 #     _priority=' /HIGH'
@@ -182,16 +168,6 @@ fi
 #         _icon=/c${_icon}
 
 #         _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
-#         echo ${_mkshortcut}
-#         echo
-#         ${_dry_run:-eval} $_mkshortcut
-#     fi
 #     _start='cmd.exe /C start'
-#     if [ -z "$ifGit" ]; then
-#         _start='start'
-#     fi
 
 #     ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"
-#     ;;
-
-# Linux)

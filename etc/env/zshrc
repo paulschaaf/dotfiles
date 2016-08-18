@@ -397,7 +397,9 @@ function git () {
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
 }
 
-chpwd_functions=(${chpwd_functions[@]} "updateDirs" "updateGuidewireVars" "updateGitVars")
+chpwd_functions=(${chpwd_functions[@]} "updateDirs")
+
+precmd_functions=(${precmd_functions[@]} "updateGuidewireVars" "updateGitVars")
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
 %2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<

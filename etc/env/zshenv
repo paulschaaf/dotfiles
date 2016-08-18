@@ -239,7 +239,7 @@ exportDefault SCREENDIR ${HOME}/tmp
 
 export SHELL=/usr/bin/zsh
 
-export STUDIO_JDK=$JAVA8_HOME_noDCEVM
+export STUDIO_JDK=$JAVA8_HOME
 
 $ifZsh export VIMRUNTIME=/usr/share/vim/vim74
 

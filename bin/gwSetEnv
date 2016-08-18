@@ -99,7 +99,10 @@ if [ -n "$GW_PLATFORM" ]; then
 
 
     _lib_jars='./lib/*jar'
-    CLASSPATH=$JAVA_HOME/lib/\*jar:${CLASSPATH%:$_lib_jars}:$_lib_jars
+    CLASSPATH=$JAVA_HOME/lib/\*jar:$_lib_jars:${CLASSPATH}
+
+    # Remove any empty or duplicate members
+    CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
     typeset -p AARDVARK_HOME ANT_HOME M2_HOME IDEA_HOME JAVA_HOME
     echo
