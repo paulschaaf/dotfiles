@@ -85,7 +85,9 @@ runTask() {
     SECONDS=0
     # if it's a Java cmd, display each option indented on a separate line
     eval $task | sed '/java / { s/ -/\n   -/g }'
-    exitCode=$pipestatus[1] # code for the first command in the chain (eval)
+
+    # keep the exit code for the first command in the chain (i.e. not the sed)
+    exitCode=$pipestatus[1]
     elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
     if [ $exitCode -eq 0 ]; then

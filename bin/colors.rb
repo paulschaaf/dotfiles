@@ -27,19 +27,18 @@ def section(header)
 end
 
 section('EFFECTS (0..9, 21..29)') {
-  effects = %w{-unset\ all- Bold [Dim] [Italic] Underline Blink [Fast\ blink] Inverse [Concealed[0m]*  [Strikeout]}
-  pad = effects.max {|e| e.length}.length + 1
-  (0...effects.length).each {|effectNum|
-    print "  #{effectNum}: "
-    printColorString effectNum, effects[effectNum], -pad
+  effects = {0=>'-unset all-', 1=>'Bold', 2=>'[Dim]', 3=>'[Italic]', 4=>'Underline', 5=>'Blink', 6=>'[Fast blink]', 7=>'Inverse', 8=>'[Concealed]', 9=>'[Strikeout]'}
+  pad = effects.values.map {|e| e.strip.length}.max + 1
+  effects.each {|effectNum, effectName|
+    printf '%4d: ', effectNum
+    printColorString effectNum, effectName, -pad
     puts if (effectNum+1) % 4 == 0
   }
-  print "  2x: [Unset effect number x]"
   puts <<STRING
+21-9: [Unset effect]
 
-     * Effect #8 may be invisible as it is "concealed".
-
-  Bracketed effects are not widely supported.
+  Bracketed effects are not widely supported. Effect #8 may be invisible as
+  it is "concealed".
 
   Usage:  echo "\\e[<number>mHello world"
 STRING
@@ -55,7 +54,6 @@ section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107)') {
       }
       puts
     }
-    # puts
   }
   puts "\n  Usage:  echo \"\\e[<color>mHello world\"' "
 }
