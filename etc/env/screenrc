@@ -21,6 +21,7 @@ defmonitor          on
 defscrollback     5000
 term xterm
 #-256color
+termcapinfo xterm* ti@:te@
 
 # hs - The HardStatus Line, followed by escape sequences for various operations:
 #    ts - Enter the hardstatus line
@@ -33,19 +34,16 @@ termcapinfo xterm*|rxvt*|kterm*|Eterm* 'Co#256:hs:ts=\E]0;:fs=\007:ds=\E]0;\007'
 caption always "%{= wk}%-Lw%{+ bw}%n%f %t%{-}%+Lw %{-}%{=}"
 
 # ======== The Terminal Title Bar
-# hardstatus           lastline
-#hardstatus           on
-# ok -> hardstatus           string "screen ^Et %H  hardstatus %{=br yk}%m/%d %{= dd} %-=%{-} %l"
-hardstatus string "%h | screen %n %? %?"
-
-
-#hardstatus off  # Don't display status messages (e.g. "Bell in window 0")
+hardstatus off  # Don't display status messages (e.g. "Bell in window 0")
+#hardstatus alwayslastline # Don't display in window title bar
+#hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %m-%d %{W} %c %{g}]'
+#hardstatus string "%h | screen %n %? %?"
+hardstatus string '%{= G}[ %{G}%H %{g}][%= %{= w}%?%-Lw%?%{= R}%n*%f %t%?%{= R}(%u)%?%{= w}%+Lw%?%= %{= g}][ %{y}Load: %l %{g}][%{B}%Y-%m-%d %{W}%c:%s %{g}]'
 
 ignorecase            on
 shell                 /bin/zsh
 shelltitle            "$ |-"
 startup_message off
-#term                  $TERM
 
 # ========  The Per-Window Status Bar
 #defhstatus "~~~screen ^E (^Et) hstatus  | $USER@^EH~~~"
@@ -81,6 +79,10 @@ bindkey "[Z"       stuff  "^Upopd^M"
 # If we need to restart irb, make sure it stays up.
 bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo "### Restarting. Press ^C to stop..."; sleep 2; echo; done'
 
+bind c screen 1
+bind ^c screen 1
+bind 0 select 10
+
 # bindkey "[25~"     windowlist       # Win key shows list of windows
 #.bash	# Menu key
 
@@ -91,17 +93,17 @@ bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo
 # restart irb if it crashes
 # screen -t '>> |irb' 0 irb
 
-# === HunkyPunk
-chdir $HOME/IdeaProjects/sonofhunkypunk
-screen -t HP
-
 # === Home
 chdir
-screen
+screen 1
+
+# === HunkyPunk
+chdir $HOME/IdeaProjects/sonofhunkypunk
+screen -t HP 2
 
 # === dotfiles
 chdir $HOME/dotfiles
-screen
+screen 3
 
 # # === Diamond
 # chdir /diamond/cc/active/core
@@ -117,10 +119,10 @@ screen
 
 # === Apollo
 chdir /gw-dev/apollo/cc
-screen
+screen 4
 
 # ======== Wrap things up
-select 1
+select 4
 
 # Change Screen's working directory
 chdir

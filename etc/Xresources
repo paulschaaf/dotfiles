@@ -54,6 +54,8 @@ Rxvt*termName: rxvt
 !	VT100.utf8Fonts.font4: -misc-fixed-medium-r-normal-*-*-100-*-*-*-*-iso10646-1
 xterm*background: black
 xterm*foreground: white
+xterm*ScrollBar: true
+xterm*rightScrollBar: true
 
 XTerm*background: black
 XTerm*foreground: white
@@ -73,8 +75,8 @@ XTermCyrillic.font: -*-fixed-*-*-*-*-*-*-*-*-*-*-*-*
 XTerm*VT100*colorBDMode:  off
 XTerm.VT100*colorULMode:  off
 XTerm.VT100*underLine:  on
-XTerm*scrollBar: true
-XTerm*scrollBar_right: true
+!XTerm*scrollBar: true
+XTerm*rightScrollBar: true
 
 !
 ! xscreen
@@ -82,7 +84,9 @@ XTerm*scrollBar_right: true
 xscreen*background: black
 xscreen*foreground: white
 xscreen*saveLines: 3000
-xscreen*scrollBar: false
+!xscreen*scrollBar: false
+!xscreen*scrollBar: true
+xscreen*rightScrollBar: true
 xscreen*geometry: 80x78
 
 

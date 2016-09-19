@@ -12,12 +12,6 @@
 # this script is run only by login shells, but after .zshenv
 loginsh=1
 
-### START-Keychain ###
-# Let  re-use ssh-agent and/or gpg-agent between logins
-#/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
-#source $HOME/.keychain/$HOSTNAME-sh
-### End-Keychain ###
-
 # ======== Terminal Settings
 # if [ "$TERM" = "screen" ]; then
 #    export TERM=xterm

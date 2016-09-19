@@ -21,7 +21,7 @@ usermodmap="$HOME"/.Xmodmap
 # ~/bin/xrescreen &
 #run xterm -name xscreen -e 'screen -R -DD' &
 #run 
-/usr/bin/emacs -rv &
+#/usr/bin/emacs -rv &
 #sleep 9999d
 #run xterm -name xscreen -e 'screen -R -DD' &
 

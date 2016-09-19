@@ -159,7 +159,13 @@ export FCEDIT=zed
 export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GREP_OPTIONS=--color
+if (( ! EUID )); then
+  HISTFILE=~/.history_root
+else
+  HISTFILE=~/.history
+fi
 export HISTSIZE=1000
+export SAVEHIST=1000
 
 export ANT_HOME=/depot/ant/apache-ant-1.7.1
 export AARDVARK_HOME=/depot/aardvark/alpha
@@ -416,7 +422,7 @@ lsf () {
 alias ...=../..
 alias ....=../../..
 alias ..='pushd ..'
-alias df='df -h -x supermount'
+alias df='df -h -x supermount -x tmpfs'
 alias du='du -h'
 alias perf='./perf -Ddir.user=pschaaf'
 alias rm='rm -i'

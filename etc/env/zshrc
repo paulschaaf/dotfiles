@@ -73,7 +73,8 @@ if [ -z "$ifZsh" ]; then
         ignore_eof \
         inc_append_history \
         pushd_silent \
-        pushd_to_home
+        pushd_to_home \
+        share_history
 fi
 
 frotz () {
@@ -166,12 +167,12 @@ wedit () {
 
 # ======== Dir Functions
 
-basename () {
-    echo ${(F)@:t}
-}
-dirname  () {
-    echo ${(F)@:h}
-}
+# basename () {
+#     echo ${(F)@:t}
+# }
+# dirname  () {
+#     echo ${(F)@:h}
+# }
 
 
 if [ "$USER" != "pschaaf" ]; then
@@ -408,13 +409,12 @@ PS1="%{[4;38;5;235m%}                                                          
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 
 pcd .
-
 $ifZsh compinit
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
-/usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
-source $HOME/.keychain/$HOSTNAME-sh
+# /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
+# source $HOME/.keychain/$HOSTNAME-sh
 ### End-Keychain ###
 
 # Move this heredoc around in the file to temporarily disable sections

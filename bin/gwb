@@ -58,7 +58,7 @@ log_section() {
     local _status=$2
     local _taskDesc=$3
 
-    local _status="⎹$(date '+%R') - ${_status} "
+    local _status=" $(date '+%R') - ${_status} "
 
     # indent, then draw an underline the length of the status message
     printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
@@ -79,12 +79,10 @@ runTask() {
 
     log_section 44 'START' $task
 
-    # if we want to run the gwb script, make sure we source it instead
-    task=${task/.\/gwb/source ./gwb}
-
     SECONDS=0
+    # make sure we source the gwb script instead of just running it
     # if it's a Java cmd, display each option indented on a separate line
-    eval $task | sed '/java / { s/ -/\n   -/g }'
+    eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
 
     # keep the exit code for the first command in the chain (i.e. not the sed)
     exitCode=$pipestatus[1]
@@ -96,7 +94,7 @@ runTask() {
             notify-send -c idea -t 5000 -i $successIcon "Completed '$task'" $whichJava
         fi
     else
-        log_section 101 "FAIL exit($exitCode) $elapsedTime" $task
+        log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $task
         if [ $failIcon ]; then
             notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$task' (exit code $exitCode)" $whichJava
         fi
@@ -107,6 +105,14 @@ runTask() {
 
 ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
 
+grepProcStr() {
+    echo "pgrep -af $1"
+}
+
+killProcStr() {
+    echo `grepProcStr $1`" && pkill -f $1"
+}
+
 if [ -z $_dry_run ]; then
     for task in `echo $_userCmd`; do
         fullTask="$GW_START_SCRIPT $task"
@@ -116,15 +122,19 @@ if [ -z $_dry_run ]; then
             dropDb*)
                 taskFailIcon=$failIcon
                 ;;
+            killStudio*)
+                fullTask=`killProcStr idea`
+                taskFailIcon=$failIcon
+                ;;
             pgrep*)
-                fullTask="pgrep -af $jvmProcess"
+                fullTask=`grepProcStr $jvmProcess`
                 ;;
             pkill*)
                 pgrep -af $jvmProcess
-                fullTask="pgrep -af $jvmProcess && pkill -f $jvmProcess"
+                fullTask=`killProcStr ${jvmProcess}`
                 ;;
             fixport*)
-                fullTask="ruby -pi -e 'gsub(%q(:null/cc/), %q(:$GW_PORT_DEBUG/cc/))' /tmp/*.html && chrome file:///tmp"
+                fullTask="ruby -pi -e 'gsub(/:(null|8080)\/cc\//, %q(:$GW_PORT_DEBUG/cc/))' /tmp/*Guidewire*.html && chrome file:///tmp"
                 ;;
             studio*)
                 taskFailIcon=$failIcon
