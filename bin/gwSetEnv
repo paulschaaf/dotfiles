@@ -104,7 +104,7 @@ if [ -n "$GW_PLATFORM" ]; then
     # Remove any empty or duplicate members
     CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
-    typeset -p AARDVARK_HOME ANT_HOME M2_HOME IDEA_HOME JAVA_HOME
+    typeset AARDVARK_HOME ANT_HOME M2_HOME IDEA_HOME JAVA_HOME
     echo
 
     export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
@@ -141,9 +141,8 @@ if [ -n "$GW_PLATFORM" ]; then
             ;;
     esac
 
-    $ifCygwin typeset -p GW_COLOR
-    typeset -p GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
-
+    $ifCygwin typeset -p GW_COLOR | sed 's/^typeset \(-x \)*//g'
+    typeset GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
     function echoList() {
         for arg in $*; do
             echo -e "\n$arg contains:"

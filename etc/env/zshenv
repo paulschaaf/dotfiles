@@ -42,6 +42,14 @@ export CLASSPATH
 exportDefault UNAME    `uname`
 exportDefault HOSTNAME `hostname`
 
+export ifCygin=:
+export ifNotCygwin=:
+if [[ "$UNAME" =~ "CYGWIN" ]]; then
+    ifCygwin=
+else
+    ifNotCygwin=
+fi
+
 # ======== Global Flags
 if [ -n "$CD_TO" ]; then
     builtin cd "$CD_TO" && unset CD_TO
