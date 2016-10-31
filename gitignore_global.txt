@@ -2,5 +2,5 @@
 nohup.out
 /logs/
 hs_err_pid*.log
-#*
 .#*
+**/build/idea/classes

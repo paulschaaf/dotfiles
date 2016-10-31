@@ -50,7 +50,7 @@ echoVar() {
 }
 
 setGnuScreenTitle() {
-    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
+    [ -n "$_inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
 }
 
 log_section() {
@@ -83,8 +83,7 @@ runTask() {
     # make sure we source the gwb script instead of just running it
     # if it's a Java cmd, display each option indented on a separate line
     eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
-
-    # keep the exit code for the first command in the chain (i.e. not the sed)
+    # keep the exit code from the first command in the chain (i.e. not the sed)
     exitCode=$pipestatus[1]
     elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
@@ -134,10 +133,14 @@ if [ -z $_dry_run ]; then
                 fullTask=`killProcStr ${jvmProcess}`
                 ;;
             fixport*)
-                fullTask="ruby -pi -e 'gsub(/:(null|8080)\/cc\//, %q(:$GW_PORT_DEBUG/cc/))' /tmp/*.html && chrome file:///tmp"
+                report=`/bin/ls -t /tmp/*.html | head -n 1`
+                fullTask="ruby -pi -e 'gsub(/:(null|8080)\/cc\//, %q(:$GW_PORT_DEBUG/cc/))' '$report' && chrome file:///'$report'"
                 ;;
             studio*)
+                export inIntelliJ=true
+                unset inScreen
                 taskFailIcon=$failIcon
+                fullTask=inScreen='' ${fullTask}
                 ;;
             tasks*)
                 taskFailIcon=$failIcon

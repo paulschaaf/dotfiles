@@ -1,0 +1,43 @@
+#!/bin/bash
+
+OUTPUTFILE=${PWD##*/}s.pdf
+OUTPUTFILE=${OUTPUTFILE/ss.pdf/s.pdf}
+
+while [ -n "$*" ]; do
+    case $1 in
+        --dry-run)
+            _dry_run=': '
+            ;;
+        --out)
+            shift
+            OUTPUTFILE=$1
+            ;;
+        --)
+            echo Unknown option $1
+            exit 1
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
+done
+
+PDFMARKS=pdfmarks.txt
+rm -f $PDFMARKS
+
+PAGE=1
+FILES=''
+for filename in "${@}"; do
+    pages=`qpdf --show-npages "${filename}"`
+    printf "Processing %02s pages: %-30s\n" $pages "'$filename'"
+    FILES+=" '${filename}'"
+    name=${filename%%.*}
+    echo "[/Page ${PAGE} /View [/XYZ null null null] /Title (${name}) /OUT pdfmark" >> $PDFMARKS
+    ((PAGE+=$pages))
+done
+
+CMD="gs -dBATCH -dNOPAUSE -sDEVICE=pdfwrite -sOutputFile='${OUTPUTFILE}' $PDFMARKS -f ${FILES}"
+echo $CMD
+eval $CMD
+

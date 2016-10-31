@@ -272,6 +272,8 @@ export WORDCHARS='|*?.-~\\$%^'
 
 # # ======== Functions
 
+alias ag='command ag --ignore app-cc/cc-test/build/idea/classes'
+
 alert() {
   if [ $? -eq 0 ]; then
     notify-send -t 3000 -i info Success\! "\n$1"
