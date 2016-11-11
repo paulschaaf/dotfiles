@@ -1,5 +1,5 @@
 #!/bin/zsh
-
+#set -x
 _batchFile=./${0##*/}
 UNAME=`uname`
 
@@ -24,6 +24,7 @@ done
 _userCmd=$*
 
 source ~/bin/gwSetEnv
+[ -z $GW_PLATFORM ] && exit 1
 
 # Separate the directory name
 GW_START_DIR=${GW_START_SCRIPT%/*}
@@ -113,7 +114,8 @@ killProcStr() {
 }
 
 if [ -z $_dry_run ]; then
-    for task in `echo $_userCmd`; do
+    while [ -n "$*" ]; do
+        task=$1
         fullTask="$GW_START_SCRIPT $task"
         taskFailIcon=
         taskPassIcon=
@@ -126,7 +128,7 @@ if [ -z $_dry_run ]; then
                 taskFailIcon=$failIcon
                 ;;
             pgrep*)
-                fullTask=`grepProcStr $jvmProcess`
+                fullTask=`grepProcStr ${jvmProcess}`
                 ;;
             pkill*)
                 pgrep -af $jvmProcess
@@ -156,6 +158,7 @@ if [ -z $_dry_run ]; then
                 taskFailIcon=$failIcon
                 ;;
         esac
+        shift
 
         # append 'Loud' or 'Quiet' to any task name to override the task default for OS notification
         if [[ ${task} =~ "Quiet$" ]]; then
@@ -168,13 +171,18 @@ if [ -z $_dry_run ]; then
             fullTask=${fullTask%Loud}
         fi
 
+        # grab any arguments
+        while [[ "$1" =~ "-.*" ]]; do
+            fullTask="${fullTask} $1"
+            shift
+        done
+
         runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
     done
 fi
 
 # for CYGWIN
 #     _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
-#     echoVar _shell
 #     _priority=' /HIGH'
 #     if [ ! -e $_shell ]; then
 #         echo '# Creating shortcut...'

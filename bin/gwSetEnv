@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#set -x
 unset GW_PLATFORM
 setScreenTitle () {
   echo -n "\ek$*\e\\"
@@ -130,7 +130,7 @@ if [ -n "$GW_PLATFORM" ]; then
             export GW_PORT=8080
             export GW_PORT_DEBUG=8090
             ;;
-        pc)
+        pc|PolicyCenter)
             # bright white text on red
             $ifCygwin xport GW_COLOR=4F
             export GW_PORT=8080

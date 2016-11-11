@@ -147,7 +147,8 @@ elif [ -n "$REMOTEUSER" ]; then
 fi
 export CONNECTION
 
-EDITOR=/usr/bin/emacs
+export EDITOR=/usr/bin/emacs
+export ALTERNATTE_EDITOR=$EDITOR
 
 case $USER in
     pschaaf)
