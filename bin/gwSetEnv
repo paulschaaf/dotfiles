@@ -52,10 +52,8 @@ if [ -n "$GW_PLATFORM" ]; then
 
         if [ "$newHome" = "" ]; then
             echo Error: $newHomeName is not set\!
-            exit 1
         elif [ ! -d ${newHome} ]; then
             echo Error: $newHomeName directory $newHome does not exist\!
-            exit 1
         fi
         export JAVA_HOME=$newHome
     }

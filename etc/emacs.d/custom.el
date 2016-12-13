@@ -285,7 +285,6 @@
  '(inhibit-startup-screen t)
  '(initial-scratch-message nil)
  '(ispell-program-name "aspell")
- '(iswitchb-mode t)
  '(jde-compile-option-classpath (quote (".")))
  '(jde-compile-option-debug (quote ("all" (t nil nil))))
  '(jde-compiler (quote ("javac server" "/usr/java/current/bin/javacc")))

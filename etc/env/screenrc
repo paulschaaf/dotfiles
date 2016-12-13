@@ -118,7 +118,7 @@ screen 3
 # screen
 
 # === Apollo
-chdir /gw-dev/apollo/cc
+chdir /home/pschaaf/gw/apollo/cc
 screen 4
 
 # ======== Wrap things up

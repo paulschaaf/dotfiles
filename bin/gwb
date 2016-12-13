@@ -135,8 +135,13 @@ if [ -z $_dry_run ]; then
                 fullTask=`killProcStr ${jvmProcess}`
                 ;;
             fixport*)
+                # extract port# argument, if none default to GW_PORT_DEBUG
+                set -x
+                port=`echo $task | sed 's/^[^0-9]*//'`
+                port=${port:-$GW_PORT_DEBUG}
+set +x
                 report=`/bin/ls -t /tmp/*.html | head -n 1`
-                fullTask="ruby -pi -e 'gsub(/:(null|8080)\/cc\//, %q(:$GW_PORT_DEBUG/cc/))' '$report' && chrome file:///'$report'"
+                fullTask="ruby -pi -e 'gsub(%r(:(null|80[89]0)/cc/), %q(:$port/cc/))' '$report' && google-chrome file:///'$report'"
                 ;;
             studio*)
                 export inIntelliJ=true

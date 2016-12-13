@@ -2,4 +2,4 @@
 
 commit=`git branch | sed '/^[^*].*/d; s/^[^A-Za-z]*//g; s_/_%2F_g'`
 
-chrome https://stash.guidewire.com/projects/CC/repos/cc/commits?until=$commit &
+google-chrome https://stash.guidewire.com/projects/CC/repos/cc/commits?until=$commit &

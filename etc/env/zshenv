@@ -167,7 +167,6 @@ export ESHELL=$SHELL
 export FCEDIT=zed
 export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
 export GIT_PS1_SHOWDIRTYSTATE=1
-export GREP_OPTIONS=--color
 if (( ! EUID )); then
   HISTFILE=~/.history_root
 else
@@ -188,7 +187,6 @@ local failIcon=$iconDir/actions/process-stop.png
 # local successIcon=$iconDir/actions/flag-green.png
 local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
 
-
 function whichjava() {
     for cmd in 'typeset -p JAVA_HOME' 'which java' 'java -version'; do
         echo // $cmd
@@ -197,15 +195,17 @@ function whichjava() {
     done
 }
 
-for home in /usr/lib/jvm/java-[0-9]-oracle*; do
-    local digit=${home##*java-};   digit=${digit%%-*}
-    local suffix=${home##*oracle}
-    local javaDigitHome=JAVA${digit}_HOME${suffix}
-    export $javaDigitHome=$home
-    # typeset $javaDigitHome
-    alias java${digit}${suffix}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; whichjava"
-    # which java${digit}${suffix}
-done
+if [ -d /usr/lib/jvm/java-8-oracle ]; then
+    for home in /usr/lib/jvm/java-[0-9]-oracle*; do
+        local digit=${home##*java-};   digit=${digit%%-*}
+        local suffix=${home##*oracle}
+        local javaDigitHome=JAVA${digit}_HOME${suffix}
+        export $javaDigitHome=$home
+        # typeset $javaDigitHome
+        alias java${digit}${suffix}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; whichjava"
+        # which java${digit}${suffix}
+    done
+fi
 export JAVA_HOME=$JAVA8_HOME
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
@@ -350,6 +350,7 @@ else
 fi
 
 alias classpath='echoList CLASSPATH'
+alias grep='command grep --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 
