@@ -9,4 +9,5 @@
 /etc/ssh/androidPrivateKey.ppk
 /etc/ssh/id_dsa
 /etc/ssh/id_rsa
-
+*/#*#
+*~

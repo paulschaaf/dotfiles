@@ -273,7 +273,7 @@ export WORDCHARS='|*?.-~\\$%^'
 
 # # ======== Functions
 
-alias ag='command ag --ignore app-cc/cc-test/build/idea/classes'
+alias ag='command ag --color --ignore build'
 
 alert() {
   if [ $? -eq 0 ]; then
@@ -436,6 +436,7 @@ alias ....=../../..
 alias ..='pushd ..'
 alias df='df -h -x supermount -x tmpfs'
 alias du='du -h'
+alias keychain='command keychain ~pschaaf/.ssh/id_{d,r}sa'
 alias perf='./perf -Ddir.user=pschaaf'
 alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'

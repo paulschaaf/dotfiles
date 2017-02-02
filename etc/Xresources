@@ -64,7 +64,7 @@ XTerm*foreground: white
 XTerm*cutNewline: false
 XTerm*cutToBeginningOfLine: false
 !  XTerm*boldFont: -*-lucidatypewriter-bold-*-*-*-12-*-*-*-*-*-*-*
-XTerm*font: 	-misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
+!XTerm*font: 	-misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
 XTerm*geometry: 80x78
 XTerm*toolBar: off
 
@@ -87,12 +87,13 @@ UXTerm*scrollBar: false
 xscreen*background: black
 xscreen*foreground: white
 xscreen*saveLines: 3000
-!xscreen*scrollBar: false
+xscreen*scrollBar: false
 !xscreen*scrollBar: true
 xscreen*rightScrollBar: true
 xscreen*geometry: 80x78
 !xscreen*iconPixmap: /home/pschaaf/etc/icons/GnuScreen.xpm
 !xscreen*iconImage: /home/pschaaf/etc/icons/Gnu Screen.icon
+xscreen*iconImage: /home/pschaaf/etc/icons/Gnu\ Screen.png
 
 ! ssh satori '/bin/zsh -ilc vncserver -geometry 1540x1140 -depth 16 -desktop "satori (pschaaf)"'
 
