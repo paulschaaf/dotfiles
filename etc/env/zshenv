@@ -436,12 +436,13 @@ alias ....=../../..
 alias ..='pushd ..'
 alias df='df -h -x supermount -x tmpfs'
 alias du='du -h'
-alias keychain='command keychain ~pschaaf/.ssh/id_{d,r}sa'
+# alias keychain='eval command keychain ~pschaaf/.ssh/id_rsa'
 alias perf='./perf -Ddir.user=pschaaf'
 alias rm='rm -i'
 alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
 alias tree="tree -a --dirsfirst"
 
+eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 case ${UNAME} in
     CYGWIN*)
         source ~/etc/env/zshenv.cygwin

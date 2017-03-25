@@ -3,6 +3,8 @@
 _batchFile=./${0##*/}
 UNAME=`uname`
 
+ssh_socket=~/tmp/cc-fwd-socket
+
 unset _dry_run delay
 
 while [ -n "$*" ]; do
@@ -86,12 +88,17 @@ runTask() {
 
     log_section 44 'START' $task
 
+    exitCode=0
     SECONDS=0
-    # make sure we source the gwb script instead of just running it
-    # if it's a Java cmd, display each option indented on a separate line
-    eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
-    # keep the exit code from the first command in the chain (i.e. not the sed)
-    exitCode=$pipestatus[1]
+    if [ -n "$spawn" ]; then
+        eval ${task} &
+    else
+        # make sure we source the gwb script instead of just running it
+        # if it's a Java cmd, display each option indented on a separate line
+        eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
+        # keep the exit code from the first command in the chain (i.e. not the sed)
+        exitCode=$pipestatus[1]
+    fi
     elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
     if [ $exitCode -eq 0 ]; then
@@ -148,6 +155,16 @@ if [ -z $_dry_run ]; then
 set +x
                 report=`/bin/ls -t /tmp/*.html | head -n 1`
                 fullTask="ruby -pi -e 'gsub(%r(:(null|80[89]0)/cc/), %q(:$port/cc/))' '$report' && google-chrome file:///'$report'"
+                ;;
+            portCheck)
+                fullTask='ssh -S $ssh_socket -O check pschaaf@localhost'
+                ;;
+            portClose)
+                fullTask='ssh -S $ssh_socket -O exit pschaaf@localhost'
+                ;;
+            portOpen)
+                spawn=true
+                fullTask='exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost'
                 ;;
             studio*)
                 export inIntelliJ=true
