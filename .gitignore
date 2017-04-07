@@ -5,9 +5,11 @@
 
 /etc/emacs.d/auto-save-list/*
 /etc/emacs.d/session*
+/etc/emacs.d/places
+/etc/emacs.d/recentf
 /etc/emacs.d/site-lisp
 /etc/ssh/androidPrivateKey.ppk
 /etc/ssh/id_dsa
 /etc/ssh/id_rsa
-*/#*#
+**/#*#
 *~

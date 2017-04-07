@@ -258,7 +258,10 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(auto-coding-alist (quote (("\\.\\(arc\\|zip\\|lzh\\|zoo\\|jar\\|tar\\|tgz\\|war\\|ear\\|xpi\\)\\'" . no-conversion) ("\\.\\(gz\\|Z\\|bz\\|bz2\\|gpg\\)\\'" . no-conversion))))
+ '(auto-coding-alist
+   (quote
+    (("\\.\\(arc\\|zip\\|lzh\\|zoo\\|jar\\|tar\\|tgz\\|war\\|ear\\|xpi\\)\\'" . no-conversion)
+     ("\\.\\(gz\\|Z\\|bz\\|bz2\\|gpg\\)\\'" . no-conversion))))
  '(auto-compression-mode t nil (jka-compr))
  '(bar-cursor 2)
  '(browse-url-generic-program "firefox")
@@ -308,7 +311,15 @@
  '(nxml-slash-auto-complete-flag t)
  '(ps-print-color-p (quote black-white))
  '(revert-without-query (quote ("^")))
- '(safe-local-variable-values (quote ((comment-start . "#") (comment-start . "! ") (mode . shell-script) (compile-command concat "crontab " buffer-file-name) (compile-command concat "xrdb -override ~/.Xresources " buffer-file-name) (compile-command byte-compile-file buffer-file-name) (compile-command concat "zcompile '" buffer-file-name "'"))))
+ '(safe-local-variable-values
+   (quote
+    ((comment-start . "#")
+     (comment-start . "! ")
+     (mode . shell-script)
+     (compile-command concat "crontab " buffer-file-name)
+     (compile-command concat "xrdb -override ~/.Xresources " buffer-file-name)
+     (compile-command byte-compile-file buffer-file-name)
+     (compile-command concat "zcompile '" buffer-file-name "'"))))
  '(save-place t nil (saveplace))
  '(scroll-step 9999)
  '(sentence-end-double-space nil)
@@ -1109,7 +1120,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "DejaVu Sans Mono" :foundry "unknown" :slant normal :weight normal :height 71 :width normal))))
+ '(default ((t (:family "Liberation Mono" :foundry "1ASC" :slant normal :weight normal :height 91 :width normal))))
  '(cursor ((t (:background "white" :inverse-video nil))))
  '(italic ((t (:slant italic :family "b&h luxi mono"))))
  '(mode-line-buffer-id ((t (:foreground "steelblue1"))))

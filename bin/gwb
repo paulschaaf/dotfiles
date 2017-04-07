@@ -126,6 +126,8 @@ killProcStr() {
     echo `grepProcStr $1`" && pkill -KILL -f $1"
 }
 
+pcfHost=localhost:$GW_PORT_DEBUG
+
 if [ -z $_dry_run ]; then
     while [ -n "$*" ]; do
         task=$1
@@ -148,23 +150,31 @@ if [ -z $_dry_run ]; then
                 fullTask=`killProcStr ${jvmProcess}`
                 ;;
             pcf*)
-                # extract port# argument, if none default to GW_PORT_DEBUG
-                set -x
-                port=`echo $task | sed 's/^[^0-9]*//'`
-                port=${port:-$GW_PORT_DEBUG}
-set +x
+                # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG
+                if [[ $task =~ 'pcf=' ]]; then
+                    pcfHost=${task##pcf=}
+                    pcfHost=${pcfHost##http://}
+                fi
+                echo pcfHost=$pcfHost
                 report=`/bin/ls -t /tmp/*.html | head -n 1`
-                fullTask="ruby -pi -e 'gsub(%r(:(null|80[89]0)/cc/), %q(:$port/cc/))' '$report' && google-chrome file:///'$report'"
+                fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' '$report' && google-chrome file:///'$report'"
+                set +x
                 ;;
+            # pcf*)
+            #     # extract port# argument, if none default to GW_PORT_DEBUG
+            #     set -x
+            #     report=`/bin/ls -t /tmp/*.html | head -n 1`
+            #     fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' '$report' && google-chrome file:///'$report'"
+            #     ;;
             portCheck)
-                fullTask='ssh -S $ssh_socket -O check pschaaf@localhost'
+                fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
                 ;;
             portClose)
-                fullTask='ssh -S $ssh_socket -O exit pschaaf@localhost'
+                fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
                 ;;
             portOpen)
                 spawn=true
-                fullTask='exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost'
+                fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
                 ;;
             studio*)
                 export inIntelliJ=true
