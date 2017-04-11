@@ -104,12 +104,12 @@ runTask() {
     if [ $exitCode -eq 0 ]; then
         log_section 42 "DONE $elapsedTime" $task
         if [ $successIcon ]; then
-            notify-send -c idea -t 5000 -i $successIcon "Completed '$task'" $whichJava
+            notify-send -c idea -t 5000 -i $successIcon "Completed $GW_TITLE:'$task'" $whichJava
         fi
     else
         log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $task
         if [ $failIcon ]; then
-            notify-send -c idea -t 10000 -u critical -i $failIcon "Failed '$task' (exit code $exitCode)" $whichJava
+            notify-send -c idea -t 10000 -u critical -i $failIcon "Failed $GW_TITLE:'$task' (exit code $exitCode)" $whichJava
         fi
     fi
 
@@ -119,11 +119,11 @@ runTask() {
 ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
 
 grepProcStr() {
-    echo "pgrep -af $1"
+    echo "pgrep -af -- '$1'"
 }
 
 killProcStr() {
-    echo `grepProcStr $1`" && pkill -KILL -f $1"
+    echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
 }
 
 pcfHost=localhost:$GW_PORT_DEBUG
@@ -139,7 +139,7 @@ if [ -z $_dry_run ]; then
                 taskFailIcon=$failIcon
                 ;;
             killStudio*)
-                fullTask=`killProcStr idea`
+                fullTask=`killProcStr "-Dstudio.sdkroot=${PWD}"`
                 taskFailIcon=$failIcon
                 ;;
             pgrep*)

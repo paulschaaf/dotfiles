@@ -105,21 +105,21 @@ screen -t HP 2
 chdir $HOME/dotfiles
 screen 3
 
+# === Apollo
+chdir /home/pschaaf/gw/apollo/cc
+screen 4
+
 # # === Diamond
 # chdir /diamond/cc/active/core
 # screen
 
-# # === Emerald
-# chdir /emerald/cc/active/core
-# screen
+# === Emerald
+chdir /emerald/cc/active/core
+screen
 
 # === Ferrite
 # chdir /gw-dev/ferrite/cc
 # screen
-
-# === Apollo
-chdir /home/pschaaf/gw/apollo/cc
-screen 4
 
 # ======== Wrap things up
 select 4

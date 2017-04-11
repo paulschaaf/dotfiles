@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ip_file=my.ip
+ip_file=~/my.ip
 
-tmp=`mktemp $TMP/$$.XXXXXX`
+tmp=`mktemp ${TMP:-~/tmp}/$$.XXXXXX`
 
 lynx -dump http://checkip.dyndns.org | ruby -ne 'puts $1 + "\t" + `hostname` if /((\d{1,3}\.){3}\d{1,3})/' > $tmp
 
