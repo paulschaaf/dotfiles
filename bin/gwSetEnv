@@ -111,19 +111,19 @@ if [ -n "$GW_PLATFORM" ]; then
     java -version
 
     case $GW_PRODUCT in
-        ab)
+        ab|ContactManager)
             # bright white text on aqua
             $ifCygwin export GW_COLOR=3F
-            export GW_PORT=8080
-            export GW_PORT_DEBUG=8090
+            export GW_PORT=8280
+            export GW_PORT_DEBUG=8290
             ;;
-        bc)
+        bc|BillingCenter)
             # bright white text on red
             $ifCygwin export GW_COLOR=2F
             export GW_PORT=8080
             export GW_PORT_DEBUG=8090
             ;;
-        cc)
+        cc|ClaimCenter)
             # bright white text on blue
             $ifCygwin export GW_COLOR=1F
             export GW_PORT=8080

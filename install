@@ -34,6 +34,11 @@ fi
 cd ${0%/*}
 sourceRoot=`pwd`
 
+echoSection() {
+    echo '
+--'$*
+}
+
 subdirs=`find $sourceRoot -mindepth 1 -maxdepth 1 -type d ! -name '.*' -printf '%f\n' | sort`
 for subdir in $subdirs; do
     echo "
@@ -42,30 +47,26 @@ INSTALLING: $subdir"
     sourceSubdir=${sourceRoot}/${subdir}
     destSubdir=${destRoot}/${subdir}
     if [ -d ${destSubdir} ]; then
-        echo '
---Making existing subdirectories writable'
-        find ${destSubdir} -type d -exec ${dry_run}chmod u+w {} +
+        echo The directory ${destSubdir} already exists!
+        echoSection 'You may want to make the following existing subdirectories writable:'
+        find ${destSubdir} -type d -exec echo chmod u+w {} +
 
-        echo '
---Deleting all symlinks'
-        ${dry_run}find ${destSubdir} -type l -exec rm -f {} +
+        # echoSection 'You may want to delete all symlinks'
+        # $find ${destSubdir} -type l -exec echo rm -f {} +
+        exit
     fi
-    echo '
---Creating new subdirectories and symlinking to contents'
+    echoSection 'Creating new subdirectories and symlinking to contents'
     ${dry_run}cp ${force}--recursive --symbolic-link ${sourceSubdir} ${destRoot} 2>&1 | grep -v '.* are the same file'
 
 #    find -type d -exec '[ -f "{}/Makefile" ] && make --directory "{}"' \;
     if [ -f ${destSubdir}/Makefile ]; then
-        echo '
---Running Makefile'
+        echoSection 'Running Makefile'
         make --directory ${destSubdir}
      fi
 
-    echo '
---Making all subdirectories read-only'
+    echoSection 'Making all subdirectories read-only'
     find ${destSubdir} -type d -exec ${dry_run}chmod a-w {} +
 
-    echo '
---Report any differences'
+    echoSection 'Report any differences'
     ${dry_run}diff --brief --recursive ${sourceSubdir} ${destSubdir} | sed 's_^HOME_~_'
 done

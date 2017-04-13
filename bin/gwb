@@ -47,7 +47,7 @@ passIcon=$_icon
 
 javaExec=$JAVA_HOME/bin/java
 whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
-jvmProcess="'$javaExec .*-Dgw.port=${GW_PORT_DEBUG}'"
+jvmProcess="$javaExec .*-Dgw.port=${GW_PORT_DEBUG}"
 
 [ -n "$_dry_run" ] && set -x
 
