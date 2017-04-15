@@ -138,6 +138,11 @@ if [ -z $_dry_run ]; then
             dropDb*)
                 taskFailIcon=$failIcon
                 ;;
+            idea*)
+                if [ $GW_PLATFORM = "emerald" ]; then
+                    fullTask=${fullTask/idea/gen-ide}
+                fi
+                ;;
             killStudio*)
                 fullTask=`killProcStr "-Dstudio.sdkroot=${PWD}"`
                 taskFailIcon=$failIcon
