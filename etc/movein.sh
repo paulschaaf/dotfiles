@@ -19,6 +19,7 @@ unordered_packages=(
     calibre           # e-book manager
     davfs2            # mount box.com into filesystem
     emacs             # the king of editors
+    frostwire         # bittorrent client
     k4dirstat         # disk usage report
     keychain          # ssh key organizer
     lynx              # command line browser
@@ -28,7 +29,12 @@ unordered_packages=(
     screen            # terminal multiplexer
     silversearcher-ag # quicker grep
     slack             # IM client
+    sweethome3d       # architectural modelling
     virtualbox        # VM manager
+    virtualbox-qt     # VM manager GUI
+    vlc               # video player
+    vpnc              # vpn to Guidewire
+    xterm             # the basics
 )
 
 unofficial_ppas=(
@@ -54,7 +60,8 @@ function apt-get-all() {
     eval local packages=\${${*}[@]}
     @# Install $*: $packages
     for package in ${packages[@]}; do
-        echo sudo apt-get install $package
+        @# Install $package
+        sudo apt-get -y install $package
     done
 }
 
@@ -68,7 +75,6 @@ for ppa in ${unofficial_ppas[@]}; do
     @# Add PPA $ppa
     sudo add-apt-repository ppa:${ppa}
 done
-
 @# Update Package Cache
 sudo apt-get update
 
@@ -76,23 +82,25 @@ apt-get-all unofficial_packages
 
 
 @# SYSTEM SETUP ========================================
-@# Add DavFS to fstab
-cp /etc/fstab ~/fstab.bak
-echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
+grep -q davfs /etc/fstab || (
+    @# Add DavFS to fstab
+    cp /etc/fstab ~/fstab.bak
+    echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
+)
 
 @# Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
-#sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-6/\1-2/g" /etc/default/console-setup
+sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-6/\1-2/g" /etc/default/console-setup
 
 @# USER SETUP ==========================================
-
-@# Downloading Git Dotfiles repository
 for repo in ${git_repos[@]}; do
+    @# Downloading Git Repository: $repo
     git clone $repo
 done
 
-if [ -d .davfs2 ]; then
+if [ ! -d .davfs2 ]; then
     @# Setup DavFS2 for Box.com access
     cp -r /etc/davfs2 .davfs2
+
     sudo adduser pschaaf davfs2
     ( cd .davfs2;
       echo -n 'Please type your box.com password:'
@@ -101,3 +109,6 @@ if [ -d .davfs2 ]; then
       echo "https://dav.box.com/dav paul666survey@gmail.com \"$password\"" >> secrets
     )
 fi
+
+[ -d box ] || mkdir box
+mount box
