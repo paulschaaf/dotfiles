@@ -58,7 +58,7 @@
 ; #'(lambda (x) x) fullname ".")))
 
 ; make system-name (i.e. hostname) a symbol whose value is t
- (eval (list 'defvar (read system-name) t))
+(eval (list 'defvar (read system-name) t))
 
 (cd "~")
 
@@ -252,6 +252,10 @@
 
 ; set the global default
 (setq comment-start "# ")
+(setq font-size (if (equal system-name "copernicus")
+                 50
+                 78))
+; (eval-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -329,11 +333,12 @@
  '(speedbar-use-images nil)
  '(tab-width 3)
  '(tool-bar-mode nil)
+ '(transient-mark-mode (quote (only . t)))
  '(truncate-lines nil)
  '(truncate-partial-width-windows nil)
  '(user-mail-address "paul.schaaf@gmail.com")
  '(visible-bell (quote top-bottom)))
-
+font-size
 ;; '(sentence-end "[.?!][]\"')}]*\\($\\| $\\|	\\| \\)[ 	\n]*")
 
 (if in-xemacs
@@ -432,21 +437,6 @@
   (replace-all-regex "^\*"           "   \*"  )
   (replace-all-regex "^-"            "      -"))
 
-(defun fix-resume ()
-  (d2u)
-  (fix-dos-outline)
-  (replace-all-regex (format " +%c +" 249) "\n")
-  (replace-all-regex "^PAUL G. SCHAAF, JR." "Paul G. Schaaf, Jr." t)
-
-; "<h1>Paul G. Schaaf, Jr.</h1>
-; 42629 Saratoga Park Street<br>
-; Fremont, CA 94538<br><br>
-; 408.644.4762 (cell)<br>
-; paul.schaaf@gmail.com<br>
-; <br>"
-
-  (replace-all-regex "Street, Fremont, CA 94538" "Street\nFremont, CA 94538\n"))
-
 (defun comment-rectangle (start end &optional arg)
   "Comment each line in the region at the start column."
   (interactive "rM")
@@ -484,62 +474,6 @@
         (if mark-active (exchange-point-and-mark))
         (insert-char ?\" 1))
       (insert-char ?\" 1))))
-
-
-;;
-;; Code for Guidewire
-;; (defun format-exam-results ()
-;;   (interactive)
-
-;;   (goto-char (point-min))
-
-;;   ; some questions are formatted differently than others
-;;   (replace-all-regex "(wrong) "  "(wrong)\n")
-
-;;   ; remove trailing spaces
-;;   (replace-all-regex " +$"  "")
-
-;;   (xml-unescape)
-
-;;   ; encode the double-quote so Excel will keep it in the same cell
-;;   (replace-all-regex "\""  "\"\"")
-
-;;   ; ensure each answer is on a separate line
-;;   (replace-all-regex " \\([ABCDE]\\. \\)"  "\n\\1")
-
-;;   ; Split question number from category and open quote the question
-;;   (replace-all-regex
-;;    "\n*Question ID \\([0-9]+\\) : \\(.*\\) (.*\n"
-;;    "\n\\2\t\\1\t\"")
-
-;;   ; remove useless lines
-;;   (replace-all-regex
-;;    "^\\(Administrator Notification\\|Course\\|Exam Date\\|Result\\|[0-9]+ correct out of\\|[-*]+\\|N/A (only available on passing\\|http://\\).*\n+"
-;;    "")
-
-;;   ; close quote after last answer, strip out boilerplate
-;;   (replace-all-regex "\n+>> Correct.*: " "\"\t")
-;;   (replace-all-regex "\n>> \\(Student\\|YOUR ANSWER\\).*: \\(.*\\)\n+"   "\t\\2\t")
-
-;;   (replace-all-regex "^Exam Title: *" "")
-
-;;   ; Add column headers
-;;   ;; (replace-all-regex "\nStudent ID: *\\(.*\\)\nStudent email: *\\(.*\\)\nStudent company: *\\(.*\\)"
-;;   ;;                    "=hyperlink(\"mailto:\\2\",\"\\1\")\t\t\\3")
-;;   ;; (replace-all-regex "\n\n\\(Score:.*\\)" "\t\t\\1\n\nCategory\t#\tQuestion\tRight\tStudent\tSource")
-
-;;   (replace-all-regex " *Student \\(ID\\|name\\|email\\|company\\): "
-;;                      "\n\\1\t")
-
-;;   ; insert abbreviations to shorten the text
-;;   (replace-all-regex "^BillingCenter" "BC")
-;;   (replace-all-regex "^ClaimCenter"   "CC")
-;;   (replace-all-regex "^PolicyCenter"  "PC")
-
-;;   (goto-char (point-min)))
-;; (global-set-key (kbd "C-c q") 'format-exam-results)
-;; End Code for Guidewire
-;;
 
 
 (defun kill-buffers-then-emacs-no-query ()
@@ -1119,7 +1053,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Liberation Mono" :foundry "1ASC" :slant normal :weight normal :height 78 :width normal))))
+ `(default ((t (:family "Liberation Mono" :foundry "1ASC" :slant normal :weight normal :height ,font-size :width normal))))
  '(cursor ((t (:background "white" :inverse-video nil))))
  '(italic ((t (:slant italic :family "b&h luxi mono"))))
  '(mode-line-buffer-id ((t (:foreground "steelblue1"))))

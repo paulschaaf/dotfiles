@@ -13,28 +13,29 @@ ordered_packages=(
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
-    amarok            # music
-    ascii             # tree of ascii codes
-    cairo-dock        # Mac-like icon dock
-    calibre           # e-book manager
-    davfs2            # mount box.com into filesystem
-    emacs             # the king of editors
-    frostwire         # bittorrent client
-    k4dirstat         # disk usage report
-    keychain          # ssh key organizer
-    lynx              # command line browser
-    meld              # merge tool
-    playonlinux       # addons for wine
-    ruby              # programming language
-    screen            # terminal multiplexer
-    silversearcher-ag # quicker grep
-    slack             # IM client
-    sweethome3d       # architectural modelling
-    virtualbox        # VM manager
-    virtualbox-qt     # VM manager GUI
-    vlc               # video player
-    vpnc              # vpn to Guidewire
-    xterm             # the basics
+    amarok             # music
+    ascii              # tree of ascii codes
+    cairo-dock         # Mac-like icon dock
+    calibre            # e-book manager
+    davfs2             # mount box.com into filesystem
+    emacs              # the king of editors
+    frostwire          # bittorrent client
+    k4dirstat          # disk usage report
+    keychain           # ssh key organizer
+    lynx               # command line browser
+    meld               # merge tool
+    partitionmanager   # manage disk partitions
+    playonlinux        # addons for wine
+    ruby               # programming language
+    screen             # terminal multiplexer
+    silversearcher-ag  # quicker grep
+    slack              # IM client
+    sweethome3d        # architectural modelling
+    virtualbox         # VM manager
+    virtualbox-qt      # VM manager GUI
+    vlc                # video player
+    vpnc               # vpn to Guidewire
+    xterm              # the basics
 )
 
 unofficial_ppas=(
