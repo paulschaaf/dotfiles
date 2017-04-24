@@ -1,5 +1,6 @@
 #!/bin/bash
 cd ~pschaaf
+backup=~/backup
 
 # these get installed first, in the order defined
 ordered_packages=(
@@ -28,6 +29,7 @@ unordered_packages=(
     screen            # terminal multiplexer
     silversearcher-ag # quicker grep
     slack             # IM client
+    sublime-text      # ide
     virtualbox        # VM manager
 )
 
@@ -46,8 +48,46 @@ git_repos=(
 )
 
 ## FUNCTIONS ===========================================
+pre=''
+dash='----------------------------------------'
+
 function @#() {
-    printf "\e[48;5;21m\n--- $*\e[0m\n"
+    bg=21  # no color
+    leadingDashes=1
+    trailingDashes=10
+
+    case $1 in
+        1)
+            bg=18
+            shift
+            leadingDashes=3
+            trailingDashes=3
+            ;;
+        2)
+            bg=27
+            shift
+            ;;
+        3)
+            bg=24
+            shift
+            ;;
+        4|5|6|7|8|9)
+            bg=0 # no color
+            shift
+            ;;
+        0) # 0 is the same as passing no number at all
+            shift
+            ;;
+        *)
+            ;;
+    esac
+
+    printf "\e[48;5;${bg}m\n%.${leadingDashes}s ${*}%.${trailingDashes}s\e[0m\n" $dash $dash
+    set +x
+}
+
+function backup() {
+    cp $* $backup
 }
 
 function apt-get-all() {
@@ -59,29 +99,48 @@ function apt-get-all() {
 }
 
 ## ====================================================
+mkdir $backup
 
 @# PACKAGE INSTALLATION ================================
 apt-get-all ordered_packages
 apt-get-all unordered_packages
 
+added=no
 for ppa in ${unofficial_ppas[@]}; do
     @# Add PPA $ppa
-    sudo add-apt-repository ppa:${ppa}
+    if apt-cache policy | grep $ppa ``; then
+        echo Already present!
+    else
+        sudo apt-add-repository ppa:${ppa}
+        added=yes
+    fi
 done
 
-@# Update Package Cache
-sudo apt-get update
+if [ $added = 'yes' ]; then
+    @# Update Package Cache
+    sudo apt-get update
 
-apt-get-all unofficial_packages
+    apt-get-all unofficial_packages
+fi
 
 
 @# SYSTEM SETUP ========================================
-@# Add DavFS to fstab
-cp /etc/fstab ~/fstab.bak
-echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
+@# 1 Add DavFS to fstab
+if ! grep -q /home/pschaaf/box /etc/fstab; then
+    backup /etc/fstab
+    echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
+else
+    @# 3 Already done!
+fi
 
 @# Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
-#sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-6/\1-2/g" /etc/default/console-setup
+if grep '/dev/tty\[1-[^2]' /etc/default/console-setup; then
+    backup /etc/default/console-setup
+    sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-[^2][0-9]*/\1-2/g" /etc/default/console-setup
+else
+    echo Already done!
+fi
+
 
 @# USER SETUP ==========================================
 
@@ -90,8 +149,8 @@ for repo in ${git_repos[@]}; do
     git clone $repo
 done
 
-if [ -d .davfs2 ]; then
-    @# Setup DavFS2 for Box.com access
+@# Setup DavFS2 for Box.com access
+if [ ! -d .davfs2 ]; then
     cp -r /etc/davfs2 .davfs2
     sudo adduser pschaaf davfs2
     ( cd .davfs2;
@@ -100,4 +159,13 @@ if [ -d .davfs2 ]; then
       umask 077;
       echo "https://dav.box.com/dav paul666survey@gmail.com \"$password\"" >> secrets
     )
+else
+    echo Already done!
+fi
+
+# Clean Up
+if rmdir $backup 2>/dev/null; then
+    @# No backups were necessary
+else
+    @# Created backups in $backup
 fi
