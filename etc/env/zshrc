@@ -77,6 +77,10 @@ if [ -z "$ifZsh" ]; then
         share_history
 fi
 
+function @#() {
+    printf "\e[48;5;21m\n--- $*\e[0m\n"
+}
+
 frotz () {
     pushd ~/private/sync/int-fic
     local stories=".*/${1:-.*}\\.\\(dat\\|z5\\)\$"

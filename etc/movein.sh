@@ -14,23 +14,29 @@ ordered_packages=(
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
-    amarok            # music
-    ascii             # tree of ascii codes
-    cairo-dock        # Mac-like icon dock
-    calibre           # e-book manager
-    davfs2            # mount box.com into filesystem
-    emacs             # the king of editors
-    k4dirstat         # disk usage report
-    keychain          # ssh key organizer
-    lynx              # command line browser
-    meld              # merge tool
-    playonlinux       # addons for wine
-    ruby              # programming language
-    screen            # terminal multiplexer
-    silversearcher-ag # quicker grep
-    slack             # IM client
-    sublime-text      # ide
-    virtualbox        # VM manager
+    amarok             # music
+    ascii              # tree of ascii codes
+    cairo-dock         # Mac-like icon dock
+    calibre            # e-book manager
+    davfs2             # mount box.com into filesystem
+    emacs              # the king of editors
+    frostwire          # bittorrent client
+    k4dirstat          # disk usage report
+    keychain           # ssh key organizer
+    lynx               # command line browser
+    meld               # merge tool
+    partitionmanager   # manage disk partitions
+    playonlinux        # addons for wine
+    ruby               # programming language
+    screen             # terminal multiplexer
+    silversearcher-ag  # quicker grep
+    slack              # IM client
+    sweethome3d        # architectural modelling
+    virtualbox         # VM manager
+    virtualbox-qt      # VM manager GUI
+    vlc                # video player
+    vpnc               # vpn to Guidewire
+    xterm              # the basics
 )
 
 unofficial_ppas=(
@@ -94,7 +100,8 @@ function apt-get-all() {
     eval local packages=\${${*}[@]}
     @# Install $*: $packages
     for package in ${packages[@]}; do
-        echo sudo apt-get install $package
+        @# Install $package
+        sudo apt-get -y install $package
     done
 }
 
@@ -119,7 +126,6 @@ done
 if [ $added = 'yes' ]; then
     @# Update Package Cache
     sudo apt-get update
-
     apt-get-all unofficial_packages
 fi
 
@@ -141,17 +147,16 @@ else
     echo Already done!
 fi
 
-
 @# USER SETUP ==========================================
-
-@# Downloading Git Dotfiles repository
 for repo in ${git_repos[@]}; do
+    @# Downloading Git Repository: $repo
     git clone $repo
 done
 
-@# Setup DavFS2 for Box.com access
 if [ ! -d .davfs2 ]; then
+    @# Setup DavFS2 for Box.com access
     cp -r /etc/davfs2 .davfs2
+
     sudo adduser pschaaf davfs2
     ( cd .davfs2;
       echo -n 'Please type your box.com password:'
@@ -169,3 +174,6 @@ if rmdir $backup 2>/dev/null; then
 else
     @# Created backups in $backup
 fi
+
+[ -d box ] || mkdir box
+mount box
