@@ -178,9 +178,11 @@ export SAVEHIST=1000
 export ANT_HOME=/depot/ant/apache-ant-1.7.1
 export AARDVARK_HOME=/depot/aardvark/alpha
 
-for home in /opt/idea[1-9][1-9]; do
-    export IDEA${home##*idea}_HOME=$home
-done
+if [ -d /opt/idea16 ]; then
+    for home in /opt/idea[1-9][1-9]; do
+        export IDEA${home##*idea}_HOME=$home
+    done
+fi
 
 local iconDir=/usr/share/icons/oxygen/48x48
 local failIcon=$iconDir/actions/process-stop.png
@@ -189,7 +191,7 @@ local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resour
 
 function whichjava() {
     for cmd in 'typeset -p JAVA_HOME' 'which java' 'java -version'; do
-        echo // $cmd
+        echo \# $cmd
         eval $cmd
         echo
     done

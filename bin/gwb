@@ -38,6 +38,7 @@ GW_START_DIR=${GW_START_SCRIPT%/*}
 echo In `pwd`
 
 GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
+#echo GW_START_SCRIPT=$GW_START_SCRIPT
 _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
 
 _icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
@@ -185,7 +186,6 @@ if [ -z $_dry_run ]; then
                 export inIntelliJ=true
                 unset inScreen
                 taskFailIcon=$failIcon
-                fullTask=inScreen='' ${fullTask}
                 ;;
             tasks*)
                 taskFailIcon=$failIcon
