@@ -187,7 +187,7 @@ fi
 local iconDir=/usr/share/icons/oxygen/48x48
 local failIcon=$iconDir/actions/process-stop.png
 # local successIcon=$iconDir/actions/flag-green.png
-local successIcon=/gw-dev/ferrite/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
+local successIcon=/gw/apollo/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
 
 function whichjava() {
     for cmd in 'typeset -p JAVA_HOME' 'which java' 'java -version'; do

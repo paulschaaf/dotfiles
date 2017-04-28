@@ -147,11 +147,14 @@ else
     echo Already done!
 fi
 
+
 @# USER SETUP ==========================================
 for repo in ${git_repos[@]}; do
     @# Downloading Git Repository: $repo
     git clone $repo
 done
+
+chsh --shell /usr/bin/zsh
 
 if [ ! -d .davfs2 ]; then
     @# Setup DavFS2 for Box.com access
