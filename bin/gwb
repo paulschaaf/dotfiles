@@ -83,7 +83,7 @@ runTask() {
     local successIcon=$2
     local failIcon=$3
 
-    [ -n ${delay} ] && echo "\nDelay for $delay" && sleep $delay
+    [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
     setGnuScreenTitle ${task}
 
