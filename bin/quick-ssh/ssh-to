@@ -58,7 +58,6 @@ while [ -n "$*" ]; do
             start_screen='exec bash -il'
             ;;
         -*)
-            # ssh_flags=${ssh_flags}${1}' '
             add_ssh_flag $1
             ;;
         *)
@@ -83,7 +82,7 @@ cmd=${*}
 
 case $remote_host in
     copernicus)
-        TERM=linux
+        add_ssh_flag '-X'
         env_vars_to_export+=' TERM'
         ;;
 
@@ -93,7 +92,6 @@ case $remote_host in
         CD_TO=/users/\${USER}
 
         add_ssh_flag '-Y' '-t' '-t'
-        # ssh_flags+='-Y -t -t '
         bash_cmd='bash --rcfile .bashrc'
         # [ -z "$cmd" ] && cmd="${bash_cmd}"
         cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
@@ -103,7 +101,6 @@ case $remote_host in
     [a-z]-cc-*)
         remote_host+=@devmerge2
         add_ssh_flag '-X' '-t' '-t'
-        # ssh_flags+='-X -t -t '
 
         def_switch_p4user='source /etc/profile.d/devmerge.sh; eval \`typeset -f switch-user | sed \"s~switch-user~switch~; s~fi\\$~fix; fi~; s~read NEWUSER~NEWUSER=\\\\\${1:-pschaaf}~\"\`; export -f switch'
 
@@ -117,8 +114,7 @@ case $remote_host in
         # typeset -p cmd def_switch_p4user bash_args bash_cmd
         ;;
 
-    oldSatori)
-        remote_host=192.168.1.107
+    satori)
         add_ssh_flag '-X'
         ;;
 

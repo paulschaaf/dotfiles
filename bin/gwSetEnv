@@ -83,7 +83,7 @@ if [ -n "$GW_PLATFORM" ]; then
             export JAVA_HOME=$JAVA8_HOME
             setJavaHomeTo JAVA8_HOME
             ;;
-       apollo)
+        apollo)
             export IDEA_HOME=$IDEA15_HOME
             export IDEA_JDK=${JAVA8_HOME}_nodcevm
             export JAVA_HOME=$JAVA8_HOME

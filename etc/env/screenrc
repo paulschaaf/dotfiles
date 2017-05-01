@@ -105,7 +105,7 @@ screen -t HP 2
 chdir $HOME/dotfiles
 screen 3
 
-# === Apollo
+# === Geneva
 chdir /home/pschaaf/gw/apollo/cc
 screen 4
 

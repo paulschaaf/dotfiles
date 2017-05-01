@@ -1,4 +1,4 @@
-HOSTS=evander d-cc-core d-cc-merge d-cc-stable e-cc-core e-cc-merge e-cc-stable
+HOSTS=copernicus satori evander d-cc-core d-cc-merge d-cc-stable e-cc-core e-cc-merge e-cc-stable
 
 all: allowUserWrite ${HOSTS} disallowAllWrites
 

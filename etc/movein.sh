@@ -14,6 +14,7 @@ ordered_packages=(
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
+    adb                # android connectivity
     amarok             # music
     ascii              # tree of ascii codes
     cairo-dock         # Mac-like icon dock
@@ -21,10 +22,12 @@ unordered_packages=(
     davfs2             # mount box.com into filesystem
     emacs              # the king of editors
     frostwire          # bittorrent client
+    gitk               # git tk browser
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
     lynx               # command line browser
     meld               # merge tool
+    mtpfs              # android file transfer
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
     ruby               # programming language
