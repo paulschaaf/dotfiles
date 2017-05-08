@@ -58,7 +58,7 @@ echoVar() {
 }
 
 setGnuScreenTitle() {
-    [ -n "$_inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
+    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
 }
 
 log_section() {
@@ -140,7 +140,7 @@ if [ -z $_dry_run ]; then
                 taskFailIcon=$failIcon
                 ;;
             idea*)
-                if [ $GW_PLATFORM = "emerald" ]; then
+                if [ $GW_PLATFORM = "diamond" -o $GW_PLATFORM = "emerald" ]; then
                     fullTask=${fullTask/idea/gen-ide}
                 fi
                 ;;
@@ -161,9 +161,16 @@ if [ -z $_dry_run ]; then
                     pcfHost=${task##pcf=}
                     pcfHost=${pcfHost##http://}
                 fi
-                echo pcfHost=$pcfHost
-                report=`/bin/ls -t /tmp/*.html | head -n 1`
-                fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' '$report' && google-chrome file:///'$report'"
+                echoVar pcfHost
+
+                if [ ${task} = "pcfs" ]; then
+                    report='/tmp'
+                else
+                    report=`/bin/ls -t /tmp/*.html | head -n 1`
+                fi
+                echoVar report
+
+                fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
                 set +x
                 ;;
             # pcf*)
