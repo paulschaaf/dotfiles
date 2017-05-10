@@ -2,31 +2,36 @@
 #set -x
 unset GW_PLATFORM
 setScreenTitle () {
-  echo -n "\ek$*\e\\"
+    echo -n "\ek$*\e\\"
 }
 case $PWD in
     */carbon/*)
         export GW_PLATFORM=carbon
+        export GW_PL_NUM=6
         ;;
     */diamond/*)
         export GW_PLATFORM=diamond
+        export GW_PL_NUM=7
         ;;
     */emerald/*)
         export GW_PLATFORM=emerald
+        export GW_PL_NUM=8
         ;;
     */ferrite/*)
         export GW_PLATFORM=ferrite
+        export GW_PL_NUM=9
         ;;
-    */apollo/*)
-        export GW_PLATFORM=apollo
+    */granite/*)
+        export GW_PL_NUM=10
+        export GW_PLATFORM=granite
         ;;
-    *)
+   *)
         echo "~${0##$HOME}: Could not determine platform version!" >&2
         unset GW_COLOR GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
         ;;
 esac
 
-if [ -n "$GW_PLATFORM" ]; then
+if [ -n $GW_PL_NUM ]; then
     export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
 
     # # take the uppercase of the first char
@@ -46,56 +51,50 @@ if [ -n "$GW_PLATFORM" ]; then
             ;;
     esac
 
-    setJavaHomeTo() {
-        local newHomeName=$1
-        eval local newHome=\$$newHomeName
+    # setJavaHomeTo() {
+    #     local newHomeName=$1
+    #     eval local newHome=\$$newHomeName
 
-        if [ "$newHome" = "" ]; then
-            echo Error: $newHomeName is not set\!
-        elif [ ! -d ${newHome} ]; then
-            echo Error: $newHomeName directory $newHome does not exist\!
-        fi
-        export JAVA_HOME=$newHome
-    }
+    #     if [ "$newHome" = "" ]; then
+    #         echo Error: $newHomeName is not set\!
+    #     elif [ ! -d ${newHome} ]; then
+    #         echo Error: $newHomeName directory $newHome does not exist\!
+    #     fi
+    #     export JAVA_HOME=$newHome
+    # }
 
     export GW_START_SCRIPT=./gwb
-    case $GW_PLATFORM in
-        carbon)
+    export IDEA_HOME=$IDEA15_HOME
+    export JAVA_HOME=$JAVA8_HOME
+
+    case $GW_PL_NUM in
+        6)
             export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
             export IDEA_HOME=$IDEA11_HOME
             export JAVA_HOME=$JAVA6_HOME
-            setJavaHomeTo JAVA6_HOME
             ;;
-        diamond)
+        7)
             export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
             export IDEA_HOME=$IDEA12_HOME
             export JAVA_HOME=$JAVA6_HOME
-            setJavaHomeTo JAVA6_HOME
-           ;;
-        emerald)
+            ;;
+        8)
             export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
             export IDEA_HOME=$IDEA12_HOME
             export JAVA_HOME=$JAVA7_HOME
-            setJavaHomeTo JAVA7_HOME
             ;;
-        ferrite)
+        9)
             export IDEA_HOME=$IDEA15_HOME
             export JAVA_HOME=$JAVA8_HOME
-            setJavaHomeTo JAVA8_HOME
             ;;
-        apollo)
+        10)
             export IDEA_HOME=$IDEA15_HOME
             export IDEA_JDK=${JAVA8_HOME}_nodcevm
             export JAVA_HOME=$JAVA8_HOME
-            setJavaHomeTo JAVA8_HOME
             ;;
         *)
-            export IDEA_HOME=$IDEA15_HOME
-            export JAVA_HOME=$JAVA8_HOME
-            setJavaHomeTo JAVA8_HOME
             ;;
     esac
-
 
     _lib_jars='./lib/*jar'
     CLASSPATH=$JAVA_HOME/lib/\*jar:$_lib_jars:${CLASSPATH}

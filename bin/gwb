@@ -140,7 +140,7 @@ if [ -z $_dry_run ]; then
                 taskFailIcon=$failIcon
                 ;;
             idea*)
-                if [ $GW_PLATFORM = "diamond" -o $GW_PLATFORM = "emerald" ]; then
+                if [ $GW_PL_NUM -lt 9 ]; then
                     fullTask=${fullTask/idea/gen-ide}
                 fi
                 ;;
@@ -171,14 +171,7 @@ if [ -z $_dry_run ]; then
                 echoVar report
 
                 fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
-                set +x
                 ;;
-            # pcf*)
-            #     # extract port# argument, if none default to GW_PORT_DEBUG
-            #     set -x
-            #     report=`/bin/ls -t /tmp/*.html | head -n 1`
-            #     fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' '$report' && google-chrome file:///'$report'"
-            #     ;;
             portCheck)
                 fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
                 ;;
@@ -190,9 +183,17 @@ if [ -z $_dry_run ]; then
                 fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
                 ;;
             studio*)
+                if [ $GW_PL_NUM -lt 9 ]; then
+                    spawn=true
+                fi
                 export inIntelliJ=true
                 unset inScreen
                 taskFailIcon=$failIcon
+                ;;
+            studioClean*)
+                if [ $GW_PL_NUM -lt 9 ]; then
+                    rm -rf app-cc/cc-studio-run/db
+                fi
                 ;;
             tasks*)
                 taskFailIcon=$failIcon
@@ -210,7 +211,7 @@ if [ -z $_dry_run ]; then
         esac
         shift
 
-        # append 'Loud' or 'Quiet' to any task name to override the task default for OS notification
+        # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
         if [[ ${task} =~ "Quiet$" ]]; then
             taskPassIcon=
             taskFailIcon=
