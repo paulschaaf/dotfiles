@@ -9,6 +9,7 @@ ordered_packages=(
     google-chrome-stable # the best browser
     openssh-client       # make secure remote connections
     openssh-server       # host secure remote connections
+    tmux                 # terminal multiplexor
     wine                 # run windows programs
 )
 
@@ -17,6 +18,7 @@ unordered_packages=(
     adb                # android connectivity
     amarok             # music
     ascii              # tree of ascii codes
+    byobu              # tmux/screen enhancements
     cairo-dock         # Mac-like icon dock
     calibre            # e-book manager
     davfs2             # mount box.com into filesystem

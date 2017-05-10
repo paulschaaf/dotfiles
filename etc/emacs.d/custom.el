@@ -354,7 +354,7 @@ font-size
        '(pending-delete-mode t nil (pending-del))
        '(toolbar-visible-p nil)))
   (progn
-    (if in-cygwin (server-start))
+    (server-start)
     (global-font-lock-mode 1)
     (tool-bar-mode -1)
     (custom-set-variables
