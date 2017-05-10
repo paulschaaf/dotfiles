@@ -71,7 +71,7 @@ if [ -n $GW_PL_NUM ]; then
         6)
             export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
             export IDEA_HOME=$IDEA11_HOME
-            export JAVA_HOME=$JAVA6_HOME
+            export JAVA_HOME=$JAVA6_HOME_x86
             ;;
         7)
             export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}

@@ -79,7 +79,7 @@ XTerm.VT100*underLine:  on
 !XTerm*scrollBar: true
 XTerm*rightScrollBar: true
 
-UXTerm*scrollBar: false
+UXTerm*scrollBar: true
 
 !
 ! xscreen
