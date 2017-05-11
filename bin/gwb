@@ -137,6 +137,9 @@ if [ -z $_dry_run ]; then
         taskPassIcon=
         case $task in
             dropDb*)
+                if [ $GW_PL_NUM -lt 9 ]; then
+                    task=dropdb
+                fi
                 taskFailIcon=$failIcon
                 ;;
             idea*)
