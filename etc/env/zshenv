@@ -200,7 +200,7 @@ function whichjava() {
 if [ -d /usr/lib/jvm/java-8-oracle ]; then
     for home in /usr/lib/jvm/java-[0-9]-oracle*; do
         local digit=${home##*java-};   digit=${digit%%-*}
-        local suffix=${home##*oracle}
+        local suffix=${home##*oracle}; suffix=${suffix//-/_}
         local javaDigitHome=JAVA${digit}_HOME${suffix}
         export $javaDigitHome=$home
         # typeset $javaDigitHome
