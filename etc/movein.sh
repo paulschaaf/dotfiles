@@ -1,6 +1,7 @@
 #!/bin/bash
-cd ~pschaaf
+cd $HOME
 backup=~/backup
+shell=/usr/bin/zsh
 
 # these get installed first, in the order defined
 ordered_packages=(
@@ -38,7 +39,9 @@ unordered_packages=(
     slack              # IM client
     sweethome3d        # architectural modelling
     virtualbox         # VM manager
-    virtualbox-qt      # VM manager GUI
+    virtualbox-ext-pack
+    virtualbox-guest-additions-iso
+    virtualbox-qt
     vlc                # video player
     vpnc               # vpn to Guidewire
     xterm              # the basics
@@ -49,6 +52,7 @@ unofficial_ppas=(
 )
 
 unofficial_packages=(
+    oracle-java6-installer
     oracle-java7-installer
     oracle-java8-installer
     oracle-java9-installer
@@ -128,11 +132,9 @@ for ppa in ${unofficial_ppas[@]}; do
     fi
 done
 
-if [ $added = 'yes' ]; then
     @# Update Package Cache
     sudo apt-get update
     apt-get-all unofficial_packages
-fi
 
 
 @# SYSTEM SETUP ========================================
@@ -159,13 +161,18 @@ for repo in ${git_repos[@]}; do
     git clone $repo
 done
 
-chsh --shell /usr/bin/zsh
+@# Changing default shell to ${shell##*/}
+if grep --quiet $USER:$shell /etc/passwd; then
+    echo Already set!
+else
+    sudo chsh --shell $shell $USER
+fi
 
+@# Setup DavFS2 for Box.com access
 if [ ! -d .davfs2 ]; then
-    @# Setup DavFS2 for Box.com access
     cp -r /etc/davfs2 .davfs2
 
-    sudo adduser pschaaf davfs2
+    sudo adduser $USER davfs2
     ( cd .davfs2;
       echo -n 'Please type your box.com password:'
       read -s password; echo
@@ -184,4 +191,17 @@ else
 fi
 
 [ -d box ] || mkdir box
-mount box
+@# Mounting box
+if mount box 2> /dev/null; then
+    echo Done!
+else
+    echo Already mounted!
+fi
+
+
+3 Other Packages
+<<EOF
+Master PDF Editor
+Frostwire
+
+EOF

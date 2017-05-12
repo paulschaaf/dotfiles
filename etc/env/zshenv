@@ -389,6 +389,9 @@ pcd () {
     cd "$@"; popd +1 2>/dev/null
 }
 
+alias vpnc-connect='sudo vpnc-connect'
+alias vpnc-disconnect='sudo vpnc-disconnect'
+
 wcat ()   {
 	cat $(which $*)
 }
