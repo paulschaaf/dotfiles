@@ -15,9 +15,10 @@ log=:
 umask 22
 set +x
 
-# default is to ignore remaining line
-export ifZsh=:;  export ifNotZsh=
+export TERM=xterm-256color
 
+# ======== Default Settings
+# default is to ignore remaining line
 # but enable the line if we're running the right shell
 export ifZsh=:
 export ifNotZsh=:
@@ -30,19 +31,15 @@ fi
 
 $log '*** In .zshenv'
 
-export TERM=xterm-256color
-
-# ======== Default Settings
 exportDefault () {
     eval : \${$1:='$2'}
     export $1
 }
 
-export CLASSPATH
 exportDefault UNAME    `uname`
 exportDefault HOSTNAME `hostname`
 
-export ifCygin=:
+export ifCygwin=:
 export ifNotCygwin=:
 if [[ "$UNAME" =~ "CYGWIN" ]]; then
     ifCygwin=
@@ -132,7 +129,7 @@ prependPath $HOME/bin
 appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw /gw-dev/Android/Sdk/platform-tools
 
 # ======== Environment and Shell Variables
-export BROWSER=chrome
+# export BROWSER=chrome
 exportDefault CLASSPATH .
 
 # ======== Remote sessions

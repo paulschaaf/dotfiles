@@ -1,136 +1,95 @@
 #!/bin/bash
 #set -x
-unset GW_PLATFORM
-setScreenTitle () {
-    echo -n "\ek$*\e\\"
-}
-case $PWD in
-    */carbon/*)
-        export GW_PLATFORM=carbon
+
+case ${*:-$PWD} in
+    6|*/carbon/*)
+        export GW_PL=C
         export GW_PL_NUM=6
+        export GW_PLATFORM=carbon
+        export IDEA_HOME=$IDEA11_HOME
+        export JAVA_HOME=$JAVA6_HOME_x86
+        export IDEA_JDK=$JAVA6_HOME
+        scriptExtension=.sh
+        typeset AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    */diamond/*)
-        export GW_PLATFORM=diamond
+    7|*/diamond/*)
+        export GW_PL=D
         export GW_PL_NUM=7
+        export GW_PLATFORM=diamond
+        export IDEA_HOME=$IDEA12_HOME
+        export JAVA_HOME=$JAVA6_HOME_x86
+        export IDEA_JDK=$JAVA6_HOME
+        scriptExtension=.sh
+        typeset AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    */emerald/*)
-        export GW_PLATFORM=emerald
+    8|*/emerald/*)
+        export GW_PL=E
         export GW_PL_NUM=8
+        export GW_PLATFORM=emerald
+        export IDEA_HOME=$IDEA12_HOME
+        export JAVA_HOME=$JAVA7_HOME
+        export IDEA_JDK=$JAVA_HOME
+        scriptExtension=.sh
+        typeset AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    */ferrite/*)
-        export GW_PLATFORM=ferrite
+    9|*/ferrite/*)
+        export GW_PL=F
         export GW_PL_NUM=9
+        export GW_PLATFORM=ferrite
+        export IDEA_HOME=$IDEA15_HOME
+        export JAVA_HOME=$JAVA8_HOME
+        export IDEA_JDK=$JAVA_HOME
         ;;
-    */granite/*)
+    10|*/granite/*)
+        export GW_PL=G
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
+        export IDEA_HOME=$IDEA15_HOME
+        export JAVA_HOME=$JAVA8_HOME
+        export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
-   *)
+    *)
         echo "~${0##$HOME}: Could not determine platform version!" >&2
-        unset GW_COLOR GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
         ;;
 esac
 
-if [ -n $GW_PL_NUM ]; then
+if [ -n "$GW_PL_NUM" ]; then
+    # Report on the new environment
+    typeset IDEA_HOME JAVA_HOME ifCygwin
+    [ -n $IDEA_JDK ] && typeset IDEA_JDK
+    echo; java -version; echo
+
+    typeset GW_PL GW_PL_NUM GW_PLATFORM
+
+    # assume we're not in Cygwin, then fix it if we're wrong
+    ifCygwin=:
+    if [ -n "$CYGPATH" ]; then
+        ifCygwin=
+    fi
+
     export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
-
-    # # take the uppercase of the first char
-    export GW_PL=`echo $GW_PLATFORM | sed 's/\(.\).*/\U\1/'`
-    export GW_TITLE="$GW_PL:$GW_PRODUCT"
-
-    case `uname` in
-        CYGWIN*)
-            _script_extension=.bat
-            ;;
-        *)
-            if [ "$GW_PLATFORM" = "ferrite" ]; then
-                _script_extension=
-            else
-                _script_extension=.sh
-            fi
-            ;;
-    esac
-
-    # setJavaHomeTo() {
-    #     local newHomeName=$1
-    #     eval local newHome=\$$newHomeName
-
-    #     if [ "$newHome" = "" ]; then
-    #         echo Error: $newHomeName is not set\!
-    #     elif [ ! -d ${newHome} ]; then
-    #         echo Error: $newHomeName directory $newHome does not exist\!
-    #     fi
-    #     export JAVA_HOME=$newHome
-    # }
-
-    export GW_START_SCRIPT=./gwb
-    export IDEA_HOME=$IDEA15_HOME
-    export JAVA_HOME=$JAVA8_HOME
-
-    case $GW_PL_NUM in
-        6)
-            export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
-            export IDEA_HOME=$IDEA11_HOME
-            export JAVA_HOME=$JAVA6_HOME_x86
-            ;;
-        7)
-            export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
-            export IDEA_HOME=$IDEA12_HOME
-            export JAVA_HOME=$JAVA6_HOME
-            ;;
-        8)
-            export GW_START_SCRIPT=bin/$GW_PRODUCT${_script_extension}
-            export IDEA_HOME=$IDEA12_HOME
-            export JAVA_HOME=$JAVA7_HOME
-            ;;
-        9)
-            export IDEA_HOME=$IDEA15_HOME
-            export JAVA_HOME=$JAVA8_HOME
-            ;;
-        10)
-            export IDEA_HOME=$IDEA15_HOME
-            export IDEA_JDK=${JAVA8_HOME}_nodcevm
-            export JAVA_HOME=$JAVA8_HOME
-            ;;
-        *)
-            ;;
-    esac
-
-    _lib_jars='./lib/*jar'
-    CLASSPATH=$JAVA_HOME/lib/\*jar:$_lib_jars:${CLASSPATH}
-
-    # Remove any empty or duplicate members
-    CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
-
-    typeset AARDVARK_HOME ANT_HOME M2_HOME IDEA_HOME JAVA_HOME
-    echo
-
-    export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
-
-    java -version
-
     case $GW_PRODUCT in
         ab|ContactManager)
-            # bright white text on aqua
-            $ifCygwin export GW_COLOR=3F
+            $ifCygwin export GW_COLOR=3F # bright white text on aqua
+            export GW_PRODUCT=ab
             export GW_PORT=8280
             export GW_PORT_DEBUG=8290
             ;;
         bc|BillingCenter)
-            # bright white text on red
-            $ifCygwin export GW_COLOR=2F
+            $ifCygwin export GW_COLOR=2F # bright white text on red
+            export GW_PRODUCT=bc
             export GW_PORT=8080
             export GW_PORT_DEBUG=8090
             ;;
         cc|ClaimCenter)
-            # bright white text on blue
-            $ifCygwin export GW_COLOR=1F
+            $ifCygwin export GW_COLOR=1F # bright white text on blue
+            export GW_PRODUCT=cc
             export GW_PORT=8080
             export GW_PORT_DEBUG=8090
             ;;
         pc|PolicyCenter)
-            # bright white text on red
-            $ifCygwin xport GW_COLOR=4F
+            $ifCygwin export GW_COLOR=4F # bright white text on red
+            export GW_PRODUCT=pc
             export GW_PORT=8080
             export GW_PORT_DEBUG=8090
             ;;
@@ -139,8 +98,23 @@ if [ -n $GW_PL_NUM ]; then
             ;;
     esac
 
-    $ifCygwin typeset -p GW_COLOR | sed 's/^typeset \(-x \)*//g'
-    typeset GW_PL GW_PLATFORM GW_PRODUCT GW_START_SCRIPT GW_TITLE
+    # Determine the startup script
+    export GW_START_SCRIPT=./gwb
+
+    if [ $GW_PL_NUM -lt 9 ]; then
+        GW_START_SCRIPT=bin/$GW_PRODUCT
+    fi
+
+    $ifCygwin set scriptExtension=.bat
+    GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
+
+    export GW_TITLE="$GW_PL:$GW_PRODUCT"
+
+    typeset GW_PRODUCT GW_START_SCRIPT GW_TITLE
+    if [ -n $GW_COLOR ]; then
+        typeset GW_COLOR | sed 's/^typeset \(-x \)*//g'
+    fi
+
     function echoList() {
         for arg in $*; do
             echo -e "\n$arg contains:"
@@ -148,8 +122,17 @@ if [ -n $GW_PL_NUM ]; then
         done
     }
 
+    export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
+
+    export CLASSPATH=$JAVA_HOME/lib/\*jar:'./lib/*jar':${CLASSPATH}
+    # Remove any empty or duplicate members
+    CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
+
     echoList PATH CLASSPATH
 
     # this will only work if you 'source' this file
-    setScreenTitle $GW_TITLE
+    if [ -n $inScreen ]; then
+        echo -n "\ek$GW_TITLE\e\\"  # the screen title
+    fi
+
 fi
