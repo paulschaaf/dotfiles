@@ -1,0 +1,43 @@
+<!-- -*- compile-command: (concat "svn commit -m ''; ssh satori 'cd " (file-name-directory buffer-file-name) " && svn update && rsync -avu --exclude=.svn . ~apache/html/jira-redirect'") -*- -->
+
+<!-- The links in this page recursively redirect back to this page, adding new parameters to the URL as they go. When the parameters include the customer name it terminates the recursion and redirects to a customized Jira report, using defaults for the unspecified parameters. -->
+
+<html>
+
+  <head>
+    <title>Jira Customer Report</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="Content-Script-Type" content="text/javascript" />
+
+    <link rel="shortcut icon" href="jira.png"/>
+    <link rel="icon"          href="jira.png" type="image/png"/>
+
+    <style type="text/css" media="*">
+      li.error { color:     red; }
+      a.small  { font-size: 75%; }
+      small    { color: red }
+    </style>
+    <script src="ReportForCustomer.js"></script>
+  </head>
+
+  <body onload="document.getElementById('noneOfAbove').focus()">
+
+    The links below will stay constant, even when the format or structure of the report is changed. Because of this, you should bookmark only this page or one of these links, but never the Jira page to which you are eventually redirected.<p/>
+    Please be aware that a Jira URL cannot specify which columns should be displayed. This is solely determined by your personal settings.
+
+    <script>
+       renderList()
+    </script>
+
+    <form
+         id="custNameForm"
+         method="post"
+         onSubmit="javascript:window.location = pageForCustomer(custNameForm.querybox.value); return false;">
+      <li>None of the above (case-sensitive): <input id="noneOfAbove" name="querybox" type="text" size="15"/></li>
+      <br/>
+    </form>
+
+    The customer names are taken from the "Customer Site" field in Jira. If you would like a link added, verify that it is correct using the text box above, then please notify <a href="mailto://pschaaf@guidewire.com">Paul Schaaf</a>.<p/>
+  </body>
+
+</html>

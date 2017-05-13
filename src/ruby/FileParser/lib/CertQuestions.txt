@@ -1,0 +1,580 @@
+Course:  ClaimCenter 5.0 Functional Certification Exam
+Title:  ClaimCenter 5.0 Functional Certification Exam
+
+Student ID: josephchockchiongtdassurancecom6711211
+Student name: Joseph Chock Chiong
+Student email: joseph.chockchiong@tdassurance.com
+Student company: TD Insurance
+
+Exam Date:   04-24-2011
+Score:  65
+Result: FAIL
+ 
+65 correct out of 100
+
+---- Questions Missed ----- 
+
+Question ID 82 : ClaimCenter Business Concepts (wrong)
+Which 2 of the following statements are true about the New Claim Wizard in a base (unconfigured) installation of ClaimCenter?
+
+A. You cannot create a Claim against an Unverified Policy
+B. A temporary Claim number is generated after completing the first step of either the full or Quick wizards.
+C. You can temporarily leave the Wizard to create a different Claim without losing any of your work
+D. You can complete the wizard without navigating to any of the independent steps
+E. You cannot complete the wizard without navigating through every ordered step
+
+
+>> Correct answer is: B D
+>> Student chose: B C
+
+
+
+Question ID 78 : ClaimCenter Business Concepts (wrong)
+In the New Claim Wizard, which 3 of the following statements are correct?
+
+A. To go to a previous step you must click the &quot;Back&quot; button
+B. The Claim is not saved until after you click the &quot;Finish&quot; button
+C. Independent New Claim Wizard Screens do not intervene with main wizard navigation and, once they become available, can be selected at any time during claim setup
+D. The Claim is saved in Draft status once you complete the first step of the New Claim Wizard
+E. In an unconfigured ClaimCenter you must complete (&quot;Finish&quot; or &quot;Cancel&quot;) the wizard before you can create another Claim.
+
+
+>> Correct answer is: C D E
+>> Student chose: B C D
+
+
+
+Question ID 79 : ClaimCenter Business Concepts (wrong)
+Which 2 of the following statements correctly reflect the setup process that runs at the end of the New Claim Wizard?
+
+A. The same rule sets are run regardless of whether an automated or manual assignment is selected
+B. Claim segmentation rules can only update the Segment property of the Claim
+C. The Segment property is used to categorize each Claim and Exposure
+D. Claim rule sets are always run before Exposure rule sets for the same rule set category
+E. Validation rules are run after PostSetup rules
+
+
+>> Correct answer is: C E
+>> Student chose: B E
+
+
+
+Question ID 109 : ClaimCenter Business Concepts (wrong)
+Which 2 statements about ClaimCenter groups are correct?
+
+A. They must directly correspond to the organisational structure of the carrier
+B. They form a hierarchical structure
+C. Each group can either include users or subgroups but not both
+D. Each group is associated with zero or more regions
+E. Each group is associated with one or more security zones
+
+
+>> Correct answer is: B D
+>> Student chose: A B
+
+
+
+Question ID 81 : ClaimCenter Business Concepts (wrong)
+ Which 3 of the following Claim rulesets are only run during claim setup?
+
+A. Initialization
+B. Post-setup
+C. Segmentation
+D. Validation
+E. Workplan
+
+
+>> Correct answer is: B C E
+>> Student chose: C D E
+
+
+
+Question ID 116 : ClaimCenter Configuration Concepts (wrong)
+ After using the Wizard to create a Claim with one Exposure I notice that the Exposure is at the external validation level. What validation level can I assume the Claim is at?
+
+A. &quot;newloss&quot;, because the Wizard set it to that (the Exposure&#39;s level is irrelevant)
+B. At least &quot;newloss&quot;, otherwise I wouldn&#39;t have been able to finish the Wizard (the Exposure&#39;s level is irrelevant)
+C. At most &quot;iso&quot;, because the Exposure prevents the Claim from reaching &quot;external&quot;
+D. At least &quot;external&quot;, otherwise the Claim would not have permitted the Exposure to reach &quot;external&quot;
+E. I can&#39;t assume anything; this Claim may not even have been validated yet
+
+
+>> Correct answer is: B
+>> Student chose: E
+
+
+
+Question ID 114 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 rulesets are triggered along with the Validation rules when a Claim is updated?
+
+A. Event Message
+B. Pre-Setup
+C. Pre-Update
+D. Post-Setup
+E. Post-Update
+
+
+>> Correct answer is: A C 
+>> Student chose: C D 
+
+
+
+Question ID 104 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 of the following statements about Reserve Lines are correct?
+
+A. Each CheckSet is linked to one and only one ReserveLine
+B. There can be only one ReserveLine for each CostCategory
+C. A ReserveLine must have a CostType and a CostCategory
+D. A ReserveLine must refer to an Exposure
+E. Every payment must come from a ReserveLine
+
+
+>> Correct answer is: C E 
+>> Student chose: C D 
+
+
+
+Question ID 99 : ClaimCenter Configuration Concepts (wrong)
+
+Currently, the incident description can be edited by many people. Which 2 of the following steps must I perform so that only those who are also Claims Supervisors can update it?
+
+A. Add &quot;updateIncidentDescription&quot; to ApplicationPermissionType then grant that permission to Claims Supervisor role
+B. Add &quot;updateIncidentDescription&quot; to SystemPermissionType then grant that permission to Claims Supervisor role
+C. Add the appropriate users to that Claim&#39;s ACL
+D. Add perm.System.updateIncidentDescription to the editable property of that input
+
+
+>> Correct answer is: B D 
+>> Student chose: A D 
+
+
+
+Question ID 119 : ClaimCenter Configuration Concepts (wrong)
+
+If a Claim fails validation at the newloss level while it is being imported [2 answers]
+
+A. An error message will appear in the browser
+B. An error message will appear in the server log
+C. The Claim will not be imported
+D. The Claim&#39;s validation level will be null
+E. The Claim&#39;s validation level will be &quot;loadsave&quot;
+
+
+>> Correct answer is: B E 
+>> Student chose: A E 
+
+
+
+Question ID 117 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 of the following requirements can be implemented with Validation Rules?
+
+A. Display a warning when required data is missing
+B. Display an edit mask (like &quot;../../..&quot;) to guide data entry
+C. Treat the same field differently on different screens
+D. Treat the same field differently for imported data
+E. Enable a button only when a field value is set correctly
+
+
+>> Correct answer is: A D 
+>> Student chose: A B 
+
+
+
+Question ID 107 : ClaimCenter Configuration Concepts (wrong)
+
+Which 4 of the following statements are true about how ClaimCenter handles financial transaction approvals?
+
+A. It examines every payment to see whether it requires approval
+B. It examines every reserve change to see whether it requires approval
+C. Some financial approval tests are done using Authority Limits
+D. Some financial approval tests are done using Transaction Approval Rules
+E. Some financial approval tests are done using Transaction Validation Rules
+
+
+>> Correct answer is: A B C D 
+>> Student chose: A B D E 
+
+
+
+Question ID 89 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 of the following entities can be the owner of a Contact Role?
+
+A. Activity
+B. ClaimContact
+C. Contact
+D. Policy
+E. PropertyIncident
+
+
+>> Correct answer is: D E 
+>> Student chose: B E 
+
+
+
+Question ID 98 : ClaimCenter Configuration Concepts (wrong)
+
+If I create a new ExposureType I also need to create a dedicated DetailView that will allow me to [3 answers]
+
+A. Create this type of Exposure within the New Claim Wizard
+B. View this type of Exposure on any existing Claim
+C. View this type of Exposure on an imported Claim
+D. Create this type of Exposure within the FNOL snapshot
+E. View this type of Exposure in an FNOL snapshot
+
+
+>> Correct answer is: A B E 
+>> Student chose: C E 
+
+
+
+Question ID 111 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 statements about Validation Level in ClaimCenter are correct?
+
+A. You can add a new Validation Level anywhere in the list
+B. You can only add a new Validation level only between loadsave and payment
+C. You can remove any existing Validation level
+D. You can explicitly set a Claim&#39;s validation level
+E. When an entity reaches a particular validation level it cannot move back to a lower level
+
+
+>> Correct answer is: A E 
+>> Student chose: B E 
+
+
+
+Question ID 95 : ClaimCenter Configuration Concepts (wrong)
+
+Which 3 statements about Line of Business configuration in ClaimCenter are true?
+
+A. Every PolicyType must be related to an Incident or one of its subtypes
+B. Each CoverageType and ExposureType typecode can relate to many CoverageSubTypes, therefore the relationship between CoverageType and ExposureType is effectively many-to-many
+C. The ClaimCenter Lines of Business are defined in a series of 8 typelists
+D. The ClaimCenter Lines of Business are defined in a series of 6 typelists
+E. Some LOB changes require corresponding changes in typelists that are not considered part of the LOB model
+
+
+>> Correct answer is: B D E 
+>> Student chose: A B C 
+
+
+
+Question ID 83 : ClaimCenter Configuration Concepts (wrong)
+
+To prevent users from being able to search ContactCenter for an existing contact but still allow them to create new contacts when editing the "Reported by" field on the Auto Loss Details page, you would
+
+A. Replace the ClaimContactInput with a RangeInput
+B. Disable the ContactCenter plugin
+C. Set the widget&#39;s newContactMenu attribute value to &quot;BlankNewContactPickerMenuItemSet()&quot;
+D. The search option is built in and cannot be removed through configuration
+E. None of the above
+
+
+>> Correct answer is: E 
+>> Student chose: C
+
+
+
+Question ID 90 : ClaimCenter Configuration Concepts (wrong)
+
+Which 2 XML files contain the data that maps between ClaimCenter and ContactCenter?
+
+A. ab-to-cc-data-mapping.xml in ClaimCenter
+B. cc-to-ab-data-mapping.xml in ClaimCenter
+C. data-mapping.xml in ClaimCenter
+D. cc-to-ab-data-mapping.xml in ContactCenter
+E. ab-to-cc-data-mapping.xml in ContactCenter
+
+
+>> Correct answer is: A B 
+>> Student chose: B E 
+
+
+
+Question ID 112 : ClaimCenter Configuration Concepts (wrong)
+
+Which 4 of the following ClaimCenter entities are validateable in an unconfigured application?
+
+A. Activity
+B. Group
+C. Contact
+D. VehicleIncident
+E. User
+
+
+>> Correct answer is: A B C E 
+>> Student chose: A B C D 
+
+
+
+Question ID 118 : ClaimCenter Configuration Concepts (wrong)
+
+If a Claim fails validation at the loadsave level while it is being imported [2 answers]...
+
+A. An error message will appear in the browser
+B. An error message will appear in the server log
+C. The Claim will not be imported
+D. The Claim&#39;s validation level will be null
+E. The Claim&#39;s validation level will be &quot;loadsave&quot;
+
+
+>> Correct answer is: B C 
+>> Student chose: A E 
+
+
+
+Question ID 84 : ClaimCenter Configuration Concepts (wrong)
+
+According to the Data Dictionary, which 2 of the following would be valid expressions for the value range of a claim contact widget whose value is Claim.PrimaryDoctor?
+
+A. Claim.RelatedContacts
+B. Claim.RelatedDoctorArray
+C. Claim.RelatedPersonArray
+D. Claim.doctor
+E. Claim.RelatedPersonVendorArray
+
+
+>> Correct answer is: B D 
+>> Student chose: A B 
+
+
+
+Question ID 129 : Fundamentals Data Model (wrong)
+
+Assuming that there exists in the base datamodel extendable entities called Official and Report, which 2 steps will ensure that a given Official can be associated with one or more Reports:
+
+A. The Report entity must have a Foreign Key to the Official entity
+B. The Official entity must have a Foreign Key to the Report entity
+C. The Report entity must have a Array Key to the Official entity
+D. The Official entity must have an Array Key to the Report entity
+E. The Entity Name for Official must include the Report entity
+
+
+>> Correct answer is: A D 
+>> Student chose: C D 
+
+
+
+Question ID 126 : Fundamentals Data Model (wrong)
+
+Which 2 of the following approaches would remedy this console database upgrade error:
+
+[java] Caused by:
+com.guidewire.pl.system.exception.UpgradeException:
+com.guidewire.pl.system.exception.TransactionException:
+Transaction aborted by exception:
+Can't add non-nullable column NumberOfDependents to existing table abx_User
+because the column does not have a default value and the table is not empty.
+
+A. Increment the version number and try again
+B. Ensure that all new User records have the NumberOfDependents value populated
+C. Set the User entity Exportable property to false and retry
+D. Set the NumberOfDependents nullok property to true and retry
+E. Set the NumberOfDependents default property to 0 and retry
+
+
+>> Correct answer is: D E 
+>> Student chose: B D 
+
+
+
+Question ID 137 : Fundamentals Data Model (wrong)
+
+A field defined in the base data model uses a typefilter on a non-internal typelist. If I wanted to change the list of permissible values for this field, which 2 of the following steps could I perform?
+
+A. add new typecodes to the typefilter
+B. remove existing typecodes from the typefilter
+C. change the field to not use a typefilter
+D. change the field to use a different typefilter
+E. change the field to use a different typelist
+
+
+>> Correct answer is: A B 
+>> Student chose: D E 
+
+
+
+Question ID 141 : Fundamentals GScript (wrong)
+
+If aPerson.PrimaryAddress is currently null, then aPerson.PrimaryAddress.SomeStringField
+
+A. Will cause an error at runtime. It should be rewritten to test for null first.
+B. Is illegal; Studio will color the code in red
+C. Is inefficient; it should be rewritten to test for null first
+D. Returns null
+E. Returns the empty string &quot;&quot;
+
+
+>> Correct answer is: D 
+>> Student chose: A
+
+
+
+Question ID 164 : Fundamentals UI (wrong)
+
+A ListView panel [2 answers]
+
+A. is used to define a dropdown selection list of records of the same type
+B. may display the results of a query of records of the same type
+C. may be navigated directly from a locationref to when defined as a separate PCF
+D. may be embedded in a DetailView
+E. may contain a Toolbar
+
+
+>> Correct answer is: B D 
+>> Student chose: B E 
+
+
+
+Question ID 163 : Fundamentals UI (wrong)
+
+The ListViewPanel's RowIterator element itself [3 answers]
+
+A. specifies the object that each row element will display
+B. limits the maximum number of rows to display
+C. limits the maximum number of columns to display
+D. can prevent the elements and their columns from being editable
+E. can prevent the display of elements of one or more types
+
+
+>> Correct answer is: A B D 
+>> Student chose: A C D 
+
+
+
+Question ID 161 : Fundamentals UI (wrong)
+
+Which display property would be valid for an Input widget with label displaykey.Web.ContactDetail.Messages(var1, var2)
+
+A. {1} / {0} messages have been sent
+B. {1} / {2} messages have been sent
+C. {0 / 1} messages have been sent
+D. {1 / 2} messages have been sent
+E. {var1} / {var2} messages have been sent
+
+
+>> Correct answer is: A 
+>> Student chose: C
+
+
+
+Question ID 170 : Fundamentals UI (wrong)
+
+A location has two Entry Points:
+
+(1) ContactInfoPopup(thisContact:ABContact)
+(2) ContactInfoPopup(thisContact:ABContact, editable:boolean)
+
+and defines the variable editable : Boolean with an initialValue of false. Which 2 of the following statements are true?
+
+A. The variable editable will always be false
+B. The variable editable will always be false when called with the 1st signature
+C. The variable editable will always be false when called with the 2nd signature
+D. The variable editable will always be required when called with the 2nd signature
+
+
+>> Correct answer is: B D 
+>> Student chose: C D 
+
+
+
+Question ID 158 : Fundamentals UI (wrong)
+
+An inputset whose editable property is set to "false"
+
+A. will not be visible to users
+B. will not be editable when the edit button is selected
+C. will only be editable if the edit button is selected
+D. may contain input fields that dynamically are made editable when in edit mode
+E. will be editable if the parent container (e.g. DetailView) is editable and in edit mode
+
+
+>> Correct answer is: B 
+>> Student chose: D
+
+
+
+Question ID 151 : Fundamentals UI (wrong)
+
+Which 2 of the following scenarios would require you to use an explicit typekeyinput widget instead of a plain input widget?
+
+A. The value is a typekey field that should be displayed as a dropdown list
+B. You want to filter the list using GScript
+C. You want to filter the list using a keyfilter
+D. You wish to show &quot;not entered&quot; instead of &quot;none selected&quot;
+E. You want to hide the field under certain conditions
+
+
+>> Correct answer is: B D 
+>> Student chose: A C 
+
+
+
+Question ID 162 : Fundamentals UI (wrong)
+
+The cell widget in a ListView controls [4 answers]
+
+A. The data value displayed
+B. Whether the values in the row are editable
+C. The column header
+D. The column footer (e.g. sum or label)
+E. Whether the values in the column are editable
+
+
+>> Correct answer is: A C D E 
+>> Student chose: A B C E 
+
+
+
+Question ID 160 : Fundamentals UI (wrong)
+
+For a PanelRef to call a modal DetailViewPanel
+
+A. the mode must be specified in the required variables of the DetailViewPanel
+B. there must be one DetailViewPanel for each possible value of the mode variable
+C. the mode variable must be a subtype of the object passed to the DetailViewPanel
+D. the mode expression must evaluate to the name of the required mode
+E. the mode must be passed in the argument list in the PanelRef
+
+
+>> Correct answer is: D 
+>> Student chose: E
+
+
+
+Question ID 152 : Fundamentals UI (wrong)
+
+Which 2 type(s) of widget could be used to display a date field in a List View as it is shown here?
+
+
+
+
+A. cell
+B. dateinput
+C. textcell
+D. datecell
+E. rangecell
+
+
+>> Correct answer is: A D 
+>> Student chose: A B 
+
+
+
+Question ID 167 : Fundamentals UI (wrong)
+
+For a ListViewPanel to support adding elements to an array, you must [3 answers]
+
+A. add a ToolbarButton widget
+B. add an IteratorButtons widget
+C. make the ListViewPanel editable
+D. provide the RowIterator&#39;s autoAdd property
+E. provide the RowIterator&#39;s toAdd property
+
+
+>> Correct answer is: B C E 
+>> Student chose: A C E 

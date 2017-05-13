@@ -1,0 +1,6 @@
+classname: com/example/rpndroid/RPNActivity$SectionsPagerAdapter
+visitAsClass_signature*
+visitAsClass_superName*android/support/v4/app/FragmentPagerAdapter
+visitFieldInsn_fieldtype*Lcom/example/rpndroid/RPNActivity;
+visitTypeInsn*187*android/os/Bundle
+visitTypeInsn*187*com/example/rpndroid/RPNActivity$DummySectionFragment

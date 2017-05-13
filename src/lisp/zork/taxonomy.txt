@@ -1,0 +1,123 @@
+chemical
+	acidity =
+	form in {solid, liquid, gas}
+	nutritionalValue = +10%
+
+physical
+	sensual
+		color in {transparent, translucent, red, green, blue, ....}
+		flavor in {}
+		odor in
+		noise = none
+	solubility
+	strength
+		compressiveStrength
+		shearStrength
+	subatomic
+		conductivity
+		magnetism
+		radioactivity
+	temperature
+		current = 75F
+		flashPoint = none
+		freezingPoint = 0F
+		meltingPoint = 275F
+	texture = {soft, rough, mottled, ...}
+	volume
+
+consumable
+	consumptionPerUse
+
+consumer
+	animal
+	plant
+	environment
+
+age
+	current
+	expectancy
+
+solid is physical
+	composition in {wood, metal, plastic, stone, textile, ...}
+	dimensions
+		l
+		w
+		h
+		volume = l * w * h
+		mass
+		density
+	strength
+		tensileStrength
+	durability
+		wear
+		peak
+
+nonsolid
+	dispersionRate =
+	volume
+
+gaseous is nonsolid
+liquid is nonsolid
+	consistency = {thick, lumpy, slushy, ...}
+
+ephemeral
+
+container is physical
+	upToWeight
+	upToSize
+	leakageRate = 10%
+
+composition is physical
+
+wood is composition
+	type in {balsa, oak, maple, ...}
+	flashpoint = 275F
+
+metal is composition
+	type in {gold, silver, aluminum, bronze, platinum, iron, steel, magnesium}
+	meltingPoint = 300F
+	flashpoint = 500F
+
+plastic is composition
+	type in {}
+	flashpoint = 200F
+
+stone is composition
+	type in {marble, granite, basalt, pumice, limestone, slate, shale, coal}
+	meltingPoint = 2500F
+
+textile is composition
+	type is {reed, grass, cotton, wool, cashmere, flax}
+	flashpoint = 200F
+
+cotton
+	burnsAt 100F
+	leaks liquid at 10% per turn
+	leaks gas at 90% per turn
+
+satchel
+	is brown, cotton, 1Kg
+	smells like garlic
+	holds 30Kg, 100cc
+	holds NastyKnife, CloveOfGarlic
+
+lamp
+	is yellow, plastic, 2Kg
+	holds battery
+	uses 1Kw/hr
+	shatters if thrown
+	shatters if droppped at 20%
+
+sword
+	is shiny, steel, sharp, 10Kg, 25cc
+	is held
+	glows within 100m
+
+object
+	is descriptor
+	attracts/seeks/wants <obj>
+	repels/avoids <obj>
+	has <obj>
+	consumes <obj> at rate
+	can <ability>
+	interacts with <obj>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="jiras2.xsl"?>
+
+<customers>
+  <customer name="Canal">  </customer>
+  <customer name="CIGA">  </customer>
+  <customer name="CNA">  </customer>
+  <customer name="EDIC">
+    <logo>images/template1AC.gif</logo>
+    <long-name>Employer's Direct Insurance Company</long-name>
+    <url>http://www.edicwc.com</url>
+  </customer>
+  <customer name="">
+    <logo>images/logo.gif</logo>
+    <long-name>Guidewire Software</long-name>
+    <url>http://www.guidewire.com</url>
+  </customer>
+  <customer name="Hastings">  </customer>
+  <customer name="ICAT">  </customer>
+  <!-- <customer name="Liberty Surety">  </customer>
+       <customer name="Liberty Mutual">  </customer>
+       <customer name="MSA">  </customer>
+       <customer name="Merastar">  </customer>
+       <customer name="Montana State">  </customer> -->
+  <customer name="NJM">  </customer>
+  <customer name="NMM">  </customer>
+</customers>

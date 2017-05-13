@@ -1,0 +1,116 @@
+
+
+function onAddressKey(event)
+{
+    var characterCode;
+    // First, check for the enter key
+    if(event && event.which)
+    {
+        //if which property of event object is supported (NN4)
+        characterCode = event.which; //character code is contained in NN4's which property
+    }
+    else
+    {
+        characterCode = event.keyCode; //character code is contained in IE's keyCode property
+    }
+
+    if(characterCode == 13)
+    {
+        onAddressEnter();
+        return false;
+    }
+}
+
+function sendParentMessage(msg)
+{
+    var data = JSON.stringify(msg);
+    window.parent.postMessage(data, "*");
+}
+
+function navigate(url, onComplete)
+{
+	sendParentMessage({ cmd: "NAVIGATECONTAINER", url: url });
+}
+
+function onAddressFocus()
+{
+    window.setTimeout(function() { document.getElementById("addressBox").select()}, 100);
+}
+
+function onAddressEnter()
+{
+    // Navigate the top frame so this navigation gets into the history and the
+    // back / forward queue
+    var url = document.getElementById("addressBox").value;
+    sendParentMessage({ cmd:"NAVIGATECONTAINER", url: url });
+}
+
+function onReturnToChrome()
+{
+    sendParentMessage({ cmd:"RETURNTOCHROME" });
+}
+
+function onOptions()
+{
+    sendParentMessage({ cmd:"SHOWIEOPTIONS" });
+}
+
+function onBookmark()
+{
+    sendParentMessage({ cmd:"BOOKMARK" });
+}
+
+function onHelp()
+{
+    navigate("http://www.blackfishsoftware.com/ietab/ietab.html");
+}
+
+function onFilters()
+{
+    window.open(g_urlOptions + "?initial=" + encodeURIComponent(g_currentUrl),
+                "ietaboptions", "location=no,width=425px,height=370px");
+}
+
+function onParentMessage()
+{
+    var msg = JSON.parse(unescape(event.data));
+
+    switch(msg.cmd)
+    {
+        case "ONTITLECHANGE":
+            onTitleChange(msg.newTitle);
+            break;
+        case "NAVIGATECOMPLETE2":
+            onNavigateComplete2(msg.url);
+            break;
+        case "ONPARENTINIT":
+            g_urlOptions = msg.optionsUrl;
+            g_currentUrl = msg.startUrl;
+            // And populate the address box with it.  Note that we communicate locally only,
+            // don't want to be sending visited URLs back!
+            document.getElementById("addressBox").value = g_currentUrl;
+            break;
+    }
+}
+
+function onTitleChange(newTitle)
+{
+    document.title = "IE: " + newTitle;
+}
+
+function onNavigateComplete2(url)
+{
+    g_currentUrl = url;
+    document.getElementById("addressBox").value = url;
+}
+
+// Add the message event listener to get commands from our UI.
+window.addEventListener("message", function(event) {
+    onParentMessage(event);
+}, false);
+
+// Parse the starting URL
+var g_currentUrl = "about:blank";
+var g_urlOptions = "";
+
+sendParentMessage({ cmd: "ONUIINIT" });

@@ -1,0 +1,7 @@
+classname: com/example/rpndroid/RPNActivity
+visitAsClass_signature*
+visitAsClass_superName*android/support/v4/app/FragmentActivity
+visitFieldInsn_fieldtype*Landroid/support/v4/view/ViewPager;
+visitFieldInsn_fieldtype*Lcom/example/rpndroid/RPNActivity$SectionsPagerAdapter;
+visitTypeInsn*187*com/example/rpndroid/RPNActivity$SectionsPagerAdapter
+visitTypeInsn*192*android/support/v4/view/ViewPager

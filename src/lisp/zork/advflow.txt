@@ -1,0 +1,32 @@
+Describe Location
+- List room features (describe)
+- List obvious escape routes [There are doors to the North and to the East.]
+- List observable objects [Sitting on the table is a candlestick.]
+- Notify of any change in status of Adventurer [You begin to feel hungry.]
+
+Prompt for Input
+- Accept statement
+- Break into manageable parts
+  - Break the sentence after commas and (sometimes) conjunctions and treat each as a separate
+    part.
+- Check part for unrecognized terms (incl. interjections and pronouns)
+  - Notify User [I don't know the word . . .]
+  - GOTO Section II.
+- Identify Action Verb, Direct Object, (usu. noun/adjective combo.), Preposition , and the
+  Indirect Object (usu. noun/adjective combo.). [Put the bloody knife on the brown table.]
+- Report any incomplete sentence
+  - GOTO Sect. II
+- Discard any unecessary parts of speech (adverbs {very}, participles {the})
+- Loop to Pgph. C for each part of input left
+
+Process each part of the sentence, and act upon it
+- Announce (and record) any change in status of an object [You throw the Lamp against the wall,
+  breaking it.]
+  - If any change in location of object, update record [You put the chicken in the barrel.]
+- Announce (and record) any change in status of the room [As you push the beam, the ceiling
+  begins to sag.]
+- Announce (and record) any change in status of the Adventurer [Drinking the liquid makes you
+  feel dizzy.]
+  - Record change in location of Adventurer. GOTO Sect. I.
+- Provide the information requested [You are in perfect health.]
+- Perform the operation requested [Insert Save disk in drive A.]
