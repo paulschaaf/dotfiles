@@ -17,7 +17,7 @@ sep_display=
 Name=Byobu
 
 #S+[Default] Image's name or path:
-Icon=/usr/share/applications/org.kde.konsole.desktop
+Icon=/usr/share/icons/gnome/48x48/apps/konsole.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}

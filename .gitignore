@@ -3,11 +3,11 @@
 !/bin/quick-ssh/ssh-to
 /bin/win/Emu48
 
-/etc/emacs.d/auto-save-list/*
-/etc/emacs.d/session*
-/etc/emacs.d/places
-/etc/emacs.d/recentf
-/etc/emacs.d/site-lisp
+/etc/home/emacs.d/auto-save-list/*
+/etc/home/emacs.d/session*
+/etc/home/emacs.d/places
+/etc/home/emacs.d/recentf
+/etc/home/emacs.d/site-lisp
 /etc/ssh/androidPrivateKey.ppk
 /etc/ssh/id_dsa
 /etc/ssh/id_rsa
