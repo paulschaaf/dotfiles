@@ -3,7 +3,12 @@
 # set up the environment given the current directory
 source ~/bin/gwSetEnv ${*}
 
-cd $IDEA_HOME/bin
+if [ -n "$IDEA_HOME" ]; then
+    echo
+    echo IDEA_HOME must be specified!
+else
+    cd $IDEA_HOME/bin
+    exec ./idea.sh
+fi
 
-exec ./idea.sh
 

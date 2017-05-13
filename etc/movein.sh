@@ -37,6 +37,7 @@ unordered_packages=(
     screen             # terminal multiplexer
     silversearcher-ag  # quicker grep
     slack              # IM client
+    sublime-text       # code editor
     sweethome3d        # architectural modelling
     virtualbox         # VM manager
     virtualbox-ext-pack
@@ -183,6 +184,15 @@ else
     echo Already done!
 fi
 
+@# Setup Symlinks to RC files
+for file in ~/etc/home/*[^~]; do  # ignore files ending in ~
+    ln -s $file .${file##*/}
+done
+
+@# Setup Symlinks to ssh files
+mkdir -m700 .ssh
+ln -s ~/etc/ssh/*[^~] ~/.ssh
+
 # Clean Up
 if rmdir $backup 2>/dev/null; then
     @# No backups were necessary
@@ -198,8 +208,7 @@ else
     echo Already mounted!
 fi
 
-
-3 Other Packages
+@# Manually install the following packages: \
 <<EOF
 Master PDF Editor
 Frostwire

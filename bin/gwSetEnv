@@ -53,10 +53,12 @@ case ${*:-$PWD} in
         ;;
 esac
 
-if [ -n "$GW_PL_NUM" ]; then
+if [ -z "$IDEA_HOME" ]; then
+    echo IDEA_HOME could not be determined!
+elif [ -n "$GW_PL_NUM" ]; then
     # Report on the new environment
     typeset IDEA_HOME JAVA_HOME ifCygwin
-    [ -n $IDEA_JDK ] && typeset IDEA_JDK
+    [ -n "$IDEA_JDK" ] && typeset IDEA_JDK
     echo; java -version; echo
 
     typeset GW_PL GW_PL_NUM GW_PLATFORM
@@ -111,7 +113,7 @@ if [ -n "$GW_PL_NUM" ]; then
     export GW_TITLE="$GW_PL:$GW_PRODUCT"
 
     typeset GW_PRODUCT GW_START_SCRIPT GW_TITLE
-    if [ -n $GW_COLOR ]; then
+    if [ -n "$GW_COLOR" ]; then
         typeset GW_COLOR | sed 's/^typeset \(-x \)*//g'
     fi
 
@@ -131,7 +133,7 @@ if [ -n "$GW_PL_NUM" ]; then
     echoList PATH CLASSPATH
 
     # this will only work if you 'source' this file
-    if [ -n $inScreen ]; then
+    if [ -n "$inScreen" ]; then
         echo -n "\ek$GW_TITLE\e\\"  # the screen title
     fi
 

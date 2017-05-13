@@ -1,86 +1,0 @@
-
-make_shells.rb,49
-$config_files 14,237
-$all_shell_rules 102,2938
-
-Makefile,960
-.SUFFIXES:.SUFFIXES37,676
-.PHONY:.PHONY44,893
-all:all54,1261
-removeBackups:removeBackups56,1322
-clean:clean60,1417
-rebuild:rebuild66,1597
-TAGS:TAGS68,1617
-localhost:localhost73,1746
-${ALL_HOSTS} every_host:${ALL_HOSTS} every_host75,1770
-${ALL_HOSTS} ${ALL_SHELLS} deploy:${ALL_HOSTS} ${ALL_SHELLS} deploy77,1815
-every_host:every_host80,1886
-${SHELLS_MAKEFILE}:${SHELLS_MAKEFILE}84,1987
-${SHELLS_MAKEFILE_MAKER}:${SHELLS_MAKEFILE_MAKER}87,2146
-chmod:chmod89,2173
-links:links93,2370
-${LINKS}:${LINKS}95,2387
-${HOME}/.bash_profile:${HOME}/.bash_profile98,2419
-${HOME}/.bashrc:${HOME}/.bashrc99,2453
-${HOME}/.tcshrc:${HOME}/.tcshrc100,2493
-${HOME}/.zprofile:${HOME}/.zprofile101,2533
-${HOME}/.zshrc:${HOME}/.zshrc102,2562
-resolve_local.bash resolve_local.zsh:resolve_local.bash resolve_local.zsh104,2601
-resolve_local.tcsh:resolve_local.tcsh105,2656
-CYGWIN:CYGWIN108,2711
-Linux:Linux112,2954
-debug:debug115,2983
-
-contacts.rb,369
-  attr_accessor :cell,4,30
-  attr_accessor :cell, :cell_provider,4,30
-  attr_accessor :cell, :cell_provider, :email,4,30
-  attr_accessor :cell, :cell_provider, :email, :home,4,30
-  attr_accessor :cell, :cell_provider, :email, :home, :login,4,30
-    :name,5,93
-    :name, :nickname,5,93
-    :name, :nickname, :work,5,93
-  def initialize(7,139
-$contacts 13,232
-
-host.rb,24
-  def initialize(11,99
-
-keyboard.rb,105
-xterm,4,78
-xterm, rxvt 4,78
-FunKeys 49,1021
-  %w(k1 k2 k3 k4 k5 k6 k7 k8 k9 k; F1 F2).inject(57,1144
-
-port.rb,242
-function printvar(printvar1291,30938
-function printvar(printvar1318,31464
-function print_params(print_params1323,31613
-function print_switches(print_switches1324,31677
-function swap(swap1336,31856
-function append(append1344,31985
-
-screenrc.rb,23
-$Max_Screen_Num 8,207
-
-servers.rb,62
-alias_host(19,352
-allowMethod(28,530
-$Owned_Servers 33,637
-
-shellrc.rb,402
-    function output(output769,19666
-def sms_to(12,280
-    ignore_globs=243,6121
-  any "set cmd=704,18071
-  any "set cmd=$1; shift;704,18071
-  sh  "local cmd x\ncmd=705,18129
-function(922,23565
-bindkey('kill-whole-line',     'F6 cut',        Keymap[1248,31647
-bindkey('copy-region-as-kill', 'F7 copy',       Keymap[1249,31708
-bindkey('yank',                'F8 paste',      Keymap[1250,31769
-
-test.rb,67
-    self[14,131
-def function(24,230
-test('hello', :alpha 46,569
