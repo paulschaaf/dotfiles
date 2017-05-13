@@ -23,6 +23,7 @@ unordered_packages=(
     cairo-dock         # Mac-like icon dock
     calibre            # e-book manager
     davfs2             # mount box.com into filesystem
+    dolphin-plugins    # git integration into KDE file manager
     emacs              # the king of editors
     frostwire          # bittorrent client
     gitk               # git tk browser

@@ -201,6 +201,7 @@ bindkey -e
 #    F12        exit
 
 # if [ -z "$ifZsh" ]; then
+    bindkey -s "[0d" "popd\n"
     bindkey "[17~" kill-whole-line
     bindkey "[18~" copy-region-as-kill
     bindkey "[19~" yank
@@ -422,7 +423,9 @@ $ifZsh compinit
 # Let  re-use ssh-agent and/or gpg-agent between logins
 # /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
 # source $HOME/.keychain/$HOSTNAME-sh
-eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
+if [ $UID -gt 0 ]; then  # if I'm not root
+    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
+fi
 ### End-Keychain ###
 
 # Move this heredoc around in the file to temporarily disable sections
