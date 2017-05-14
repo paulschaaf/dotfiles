@@ -25,6 +25,7 @@ unordered_packages=(
     davfs2             # mount box.com into filesystem
     dolphin-plugins    # git integration into KDE file manager
     emacs              # the king of editors
+    filezilla          # file transfers
     frostwire          # bittorrent client
     gitk               # git tk browser
     k4dirstat          # disk usage report

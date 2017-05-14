@@ -114,7 +114,7 @@ case $remote_host in
         # typeset -p cmd def_switch_p4user bash_args bash_cmd
         ;;
 
-    satori)
+    satori*)
         add_ssh_flag '-X'
         ;;
 
