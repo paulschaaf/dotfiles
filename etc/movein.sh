@@ -22,11 +22,13 @@ unordered_packages=(
     byobu              # tmux/screen enhancements
     cairo-dock         # Mac-like icon dock
     calibre            # e-book manager
+    cmake              # multi-platform install system
     davfs2             # mount box.com into filesystem
     dolphin-plugins    # git integration into KDE file manager
     emacs              # the king of editors
     filezilla          # file transfers
     frostwire          # bittorrent client
+    g++                # compiler
     gitk               # git tk browser
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
