@@ -21,7 +21,7 @@ Icon=/usr/share/icons/gnome/48x48/apps/konsole.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
-Exec=/usr/bin/konsole --profile Byobu --hide-menubar --hide-tabbar -e /usr/bin/byobu new-session -A -s defaultxscreen
+Exec=/usr/bin/konsole --profile Byobu --hide-menubar --hide-tabbar
 
 
 #X[Extra parameters]

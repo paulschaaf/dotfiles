@@ -202,6 +202,7 @@ bindkey -e
 
 # if [ -z "$ifZsh" ]; then
     bindkey -s "[0d" "popd\n"
+    bindkey -s "[Z" "popd\n"
     bindkey "[17~" kill-whole-line
     bindkey "[18~" copy-region-as-kill
     bindkey "[19~" yank

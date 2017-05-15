@@ -1,17 +1,26 @@
 [Appearance]
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Liberation Mono,7,-1,5,50,0,0,0,0,0
+Font=Liberation Mono,8,-1,5,50,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8
 
 [General]
+Command=/usr/bin/byobu new-session -A -s defaultxscreen
+Directory=/home/pschaaf
+Environment=TERM=xterm
 Name=Byobu
 Parent=FALLBACK/
+StartInCurrentSessionDir=false
+
+[Interaction Options]
+AutoCopySelectedText=true
+MiddleClickPasteMode=1
+TrimTrailingSpacesInSelectedText=true
 
 [Keyboard]
-KeyBindings=default
+KeyBindings=paul
 
 [Scrolling]
 HistoryMode=0
