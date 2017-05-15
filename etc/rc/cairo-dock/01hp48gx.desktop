@@ -17,7 +17,7 @@ sep_display=
 Name=HP 48GX
 
 #S+[Default] Image's name or path:
-Icon=/home/pschaaf/sync/HP48GX/HP 48GX.png
+Icon=/home/pschaaf/sync/HP48GX/HP_48GX_small.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}

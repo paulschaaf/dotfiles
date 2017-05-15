@@ -1,10 +1,6 @@
-;; $Source: e:/MyDocuments/cvsroot/etc/xemacs/custom.el,v $
-;; $Revision: 1.61 $
-;; $Date: 2004/03/10 21:04:44 $
-;; $Author: pschaaf $
-;; $State: Exp $
-;; $Name:  $
+;; -*- mode: Lisp; fill-column: 75; comment-column: 50; outline-minor-mode: t -*-
 
+;;(byte-recompile-file "~/.emacs" nil 0)
 
 ; ==================================================
 ; === Comments
@@ -157,6 +153,8 @@
 
 ; ================================================
 ; === Establish Major and Minor Modes
+
+(start-server)
 
 ;; (pending-delete-mode t)
 

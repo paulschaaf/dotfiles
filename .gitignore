@@ -1,13 +1,12 @@
 /bin/quick-ssh/*
 !/bin/quick-ssh/Makefile
 !/bin/quick-ssh/ssh-to
-/bin/win/Emu48
-
 /etc/home/emacs.d/auto-save-list/*
 /etc/home/emacs.d/session*
 /etc/home/emacs.d/places
 /etc/home/emacs.d/recentf
 /etc/home/emacs.d/site-lisp
+/etc/home/emacs.d/*.elc
 /etc/ssh/androidPrivateKey.ppk
 /etc/ssh/id_dsa
 /etc/ssh/id_rsa
