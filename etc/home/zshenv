@@ -245,7 +245,7 @@ export PAGER=less
 
 # ======== RUBYLIB
 export RUBYLIB
-appendRubyLib ${HOME}/lib/ruby $HOME/bin
+appendRubyLib ${HOME}/src/ruby $HOME/bin
 
 export MANPAGER=less
 
