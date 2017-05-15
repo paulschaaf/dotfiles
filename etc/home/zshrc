@@ -324,39 +324,40 @@ esac
 
 rootColorString='[37;1;41m'
 
-case $UNAME in
-    AIX*)
+case $HOSTNAME:$UNAME in
+    copernicus*)
+        # bold green with underline
+        hostColor='[4;92;40m'
+        ;;
+    *:AIX*)
         # blue
-        platformColor='[34;40m'
+        hostColor='[34;40m'
         ;;
-    CYGWIN*)
+    *:CYGWIN*)
         # white on green
-        platformColor='[37;42m'
+        hostColor='[37;42m'
         ;;
-    HPUX*)
+    *:HPUX*)
         # cyan
-        platformColor='[36;40m'
+        hostColor='[36;40m'
         ;;
-    Linux*)
+    *:Linux*)
         # green
-        platformColor='[32;40m'
+        hostColor='[32;40m'
         ;;
-    SunOS*)
+    *:SunOS*)
         # yellow
-        platformColor='[33;40m'
+        hostColor='[33;40m'
         ;;
-    Windows*)
+    *:Windows*)
         # white bold on blue
-        platformColor='[37;1;44m'
+        hostColor='[37;1;44m'
         ;;
-    UNKN*|*)
+    *:UNKN*|*)
         # magenta
-        platformColor='[35;40m'
+        hostColor='[35;40m'
         ;;
 esac
-
-updateGitVars () {
-}
 
 source /home/pschaaf/etc/rc/git_zshrc.sh
 
@@ -411,7 +412,7 @@ add-zsh-hook precmd updateGuidewireVars
 add-zsh-hook precmd updateGitVars
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
-%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$platformColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
+%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
 %{[0m%}\$GIT_STATUS%{[36m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
