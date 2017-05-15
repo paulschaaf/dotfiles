@@ -16,7 +16,7 @@ StartInCurrentSessionDir=false
 
 [Interaction Options]
 AutoCopySelectedText=true
-MiddleClickPasteMode=1
+MiddleClickPasteMode=0
 TrimTrailingSpacesInSelectedText=true
 
 [Keyboard]
