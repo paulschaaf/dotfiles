@@ -1,7 +1,7 @@
 [Appearance]
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Liberation Mono,8,-1,5,50,0,0,0,0,0
+Font=DejaVu Sans Mono,8,-1,5,50,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8
