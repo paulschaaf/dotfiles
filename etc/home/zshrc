@@ -304,32 +304,9 @@ updateManpath () {
 
 export OLD_PS1=${PS1/\\n$ */}
 
-CONNECTION_END=' '
-case $CONNECTION in
-    ssh)
-        export CONNECTION_COLOR='[33;1m'
-        ;;
-    tlnt)
-        export CONNECTION_COLOR='[31;1m'
-        ;;
-    sudo)
-        export CONNECTION_COLOR='[35;1;40m'
-        ;;
-    tlnt)
-        export CONNECTION_COLOR='[31;1m'
-        ;;
-    *)
-        unset CONNECTION_END
-        ;;
-esac
-
 rootColorString='[37;1;41m'
 
 case $HOSTNAME:$UNAME in
-    # copernicus*)
-    #     # bold green with underline
-    #     hostColor='[4;92;40m'
-    #     ;;
     *:AIX*)
         # blue
         hostColor='[34;40m'
@@ -359,6 +336,25 @@ case $HOSTNAME:$UNAME in
         hostColor='[35;40m'
         ;;
 esac
+
+CONNECTION_END=' '
+case $CONNECTION in
+    ssh)
+        export CONNECTION_COLOR='[0;30;48;5;226m'
+        ;;
+    tlnt)
+        export CONNECTION_COLOR='[31;1m'
+        ;;
+    sudo)
+        export CONNECTION_COLOR='[35;1;40m'
+        ;;
+    *)
+        unset CONNECTION_END
+        ;;
+esac
+if [ -n "$CONNECTION_COLOR" ]; then
+    hostColor=${hostColor/m/;4m}  # underline the host name
+fi
 
 source /home/pschaaf/etc/rc/git_zshrc.sh
 
@@ -406,6 +402,8 @@ function git () {
     command git $*
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
 }
+
+alias colors=colors.rb
 
 autoload -U add-zsh-hook
 add-zsh-hook chpwd  updateDirs
