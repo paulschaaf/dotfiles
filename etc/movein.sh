@@ -35,6 +35,7 @@ unordered_packages=(
     lynx               # command line browser
     meld               # merge tool
     mtpfs              # android file transfer
+    pzip               # file compression
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
     ruby               # programming language
@@ -123,6 +124,7 @@ function apt-get-all() {
 mkdir $backup
 
 @# PACKAGE INSTALLATION ================================
+apt autoremove
 apt-get-all ordered_packages
 apt-get-all unordered_packages
 
