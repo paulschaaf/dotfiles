@@ -1,0 +1,5 @@
+#!/bin/bash
+
+sudo vpnc-connect
+ssh satori -- 'echo ${SSH_CLIENT%% *} >| copernicus.ip'
+
