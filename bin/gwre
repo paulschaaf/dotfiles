@@ -1,9 +1,4 @@
 #!/bin/bash
 
 sudo vpnc-connect 2>/dev/null
-#ssh satori -- 'echo ${SSH_CLIENT%% *} >| copernicus.ip'
-
-#printf 'Host copernicus %s\n   ForwardAgent yes\n   ForwardX11 yes\n' 127.0.0.999 | tee foobar
-#ssh satori -- 'echo "Host copernicus  ${SSH_CLIENT%% *}\n   ForwardAgent yes\n   ForwardX11 yes\n" | tee ~/bin/quick-ssh/config.copernicus; cat ~/.ssh/config >>  ~/bin/quick-ssh/config.copernicus'
-
 ssh satori -- 'make-ssh-config-for copernicus ${SSH_CLIENT%% *}'

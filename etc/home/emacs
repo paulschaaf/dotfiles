@@ -86,13 +86,13 @@
       (paste     (if in-xemacs
                      'yank-clipboard-selection
                    'yank))
+      ;; (start-server (if in-xemacs
+      ;;                   'gnuserv-start
+      ;;                 'server-start))
       (show-menu (if in-x
                      (if in-xemacs
                          'accelerate-menu
-                       'tmm-menubar)))
-      (start-server (if in-xemacs
-                        'gnuserv-start
-                      'server-start)))
+                       'tmm-menubar))))
   ;; Function Keys
   ;; (global-set-key [f1]  (lambda ()
   ;;                         (interactive)
@@ -146,7 +146,7 @@
   (global-set-key [(control f)]           'isearch-forward-regexp)
   (global-set-key [(control s)]           'save-buffer)
   (global-set-key [(meta r)]              'revert-buffer)
-  (global-set-key [(meta s)]               start-server)
+  (global-set-key [(meta s)]              'server-start)
   (global-set-key [(meta \")]             'insert-quotes)
   (global-set-key [(control z)]           'undo))
 
@@ -154,7 +154,7 @@
 ; ================================================
 ; === Establish Major and Minor Modes
 
-(start-server)
+(server-start)
 
 ;; (pending-delete-mode t)
 
