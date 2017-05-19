@@ -1,0 +1,8 @@
+ # =========================================================================
+ # ======= Default - Used when value is unspecified
+
+ Host *
+    Compression yes
+    ForwardAgent no
+    ForwardX11 no
+    SendEnv CD_TO SHLVL ZDOTDIR

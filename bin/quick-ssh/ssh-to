@@ -6,7 +6,7 @@ fi
 # Decrement to not count this script as a level
 ((SHLVL--))
 
-env_vars_to_export='SHLVL ZDOTDIR'
+env_vars_to_export='SHLVL'
 env_vars_to_pass=''
 ssh_flags=''
 
@@ -138,13 +138,18 @@ case $remote_host in
 
     root)
         final='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
+        env_vars_to_export+=' ZDOTDIR'
         ;;
 
     *)
         ;;
 esac
 
-#set +x
+if [ -f config.$remote_host ]; then
+    add_ssh_flag "-F config.$remote_host"
+fi
+
+set +x
 #
 # We must manually cd before evaluating any remote commands
 # If no command specified, the remote shell is expected to handle the cd
