@@ -1,7 +1,5 @@
 #!/bin/bash
 
-target=~/bin/quick-ssh/config.${1%% *}
-
 echo "## Custom config
 Host $1
    HostKeyAlias $1
@@ -9,5 +7,5 @@ Host $1
    ForwardAgent yes
    ForwardX11 yes
 
-" >| $target
-cat ~/.ssh/config.default >> $target
+"
+cat ~/.ssh/config.default
