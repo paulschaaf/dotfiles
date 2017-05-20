@@ -145,8 +145,10 @@ case $remote_host in
         ;;
 esac
 
-if [ -f config.$remote_host ]; then
-    add_ssh_flag "-F config.$remote_host"
+configFile=~/bin/quick-ssh/config.$remote_host
+
+if [ -f $configFile ]; then
+    add_ssh_flag "-F $configFile"
 fi
 
 set +x
