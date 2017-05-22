@@ -14,14 +14,14 @@ Container=Favorites
 sep_display=
 
 #s[Default] Launcher's name:
-Name=
+Name=Perforce
 
 #S+[Default] Image's name or path:
-Icon=
+Icon=/opt/p4v/lib/p4v/P4VResources/icons/P4-V_96x96.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
-Exec=
+Exec=/opt/p4v/bin/p4v
 
 
 #X[Extra parameters]
@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=9.375
+Order=9.25
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/slack.desktop
+Origin=/usr/share/applications/vlc.desktop

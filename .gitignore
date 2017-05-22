@@ -19,6 +19,7 @@
 
 **/.metadata/*
 **/.DS_Store
+**/.directory
 **/$*
 **.class
 **.zip

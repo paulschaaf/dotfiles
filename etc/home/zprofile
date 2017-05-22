@@ -20,3 +20,4 @@ loginsh=1
 $ifZsh stty start ''   stop   ''
 
 # stty lnext '^V' eof '^D' quit '^\\' susp '^Z' start '^Q' eol '^-' flush '^O' werase '^H' eol2 '^-' erase '^?' stop '^S' min '1' time '0' intr '^C' rprnt '^R' kill '^U'
+_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
