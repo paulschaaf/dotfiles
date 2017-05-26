@@ -29,8 +29,12 @@ done
 
 _userCmd=$*
 
+unset GW_PL_NUM
 source ~/bin/gwSetEnv
-[ -z $GW_PLATFORM ] && exit 1
+if [ -z "$GW_PL_NUM" ]; then
+    echo Could not determine Guidewire platform version!
+    exit 1
+fi
 
 # Separate the directory name
 GW_START_DIR=${GW_START_SCRIPT%/*}
@@ -85,7 +89,7 @@ runTask() {
 
     [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
-    setGnuScreenTitle ${task}
+    #setGnuScreenTitle ${task}
 
     log_section 44 'START' $task
 

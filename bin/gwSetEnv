@@ -1,7 +1,14 @@
 #!/bin/bash
+
 #set -x
 
-case ${*:-$PWD} in
+export IDEA_HOME=$IDEA15_HOME
+export JAVA_HOME=$JAVA8_HOME
+export IDEA_JDK=${JAVA8_HOME}
+
+GW_old_pl_num=${GW_PL_NUM:=0}
+
+case ${PWD} in
     6|*/carbon/*)
         export GW_PL=C
         export GW_PL_NUM=6
@@ -10,7 +17,7 @@ case ${*:-$PWD} in
         export JAVA_HOME=$JAVA6_HOME_x86
         export IDEA_JDK=$JAVA6_HOME
         scriptExtension=.sh
-        typeset AARDVARK_HOME ANT_HOME M2_HOME
+        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     7|*/diamond/*)
         export GW_PL=D
@@ -20,7 +27,7 @@ case ${*:-$PWD} in
         export JAVA_HOME=$JAVA6_HOME_x86
         export IDEA_JDK=$JAVA6_HOME
         scriptExtension=.sh
-        typeset AARDVARK_HOME ANT_HOME M2_HOME
+        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     8|*/emerald/*)
         export GW_PL=E
@@ -30,7 +37,7 @@ case ${*:-$PWD} in
         export JAVA_HOME=$JAVA7_HOME
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
-        typeset AARDVARK_HOME ANT_HOME M2_HOME
+        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     9|*/ferrite/*)
         export GW_PL=F
@@ -49,73 +56,81 @@ case ${*:-$PWD} in
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
     *)
-        echo "~${0##$HOME}: Could not determine platform version!" >&2
+        unset GW_PL_NUM
         ;;
 esac
 
-if [ -z "$IDEA_HOME" ]; then
-    echo IDEA_HOME could not be determined!
-elif [ -n "$GW_PL_NUM" ]; then
+GW_old_product=$GW_PRODUCT
+export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\U\1_"`
+
+if [ -z "$GW_PL_NUM" ]; then
+    # We're outside of a GW build, so unset every var named GW_*
+    for var in `env | grep ^GW | cut -d '=' -f 1`; do
+        unset -v $var
+    done
+
+# elif [     "$GW_PL_NUM" = "$GW_old_pl_num" \
+#        -a "$GW_PRODUCT" = "$GW_old_product" ]; then
+#     # This is the same platform and product we were already in.
+#     # The environment is already set up.
+#     : an elif requires at least one non-comment line
+
+else
     # Report on the new environment
-    typeset IDEA_HOME JAVA_HOME ifCygwin
-    [ -n "$IDEA_JDK" ] && typeset IDEA_JDK
-    echo; java -version; echo
+    typeset -p IDEA_HOME JAVA_HOME
+    [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
+    echo; java -version 2>&1; echo
 
-    typeset GW_PL GW_PL_NUM GW_PLATFORM
+    typeset -p GW_PL GW_PL_NUM GW_PLATFORM
 
-    # assume we're not in Cygwin, then fix it if we're wrong
+    # assume we're NOT in Cygwin, then fix it if we're wrong
     ifCygwin=:
     if [ -n "$CYGPATH" ]; then
         ifCygwin=
     fi
 
-    export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\1_"`
     case $GW_PRODUCT in
-        ab|ContactManager)
-            $ifCygwin export GW_COLOR=3F # bright white text on aqua
-            export GW_PRODUCT=ab
+        AB)
             export GW_PORT=8280
-            export GW_PORT_DEBUG=8290
+            export GW_COLOR='[106m' # bright white text on aqua
+            $ifCygwin GW_COLOR=3F
             ;;
-        bc|BillingCenter)
-            $ifCygwin export GW_COLOR=2F # bright white text on red
-            export GW_PRODUCT=bc
+        BC)
+            export GW_PORT=8380
+            export GW_COLOR='[105m' # bright white text on magenta
+            $ifCygwin GW_COLOR=2F
+            ;;
+        CC)
             export GW_PORT=8080
-            export GW_PORT_DEBUG=8090
+            export GW_COLOR='[104m' # bright white text on blue
+            $ifCygwin GW_COLOR=1F
             ;;
-        cc|ClaimCenter)
-            $ifCygwin export GW_COLOR=1F # bright white text on blue
-            export GW_PRODUCT=cc
-            export GW_PORT=8080
-            export GW_PORT_DEBUG=8090
+        PC)
+            export GW_PORT=8480
+            export GW_COLOR='[103' # bright white text on tan/yellow
+            $ifCygwin GW_COLOR=4F
             ;;
-        pc|PolicyCenter)
-            $ifCygwin export GW_COLOR=4F # bright white text on red
-            export GW_PRODUCT=pc
-            export GW_PORT=8080
-            export GW_PORT_DEBUG=8090
-            ;;
-        *)
-            $ifCygwin export GW_COLOR=0F
+        WTF|*)
+            export GW_COLOR='[5;101m' # blinking bright white on red
+            $ifCygwin GW_COLOR=0F
             ;;
     esac
+    export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
     # Determine the startup script
     export GW_START_SCRIPT=./gwb
 
-    if [ $GW_PL_NUM -lt 9 ]; then
+    if [ ${GW_PL_NUM} -lt 9 ]; then
         GW_START_SCRIPT=bin/$GW_PRODUCT
     fi
 
     $ifCygwin set scriptExtension=.bat
     GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
 
-    export GW_TITLE="$GW_PL:$GW_PRODUCT"
+    export GW_TITLE=$GW_PRODUCT$GW_PL_NUM
+    export GW_TITLE_END=${GW_TITLE:+ }
 
-    typeset GW_PRODUCT GW_START_SCRIPT GW_TITLE
-    if [ -n "$GW_COLOR" ]; then
-        typeset GW_COLOR | sed 's/^typeset \(-x \)*//g'
-    fi
+    typeset -p GW_PRODUCT GW_START_SCRIPT GW_TITLE
 
     function echoList() {
         for arg in $*; do
@@ -138,3 +153,5 @@ elif [ -n "$GW_PL_NUM" ]; then
     fi
 
 fi
+
+unset GW_old_pl_num GW_old_product

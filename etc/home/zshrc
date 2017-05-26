@@ -32,10 +32,11 @@ if [ -z "$ifZsh" ]; then
 
     fpath=(~/etc/zshcompletion $fpath)
 
-    autoload -U compinit
+    autoload -U compinit && compinit
     autoload zed                  && alias fned='zed -f'
     unalias  run-help 2>/dev/null && autoload run-help
-    autoload -U compinit
+    zmodload -i zsh/complist
+#    autoload -U compinit
 fi
 
 
@@ -380,8 +381,8 @@ updateDirs () {
 }
 
 updateGuidewireVars () {
-    source gwSetEnv &>> /dev/null
- }
+    source gwSetEnv > /dev/null
+}
 
 updateGitVars () {
     # local oldStatus=$GIT_SUPER_STATUS
@@ -403,16 +404,14 @@ function git () {
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
 }
 
-alias colors=colors.rb
-
 autoload -U add-zsh-hook
 add-zsh-hook chpwd  updateDirs
-add-zsh-hook precmd updateGuidewireVars
+add-zsh-hook chpwd  updateGuidewireVars
 add-zsh-hook precmd updateGitVars
 
 PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
 %2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
-%{[0m%}\$GIT_STATUS%{[36m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
+%{[0m%}\$GIT_STATUS%{\$GW_COLOR%}\$GW_TITLE%{[0m%}\$GW_TITLE_END%{[36m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 
