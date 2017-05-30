@@ -100,6 +100,7 @@ class Array
     self[0]*12 + (self[1] || 0) + (self[2] || 0)
   end
 
+  puts '# convert number as inches using to_feet or to_mm'
   def to_feet
     self.to_inches / 12.0
   end
@@ -108,15 +109,6 @@ class Array
     self.to_inches.to_mm
   end
 end
-
-# class Fixnum
-#   def inches
-#     [self / 12, self % 12]
-#   end
-#   def r(num)
-#     Rational self, num
-#   end
-# end
 
 class Numeric
   def to_feet
@@ -140,7 +132,7 @@ end
 # ================================================
 # ======= Sample Objects
 
-puts '## Sample objects:'
+puts '', '## Sample objects:'
 sample_objects = <<EOF
   $a = [:one, :two, :three, :four]
   $f = 1.r 3
