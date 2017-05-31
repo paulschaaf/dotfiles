@@ -29,20 +29,18 @@ done
 
 _userCmd=$*
 
-unset GW_PL_NUM
 source ~/bin/gwSetEnv
 if [ -z "$GW_PL_NUM" ]; then
-    echo Could not determine Guidewire platform version!
+    echo Could not determine Guidewire platform version! >&2
     exit 1
 fi
 
-# Separate the directory name
-GW_START_DIR=${GW_START_SCRIPT%/*}
-[ -d ${GW_START_DIR} ] && cd $GW_START_DIR
-echo In `pwd`
+if [ "$GW_ROOT" != "$PWD" ]; then
+    cd $GW_ROOT
+    echo
+    echo Running in $PWD
+fi
 
-GW_START_SCRIPT=./${GW_START_SCRIPT##*/}
-#echo GW_START_SCRIPT=$GW_START_SCRIPT
 _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
 
 _icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico

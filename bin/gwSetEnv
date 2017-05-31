@@ -6,8 +6,6 @@ export IDEA_HOME=$IDEA15_HOME
 export JAVA_HOME=$JAVA8_HOME
 export IDEA_JDK=${JAVA8_HOME}
 
-GW_old_pl_num=${GW_PL_NUM:=0}
-
 case ${PWD} in
     6|*/carbon/*)
         export GW_PL=C
@@ -60,28 +58,29 @@ case ${PWD} in
         ;;
 esac
 
-GW_old_product=$GW_PRODUCT
-export GW_PRODUCT=`echo $PWD | sed "s_^.*/${GW_PLATFORM}/\([^/]*\).*_\U\1_"`
+local GW_ROOT_old=$GW_ROOT
+export GW_ROOT=`echo $PWD | sed "s_^\(.*/${GW_PLATFORM}/[^/]*\).*_\1_"`
 
-if [ -z "$GW_PL_NUM" ]; then
-    # We're outside of a GW build, so unset every var named GW_*
+if [ "$GW_ROOT" = "$GW_ROOT_old" ]; then
+    # This is the same installation we were already in.
+    # The environment is already set up.
+    : a bash elif requires at least one non-comment line
+
+elif [ -z "$GW_PL_NUM" ]; then
+    # We've just moved outside of a GW build, so unset every var named GW_*
     for var in `env | grep ^GW | cut -d '=' -f 1`; do
         unset -v $var
     done
 
-# elif [     "$GW_PL_NUM" = "$GW_old_pl_num" \
-#        -a "$GW_PRODUCT" = "$GW_old_product" ]; then
-#     # This is the same platform and product we were already in.
-#     # The environment is already set up.
-#     : an elif requires at least one non-comment line
-
 else
+    export GW_PRODUCT=`echo $GW_ROOT | sed 's_.*/\(.*\)_\U\1_g'`
+
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
     [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
     echo; java -version 2>&1; echo
 
-    typeset -p GW_PL GW_PL_NUM GW_PLATFORM
+    typeset -p GW_PL GW_PL_NUM GW_PLATFORM GW_ROOT
 
     # assume we're NOT in Cygwin, then fix it if we're wrong
     ifCygwin=:
@@ -127,8 +126,8 @@ else
     $ifCygwin set scriptExtension=.bat
     GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
 
-    export GW_TITLE=$GW_PRODUCT$GW_PL_NUM
-    export GW_TITLE_END=${GW_TITLE:+ }
+    export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
+    export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
     typeset -p GW_PRODUCT GW_START_SCRIPT GW_TITLE
 

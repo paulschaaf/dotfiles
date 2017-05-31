@@ -338,40 +338,28 @@ case $HOSTNAME:$UNAME in
         ;;
 esac
 
-CONNECTION_END=' '
 case $CONNECTION in
     ssh)
-        export CONNECTION_COLOR='[0;30;48;5;226m'
+        local connection_color='[0;30;48;5;226m'
         ;;
     tlnt)
-        export CONNECTION_COLOR='[31;1m'
+        local connection_color='[31;1m'
         ;;
     sudo)
-        export CONNECTION_COLOR='[35;1;40m'
+        local connection_color='[35;1;40m'
         ;;
     *)
-        unset CONNECTION_END
         ;;
 esac
-if [ -n "$CONNECTION_COLOR" ]; then
+if [ -n "$CONNECTION" ]; then
     hostColor=${hostColor/m/;4m}  # underline the host name
 fi
 
+if [ -n "$connection_color" ]; then
+    CONNECTION="%{$connection_color%}$CONNECTION%{[0m%} "
+fi
+
 source /home/pschaaf/etc/rc/git_zshrc.sh
-
-#ZSH_THEME_GIT_PROMPT_PREFIX="%{\e[38;5;245m%}᚛➝ " # feather mark plus arrow
-#ZSH_THEME_GIT_PROMPT_PREFIX="%{\e[38;5;245m%}[7m▶" # pennant style
-ZSH_THEME_GIT_PROMPT_BRANCH="%{\e[38;5;99m%}"
-ZSH_THEME_GIT_PROMPT_SEPARATOR="%{\e[38;5;245m%}|"
-
-ZSH_THEME_GIT_PROMPT_STAGED="%{\e[38;5;215m%}%{∘%G%}"
-#ZSH_THEME_GIT_PROMPT_CONFLICTS="%{$bg[red]%}%{✖%G%}"
-ZSH_THEME_GIT_PROMPT_CHANGED="%{\e[38;5;45m%}%{+%G%}"
-ZSH_THEME_GIT_PROMPT_BEHIND="%{\e[96m↓\e[0m%G%}"
-ZSH_THEME_GIT_PROMPT_AHEAD="%{\e[96m↑\e[0m%G%}"
-# ZSH_THEME_GIT_PROMPT_UNTRACKED="%{…%G%}"
-#ZSH_THEME_GIT_PROMPT_SUFFIX="%{\e[38;5;245m%})"
-# ZSH_THEME_GIT_PROMPT_CLEAN="%{$bg_bold[green]%}%{✔%G%}"
 
 export dirs
 
@@ -380,22 +368,13 @@ updateDirs () {
        awk 'NR == 2 {printf(\"%s\", \"[0;38;5;243m\")}; {print}' ORS=' '`"
 }
 
-updateGuidewireVars () {
-    source gwSetEnv > /dev/null
-}
-
-updateGitVars () {
-    # local oldStatus=$GIT_SUPER_STATUS
-    GIT_SUPER_STATUS=`git_super_status`
-    if [ -z "$GIT_SUPER_STATUS" ]; then
-        unset GIT_STATUS
-    # elif [ "$GIT_SUPER_STATUS" = "$oldStatus" ]; then
-    #     # nothing has changed
-    else
-        GIT_STATUS="$GIT_SUPER_STATUS  `git config branch.$GIT_BRANCH.description`
-"
-    fi
-}
+if [ $UID -eq 0 ]; then
+    updateGuidewireVars () { }
+else
+    updateGuidewireVars () {
+        source gwSetEnv > /dev/null
+    }
+fi
 
 alias fixprompt='updateGuidewireVars; updateGitVars'
 
@@ -409,9 +388,14 @@ add-zsh-hook chpwd  updateDirs
 add-zsh-hook chpwd  updateGuidewireVars
 add-zsh-hook precmd updateGitVars
 
-PS1="%{[4;38;5;235m%}                                                                 %{[0m%}
-%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}%n@%m%{[0m%}$HOSTMESSAGE %{[93m%}%62>\>>\$dirs%<<
-%{[0m%}\$GIT_STATUS%{\$GW_COLOR%}\$GW_TITLE%{[0m%}\$GW_TITLE_END%{[36m%}%!%{[0m%} %{$CONNECTION_COLOR%}$CONNECTION%{[0m%}$CONNECTION_END$SCRIPTING_MSG%(!.#.$) "
+if [ -n "$HOSTMESSAGE" ]; then
+    HOSTMESSAGE+=' '
+fi
+
+local faintGreyUnderline="%{[4;38;5;235m%}                                                                 "
+PS1="${faintGreyUnderline}%{[0m%}
+%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}%n@%m%{[0m%} $HOSTMESSAGE%{[93m%}%62>\>>\$dirs%<<
+%{[0m%}\$GIT_STATUS\$GW_PROMPT%{[36m%}%!%{[0m%} $CONNECTION$SCRIPTING_MSG%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 
