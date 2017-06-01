@@ -1,14 +1,10 @@
 #!/bin/bash
 
-#set -x
+local GW_PLATFORM_old=$GW_PLATFORM
+local GW_ROOT_old=$GW_ROOT
 
-export IDEA_HOME=$IDEA15_HOME
-export JAVA_HOME=$JAVA8_HOME
-export IDEA_JDK=${JAVA8_HOME}
-
-case ${PWD} in
-    6|*/carbon/*)
-        export GW_PL=C
+case ${PWD}/ in
+    6|*/carbon/*|*/idea11/*)
         export GW_PL_NUM=6
         export GW_PLATFORM=carbon
         export IDEA_HOME=$IDEA11_HOME
@@ -17,8 +13,7 @@ case ${PWD} in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    7|*/diamond/*)
-        export GW_PL=D
+    7|*/diamond/*|*/idea12/*)
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
         export IDEA_HOME=$IDEA12_HOME
@@ -27,8 +22,7 @@ case ${PWD} in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    8|*/emerald/*)
-        export GW_PL=E
+    8|*/emerald/*|*/idea12/*)
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
         export IDEA_HOME=$IDEA12_HOME
@@ -37,16 +31,14 @@ case ${PWD} in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    9|*/ferrite/*)
-        export GW_PL=F
+    9|*/ferrite/*|*/idea15/*)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
         export IDEA_HOME=$IDEA15_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=$JAVA_HOME
         ;;
-    10|*/granite/*)
-        export GW_PL=G
+    10|*/granite/*|*/idea15/*)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
         export IDEA_HOME=$IDEA15_HOME
@@ -54,33 +46,35 @@ case ${PWD} in
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
     *)
-        unset GW_PL_NUM
+        unset GW_PLATFORM
+        export IDEA_HOME=$IDEA15_HOME
+        export JAVA_HOME=$JAVA8_HOME
+        export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
 esac
 
-local GW_ROOT_old=$GW_ROOT
-export GW_ROOT=`echo $PWD | sed "s_^\(.*/${GW_PLATFORM}/[^/]*\).*_\1_"`
+if [ -z "$GW_PLATFORM" ]; then  # we're not in a gw install
+    if [ -z "$GW_PLATFORM_old" ]; then  # and we weren't in one before
+        echo "Still outside any GW build."
 
-if [ "$GW_ROOT" = "$GW_ROOT_old" ]; then
-    # This is the same installation we were already in.
-    # The environment is already set up.
-    : a bash elif requires at least one non-comment line
-
-elif [ -z "$GW_PL_NUM" ]; then
-    # We've just moved outside of a GW build, so unset every var named GW_*
-    for var in `env | grep ^GW | cut -d '=' -f 1`; do
-        unset -v $var
-    done
+    else                        # we just exited an install
+        echo "We've just moved outside of any GW install, so unset every var named GW_*"
+        for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
+            unset -v $var
+        done
+    fi
 
 else
+    export GW_ROOT=`echo $PWD/ | sed -n "s_^\(.*/${GW_PLATFORM}/[^/]*\).*/_\1_p"`
     export GW_PRODUCT=`echo $GW_ROOT | sed 's_.*/\(.*\)_\U\1_g'`
+    GW_PRODUCT=${GW_PRODUCT:-gw}
 
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
     [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
     echo; java -version 2>&1; echo
 
-    typeset -p GW_PL GW_PL_NUM GW_PLATFORM GW_ROOT
+    typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
     # assume we're NOT in Cygwin, then fix it if we're wrong
     ifCygwin=:
@@ -88,7 +82,7 @@ else
         ifCygwin=
     fi
 
-    case $GW_PRODUCT in
+    case ${GW_PRODUCT} in
         AB)
             export GW_PORT=8280
             export GW_COLOR='[106m' # bright white text on aqua
@@ -106,10 +100,14 @@ else
             ;;
         PC)
             export GW_PORT=8480
-            export GW_COLOR='[103' # bright white text on tan/yellow
+            export GW_COLOR='[103m' # bright white text on tan/yellow
             $ifCygwin GW_COLOR=4F
             ;;
-        WTF|*)
+        gw)
+            export GW_COLOR='[30;107m' # bright black text on gray
+            $ifCygwin GW_COLOR=4F
+            ;;
+        *)
             export GW_COLOR='[5;101m' # blinking bright white on red
             $ifCygwin GW_COLOR=0F
             ;;
@@ -153,4 +151,5 @@ else
 
 fi
 
-unset GW_old_pl_num GW_old_product
+set +x
+unset GW_ROOT_old GW_PLATFORM_old
