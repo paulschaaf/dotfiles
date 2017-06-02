@@ -284,7 +284,7 @@ alert() {
 }
 # # cd to the specified directory, or if it's a file, to the containing directory
 cd () {
-    builtin cd ${1} || [ ! -e ${1} ] || builtin cd ${1:h}
+    [ -f ${1} ] && builtin cd ${1:h} || builtin cd ${1}
 }
 
 echoList () {
