@@ -254,15 +254,9 @@ exportDefault SCREENDIR ${HOME}/tmp
 export SHELL=/usr/bin/zsh
 
 export STUDIO_JDK=$JAVA8_HOME
+export STUDIO_VM_OPTIONS=~/etc/rc/studio64.vmoptions
 
-$ifZsh export VIMRUNTIME=/usr/share/vim/vim74
-
-export VISUAL=$EDITOR
-if [ -f ${VIMRUNTIME}/macros/less.sh ]; then
-    export VLESS='$VIMRUNTIME/macros/less.sh'
-else
-    export VLESS='vim -u ~pschaaf/.vimrc.less'
-fi
+#export VISUAL=$EDITOR   # 6/17 what's this for?
 
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word.
 # The remaining punctuation chars are considered separate words, regardless of
@@ -282,9 +276,12 @@ alert() {
     return 1
   fi
 }
-# # cd to the specified directory, or if it's a file, to the containing directory
-cd () {
-    [ -f ${1} ] && builtin cd ${1:h} || builtin cd ${1}
+
+alias cd=pushd
+
+# cd to the specified directory, or if it's a file, to the containing directory
+pushd () {
+    [ -f ${1} ] && builtin pushd ${1:h} || builtin pushd ${1}
 }
 
 echoList () {
@@ -373,10 +370,6 @@ rubylib () {
     echo
     local RUBYLIB=`ruby -e 'print $:.join(":")'`
     echoList RUBYLIB | sed 's/^.*has type.*/ Including implied dirs:/'
-}
-
-cdl () {
-	cd $*; ls
 }
 
 ddu () {
