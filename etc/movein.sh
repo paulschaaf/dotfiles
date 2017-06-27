@@ -7,10 +7,11 @@ shell=/usr/bin/zsh
 ordered_packages=(
     git                  # version control
     zsh                  # the best shell
+    tmux                 # terminal multiplexor
+    byobu                # tmux/screen enhancements
     google-chrome-stable # the best browser
     openssh-client       # make secure remote connections
     openssh-server       # host secure remote connections
-    tmux                 # terminal multiplexor
     wine                 # run windows programs
 )
 
@@ -39,11 +40,12 @@ unordered_packages=(
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
     ruby               # programming language
-    screen             # terminal multiplexer
+#    screen             # terminal multiplexer
     silversearcher-ag  # quicker grep
     slack              # IM client
     sublime-text       # code editor
     sweethome3d        # architectural modelling
+    units              # unit conversions
     virtualbox         # VM manager
     virtualbox-ext-pack
     virtualbox-guest-additions-iso
