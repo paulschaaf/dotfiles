@@ -261,7 +261,7 @@ export STUDIO_VM_OPTIONS=~/etc/rc/studio64.vmoptions
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word.
 # The remaining punctuation chars are considered separate words, regardless of
 # what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
-#export WORDCHARS='|*?.-~\\$%^'
+export WORDCHARS='|*?-~\\$%^'
 
 
 # # ======== Functions
