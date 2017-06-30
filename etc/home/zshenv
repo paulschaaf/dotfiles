@@ -281,7 +281,13 @@ alias cd=pushd
 
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd () {
-    [ -f ${1} ] && builtin pushd ${1:h} || builtin pushd ${1:-~}
+    if [ -z "$1" ]; then
+        builtin pushd
+    elif [ -f "$1" ]; then
+        builtin pushd ${1:h}
+    else
+        builtin pushd ${1}
+    fi
 }
 
 echoList () {
