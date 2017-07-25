@@ -1,0 +1,5 @@
+#
+# User-specific overrides
+# See http://tools.android.com/tech-docs/configuration
+#
+-XX:+UseSerialGC
