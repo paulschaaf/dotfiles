@@ -113,12 +113,13 @@ prependRubyLib   () {
 # echo a path without double slashes, or empty or relative paths
 cleanpath () {
 	echo :$PATH: | sed '
-     s/:::*/:/g;
-     s,///*,/,g;
-     s,:c:/,:/c/,g;
-     s/:[^/][^:]*//g;
+     s_:::*_:_g;
+     s_///*_/_g;
+     s_:c:/_:/c/_g;
+     s_:[^/][^:]*__g;
      s_:[^:]*/pschaaf/bin/win__g;
-     s/^://; s/:$//
+     s_^:__;
+     s_:$__
    '
 }
 PATH=`cleanpath`
@@ -205,15 +206,12 @@ if [ -d /usr/lib/jvm/java-8-oracle ]; then
         # which java${digit}${suffix}
     done
 fi
-export JAVA_HOME=$JAVA8_HOME
+export JAVA_HOME=$JAVA9_HOME
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
 
-# export P4CONFIG=<clientSpec>
 export P4CLIENT=pschaaf_satori_1124
-# export P4PORT=perforce:1666
-# export CATALINA_HOME=<tomcat-root-directory>
 
 prependPath \
     ${AARDVARK_HOME:+$AARDVARK_HOME/bin} \
@@ -256,12 +254,10 @@ export SHELL=/usr/bin/zsh
 export STUDIO_JDK=$JAVA8_HOME
 export STUDIO_VM_OPTIONS=~/etc/rc/studio64.vmoptions
 
-#export VISUAL=$EDITOR   # 6/17 what's this for?
-
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word.
 # The remaining punctuation chars are considered separate words, regardless of
 # what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
-#export WORDCHARS='|*?.-~\\$%^'
+export WORDCHARS='|*?-~\\$%^'
 
 
 # # ======== Functions
@@ -291,10 +287,9 @@ pushd () {
 }
 
 echoList () {
-    local show_type
-    if [ "$1" = "--show_type" ]; then
-        echo it does
-        show_type=file
+    local show-type
+    if [ "$1" = "--show-type" ]; then
+        show-type=file
         shift
     fi
     if [ -z "$ifZsh" ]; then
@@ -324,12 +319,12 @@ echoList () {
         if (matches) {
             print ls matches "\n"
             system(ls matches)
-            if (show_type) {
-                print "\n" show_type matches "\n"
-                system(show_type matches)
+            if (show-type) {
+                print "\n" show-type matches "\n"
+                system(show-type matches)
             }
         }
-    }' RS=${RS:-:} file=${@} ls="ls ${LS_FLAGS}Ul" show_type=${show_type}
+    }' RS=${RS:-:} file=${@} ls="ls ${LS_FLAGS}Ul" show-type=${show-type}
 }
 
 if [ -z "$ifZsh" ]; then
@@ -357,9 +352,9 @@ alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 
 path () {
-    local show_type
-    if [ "$1" = "--show_type" -o "$1" = "-t" ]; then
-        show_type=yes
+    local show-type
+    if [ "$1" = "--show-type" -o "$1" = "-t" ]; then
+        show-type=yes
         shift
     fi
     if [ -z "$ifZsh" ]; then
@@ -368,7 +363,7 @@ path () {
         whence $* | sed '/^$\|^\/\|not found$/d; s:^\('$regex'\):[1;40;33m\1[0;0m:g'
         echo
     fi
-    echoList ${show_type:+--show_type} PATH $*
+    echoList ${show-type:+--show-type} PATH $*
 }
 
 rubylib () {
@@ -463,7 +458,6 @@ esac
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
-# against the left margin on a line by itself. Don't forget that any
-# edits are lost if this file is re-generated.
+# against the left margin on a line by itself.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
