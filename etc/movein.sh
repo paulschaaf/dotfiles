@@ -76,6 +76,7 @@ dash='----------------------------------------'
 
 function @#() {
     bg=21  # no color
+    fg=248  # dim white
     leadingDashes=1
     trailingDashes=10
 
@@ -99,13 +100,15 @@ function @#() {
             shift
             ;;
         0) # 0 is the same as passing no number at all
+            fg=255
             shift
             ;;
         *)
+            fg=255
             ;;
     esac
 
-    printf "\e[48;5;${bg}m\n%.${leadingDashes}s ${*}%.${trailingDashes}s\e[0m\n" $dash $dash
+    printf "\e[38;5;${fg};48;5;${bg}m\n%.${leadingDashes}s ${*}%.${trailingDashes}s\e[0m\n" $dash $dash
     set +x
 }
 
@@ -115,10 +118,30 @@ function backup() {
 
 function apt-get-all() {
     eval local packages=\${${*}[@]}
-    @# Install $*: $packages
+    @# Install $* #: $packages
+    skipped=''
     for package in ${packages[@]}; do
-        @# Install $package
-        sudo apt-get -y install $package
+        # if it's not already installed
+        if apt-cache policy $package | grep -q 'Installed'; then
+            skipped=${skipped}${package}' '
+        else
+            @# 2 Install $package
+            sudo apt-get -y install $package
+        fi
+    done
+    @# 2 Skipped already installed $*: $skipped
+}
+
+function ln-all() {
+    for src in $*; do
+        target=.${src##*/}
+        # echo src=$src
+        # readlink $target
+        if [ "$(readlink $target)" == "$src" ]; then
+            echo The link $target is already correct
+        else
+            ln -s $src ${target}
+        fi
     done
 }
 
@@ -132,35 +155,40 @@ apt-get-all unordered_packages
 
 added=no
 for ppa in ${unofficial_ppas[@]}; do
-    @# Add PPA $ppa
     if apt-cache policy | grep $ppa ``; then
-        echo Already present!
+        @# 2 PPA $ppa already present!
     else
+        @# Add PPA $ppa
         sudo apt-add-repository ppa:${ppa}
         added=yes
     fi
 done
 
+if [ "$added" == "yes" ]; then
     @# Update Package Cache
     sudo apt-get update
-    apt-get-all unofficial_packages
+else
+    @# 2 No PPAs were added--no need to update the package cache
+fi
+
+apt-get-all unofficial_packages
 
 
 @# SYSTEM SETUP ========================================
-@# 1 Add DavFS to fstab
-if ! grep -q /home/pschaaf/box /etc/fstab; then
+if grep -q /home/pschaaf/box /etc/fstab; then
+    @# 2 DavFS already listed in fstab
+else
+    @# 2 Adding DavFS to fstab
     backup /etc/fstab
     echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
-else
-    @# 3 Already done!
 fi
 
-@# Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
 if grep '/dev/tty\[1-[^2]' /etc/default/console-setup; then
+    @# Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
     backup /etc/default/console-setup
     sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-[^2][0-9]*/\1-2/g" /etc/default/console-setup
 else
-    echo Already done!
+    @# 2 ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2 already removed
 fi
 
 
@@ -170,15 +198,17 @@ for repo in ${git_repos[@]}; do
     git clone $repo
 done
 
-@# Changing default shell to ${shell##*/}
 if grep --quiet $USER:$shell /etc/passwd; then
-    echo Already set!
+    @# 2 Default shell already set to ${shell##*/}
 else
+    @# Changing default shell to ${shell##*/}
     sudo chsh --shell $shell $USER
 fi
 
-@# Setup DavFS2 for Box.com access
-if [ ! -d .davfs2 ]; then
+if [ -d .davfs2 ]; then
+    @# 2 DavFS2 already set up for Box.com access
+else
+    @# Setup DavFS2 for Box.com access
     cp -r /etc/davfs2 .davfs2
 
     sudo adduser $USER davfs2
@@ -188,18 +218,17 @@ if [ ! -d .davfs2 ]; then
       umask 077;
       echo "https://dav.box.com/dav paul666survey@gmail.com \"$password\"" >> secrets
     )
-else
-    echo Already done!
 fi
 
 @# Setup Symlinks to RC files
-for file in ~/etc/home/*[^~]; do  # ignore files ending in ~
-    ln -s $file .${file##*/}
-done
+ln-all ~/etc/home/*[^~]
 
 @# Setup Symlinks to ssh files
-mkdir -m700 .ssh
-ln -s ~/etc/ssh/*[^~] ~/.ssh
+[ -d .ssh ] || mkdir .ssh
+chmod 700 .ssh
+cd .ssh
+ln-all ~/etc/ssh/*[^~]
+cd
 
 # Clean Up
 if rmdir $backup 2>/dev/null; then
@@ -209,16 +238,14 @@ else
 fi
 
 [ -d box ] || mkdir box
-@# Mounting box
 if mount box 2> /dev/null; then
-    echo Done!
+    @# 2 Mounted box.com
 else
-    echo Already mounted!
+    @# 2 Box.com already mounted!
 fi
 
-@# Manually install the following packages: \
-<<EOF
+@# Manually install the following packages:
+echo "
 Master PDF Editor
 Frostwire
-
-EOF
+"
