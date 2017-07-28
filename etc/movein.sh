@@ -1,7 +1,9 @@
 #!/bin/bash
+# -*- eval: (progn (highlight-regexp "\\bheader[1-9]+\\b" 'hi-green-b) (highlight-regexp "\\bh1\\b.*" 'header1) (highlight-regexp "\\bh2\\b.*" 'header2) ) -*-
 cd $HOME
 backup=~/backup
 shell=/usr/bin/zsh
+
 
 # these get installed first, in the order defined
 ordered_packages=(
@@ -40,7 +42,6 @@ unordered_packages=(
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
     ruby               # programming language
-#    screen             # terminal multiplexer
     silversearcher-ag  # quicker grep
     slack              # IM client
     sublime-text       # code editor
@@ -63,7 +64,7 @@ unofficial_packages=(
     oracle-java6-installer
     oracle-java7-installer
     oracle-java8-installer
-    oracle-java9-installer
+    # oracle-java9-installer
 )
 
 git_repos=(
@@ -74,7 +75,7 @@ git_repos=(
 pre=''
 dash='----------------------------------------'
 
-function @#() {
+function header() {
     bg=21  # no color
     fg=248  # dim white
     leadingDashes=1
@@ -107,9 +108,21 @@ function @#() {
             fg=255
             ;;
     esac
-
     printf "\e[38;5;${fg};48;5;${bg}m\n%.${leadingDashes}s ${*}%.${trailingDashes}s\e[0m\n" $dash $dash
-    set +x
+}
+
+function printFgBg() {
+    fg=$1; shift
+    bg=$1; shift
+    echo "[38;5;${fg};48;5;${bg}m${*}[0m\n"
+}
+
+function h1() {
+    printFgBg 255 21 $*
+}
+
+function h2() {
+    printFgBg 255 27 $*
 }
 
 function backup() {
@@ -118,18 +131,18 @@ function backup() {
 
 function apt-get-all() {
     eval local packages=\${${*}[@]}
-    @# Install $* #: $packages
+    h1 Install $* #: $packages
     skipped=''
     for package in ${packages[@]}; do
         # if it's not already installed
-        if apt-cache policy $package | grep -q 'Installed'; then
+        if apt-cache policy $package | grep -q 'Installed: [^(]'; then
             skipped=${skipped}${package}' '
         else
-            @# 2 Install $package
+            h2 Install $package
             sudo apt-get -y install $package
         fi
     done
-    @# 2 Skipped already installed $*: $skipped
+    h2 Skipped already installed $*: $skipped
 }
 
 function ln-all() {
@@ -148,7 +161,7 @@ function ln-all() {
 ## ====================================================
 mkdir $backup
 
-@# PACKAGE INSTALLATION ================================
+h1 PACKAGE INSTALLATION ================================
 apt autoremove
 apt-get-all ordered_packages
 apt-get-all unordered_packages
@@ -156,59 +169,59 @@ apt-get-all unordered_packages
 added=no
 for ppa in ${unofficial_ppas[@]}; do
     if apt-cache policy | grep $ppa ``; then
-        @# 2 PPA $ppa already present!
+        h2 PPA $ppa already present!
     else
-        @# Add PPA $ppa
+        h1 Add PPA $ppa
         sudo apt-add-repository ppa:${ppa}
         added=yes
     fi
 done
 
 if [ "$added" == "yes" ]; then
-    @# Update Package Cache
+    h1 Update Package Cache
     sudo apt-get update
 else
-    @# 2 No PPAs were added--no need to update the package cache
+    h2 No PPAs were added--no need to update the package cache
 fi
 
 apt-get-all unofficial_packages
 
 
-@# SYSTEM SETUP ========================================
+h1 SYSTEM SETUP ========================================
 if grep -q /home/pschaaf/box /etc/fstab; then
-    @# 2 DavFS already listed in fstab
+    h2 DavFS already listed in fstab
 else
-    @# 2 Adding DavFS to fstab
+    h2 Adding DavFS to fstab
     backup /etc/fstab
     echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
 fi
 
 if grep '/dev/tty\[1-[^2]' /etc/default/console-setup; then
-    @# Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
+    h1 Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
     backup /etc/default/console-setup
     sudo perl -pi -e "s/(ACTIVE_CONSOLES=\"\/dev\/tty\[1)-[^2][0-9]*/\1-2/g" /etc/default/console-setup
 else
-    @# 2 ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2 already removed
+    h2 ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2 already removed
 fi
 
 
-@# USER SETUP ==========================================
+h1 USER SETUP ==========================================
 for repo in ${git_repos[@]}; do
-    @# Downloading Git Repository: $repo
+    h1 Downloading Git Repository: $repo
     git clone $repo
 done
 
 if grep --quiet $USER:$shell /etc/passwd; then
-    @# 2 Default shell already set to ${shell##*/}
+    h2 Default shell already set to ${shell##*/}
 else
-    @# Changing default shell to ${shell##*/}
+    h1 Changing default shell to ${shell##*/}
     sudo chsh --shell $shell $USER
 fi
 
 if [ -d .davfs2 ]; then
-    @# 2 DavFS2 already set up for Box.com access
+    h2 DavFS2 already set up for Box.com access
 else
-    @# Setup DavFS2 for Box.com access
+    h1 Setup DavFS2 for Box.com access
     cp -r /etc/davfs2 .davfs2
 
     sudo adduser $USER davfs2
@@ -220,10 +233,10 @@ else
     )
 fi
 
-@# Setup Symlinks to RC files
+h1 Setup Symlinks to RC files
 ln-all ~/etc/home/*[^~]
 
-@# Setup Symlinks to ssh files
+h1 Setup Symlinks to ssh files
 [ -d .ssh ] || mkdir .ssh
 chmod 700 .ssh
 cd .ssh
@@ -232,19 +245,19 @@ cd
 
 # Clean Up
 if rmdir $backup 2>/dev/null; then
-    @# No backups were necessary
+    h1 No backups were necessary
 else
-    @# Created backups in $backup
+    h1 Created backups in $backup
 fi
 
 [ -d box ] || mkdir box
 if mount box 2> /dev/null; then
-    @# 2 Mounted box.com
+    h2 Mounted box.com
 else
-    @# 2 Box.com already mounted!
+    h2 Box.com already mounted!
 fi
 
-@# Manually install the following packages:
+h1 Manually install the following packages:
 echo "
 Master PDF Editor
 Frostwire
