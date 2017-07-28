@@ -17,12 +17,16 @@
 !/etc/ssh/ssh-open
 !/etc/ssh/sshd_config
 
-**/.metadata/*
 **/.DS_Store
 **/.directory
-**/$*
+**/.metadata/*
+**/.ssh-agent
+
 **.class
 **.zip
 **.jar
+
+**/$*
+**/.#*
 **/#*#
 **/*~

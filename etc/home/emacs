@@ -1055,6 +1055,9 @@ font-size
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Liberation Mono" :foundry "1ASC" :slant normal :weight normal :height 78 :width normal))))
  '(cursor ((t (:background "white" :inverse-video nil))))
+ '(header1 ((t (:inherit tabbar-default-face :underline t :weight bold :height 1.3))) t)
+ '(header2 ((t (:inherit bold :height 1.3))) t)
+ '(header3 ((t (:inherit italic :height 1.1))) t)
  '(italic ((t (:slant italic :family "b&h luxi mono"))))
  '(mode-line-buffer-id ((t (:foreground "steelblue1"))))
  '(mwe:nesting-face-0 ((((class color)) (:background "#90b0f0"))) t)
@@ -1081,8 +1084,6 @@ font-size
  '(nxml-processing-instruction-delimiter-face ((t (:foreground "lightgoldenrod" :height 1.2))) t)
  '(nxml-processing-instruction-target-face ((t (:inherit nxml-processing-instruction-delimiter-face :foreground "lightgoldenrod"))) t)
  '(nxml-prolog-keyword-face ((t (:inherit nxml-name-face :foreground "magenta"))) t)
- '(header1 ((t (:inherit tabbar-default-face :underline t :weight bold :height 1.3))) t)
- '(header2 ((t (:inherit tabbar-default-face :weight bold))) t)
  '(tabbar-default-face ((t (:inherit variable-pitch :background "gray72" :foreground "black")))))
 
 ; modeline has red background for root user
