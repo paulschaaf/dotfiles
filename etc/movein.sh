@@ -23,7 +23,7 @@ unordered_packages=(
     amarok             # music
     ascii              # tree of ascii codes
     byobu              # tmux/screen enhancements
-    cairo-dock         # Mac-like icon dock
+#    cairo-dock         # Mac-like icon dock
     calibre            # e-book manager
     cmake              # multi-platform install system
     davfs2             # mount box.com into filesystem
@@ -35,10 +35,11 @@ unordered_packages=(
     gitk               # git tk browser
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
+    latte-dock         # dock app
     lynx               # command line browser
     meld               # merge tool
+    mp3fs              # MP3 virtual filesystem
     mtpfs              # android file transfer
-    pzip               # file compression
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
     ruby               # programming language
@@ -114,7 +115,7 @@ function header() {
 function printFgBg() {
     fg=$1; shift
     bg=$1; shift
-    echo "[38;5;${fg};48;5;${bg}m${*}[0m\n"
+    echo "[38;5;${fg};48;5;${bg}m${*}[0m"
 }
 
 function h1() {
@@ -161,7 +162,7 @@ function ln-all() {
 ## ====================================================
 mkdir $backup
 
-h1 PACKAGE INSTALLATION ================================
+h1 PACKAGE INSTALLATION
 apt autoremove
 apt-get-all ordered_packages
 apt-get-all unordered_packages
@@ -187,7 +188,7 @@ fi
 apt-get-all unofficial_packages
 
 
-h1 SYSTEM SETUP ========================================
+h1 SYSTEM SETUP
 if grep -q /home/pschaaf/box /etc/fstab; then
     h2 DavFS already listed in fstab
 else
@@ -205,7 +206,7 @@ else
 fi
 
 
-h1 USER SETUP ==========================================
+h1 USER SETUP
 for repo in ${git_repos[@]}; do
     h1 Downloading Git Repository: $repo
     git clone $repo
