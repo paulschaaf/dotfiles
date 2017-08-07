@@ -138,6 +138,9 @@ if [ -z $_dry_run ]; then
         taskFailIcon=
         taskPassIcon=
         case $task in
+            cleanIdea)
+                taskFailIcon=$failIcon
+                ;;
             dropDb*)
                 if [ $GW_PL_NUM -lt 9 ]; then
                     task=dropdb
@@ -202,6 +205,7 @@ if [ -z $_dry_run ]; then
                 ;;
             tasks*)
                 taskFailIcon=$failIcon
+                fullTask="$fullTask | sed 's/^\(\w*\)\( - \)/[96m\1[0m\2/'"
                 ;;
             testFail*)
                 fullTask='time && sleep 1 && ls *wojaljg209'
