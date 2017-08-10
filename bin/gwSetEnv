@@ -1,10 +1,23 @@
 #!/bin/bash
 
-local GW_PLATFORM_old=$GW_PLATFORM
-local GW_ROOT_old=$GW_ROOT
+GW_PLATFORM_old=$GW_PLATFORM
+GW_ROOT_old=$GW_ROOT
 
-case ${PWD}/ in
-    6|*/carbon/*|*/idea11/*)
+GW_PLATFORM=`echo $PWD | sed -n '
+# check if the path explicitly names the platform version
+s/.*\(carbon\|diamond\|emerald\|ferrite\|granite\).*/\1/
+
+# otherwise extract the version number
+s/.*\(bc\|cc\|pc\|ab\|cm\|Center\|Manager\)_*0*\(1[0-9]\|[1-9]\).*/\2/
+
+# exit now if no substitutions were made
+T
+
+# otherwise print what we found
+p'`
+
+case ${GW_PLATFORM} in
+    6|carbon)
         export GW_PL_NUM=6
         export GW_PLATFORM=carbon
         export IDEA_HOME=$IDEA11_HOME
@@ -13,7 +26,7 @@ case ${PWD}/ in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    7|*/diamond/*|*/idea12/*)
+    7|diamond)
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
         export IDEA_HOME=$IDEA12_HOME
@@ -22,7 +35,7 @@ case ${PWD}/ in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    8|*/emerald/*|*/idea12/*)
+    8|emerald)
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
         export IDEA_HOME=$IDEA12_HOME
@@ -31,14 +44,14 @@ case ${PWD}/ in
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
-    9|*/ferrite/*|*/idea15/*)
+    9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
         export IDEA_HOME=$IDEA15_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=$JAVA_HOME
         ;;
-    10|*/granite/*|*/idea15/*)
+    10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
         export IDEA_HOME=$IDEA15_HOME
@@ -52,6 +65,7 @@ case ${PWD}/ in
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
 esac
+echo GW_PLATFORM=$GW_PLATFORM
 
 if [ -z "$GW_PLATFORM" ]; then  # we're not in a gw install
     if [ -z "$GW_PLATFORM_old" ]; then  # and we weren't in one before
@@ -63,7 +77,6 @@ if [ -z "$GW_PLATFORM" ]; then  # we're not in a gw install
             unset -v $var
         done
     fi
-
 else
     export GW_ROOT=`echo $PWD/ | sed -n "s_^\(.*/${GW_PLATFORM}/[^/]*\).*/_\1_p"`
     export GW_PRODUCT=`echo $GW_ROOT | sed 's_.*/\(.*\)_\U\1_g'`
