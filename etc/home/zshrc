@@ -74,7 +74,6 @@ if [ -z "$ifZsh" ]; then
         ignore_eof \
         inc_append_history \
         pushd_silent \
-        pushd_to_home \
         share_history
 fi
 

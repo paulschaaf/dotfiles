@@ -78,9 +78,10 @@ if [ -z "$GW_PLATFORM" ]; then  # we're not in a gw install
         done
     fi
 else
-    export GW_ROOT=`echo $PWD/ | sed -n "s_^\(.*/${GW_PLATFORM}/[^/]*\).*/_\1_p"`
-    export GW_PRODUCT=`echo $GW_ROOT | sed 's_.*/\(.*\)_\U\1_g'`
-    GW_PRODUCT=${GW_PRODUCT:-gw}
+    export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -n "
+s_\(\(${GW_PLATFORM}/\|${GW_PL_NUM}\)[^/]*\).*_\1_
+T
+p"`
 
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
@@ -89,34 +90,38 @@ else
 
     typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
-    # assume we're NOT in Cygwin, then fix it if we're wrong
-    ifCygwin=:
-    if [ -n "$CYGPATH" ]; then
-        ifCygwin=
-    fi
+    # set to ':' if not in Cygwin, and ':;' if we are
+    ifCygwin=:${CYGPATH:+;}
+
+    export GW_PRODUCT=`echo ${GW_ROOT} | sed 's_^.*/\([^0-9]*\).*$_\L\1_'`
 
     case ${GW_PRODUCT} in
-        AB)
+        ab|contactmanager)
+            export GW_PRODUCT=AB
             export GW_PORT=8280
             export GW_COLOR='[106m' # bright white text on aqua
             $ifCygwin GW_COLOR=3F
             ;;
-        BC)
+        bc|billingcenter)
+            export GW_PRODUCT=BC
             export GW_PORT=8380
             export GW_COLOR='[105m' # bright white text on magenta
             $ifCygwin GW_COLOR=2F
             ;;
-        CC)
+        cc|claimcenter)
+            export GW_PRODUCT=CC
             export GW_PORT=8080
             export GW_COLOR='[104m' # bright white text on blue
             $ifCygwin GW_COLOR=1F
             ;;
-        PC)
+        pc|policycenter)
+            export GW_PRODUCT=PC
             export GW_PORT=8480
             export GW_COLOR='[103m' # bright white text on tan/yellow
             $ifCygwin GW_COLOR=4F
             ;;
         gw)
+            export GW_PRODUCT=gw
             export GW_COLOR='[30;107m' # bright black text on gray
             $ifCygwin GW_COLOR=4F
             ;;
