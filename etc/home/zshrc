@@ -392,9 +392,10 @@ if [ -n "$HOSTMESSAGE" ]; then
 fi
 
 local faintGreyUnderline="%{[4;38;5;235m%}                                                                 "
+
 PS1="${faintGreyUnderline}%{[0m%}
-%2(L.%L-.)%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}%n@%m%{[0m%} $HOSTMESSAGE%{[93m%}%62>\>>\$dirs%<<
-%{[0m%}\$GIT_STATUS\$GW_PROMPT%{[36m%}%!%{[0m%} $CONNECTION$SCRIPTING_MSG%(!.#.$) "
+%{[0m%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${USERNAME//pschaaf/}@%m%{[0m%} $HOSTMESSAGE%{[93m%}%62>\>>\$dirs%<<
+%{[0m%}\$GIT_STATUS%2(L.[96m%L/.)%{[36m%}%!%{[0m%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{[0m%}) %(!.#.$) "
 

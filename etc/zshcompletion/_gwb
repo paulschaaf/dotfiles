@@ -1,3 +1,41 @@
 #compdef gwb
- 
-_arguments "*: :(clean cleanIdea codegen compile dropDb genDataDictionary genPcfDictionary genPcfXsd genSystemData genTypeInfo genWsiLocal genWsdl idea killStudio pcf pgrep pkill portCheck portClose portOpen studio studioClean tasks)"
+
+# local -a options
+
+# options=(
+#    clean
+#    'stop:Stop Gradle daemon'
+#    tasks
+# )
+
+# _describe 'values' options
+
+_arguments "*: :((
+  clean
+  cleanIdea
+  codegen
+  compile
+  dropDb
+  genDataDictionary
+  genPcfDictionary
+  genPcfXsd
+  genSystemData
+  genTypeInfo
+  genWsiLocal
+  genWsdl
+  idea
+  killStudio
+  pcf
+  studio
+  studioClean
+  tasks
+))"
+
+_arguments "*: :((
+  pgrep:'Is the server process running?'
+  pkill:'Kill the server process'
+  portCheck:'Is the SSH tunnel open?'
+  portClose:'Stop the SSH tunnel on port 8080'
+  portOpen:'Open an SSH tunnel on port 8080 redirecting to 8090'
+  stop:'Stop Gradle daemon'
+))"

@@ -1,16 +1,20 @@
 #!/bin/bash
 
-GW_PLATFORM_old=$GW_PLATFORM
-GW_ROOT_old=$GW_ROOT
+function unsetGWVars () {
+    echo "We've just moved outside of any GW install, so unset every var named GW_*"
+    for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
+        unset -v $var
+    done
+}
 
 GW_PLATFORM=`echo $PWD | sed -n '
 # check if the path explicitly names the platform version
 s/.*\(carbon\|diamond\|emerald\|ferrite\|granite\).*/\1/
 
-# otherwise extract the version number
+# otherwise extract the version number from the install directory name
 s/.*\(bc\|cc\|pc\|ab\|cm\|Center\|Manager\)_*0*\(1[0-9]\|[1-9]\).*/\2/
 
-# exit now if no substitutions were made
+# if no substitutions were made--we could not determine the version--exit now with the empty string
 T
 
 # otherwise print what we found
@@ -59,25 +63,14 @@ case ${GW_PLATFORM} in
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
     *)
-        unset GW_PLATFORM
+        unsetGWVars
         export IDEA_HOME=$IDEA15_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
 esac
-echo GW_PLATFORM=$GW_PLATFORM
 
-if [ -z "$GW_PLATFORM" ]; then  # we're not in a gw install
-    if [ -z "$GW_PLATFORM_old" ]; then  # and we weren't in one before
-        echo "Still outside any GW build."
-
-    else                        # we just exited an install
-        echo "We've just moved outside of any GW install, so unset every var named GW_*"
-        for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
-            unset -v $var
-        done
-    fi
-else
+if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
     export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -n "
 s_\(\(${GW_PLATFORM}/\|${GW_PL_NUM}\)[^/]*\).*_\1_
 T
@@ -90,32 +83,35 @@ p"`
 
     typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
-    # set to ':' if not in Cygwin, and ':;' if we are
-    ifCygwin=:${CYGPATH:+;}
-
     export GW_PRODUCT=`echo ${GW_ROOT} | sed 's_^.*/\([^0-9]*\).*$_\L\1_'`
+
+    ifCygwin=:  # make the subsequent command a no-op when we're not in Cygwin
+    if [[ "$UNAME" =~ "CYGWIN" ]]; then
+        # if we are in Cygwin, execute the subsequent command
+        ifCygwin=
+    fi
 
     case ${GW_PRODUCT} in
         ab|contactmanager)
-            export GW_PRODUCT=AB
+            export GW_PRODUCT=ab
             export GW_PORT=8280
             export GW_COLOR='[106m' # bright white text on aqua
             $ifCygwin GW_COLOR=3F
             ;;
         bc|billingcenter)
-            export GW_PRODUCT=BC
+            export GW_PRODUCT=bc
             export GW_PORT=8380
             export GW_COLOR='[105m' # bright white text on magenta
             $ifCygwin GW_COLOR=2F
             ;;
         cc|claimcenter)
-            export GW_PRODUCT=CC
+            export GW_PRODUCT=cc
             export GW_PORT=8080
             export GW_COLOR='[104m' # bright white text on blue
             $ifCygwin GW_COLOR=1F
             ;;
         pc|policycenter)
-            export GW_PRODUCT=PC
+            export GW_PRODUCT=pc
             export GW_PORT=8480
             export GW_COLOR='[103m' # bright white text on tan/yellow
             $ifCygwin GW_COLOR=4F
@@ -126,48 +122,51 @@ p"`
             $ifCygwin GW_COLOR=4F
             ;;
         *)
+            unset GW_PRODUCT GW_TITLE GW_PROMPT
             export GW_COLOR='[5;101m' # blinking bright white on red
             $ifCygwin GW_COLOR=0F
             ;;
     esac
-    export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
-    # Determine the startup script
-    export GW_START_SCRIPT=./gwb
+    if [ -z "${GW_PRODUCT}" ]; then
+        unsetGWVars
+    else
+        export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
-    if [ ${GW_PL_NUM} -lt 9 ]; then
-        GW_START_SCRIPT=bin/$GW_PRODUCT
-    fi
+        # Determine the startup script
+        export GW_START_SCRIPT=./gwb
 
-    $ifCygwin set scriptExtension=.bat
-    GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
+        if [ ${GW_PL_NUM} -lt 9 ]; then
+            GW_START_SCRIPT=bin/$GW_PRODUCT
+        fi
 
-    export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
-    export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
+        $ifCygwin set scriptExtension=.bat
+        GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
 
-    typeset -p GW_PRODUCT GW_START_SCRIPT GW_TITLE
+        export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
+        export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
-    function echoList() {
-        for arg in $*; do
-            echo -e "\n$arg contains:"
-            eval echo \${${arg}} | tr ':' '\n' | cat -n
-        done
-    }
+        typeset -p GW_PRODUCT GW_START_SCRIPT GW_TITLE
 
-    export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
+        export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
 
-    export CLASSPATH=$JAVA_HOME/lib/\*jar:'./lib/*jar':${CLASSPATH}
-    # Remove any empty or duplicate members
-    CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
+        export CLASSPATH=$JAVA_HOME/lib/\*jar:'./lib/*jar':${CLASSPATH}
+        # Remove any empty or duplicate members
+        CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
-    echoList PATH CLASSPATH
+        function echoList() {
+            for arg in $*; do
+                echo -e "\n$arg contains:"
+                eval echo \${${arg}} | tr ':' '\n' | cat -n
+            done
+        }
 
-    # this will only work if you 'source' this file
-    if [ -n "$inScreen" ]; then
-        echo -n "\ek$GW_TITLE\e\\"  # the screen title
+        echoList PATH CLASSPATH
+
+        # this will only work if you 'source' this file
+        if [ -n "$inScreen" ]; then
+            echo -n "\ek$GW_TITLE\e\\"  # the screen title
+        fi
     fi
 
 fi
-
-set +x
-unset GW_ROOT_old GW_PLATFORM_old

@@ -17,14 +17,14 @@ while [ -n "$*" ]; do
             export debug
             # set -x
             ;;
-        --dry-run)
+        --dry-run|--dry_run)
             dry_run=true
             ;;
         --help)
             echo Usage: `basename $0` [--dry-run] [--help] [OPTION] NAME...
             echo '   --dry-run  Show commands but do not execute them'
             echo '   --help     Display this help screen'
-            options+=' '${1}
+            options="${options} ${1}"
             ;;
         --)
             shift
@@ -35,17 +35,17 @@ while [ -n "$*" ]; do
         # allow it so that we don't need to enumerate every switch
         # that takes an argument
         -*=*|+*=*)
-            options+=' '${1/=/ }
+            options="${opttions} ${1/=/ }"
             ;;
 
         # switches that take an argument where no equals sign was specified
         --display|-bd|-bf|-bw|-cr|-d|-f|-fg|-font|-geometry|-ib|-l|-ms|-name|+number|-t|-title)
-            options+=' '${1}' '${2}
+            options="${opttions} ${1} ${2}"
             shift
             ;;
 
         -*|+*)
-            options+=' '${1}
+            options="${opttions} ${1}"
             ;;
 
         *)
@@ -73,20 +73,23 @@ while [ -n "$*" ]; do
 done
 
 if [ `whoami` != 'pschaaf' -a `whoami` != 'centripital\pschaaf' ]; then
-    options+=' -u pschaaf'
+    options="${opttions} -u pschaaf"
 fi
 
 [ -n "$debug" ] && echo options="[ ${options} ]"
 
-case "__${options}${files}__" in
-    ____)
-        cmd=${emacs}\ -rv
+case ${options}${files} in
+    '')
+        cmd="${emacs} -rv ${files}"
         ;;
-    __*-batch*__)
+    *-batch*)
+        cmd="${emacs} ${options} ${files}"
+        ;;
+    *-nw*)
         cmd="${emacs} ${options} ${files}"
         ;;
     *)
-        cmd="${emacs_bin}/emacsclient --no-wait --alternate-editor='${emacs}' ${options} ${files}"
+        cmd="${emacs_bin}/emacsclient --no-wait ${options} ${files}"
         ;;
 esac
 #echo cmd=$cmd

@@ -38,7 +38,7 @@ unordered_packages=(
     latte-dock         # dock app
     lynx               # command line browser
     meld               # merge tool
-    mp3fs              # MP3 virtual filesystem
+    mp3fs              # MP3 virtualf ilesystem
     mtpfs              # android file transfer
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine

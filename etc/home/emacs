@@ -154,8 +154,6 @@
 ; ================================================
 ; === Establish Major and Minor Modes
 
-(server-start)
-
 ;; (pending-delete-mode t)
 
 (if (not in-xemacs)
@@ -256,86 +254,7 @@
 ; (eval-buffer)
 
 (custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(auto-coding-alist
-   (quote
-    (("\\.\\(arc\\|zip\\|lzh\\|zoo\\|jar\\|tar\\|tgz\\|war\\|ear\\|xpi\\)\\'" . no-conversion)
-     ("\\.\\(gz\\|Z\\|bz\\|bz2\\|gpg\\)\\'" . no-conversion))))
- '(auto-compression-mode t nil (jka-compr))
- '(bar-cursor 2)
- '(browse-url-generic-program "firefox")
- '(buffers-menu-sort-function (quote sort-buffers-menu-by-mode-then-alphabetically))
- '(buffers-tab-filter-functions (quote ((lambda (buf1 buf2) t))))
- '(case-fold-search t)
- '(colon-double-space t)
- '(column-number-mode t)
- '(comint-completion-autolist t)
- '(comment-style (quote multi-line))
- '(current-language-environment "English")
- '(custom-enabled-themes (quote (tsdh-dark)))
- '(default-gutter-position (quote top))
- '(default-major-mode (quote text-mode) t)
- '(delete-selection-mode t nil (delsel))
- '(display-time-24hr-format t)
- '(display-time-mode t nil (time))
- '(enable-local-eval t)
- '(enable-local-variables :all)
- '(frame-title-format (list "Emacs: %f") t)
- '(icon-title-format "%b" t)
- '(indent-tabs-mode nil)
- '(inhibit-startup-screen t)
- '(initial-scratch-message nil)
- '(ispell-program-name "aspell")
- '(jde-compile-option-classpath (quote (".")))
- '(jde-compile-option-debug (quote ("all" (t nil nil))))
- '(jde-compiler (quote ("javac server" "/usr/java/current/bin/javacc")))
- '(jde-jdk-registry (quote (("1.4.2_02" . "/usr/java/j2sdk1.4.2_02"))))
- '(jde-sourcepath (quote ("/home/pschaaf")))
- '(jde-vm-path "/usr/java/current/bin/java")
- '(js2-allow-keywords-as-property-names nil)
- '(js2-enter-indents-newline nil)
- '(js2-highlight-level 3)
- '(js2-missing-semi-one-line-override t)
- '(kept-old-versions 2)
- '(kill-whole-line t)
- '(lazy-highlight-initial-delay 0.5)
- '(minibuffer-max-depth nil)
- '(mode-for-help (quote hyper-apropos-help-mode))
- '(nxml-attribute-indent 5)
- '(nxml-auto-insert-xml-declaration-flag t)
- '(nxml-bind-meta-tab-to-complete-flag t)
- '(nxml-child-indent 2)
- '(nxml-outline-child-indent 3)
- '(nxml-slash-auto-complete-flag t)
- '(ps-print-color-p (quote black-white))
- '(revert-without-query (quote ("^")))
- '(safe-local-variable-values
-   (quote
-    ((comment-start . "#")
-     (comment-start . "! ")
-     (mode . shell-script)
-     (compile-command concat "crontab " buffer-file-name)
-     (compile-command concat "xrdb -override ~/.Xresources " buffer-file-name)
-     (compile-command byte-compile-file buffer-file-name)
-     (compile-command concat "zcompile '" buffer-file-name "'"))))
- '(save-place t nil (saveplace))
- '(scroll-step 9999)
- '(sentence-end-double-space nil)
- '(shell-completion-fignore (quote ("~" "#" "%")))
- '(show-paren-mode t)
- '(show-trailing-whitespace t)
- '(sort-fold-case t t)
- '(speedbar-use-images nil)
- '(tab-width 3)
- '(tool-bar-mode nil)
- '(transient-mark-mode (quote (only . t)))
- '(truncate-lines nil)
- '(truncate-partial-width-windows nil)
- '(user-mail-address "paul.schaaf@gmail.com")
- '(visible-bell (quote top-bottom)))
+ '(load-home-init-file t t))
 font-size
 ;; '(sentence-end "[.?!][]\"')}]*\\($\\| $\\|	\\| \\)[ 	\n]*")
 
@@ -1048,43 +967,7 @@ font-size
 
 ;; (list-faces-display)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Liberation Mono" :foundry "1ASC" :slant normal :weight normal :height 60 :width normal))))
- '(cursor ((t (:background "white" :inverse-video nil))))
- '(header1 ((t (:inherit tabbar-default-face :underline t :weight bold :height 1.3))) t)
- '(header2 ((t (:inherit bold :height 1.3))) t)
- '(header3 ((t (:inherit italic :height 1.1))) t)
- '(italic ((t (:slant italic :family "b&h luxi mono"))))
- '(mode-line-buffer-id ((t (:foreground "steelblue1"))))
- '(mwe:nesting-face-0 ((((class color)) (:background "#90b0f0"))) t)
- '(mwe:nesting-face-1 ((((class color)) (:background "#b090f0"))) t)
- '(mwe:nesting-face-2 ((((class color)) (:background "#f0b090"))) t)
- '(mwe:nesting-face-3 ((((class color)) (:background "#90b0f0"))) t)
- '(mwe:nesting-face-4 ((((class color)) (:background "#90f0b0"))) t)
- '(mwe:nesting-face-5 ((((class color)) (:background "#b0f090"))) t)
- '(mwe:nesting-face-6 ((((class color)) (:background "#b090f0"))) t)
- '(mwe:nesting-face-7 ((((class color)) (:background "#90b0f0"))) t)
- '(mwe:nesting-face-8 ((((class color)) (:background "#b0f090"))) t)
- '(nxml-attribute-local-name-face ((t (:foreground "deep sky blue"))) t)
- '(nxml-comment-content-face ((t (:inherit nxml-comment-delimiter-face))) t)
- '(nxml-comment-delimiter-face ((t (:foreground "chocolate1"))) t)
- '(nxml-element-colon-face ((t (:inherit nxml-element-prefix-face))) t)
- '(nxml-element-prefix-face ((t (:inherit nxml-name-face :foreground "cyan"))) t)
- '(nxml-markup-declaration-delimiter-face ((t (:foreground "magenta"))) t)
- '(nxml-namespace-attribute-colon-face ((t (:inherit nxml-namespace-attribute-prefix-face))) t)
- '(nxml-namespace-attribute-prefix-face ((t (:inherit nxml-name-face :foreground "cyan"))) t)
- '(nxml-namespace-attribute-value-delimiter-face ((t (:inherit nxml-namespace-attribute-prefix-face))) t)
- '(nxml-namespace-attribute-value-face ((t (:inherit nxml-namespace-attribute-prefix-face :weight bold :height 1.2))) t)
- '(nxml-namespace-attribute-xmlns-face ((t (:inherit nxml-namespace-attribute-prefix-face))) t)
- '(nxml-processing-instruction-content-face ((t (:inherit nxml-processing-instruction-delimiter-face))) t)
- '(nxml-processing-instruction-delimiter-face ((t (:foreground "lightgoldenrod" :height 1.2))) t)
- '(nxml-processing-instruction-target-face ((t (:inherit nxml-processing-instruction-delimiter-face :foreground "lightgoldenrod"))) t)
- '(nxml-prolog-keyword-face ((t (:inherit nxml-name-face :foreground "magenta"))) t)
- '(tabbar-default-face ((t (:inherit variable-pitch :background "gray72" :foreground "black")))))
+(custom-set-faces)
 
 ; modeline has red background for root user
 (if (eq (user-uid) 0)

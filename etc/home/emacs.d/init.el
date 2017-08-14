@@ -28,6 +28,5 @@
 (if (featurep 'xemacs)
     (gnuserv-start)
   (progn
-    ; (custom-set-variables '(custom-file (expand-file-name "~/etc/xemacs/custom.el")))
-    (setq custom-file (expand-file-name "~/.xemacs/custom.el"))
+    (setq custom-file (expand-file-name "~/.emacs"))
     (load custom-file t)))

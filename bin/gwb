@@ -7,6 +7,7 @@ ssh_socket=~/tmp/cc-fwd-socket
 
 unset _dry_run delay
 
+exitCode=0
 while [ -n "$*" ]; do
     case $1 in
         --delay)
@@ -18,7 +19,7 @@ while [ -n "$*" ]; do
             ;;
         --)
             echo Unknown option $1
-            exit 1
+            exitCode=1
             ;;
         *)
             break
@@ -32,214 +33,217 @@ _userCmd=$*
 source ~/bin/gwSetEnv
 if [ -z "$GW_PL_NUM" ]; then
     echo Could not determine Guidewire platform version! >&2
-    exit 1
+    exitCode=1
 fi
 
-if [ "${GW_ROOT//'~'/$HOME}" != "$PWD" ]; then
-    eval cd $GW_ROOT
-    echo
-    echo Running in $PWD
-fi
-
-_gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
-
-_icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
-iconDir=/usr/share/icons/oxygen/48x48
-failIcon=$iconDir/actions/process-stop.png
-passIcon=$_icon
-
-javaExec=$JAVA_HOME/bin/java
-whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
-jvmProcess="$javaExec .*-Dgw.port=${GW_PORT_DEBUG}"
-
-[ -n "$_dry_run" ] && set -x
-
-echoVar() {
-    typeset -p $* | sed 's/^declare\( -x\)* / /'
-    echo
-}
-
-setGnuScreenTitle() {
-    [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
-}
-
-log_section() {
-    local _color=$1
-    local _status=$2
-    local _taskDesc=$3
-
-    local _status=" $(date '+%R') - ${_status} "
-
-    # indent, then draw an underline the length of the status message
-    printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
-
-    # indent with ul, turn ul off & color on, show status, fill remainder with ul
-    printf "  \e[0;1;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
-
-    # turn off bold and show the task description
-    printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
-}
-
-runTask() {
-    local task=$1
-    local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
-    local successIcon=$2
-    local failIcon=$3
-
-    [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
-
-    #setGnuScreenTitle ${task}
-
-    log_section 44 'START' ${taskSummary}
-
-    exitCode=0
-    SECONDS=0
-    if [ -n "$spawn" ]; then
-        eval ${task} &
-    else
-        # make sure we source the gwb script instead of just running it
-        # if it's a Java cmd, display each option indented on a separate line
-        eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
-        # keep the exit code from the first command in the chain (i.e. not the sed)
-        exitCode=$pipestatus[1]
-    fi
-    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
-
-    if [ $exitCode -eq 0 ]; then
-        log_section 42 "DONE $elapsedTime" $taskSummary
-        if [ $successIcon ]; then
-            notify-send -c idea -t 5000 -i $successIcon "Completed $GW_TITLE:'$taskSummary'" $whichJava
-        fi
-    else
-        log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
-        if [ $failIcon ]; then
-            notify-send -c idea -t 10000 -u critical -i $failIcon "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava
-        fi
+# don't use the 'exit' command in case this file is "sourced"
+if [ $exitCode -eq 0 ]; then
+    if [ "${GW_ROOT//'~'/$HOME}" != "$PWD" ]; then
+        eval cd $GW_ROOT
+        echo
+        echo Running in $PWD
     fi
 
-    setGnuScreenTitle
-}
+    _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
 
-${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+    _icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
+    iconDir=/usr/share/icons/oxygen/48x48
+    failIcon=$iconDir/actions/process-stop.png
+    passIcon=$_icon
 
-grepProcStr() {
-    echo "pgrep -af -- '$1'"
-}
+    javaExec=$JAVA_HOME/bin/java
+    whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
+    jvmProcess="$javaExec .*-Dgw.port=${GW_PORT_DEBUG}"
 
-killProcStr() {
-    echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
-}
+    [ -n "$_dry_run" ] && set -x
 
-pcfHost=localhost:$GW_PORT_DEBUG
+    echoVar() {
+        typeset -p $* | sed 's/^declare\( -x\)* / /'
+        echo
+    }
 
-if [ -z $_dry_run ]; then
-    while [ -n "$*" ]; do
-        task=$1
-        fullTask="$GW_START_SCRIPT $task"
-        taskFailIcon=
-        taskPassIcon=
-        case $task in
-            cleanIdea)
-                taskFailIcon=$failIcon
-                ;;
-            dropDb*)
-                if [ $GW_PL_NUM -lt 9 ]; then
-                    task=dropdb
-                fi
-                taskFailIcon=$failIcon
-                ;;
-            idea*)
-                if [ $GW_PL_NUM -lt 9 ]; then
-                    fullTask=${fullTask/idea/gen-ide}
-                fi
-                ;;
-            killStudio*)
-                fullTask=`killProcStr "-Dstudio.sdkroot=${PWD}"`
-                taskFailIcon=$failIcon
-                ;;
-            pgrep*)
-                fullTask=`grepProcStr ${jvmProcess}`
-                ;;
-            pkill*)
-                pgrep -af $jvmProcess
-                fullTask=`killProcStr ${jvmProcess}`
-                ;;
-            pcf*)
-                # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG
-                if [[ $task =~ 'pcf=' ]]; then
-                    pcfHost=${task##pcf=}
-                    pcfHost=${pcfHost##http://}
-                fi
-                echoVar pcfHost
+    setGnuScreenTitle() {
+        [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
+    }
 
-                if [ ${task} = "pcfs" ]; then
-                    report='/tmp'
-                else
-                    report=`/bin/ls -t /tmp/*.html | head -n 1`
-                fi
-                echoVar report
+    log_section() {
+        local _color=$1
+        local _status=$2
+        local _taskDesc=$3
 
-                fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
-                ;;
-            portCheck)
-                fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
-                ;;
-            portClose)
-                fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
-                ;;
-            portOpen)
-                spawn=true
-                fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
-                ;;
-            studio*)
-                if [ $GW_PL_NUM -lt 9 ]; then
+        local _status=" $(date '+%R') - ${_status} "
+
+        # indent, then draw an underline the length of the status message
+        printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
+
+        # indent with ul, turn ul off & color on, show status, fill remainder with ul
+        printf "  \e[0;1;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
+
+        # turn off bold and show the task description
+        printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
+    }
+
+    runTask() {
+        local task=$1
+        local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
+        local successIcon=$2
+        local failIcon=$3
+
+        [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
+
+        #setGnuScreenTitle ${task}
+
+        log_section 44 'START' ${taskSummary}
+
+        exitCode=0
+        SECONDS=0
+        if [ -n "$spawn" ]; then
+            eval ${task} &
+        else
+            # make sure we source the gwb script instead of just running it
+            # if it's a Java cmd, display each option indented on a separate line
+            eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
+            # keep the exit code from the first command in the chain (i.e. not the sed)
+            exitCode=$pipestatus[1]
+        fi
+        elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+
+        if [ $exitCode -eq 0 ]; then
+            log_section 42 "DONE $elapsedTime" $taskSummary
+            if [ $successIcon ]; then
+                notify-send -c idea -t 5000 -i $successIcon "Completed $GW_TITLE:'$taskSummary'" $whichJava
+            fi
+        else
+            log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
+            if [ $failIcon ]; then
+                notify-send -c idea -t 10000 -u critical -i $failIcon "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava
+            fi
+        fi
+
+        setGnuScreenTitle
+    }
+
+    ${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+
+    grepProcStr() {
+        echo "pgrep -af -- '$1'"
+    }
+
+    killProcStr() {
+        echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
+    }
+
+    pcfHost=localhost:$GW_PORT_DEBUG
+
+    if [ -z $_dry_run ]; then
+        while [ -n "$*" ]; do
+            task=$1
+            fullTask="$GW_START_SCRIPT $task"
+            taskFailIcon=
+            taskPassIcon=
+            case $task in
+                cleanIdea)
+                    taskFailIcon=$failIcon
+                    ;;
+                dropDb*)
+                    if [ $GW_PL_NUM -lt 9 ]; then
+                        task=dropdb
+                    fi
+                    taskFailIcon=$failIcon
+                    ;;
+                idea*)
+                    if [ $GW_PL_NUM -lt 9 ]; then
+                        fullTask=${fullTask/idea/gen-ide}
+                    fi
+                    ;;
+                killStudio*)
+                    fullTask=`killProcStr "-Dstudio.sdkroot=${PWD}"`
+                    taskFailIcon=$failIcon
+                    ;;
+                pgrep*)
+                    fullTask=`grepProcStr ${jvmProcess}`
+                    ;;
+                pkill*)
+                    pgrep -af $jvmProcess
+                    fullTask=`killProcStr ${jvmProcess}`
+                    ;;
+                pcf*)
+                    # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG
+                    if [[ $task =~ 'pcf=' ]]; then
+                        pcfHost=${task##pcf=}
+                        pcfHost=${pcfHost##http://}
+                    fi
+                    echoVar pcfHost
+
+                    if [ ${task} = "pcfs" ]; then
+                        report='/tmp'
+                    else
+                        report=`/bin/ls -t /tmp/*.html | head -n 1`
+                    fi
+                    echoVar report
+
+                    fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
+                    ;;
+                portCheck)
+                    fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
+                    ;;
+                portClose)
+                    fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
+                    ;;
+                portOpen)
                     spawn=true
-                fi
-                export inIntelliJ=true
-                unset inScreen
-                taskFailIcon=$failIcon
-                ;;
-            studioClean*)
-                if [ $GW_PL_NUM -lt 9 ]; then
-                    rm -rf app-cc/cc-studio-run/db
-                fi
-                ;;
-            tasks*)
-                taskFailIcon=$failIcon
-                fullTask="$fullTask | sed 's/^\(\w*\)\( - \)/[96m\1[0m\2/'"
-                ;;
-            testFail*)
-                fullTask='time && sleep 1 && ls *wojaljg209'
-                ;;
-            testPass*)
-                fullTask='time && sleep 1s'
-                ;;
-            *)
+                    fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
+                    ;;
+                studio*)
+                    if [ $GW_PL_NUM -lt 9 ]; then
+                        spawn=true
+                    fi
+                    export inIntelliJ=true
+                    unset inScreen
+                    taskFailIcon=$failIcon
+                    ;;
+                studioClean*)
+                    if [ $GW_PL_NUM -lt 9 ]; then
+                        rm -rf app-cc/cc-studio-run/db
+                    fi
+                    ;;
+                tasks*)
+                    taskFailIcon=$failIcon
+                    fullTask="$fullTask | sed 's/^_/_/g' | less"
+                    ;;
+                testFail*)
+                    fullTask='time && sleep 1 && ls *wojaljg209'
+                    ;;
+                testPass*)
+                    fullTask='time && sleep 1s'
+                    ;;
+                *)
+                    taskPassIcon=$passIcon
+                    taskFailIcon=$failIcon
+                    ;;
+            esac
+            shift
+
+            # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
+            if [[ ${task} =~ "Quiet$" ]]; then
+                taskPassIcon=
+                taskFailIcon=
+                fullTask=${fullTask%Quiet}
+            elif [[ ${task} =~ "Loud$" ]]; then
                 taskPassIcon=$passIcon
                 taskFailIcon=$failIcon
-                ;;
-        esac
-        shift
+                fullTask=${fullTask%Loud}
+            fi
 
-        # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
-        if [[ ${task} =~ "Quiet$" ]]; then
-            taskPassIcon=
-            taskFailIcon=
-            fullTask=${fullTask%Quiet}
-        elif [[ ${task} =~ "Loud$" ]]; then
-            taskPassIcon=$passIcon
-            taskFailIcon=$failIcon
-            fullTask=${fullTask%Loud}
-        fi
+            # grab any arguments
+            while [[ "$1" =~ "-.*" ]]; do
+                fullTask="${fullTask} $1"
+                shift
+            done
 
-        # grab any arguments
-        while [[ "$1" =~ "-.*" ]]; do
-            fullTask="${fullTask} $1"
-            shift
+            runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
         done
-
-        runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
-    done
+    fi
 fi
 
 # for CYGWIN
