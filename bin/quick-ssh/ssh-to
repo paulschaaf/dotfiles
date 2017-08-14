@@ -190,6 +190,7 @@ fi
 echo ${final}
 
 if [ -z "$dry_run" ]; then
-    echo -n "\ek${remote-host}\e\\"
-    eval exec ${final}
+    echo k${remote_host}
+    eval ${final}
+    echo -n k-
 fi
