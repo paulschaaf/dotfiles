@@ -182,7 +182,7 @@ if [ $exitCode -eq 0 ]; then
                     fi
                     echoVar report
 
-                    fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|80[89]0)/cc/), %q(http://$pcfHost/cc/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
+                    fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|${GW_PORT})/${GW_PRODUCT}/), %q(http://$pcfHost/$GW_PRODUCT/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
                     ;;
                 portCheck)
                     fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
@@ -208,8 +208,8 @@ if [ $exitCode -eq 0 ]; then
                     fi
                     ;;
                 tasks*)
-                    taskFailIcon=$failIcon
-                    fullTask="$fullTask | sed 's/^_/_/g' | less"
+                    $GW_START_SCRIPT tasks
+                    exit
                     ;;
                 testFail*)
                     fullTask='time && sleep 1 && ls *wojaljg209'

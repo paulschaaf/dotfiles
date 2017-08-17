@@ -145,7 +145,7 @@ p"`
         export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
         export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
-        typeset -p GW_PRODUCT GW_START_SCRIPT GW_TITLE
+        typeset -p GW_PRODUCT GW_PORT GW_PORT_DEBUG GW_START_SCRIPT GW_TITLE
 
         export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
 
