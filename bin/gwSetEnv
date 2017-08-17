@@ -7,12 +7,12 @@ function unsetGWVars () {
     done
 }
 
-GW_PLATFORM=`echo $PWD | sed -n '
+GW_PLATFORM=`echo $PWD | sed -rn '
 # check if the path explicitly names the platform version
-s/.*\(carbon\|diamond\|emerald\|ferrite\|granite\).*/\1/
+s/.*(carbon|diamond|emerald|ferrite|granite).*/\1/
 
 # otherwise extract the version number from the install directory name
-s/.*\(bc\|cc\|pc\|ab\|cm\|Center\|Manager\)_*0*\(1[0-9]\|[1-9]\).*/\2/
+s/.*([bcp]c|ab|cm|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/
 
 # if no substitutions were made--we could not determine the version--exit now with the empty string
 T
@@ -34,7 +34,7 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
         export IDEA_HOME=$IDEA12_HOME
-        export JAVA_HOME=$JAVA6_HOME_x86
+        export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
         export IDEA_JDK=$JAVA6_HOME
         scriptExtension=.sh
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
@@ -71,19 +71,18 @@ case ${GW_PLATFORM} in
 esac
 
 if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
-    export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -n "
-s_\(\(${GW_PLATFORM}/\|${GW_PL_NUM}\)[^/]*\).*_\1_
+    export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -rn "
+s_((${GW_PLATFORM}|${GW_PL_NUM})(/(ab|bc|cc|pc)/(active/|release/))?[^/]*).*_\1_
 T
 p"`
 
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
     [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
-    echo; java -version 2>&1; echo
 
     typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
-    export GW_PRODUCT=`echo ${GW_ROOT} | sed 's_^.*/\([^0-9]*\).*$_\L\1_'`
+    export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
 
     ifCygwin=:  # make the subsequent command a no-op when we're not in Cygwin
     if [[ "$UNAME" =~ "CYGWIN" ]]; then
@@ -161,6 +160,7 @@ p"`
             done
         }
 
+        echo; java -version 2>&1; echo
         echoList PATH CLASSPATH
 
         # this will only work if you 'source' this file
