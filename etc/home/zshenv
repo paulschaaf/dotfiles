@@ -221,10 +221,10 @@ prependPath \
     ${P4_HOME}/bin
 
 appendClasspath \
-    ${M2_HOME:+$M2_HOME/lib/\*jar} \
-    ${AARDVARK_HOME:+$AARDVARK_HOME/lib/\*jar}  \
-    ${ANT_HOME:+$ANT_HOME/lib/\*jar} \
-    ${M2_HOME:+$M2_HOME/lib/\*jar}
+    ${M2_HOME:+$M2_HOME/lib/\*} \
+    ${AARDVARK_HOME:+$AARDVARK_HOME/lib/\*}  \
+    ${ANT_HOME:+$ANT_HOME/lib/\*} \
+    ${M2_HOME:+$M2_HOME/lib/\*}
 
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --status-column -Ps%dt/%D ?f%f::STDIN:$'
 export LESSKEY=${HOME}/.less_$HOSTNAME

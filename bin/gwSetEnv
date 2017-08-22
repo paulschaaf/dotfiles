@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ "$1" = "--debug" ] && set -x
+
 function unsetGWVars () {
     echo "We've just moved outside of any GW install, so unset every var named GW_*"
     for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
@@ -22,6 +24,8 @@ p'`
 
 case ${GW_PLATFORM} in
     6|carbon)
+        # export AARDVARK_HOME=/depot/aardvark/0.4
+        # export ANT_HOME=/depot/ant/apache-ant-1.7.1
         export GW_PL_NUM=6
         export GW_PLATFORM=carbon
         export IDEA_HOME=$IDEA11_HOME
@@ -31,13 +35,20 @@ case ${GW_PLATFORM} in
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     7|diamond)
+        export AARDVARK_HOME=/depot/aardvark/0.3
+        #export AARDVARK_HOME=/depot/aardvark/0.4
+        #export AARDVARK_HOME=/depot/aardvark/alpha
+
+        export ANT_HOME=/depot/ant/apache-ant-1.7.1
+        #export ANT_HOME=/depot/ant/apache-ant-1.8.2
+
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
         export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
-        export IDEA_JDK=$JAVA6_HOME
+        export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
-        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
+        # typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     8|emerald)
         export GW_PL_NUM=8
@@ -71,8 +82,7 @@ case ${GW_PLATFORM} in
 esac
 
 if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
-    typeset -p GW_PL_NUM GW_PLATFORM
-
+    typeset -p GW_PLATFORM GW_PL_NUM PWD
     export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -rn "
 s_((${GW_PLATFORM}|${GW_PL_NUM})/((ab|bc|cc|pc)/?(active/|release/))?[^/]*).*_\1_
 T
@@ -82,7 +92,10 @@ p"`
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
     [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
-
+    echo
+    which java
+    java -version
+    echo
 
     export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
 set +x
@@ -134,6 +147,14 @@ set +x
     if [ -z "${GW_PRODUCT}" ]; then
         unsetGWVars
     else
+        function replaceInList() {
+            local listName=$1; shift
+            eval local list=\$$listName
+            local regex=$1; shift
+            local newVal=$1; shift
+            export ${listName}=`echo :$list | sed -r "s_:[^:]+(/${regex})[^:]*__g; s_^:_${newVal}:_"`
+        }
+
         export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
         # Determine the startup script
@@ -151,22 +172,37 @@ set +x
 
         typeset -p GW_PORT GW_PORT_DEBUG GW_START_SCRIPT GW_TITLE
 
-        export PATH=`echo :$PATH | sed -r 's_:[^:]+(/java-[0-9]+-oracle|/idea[0-9]*)[^:]*__g; s/^://'`
-        PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
+        # Fix PATH and CLASSPATH
+        replaceInList PATH      'ant'      $ANT_HOME/bin
+        replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
 
-        export CLASSPATH="${JAVA_HOME}/lib/*jar:./lib/*jar:${CLASSPATH}"
+        replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
+        replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
+
+        replaceInList PATH      'idea[0-9]*'         ${IDEA_HOME}/bin
+        replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
+        replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
+
         # Remove any empty or duplicate members
         CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
         function _echoList() {
             for arg in $*; do
                 echo -e "\n$arg contains:"
-                eval echo \${${arg}} | tr ':' '\n' | cat -n
+                eval echo \${${arg}} | sed -r 's_:_\n_g; s_/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*)/_/[4m\1[0m/_g' | cat -n
             done
+            echo
         }
 
-        echo; java -version 2>&1; echo
         _echoList PATH CLASSPATH
+
+        typeset -p ANT_HOME
+        ant -version
+
+        echo
+        typeset -p AARDVARK_HOME
+        vark --version 2>&1 | sed '/^gosu-launch.*$/d'
+        echo
 
         # this will only work if you 'source' this file
         if [ -n "$inScreen" ]; then
