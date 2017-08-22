@@ -71,19 +71,21 @@ case ${GW_PLATFORM} in
 esac
 
 if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
+    typeset -p GW_PL_NUM GW_PLATFORM
+
     export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -rn "
-s_((${GW_PLATFORM}|${GW_PL_NUM})(/(ab|bc|cc|pc)/(active/|release/))?[^/]*).*_\1_
+s_((${GW_PLATFORM}|${GW_PL_NUM})/((ab|bc|cc|pc)/?(active/|release/))?[^/]*).*_\1_
 T
 p"`
+    typeset -p GW_ROOT
 
     # Report on the new environment
     typeset -p IDEA_HOME JAVA_HOME
     [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
 
-    typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
     export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
-
+set +x
     ifCygwin=:  # make the subsequent command a no-op when we're not in Cygwin
     if [[ "$UNAME" =~ "CYGWIN" ]]; then
         # if we are in Cygwin, execute the subsequent command
@@ -127,6 +129,8 @@ p"`
             ;;
     esac
 
+    typeset -p GW_PRODUCT
+
     if [ -z "${GW_PRODUCT}" ]; then
         unsetGWVars
     else
@@ -145,15 +149,16 @@ p"`
         export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
         export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
-        typeset -p GW_PRODUCT GW_PORT GW_PORT_DEBUG GW_START_SCRIPT GW_TITLE
+        typeset -p GW_PORT GW_PORT_DEBUG GW_START_SCRIPT GW_TITLE
 
-        export PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
+        export PATH=`echo :$PATH | sed -r 's_:[^:]+(/java-[0-9]+-oracle|/idea[0-9]*)[^:]*__g; s/^://'`
+        PATH=${JAVA_HOME}/bin:${IDEA_HOME}/bin:${PATH}
 
-        export CLASSPATH=$JAVA_HOME/lib/\*jar:'./lib/*jar':${CLASSPATH}
+        export CLASSPATH="${JAVA_HOME}/lib/*jar:./lib/*jar:${CLASSPATH}"
         # Remove any empty or duplicate members
         CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
-        function echoList() {
+        function _echoList() {
             for arg in $*; do
                 echo -e "\n$arg contains:"
                 eval echo \${${arg}} | tr ':' '\n' | cat -n
@@ -161,7 +166,7 @@ p"`
         }
 
         echo; java -version 2>&1; echo
-        echoList PATH CLASSPATH
+        _echoList PATH CLASSPATH
 
         # this will only work if you 'source' this file
         if [ -n "$inScreen" ]; then
