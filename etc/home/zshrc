@@ -81,7 +81,7 @@ function @#() {
     printf "\e[48;5;21m\n--- $*\e[0m\n"
 }
 
-frotz() {
+frotz () {
     pushd ~/private/sync/int-fic
     local stories=".*/${1:-.*}\\.\\(dat\\|z5\\)\$"
     if [ "$*" = "" ]; then
@@ -116,7 +116,7 @@ man() {
 	 command man "$@"
 }
 
-setfont() {
+setfont () {
     local name
     case $1 in
         unreadable)
@@ -144,7 +144,7 @@ setfont() {
     echo "]50;$name"
 }
 
-setScreenTitle() {
+setScreenTitle () {
     echo -n "\ek$*\e\\"
 }
 
@@ -160,7 +160,7 @@ splitFlac() {
     shnsplit -f $cue -t %n-%t -o flac $flac
 }
 
-wedit() {
+wedit () {
     local cmd file x
     for x in $*
     do
@@ -171,10 +171,10 @@ wedit() {
 
 # ======== Dir Functions
 
-# basename() {
+# basename () {
 #     echo ${(F)@:t}
 # }
-# dirname() {
+# dirname  () {
 #     echo ${(F)@:h}
 # }
 
@@ -297,7 +297,7 @@ bindkey -s ""^_"" "\C-apath \C-e\C-m"
 #     fi
 
 
-updateManpath() {
+updateManpath () {
     appendManpath `echo $PATH | awk '/\/bin$/ {gsub(/\/bin$/, "/man"); print}' RS=':'`
 }
 
@@ -362,7 +362,7 @@ source /home/pschaaf/etc/rc/git_zshrc.sh
 
 export dirs
 
-updateDirs() {
+updateDirs () {
     dirs="`builtin dirs -p | awk '
        NR == 2 {printf(\"%{%s%}\", \"[0;38;5;243m\")};
        {print}
@@ -370,16 +370,16 @@ updateDirs() {
 }
 
 if [ $UID -eq 0 ]; then
-    updateGuidewireVars() { }
+    updateGuidewireVars () { }
 else
-    updateGuidewireVars() {
-        source gwSetEnv > /dev/null
+    updateGuidewireVars () {
+        source gwSetEnv 2>&1 > /dev/null
     }
 fi
 
 alias fixprompt='updateGuidewireVars; updateGitVars'
 
-function git() {
+function git () {
     command git $*
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
 }

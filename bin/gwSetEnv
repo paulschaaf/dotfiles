@@ -35,12 +35,16 @@ case ${GW_PLATFORM} in
         typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     7|diamond)
+        #export AARDVARK_HOME=/depot/aardvark/alpha    # gives parser stacktrace in any config
         export AARDVARK_HOME=/depot/aardvark/0.3
-        #export AARDVARK_HOME=/depot/aardvark/0.4
-        #export AARDVARK_HOME=/depot/aardvark/alpha
+        export AARDVARK_HOME=/depot/aardvark/0.4
 
         export ANT_HOME=/depot/ant/apache-ant-1.7.1
-        #export ANT_HOME=/depot/ant/apache-ant-1.8.2
+        export ANT_HOME=/depot/ant/apache-ant-1.8.2
+
+        export M2_HOME=/depot/maven/apache-maven-2.2.1
+        export M2_HOME=/depot/maven/apache-maven-3.0.3
+        export M2_HOME=/depot/maven/apache-maven-3.0.4
 
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
@@ -48,7 +52,6 @@ case ${GW_PLATFORM} in
         export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
-        # typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     8|emerald)
         export GW_PL_NUM=8
@@ -82,26 +85,24 @@ case ${GW_PLATFORM} in
 esac
 
 if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
-    typeset -p GW_PLATFORM GW_PL_NUM PWD
+    export IDEA_JDK=${IDEA_JDK:-$JAVA_HOME}
     export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -rn "
 s_((${GW_PLATFORM}|${GW_PL_NUM})/((ab|bc|cc|pc)/?(active/|release/))?[^/]*).*_\1_
 T
 p"`
-    typeset -p GW_ROOT
+    typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
 
-    # Report on the new environment
-    typeset -p IDEA_HOME JAVA_HOME
-    [ -n "$IDEA_JDK" ] && typeset -p IDEA_JDK
     echo
+    typeset -p JAVA_HOME
     which java
-    java -version
+    java -version 2>&1
     echo
 
     export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
 set +x
-    ifCygwin=:  # make the subsequent command a no-op when we're not in Cygwin
+    ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
     if [[ "$UNAME" =~ "CYGWIN" ]]; then
-        # if we are in Cygwin, execute the subsequent command
+        # if we are in Cygwin, execute the rest of the line
         ifCygwin=
     fi
 
@@ -142,8 +143,6 @@ set +x
             ;;
     esac
 
-    typeset -p GW_PRODUCT
-
     if [ -z "${GW_PRODUCT}" ]; then
         unsetGWVars
     else
@@ -154,6 +153,8 @@ set +x
             local newVal=$1; shift
             export ${listName}=`echo :$list | sed -r "s_:[^:]+(/${regex})[^:]*__g; s_^:_${newVal}:_"`
         }
+
+        typeset -p GW_PRODUCT
 
         export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
@@ -183,6 +184,9 @@ set +x
         replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
         replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
 
+        replaceInList PATH      'maven'       ${M2_HOME}/bin
+        replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
+
         # Remove any empty or duplicate members
         CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
@@ -202,6 +206,10 @@ set +x
         echo
         typeset -p AARDVARK_HOME
         vark --version 2>&1 | sed '/^gosu-launch.*$/d'
+
+        echo
+        typeset -p M2_HOME
+        mvn -version
         echo
 
         # this will only work if you 'source' this file
