@@ -25,42 +25,44 @@ p'`
 case ${GW_PLATFORM} in
     6|carbon)
         # export AARDVARK_HOME=/depot/aardvark/0.4
-        # export ANT_HOME=/depot/ant/apache-ant-1.7.1
+        # export M2_HOME=/depot/maven/apache-maven-2.2.1
+        # export M2_HOME=/depot/maven/apache-maven-3.0.3
+        export ANT_HOME=/depot/ant/apache-ant-1.7.1
         export GW_PL_NUM=6
         export GW_PLATFORM=carbon
         export IDEA_HOME=$IDEA11_HOME
         export JAVA_HOME=$JAVA6_HOME_x86
         export IDEA_JDK=$JAVA6_HOME
         scriptExtension=.sh
-        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     7|diamond)
-        #export AARDVARK_HOME=/depot/aardvark/alpha    # gives parser stacktrace in any config
-        export AARDVARK_HOME=/depot/aardvark/0.3
-        export AARDVARK_HOME=/depot/aardvark/0.4
+        export AARDVARK_HOME=/depot/aardvark/alpha    # gives parser stacktrace in any config
+        #export AARDVARK_HOME=/depot/aardvark/0.3
+        #export AARDVARK_HOME=/depot/aardvark/0.4
 
         export ANT_HOME=/depot/ant/apache-ant-1.7.1
-        export ANT_HOME=/depot/ant/apache-ant-1.8.2
 
         export M2_HOME=/depot/maven/apache-maven-2.2.1
-        export M2_HOME=/depot/maven/apache-maven-3.0.3
-        export M2_HOME=/depot/maven/apache-maven-3.0.4
+        # export M2_HOME=/depot/maven/apache-maven-3.0.3
+        # export M2_HOME=/depot/maven/apache-maven-3.0.4
 
         export GW_PL_NUM=7
         export GW_PLATFORM=diamond
         export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
+        export JAVA16_HOME=$JAVA6_HOME
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
         ;;
     8|emerald)
+        export ANT_HOME=/depot/ant/apache-ant-1.8.2
+        export M2_HOME=/depot/maven/apache-maven-3.0.4
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
         export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=$JAVA7_HOME
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
-        typeset -p AARDVARK_HOME ANT_HOME M2_HOME
         ;;
     9|ferrite)
         export GW_PL_NUM=9
@@ -160,9 +162,11 @@ set +x
 
         # Determine the startup script
         export GW_START_SCRIPT=./gwb
+        export GW_START_DIR=$GW_ROOT
 
         if [ ${GW_PL_NUM} -lt 9 ]; then
-            GW_START_SCRIPT=bin/$GW_PRODUCT
+            GW_START_DIR=${GW_ROOT}/bin
+            GW_START_SCRIPT=./$GW_PRODUCT
         fi
 
         $ifCygwin set scriptExtension=.bat
