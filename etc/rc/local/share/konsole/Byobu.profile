@@ -23,5 +23,5 @@ TrimTrailingSpacesInSelectedText=true
 KeyBindings=paul
 
 [Scrolling]
-HistoryMode=0
+HistoryMode=1
 ScrollBarPosition=2
