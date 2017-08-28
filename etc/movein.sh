@@ -36,6 +36,7 @@ unordered_packages=(
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
     latte-dock         # dock app
+    libimage-exiftool-perl # edit EXIF data in image
     lynx               # command line browser
     meld               # merge tool
     mp3fs              # MP3 virtualf ilesystem
