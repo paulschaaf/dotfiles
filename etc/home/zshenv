@@ -204,7 +204,7 @@ if [ -d /usr/lib/jvm/java-8-oracle ]; then
         alias java${digit}${suffix}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitHome}; JAVA_HOME=\$$javaDigitHome; whichjava"
         # which java${digit}${suffix}
     done
-    eval export JAVA_HOME=\$$javaDigitHome  # this will end up with the highest-numbered jvm
+    eval export JAVA_HOME=\$$javaDigitHome
 fi
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
