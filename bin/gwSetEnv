@@ -207,7 +207,7 @@ set +x
 
         echo
         typeset -p M2_HOME
-        mvn -version
+        mvn -version 2>/dev/null
         echo
 
         # this will only work if you 'source' this file
