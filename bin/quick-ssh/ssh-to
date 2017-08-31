@@ -82,7 +82,7 @@ cmd=${*}
 
 case $remote_host in
     copernicus)
-        add_ssh_flag '-X'
+        add_ssh_flag '-Y'
         env_vars_to_export+=' TERM'
         ;;
 
