@@ -37,11 +37,12 @@ if [ -z "$GW_PL_NUM" ]; then
 fi
 
 # don't use the 'exit' command in case this file is "sourced"
+set -x
 if [ $exitCode -eq 0 ]; then
     if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
-        eval cd $GW_START_DIR
+        eval cd ${GW_START_DIR}
         echo
-        echo Running in $PWD
+        echo Running in ${PWD}
     fi
 
     _gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
