@@ -2,8 +2,8 @@
 
 ;;(byte-recompile-file "~/.emacs" nil 0)
 
-; ==================================================
-; === Comments
+;; ==================================================
+;; === Comments
 
 ;; To automatically set variables when a particular file is loaded, put the
 ;; following as the first line, or the second if it is executable (i.e. the
@@ -35,11 +35,9 @@
 ;; To print evaluation in buffer use C-u C-x C-e
 
 
-; ==================================================
-; === Global Constants and Variables
+;; ==================================================
+;; === Global Constants and Variables
 
-(defconst in-xemacs   (featurep        'xemacs))
-(defconst not-xemacs  (not              in-xemacs))
 (defconst in-x        (eq 'x            window-system))
 (defconst in-windows  (eq 'w32          window-system))
 (defconst i-am-root   (=  0            (user-uid)))
@@ -47,13 +45,13 @@
                           (eq system-type 'windows-nt)))
 (defconst in-linux    (eq system-type  'linux))
 
-; separate the domain-name from the system-name
+;; separate the domain-name from the system-name
 (defconst system-name (car (split-string (system-name) "\\.")))
 (defconst domain-name (cdr (split-string (system-name) (concat system-name "\\."))))
 
-; #'(lambda (x) x) fullname ".")))
+;; #'(lambda (x) x) fullname ".")))
 
-; make system-name (i.e. hostname) a symbol whose value is t
+;; make system-name (i.e. hostname) a symbol whose value is t
 (eval (list 'defvar (read system-name) t))
 
 (cd "~")
@@ -69,46 +67,29 @@
 (add-to-list 'load-path "/usr/share/emacs/site-lisp/slime-2.0" t)
 
 
-; ==================================================
-; === Key Bindings
+;; ==================================================
+;; === Key Bindings
 
-; (iswitchb-default-keybindings)
+;; (iswitchb-default-keybindings)
 
 (global-set-key [(control \()] 'paren-backward-sexp)
 (global-set-key [(control \))] 'paren-forward-sexp)
 
-(let ((cut       (if in-xemacs
-                     'kill-primary-selection
-                   'kill-region))
-      (copy      (if in-xemacs
-                     'copy-primary-selection
-                   'kill-ring-save))
-      (paste     (if in-xemacs
-                     'yank-clipboard-selection
-                   'yank))
-      ;; (start-server (if in-xemacs
-      ;;                   'gnuserv-start
-      ;;                 'server-start))
+(let ((cut       'kill-region)
+      (copy      'kill-ring-save)
+      (paste     'yank)
       (show-menu (if in-x
-                     (if in-xemacs
-                         'accelerate-menu
-                       'tmm-menubar))))
+                     'tmm-menubar)))
   ;; Function Keys
-  ;; (global-set-key [f1]  (lambda ()
-  ;;                         (interactive)
-  ;;                         ;;(cond
-  ;;                          ;;(static-man-topic  (man static-man-topic))
-  ;;                          ((current-word)    (man (current-word)))));;)
-
-  (global-set-key [(meta f6)]             'compile)
-  (global-set-key [f6]                     cut)
-  (global-set-key [f7]                     copy)
-  (global-set-key [f8]                     paste)
-  (global-set-key [f9]                    'list-matching-lines) ;; find
-  (global-set-key [f10]                   'query-replace-regexp) ;; replace
-  (global-set-key [f11]                   'find-file)        ;; new
-  (global-set-key [f12]                   'kill-this-buffer) ;; close
-  ;; (global-set-key [f12]                   'kill-windows-then-buffers-no-query)  ;; close
+  (global-set-key [(meta f6)]   'compile)
+  (global-set-key [f6]           cut)
+  (global-set-key [f7]           copy)
+  (global-set-key [f8]           paste)
+  (global-set-key [f9]          'list-matching-lines)  ;; find
+  (global-set-key [f10]         'query-replace-regexp) ;; replace
+  (global-set-key [f11]         'find-file)            ;; new
+  (global-set-key [f12]         'kill-this-buffer)     ;; close
+  ;; (global-set-key [f12]         'kill-windows-then-buffers-no-query)  ;; close
 
   (global-set-key [(meta f8)]             'yank-pop)
 
@@ -129,17 +110,14 @@
   ;; Other keys
   (global-set-key [(control \;)]          'comment-region)
   (global-set-key [(control x) (control o)] 'sort-lines)
-; (global-set-key [(control x) (r) (p)]   'comment-rectangle)
+  ;; (global-set-key [(control x) (r) (p)]   'comment-rectangle)
 
-  (when not-xemacs
-    (global-set-key [(meta g)]            'goto-line)
-    (global-set-key [down-mouse-3]        'mouse-popup-menubar-stuff)
-    (global-set-key [vertical-scroll-bar   down-mouse-1] 'scroll-bar-drag))
+  (global-set-key [(meta g)]            'goto-line)
+  (global-set-key [down-mouse-3]        'mouse-popup-menubar-stuff)
+  (global-set-key [vertical-scroll-bar   down-mouse-1] 'scroll-bar-drag)
 
   (if show-menu
-      (if in-xemacs
-          (global-set-key [(menu)]         show-menu)
-        (global-set-key [(menu)]        'tmm-menubar)))
+      (global-set-key [(menu)]        'tmm-menubar))
 
 
   (global-set-key [(control meta c)]      'indent-buffer)
@@ -151,26 +129,29 @@
   (global-set-key [(control z)]           'undo))
 
 
-; ================================================
-; === Establish Major and Minor Modes
+;; ================================================
+;; === Establish Major and Minor Modes
 
 ;; (pending-delete-mode t)
 
-(if (not in-xemacs)
-  (progn
-    (recentf-mode)
-    ;; highlight-regexp
-    (if (functionp 'global-hi-lock-mode)
-        (global-hi-lock-mode 1)
-      (hi-lock-mode 1))
-    (auto-compression-mode)))
+(recentf-mode)
+
+;; highlight-regexp
+
+(if (functionp 'global-hi-lock-mode)
+    (global-hi-lock-mode 1)
+  (hi-lock-mode 1))
+
+(auto-compression-mode)
+
+(show-paren-mode)
 
 ;; (display-time)
 (fset 'yes-or-no-p 'y-or-n-p)
 
 
-; ================================================
-; === Worth investigation
+;; ================================================
+;; === Worth investigation
 
 ;;; delim-col.el --- prettify all columns in a region or rectangle
 ;;; hilit-chg.el --- minor mode displaying buffer changes with special face
@@ -178,8 +159,8 @@
 ;;; tmm.el       --- text mode access to menu-bar
 
 
-; ================================================
-; === Libraries
+;; ================================================
+;; === Libraries
 
 (load-library "package")
 
@@ -188,12 +169,12 @@
   (linum-mode))
 
 (add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
-; execute (package-list-packages) to install new packages
+;; execute (package-list-packages) to install new packages
 
-; (autoload 'mwheel-install "mwheel" "Enable mouse wheel support.")
-; (mwheel-install)
+;; (autoload 'mwheel-install "mwheel" "Enable mouse wheel support.")
+;; (mwheel-install)
 
-; (load-library "Malyon")
+;; (load-library "Malyon")
 
 ;; Enable mouse wheel support
 (when (and in-x
@@ -201,17 +182,13 @@
   (mwheel-install))
 
 ;; enable version control
-(if (not in-xemacs)
-    (load-library "vc"))
+(load-library "vc")
 
-; eval (toggle-emacs-lock) to lock/unlock a buffer
-(when not-xemacs
-  (load-library "emacs-lock"))
+;; eval (toggle-emacs-lock) to lock/unlock a buffer
+(load-library "emacs-lock")
 
-;(when in-cygwin
-;  (if in-xemacs
-;      (load "msw-init" t)
-;    (require 'w32-symlinks)))
+;; (when in-cygwin
+;;    (require 'w32-symlinks))
 
 ;; Edit gpg encrypted files
 (when (load "crypt++" t)
@@ -221,11 +198,9 @@
         crypt-encryption-file-extension "\\(\\.gpg\\)$"
         crypt-freeze-vs-fortran nil)
 
-; don't monkey with the encrypted bytes
+  ;; don't monkey with the encrypted bytes
   (let* ((binary-extensions '("bz" "bz2" "gpg" "gz" "Z" "zip"))
-         (no-conversion-fn  (if in-xemacs
-                                'no-conversion-unix
-                              'no-conversion))
+         (no-conversion-fn  'no-conversion)
          (preserve-bytes    (lambda (extn)
                               (modify-coding-system-alist 'file
                                                           (concat "\\." extn "\\'")
@@ -234,24 +209,24 @@
 
 (load "rotate-buffers" t)
 
-; (crypt-rebuild-tables))
-; (require 'crypt++)
+;; (crypt-rebuild-tables))
+;; (require 'crypt++)
 
 '(when (require 'slime "slime" t)
    (setq inferior-lisp-program "/usr/bin/clisp")
    (slime-setup))
 
-; ==================================================
-; === Settings
+;; ==================================================
+;; === Settings
 
 (make-local-variable 'static-man-topic)
 
-; set the global default
+;; set the global default
 (setq comment-start "# ")
 (setq font-size (if (equal system-name "copernicus")
-                 50
-                 78))
-; (eval-buffer)
+		    50
+		  78))
+;; (eval-buffer)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -261,33 +236,18 @@
  '(delete-selection-mode t nil (delsel))
  '(load-home-init-file t t)
  '(safe-local-variable-values (quote ((outline-minor-mode . t)))))
-font-size
+
 ;; '(sentence-end "[.?!][]\"')}]*\\($\\| $\\|	\\| \\)[ 	\n]*")
 
-(if in-xemacs
-    (progn
-      ;; (set-specifier scrollbar-on-left-p t)
-      ;;(balloon-help-mode t)
-      (defconst package-get-remote '("ftp.xemacs.org" "pub/xemacs/packages"))
-      (custom-set-variables
-       '(font-lock-mode t nil (font-lock))
-       '(gnuserv-frame (quote gnuserv-main-frame-function))
-       '(gnuserv-kill-quietly t)
-       '(gnuserv-program (concat exec-directory "gnuserv"))
-       '(pending-delete-mode t nil (pending-del))
-       '(toolbar-visible-p nil)))
-  (progn
-    (server-start)
-    (global-font-lock-mode 1)
-    (tool-bar-mode -1)
-    (custom-set-variables
-     '(delete-selection-mode t nil (delsel)))
-    (add-to-list 'load-path
-                 (let ((dir "/usr/local/share/emacs/site-lisp"))
-                   (if in-windows
-                       (concat "C:/cygwin" dir)
-                     dir))
-                 t)))
+(server-start)
+(global-font-lock-mode 1)
+(tool-bar-mode -1)
+(add-to-list 'load-path
+	     (let ((dir "/usr/local/share/emacs/site-lisp"))
+	       (if in-windows
+		   (concat "C:/cygwin" dir)
+		 dir))
+	     t)
 
 ;; To edit remote files with Tramp:
 ;;   (find-file "/pschaaf@localhost:/etc/passwd")
@@ -302,11 +262,11 @@ font-size
 
 (setq efs-generate-anonymous-password user-mail-address)
 
-;(if (equal "pschaaf" (user-login-name))
-;    (read-abbrev-file))
+;; (if (equal "pschaaf" (user-login-name))
+;;    (read-abbrev-file))
 
-; ==================================================
-; === Scratch buffer
+;; ==================================================
+;; === Scratch buffer
 
 (defun kill-scratch-buffer ()
   ;; The next line is just in case someone calls this manually
@@ -331,15 +291,15 @@ font-size
 (save-excursion
   (make-scratch-buffer-resilient))
 
-; ==================================================
-; === Functions
+;; ==================================================
+;; === Functions
 
-; (defun upcase-region-or-word (arg)
-;   "Upcase the selected region or the following word (or ARG words)."
-;   (interactive "p")
-;   (if (region-active-p)
-;       (upcase-region (region-beginning) (region-end))
-;     (upcase-word arg)))
+;; (defun upcase-region-or-word (arg)
+;;   "Upcase the selected region or the following word (or ARG words)."
+;;   (interactive "p")
+;;   (if (region-active-p)
+;;       (upcase-region (region-beginning) (region-end))
+;;     (upcase-word arg)))
 
 (defun byte-compile-this-file ()
   (interactive)
@@ -385,7 +345,7 @@ font-size
   (interactive "rp")
   (if arg
       (save-excursion
-        ;; delete quotes instead (todo: doesn't work)
+	;; delete quotes instead (todo: doesn't work)
         (when (eq (char-before start) ?\")
           (goto-char start)
           (delete-char -1))
@@ -427,16 +387,12 @@ font-size
 (defun man (title)
   (manual-entry title))
 
-(if not-xemacs
-    (setq server-start #'gnuserv-start)
-  (defun package-provide (&rest args)))
-
 (defun one-buffer-p ()
   "Answers whether there is only one buffer."
   (not (yic-next (buffer-list))))
 
 (defun map-all-regex (regex map)
-; (point-to-register)
+  ;; (point-to-register)
   (goto-char (point-min))
   (while (re-search-forward regex nil t)
     map))
@@ -446,9 +402,9 @@ font-size
   (goto-char (point-min))
   (while (re-search-forward from nil t)
     (replace-match to fixedcase literal))
-; the following code appears unecessary
-;(map-all-regex from #'(lambda ()
-;                        (replace-match to nil nil)))
+  ;; the following code appears unecessary
+  ;; (map-all-regex from #'(lambda ()
+  ;;                        (replace-match to nil nil)))
   )
 
 (defun url-unescape ()
@@ -477,12 +433,12 @@ font-size
 
 
 
-; ==================================================
-; === Define Modes
+;; ==================================================
+;; === Define Modes
 
 
-; ==================
-; === Multi Mode
+;; ==================
+;; === Multi Mode
 
 (autoload 'multi-mode
   "multi-mode"
@@ -490,15 +446,15 @@ font-size
   t)
 
 
-; ==================
-; === Clojure Mode
+;; ==================
+;; === Clojure Mode
 
-; (require 'clojure-mode)
+;; (require 'clojure-mode)
 (add-to-list 'auto-mode-alist '("\\.clj&" . clojure-mode))
 
 
-; ==================
-; === Emacs Lisp Mode
+;; ==================
+;; === Emacs Lisp Mode
 
 (add-hook 'emacs-lisp-mode-hook
           '(lambda ()
@@ -515,8 +471,8 @@ font-size
           t)
 
 
-; ==================
-; === Folding Mode
+;; ==================
+;; === Folding Mode
 
 (add-hook 'folding-mode-hook
           '(lambda ()
@@ -526,89 +482,87 @@ font-size
              (define-key folding-mode-map [(meta add)]      'folding-show-current-subtree)))
 
 
-; ==================
-; === HTML Mode
+;; ==================
+;; === HTML Mode
 
 (add-to-list 'auto-mode-alist '("\\.vm\\|.rhtml\\'" . html-mode))
 
 
-; ==================
-; === Generic Modes
+;; ==================
+;; === Generic Modes
 
-;(defun define-generic-mode (&rest args))
+;; (defun define-generic-mode (&rest args))
 
-(if not-xemacs
-    (when (require 'generic-x nil t)
-      (add-hook 'javascript-generic-mode
-                '(lambda ()
-                   (set comment-start  "//"
-                        outline-regexp "")
-                   )
-                nil
-                t)
-      (setq generic-extras-enable-list
-            (append generic-extras-enable-list
-                    '(
-                      alias-generic-mode
-                      apache-conf-generic-mode
-                      apache-log-generic-mode
-                      bat-generic-mode
-                      etc-fstab-generic-mode
-                      etc-passwd-generic-mode
-                      etc-services-generic-mode
-                      fvwm-generic-mode
-                      hosts-generic-mode
-                      inetd-conf-generic-mode
-                      io-mode
-                      inf-generic-mode
-                      ini-generic-mode
-                      java-manifest-generic-mode
-                      java-properties-generic-mode
-                      mailagent-rules-generic-mode
-                      mailrc-generic-mode
-                      named-boot-generic-mode
-                      named-database-generic-mode
-                      rc-generic-mode
-                      reg-generic-mode
-                      resolve-conf-generic-mode
-                      samba-generic-mode
-                      show-tabs-generic-mode
-                      x-resource-generic-mode
-                      )))
-      (load "generic-x" t)))
+(when (require 'generic-x nil t)
+  (add-hook 'javascript-generic-mode
+	    '(lambda ()
+	       (set comment-start  "//"
+		    outline-regexp "")
+	       )
+	    nil
+	    t)
+  (setq generic-extras-enable-list
+	(append generic-extras-enable-list
+		'(
+		  alias-generic-mode
+		  apache-conf-generic-mode
+		  apache-log-generic-mode
+		  bat-generic-mode
+		  etc-fstab-generic-mode
+		  etc-passwd-generic-mode
+		  etc-services-generic-mode
+		  fvwm-generic-mode
+		  hosts-generic-mode
+		  inetd-conf-generic-mode
+		  io-mode
+		  inf-generic-mode
+		  ini-generic-mode
+		  java-manifest-generic-mode
+		  java-properties-generic-mode
+		  mailagent-rules-generic-mode
+		  mailrc-generic-mode
+		  named-boot-generic-mode
+		  named-database-generic-mode
+		  rc-generic-mode
+		  reg-generic-mode
+		  resolve-conf-generic-mode
+		  samba-generic-mode
+		  show-tabs-generic-mode
+		  x-resource-generic-mode
+		  )))
+  (load "generic-x" t))
 
 
 ;; (define-generic-mode 'inf-generic-mode
-;;    (list ?\;)                                          ; comment-list
-;;    nil                                                 ; keyword-list
-;;    '(("^\\(\\[.*\\]\\)"   1 'font-lock-constant-face)) ; font-lock-list
-;;    (list "\\.[iI][nN][fF]\\'")                         ; auto-mode-list
-;;    (list 'generic-bracket-support)                     ; function-list
-;;    "Generic mode for MS-Windows INF files."))          ; description (opt)
+;;    (list ?\;)                                          ;; comment-list
+;;    nil                                                 ;; keyword-list
+;;    '(("^\\(\\[.*\\]\\)"   1 'font-lock-constant-face)) ;; font-lock-list
+;;    (list "\\.[iI][nN][fF]\\'")                         ;; auto-mode-list
+;;    (list 'generic-bracket-support)                     ;; function-list
+;;    "Generic mode for MS-Windows INF files."))          ;; description (opt)
 
 
-; ==================
-; === Io Mode
+;; ==================
+;; === Io Mode
 
 (add-to-list 'auto-mode-alist '("\\.io$" . io-mode))
 (autoload 'io-mode "io-mode" nil t)
 
 
-; ==================
-; === Java Mode
+;; ==================
+;; === Java Mode
 
 
-; ==================
-; === JavaScript Mode
+;; ==================
+;; === JavaScript Mode
 
-(when not-xemacs
-  (autoload 'js2-mode "js2" nil t)
-  (add-to-list 'auto-mode-alist '("\\.\\(js\\)$" . js2-mode)))
+(autoload 'js2-mode "js2" nil t)
+(add-to-list 'auto-mode-alist '("\\.\\(js\\)$" . js2-mode))
 
 (add-to-list 'auto-mode-alist '("\\.\\(gs\\|gsx\\|gst\\)$" . javascript-mode))
 
-; ==================
-; === JKA Compression Mode
+;; ==================
+;; === JKA Compression Mode
 
 (add-to-list 'auto-mode-alist '("\\.\\(ear\\|war\\|xpi\\)'" . archive-mode))
 
@@ -626,8 +580,8 @@ font-size
 ;;                  ("\\.scm\\'" . scheme-mode) ...)
 
 
-; ==================
-; === JSP Mode
+;; ==================
+;; === JSP Mode
 
 (defun jsp-mode ()
   (interactive)
@@ -641,15 +595,8 @@ font-size
 (add-to-list 'auto-mode-alist '("\\.jsp$" . jsp-mode))
 
 
-; ==================
-; === Makefile Mode
-
-; code taken from xemacs 'compile-command' doc
-;(add-hook 'c-mode-common-hook
-;          (lambda ()
-;             (or (file-exists-p "makefile") (file-exists-p "Makefile")
-;                 (set (make-local-variable 'compile-command)
-;                      (concat "make -k " buffer-file-name))))
+;; ==================
+;; === Makefile Mode
 
 (add-hook 'makefile-mode-hook
           '(lambda ()
@@ -660,34 +607,33 @@ font-size
 (add-to-list 'auto-mode-alist '("\\.make$" . makefile-mode))
 
 
-; ==================
-; === Malyon Mode
+;; ==================
+;; === Malyon Mode
 
-;(autoload 'malyon-mode "z5" nil t)
-;(add-to-list 'auto-mode-alist '("\\.z5$" . malyon-mode))
+;; (autoload 'malyon-mode "z5" nil t)
+;; (add-to-list 'auto-mode-alist '("\\.z5$" . malyon-mode))
 
 
-; ==================
-; === Outline Mode
+;; ==================
+;; === Outline Mode
 
-; The FEWER chars this matches, the HIGHER its priority.
-; (Q: what about empty lines, or no matches?)
-; outline-regexp                                  "[*]+" is default
+;; The FEWER chars this matches, the HIGHER its priority.
+;; (Q: what about empty lines, or no matches?)
+;; outline-regexp                                  "[*]+" is default
 
-; outline-heading-end-regexp                      "[\n\r]" is default
-; (string-to-list outline-heading-end-regexp)     (?\[ ?\n ?\r ?\]) is default
+;; outline-heading-end-regexp                      "[\n\r]" is default
+;; (string-to-list outline-heading-end-regexp)     (?\[ ?\n ?\r ?\]) is default
 
-(when not-xemacs
-  (defun pgs-set-outline-map (map)
-    (define-key map [(meta divide)]   'hide-sublevels)
-    (define-key map [(meta multiply)] 'show-all)
-    (define-key map [(meta subtract)] 'hide-subtree)
-    (define-key map [(meta add)]      'show-subtree)
-    (set 'outline-regexp
-         (concat "[*]+\\|[ \t]+...\\|"
-                 (or comment-start
-                     "#")
-                 " +[/*=-]")))
+(defun pgs-set-outline-map (map)
+  (define-key map [(meta divide)]   'hide-sublevels)
+  (define-key map [(meta multiply)] 'show-all)
+  (define-key map [(meta subtract)] 'hide-subtree)
+  (define-key map [(meta add)]      'show-subtree)
+  (set 'outline-regexp
+       (concat "[*]+\\|[ \t]+...\\|"
+	       (or comment-start
+		   "#")
+	       " +[/*=-]"))
 
   (add-hook 'outline-mode-hook
             '(lambda ()
@@ -703,8 +649,8 @@ font-size
             t))
 
 
-; ==================
-; === .properties Mode
+;; ==================
+;; === .properties Mode
 
 (define-generic-mode 'properties-generic-mode
   (list ?#)
@@ -724,39 +670,36 @@ font-size
   "Generic mode for .properties files.")
 
 
-; ==================
-; === Ruby Mode
+;; ==================
+;; === Ruby Mode
 
 ;; (add-to-list 'load-path "/usr/share/emacs/site-lisp/ruby-mode" t)
 
-(when not-xemacs
-  (autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
-  (autoload 'run-ruby      "inf-ruby"  "Run an inferior Ruby process" t)
-  (autoload 'inf-ruby-keys "inf-ruby"  "Set local key defs for inf-ruby in ruby-mode")
-  (add-to-list 'auto-mode-alist '("\\.rb\\|irbrc\\'" . ruby-mode))
-  (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode)))
+(autoload 'ruby-mode     "ruby-mode" "Mode for editing ruby source files" t)
+(autoload 'run-ruby      "inf-ruby"  "Run an inferior Ruby process" t)
+(autoload 'inf-ruby-keys "inf-ruby"  "Set local key defs for inf-ruby in ruby-mode")
+(add-to-list 'auto-mode-alist '("\\.rb\\|irbrc\\'" . ruby-mode))
+(add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 
 (add-hook 'ruby-mode-hook
           '(lambda ()
-             (custom-set-faces
-              '(default ((t (:inherit default :family "helv")))))
              (inf-ruby-keys)
              (outline-minor-mode t)
 
-             ;; todo: is outline-regexp really a list of strings?
+	     ;; todo: is outline-regexp really a list of strings?
              (set outline-regexp
                   "\\|req\\|cla\\|def\\>\\|mod\\|=beg\\|=end\\|\\w\\w\\w\\w\\[ \t]+\\(end\\>\\|#  *\\|\\w\\w\\)")
-; (define-key ruby-mode-map [f1]
-;   '(lambda ()
-;      (interactive)
-;      (shell-command (format "bin/ri %s" (current-word)))))
+	     ;; (define-key ruby-mode-map [f1]
+	     ;;   '(lambda ()
+	     ;;      (interactive)
+	     ;;      (shell-command (format "bin/ri %s" (current-word)))))
              )
           nil
           t)
 
 
-; ==================
-; === SGML Mode
+;; ==================
+;; === SGML Mode
 
 (add-hook 'sgml-mode-hook
           '(lambda ()
@@ -764,8 +707,8 @@ font-size
                    sgml-indent-data t)))
 
 
-; ==================
-; === sh Mode
+;; ==================
+;; === sh Mode
 
 (add-hook 'sh-mode-hook
           '(lambda ()
@@ -775,25 +718,23 @@ font-size
           nil
           t)
 
-(if not-xemacs
-    (add-to-list 'auto-mode-alist '("\\.\\(ba\\|tc\\|[ackz]\\)sh\\'" . sh-mode)))
+(add-to-list 'auto-mode-alist '("\\.\\(ba\\|tc\\|[ackz]\\)sh\\'" . sh-mode))
 
 
-; ==================
-; === ssh Mode
+;; ==================
+;; === ssh Mode
 
-(if not-xemacs
-    (define-generic-mode 'ssh-config-generic-mode
-      (list ?#)
-      (list "Host")
-      '(("^Host[ \t]+\\(.*\\)"
-         (1 'header-line))
-        ("^[ \t]+\\([^ \t]+\\)[ \t]+\\(.*\\)"
-         (1 'font-lock-variable-name-face)
-         (2 'default-face)))
-      (list "config\\'")
-      nil
-      "Generic mode for ssh config file."))
+(define-generic-mode 'ssh-config-generic-mode
+  (list ?#)
+  (list "Host")
+  '(("^Host[ \t]+\\(.*\\)"
+     (1 'header-line))
+    ("^[ \t]+\\([^ \t]+\\)[ \t]+\\(.*\\)"
+     (1 'font-lock-variable-name-face)
+     (2 'default-face)))
+  (list "config\\'")
+  nil
+  "Generic mode for ssh config file.")
 
 
 (define-generic-mode 'ssh-authorized-keys-generic-mode
@@ -806,11 +747,10 @@ font-size
   "Generic mode for ssh authorized_keys file.")
 
 
-; ==================
-; === Tabbar Mode
+;; ==================
+;; === Tabbar Mode
 
-(when (and not-xemacs
-           (load "tabbar" t)
+(when (and (load "tabbar" t)
            (require 'tabbar nil t))
   (tabbar-mode t)
   (global-set-key [(control c) (T)]     'tabbar-backward)
@@ -823,7 +763,7 @@ font-size
     (delq t
           (mapcar #'(lambda (b)
                       (let ((name (buffer-name b)))
-                        (cond ; Only display buffers whose name matches the default
+                        (cond ;; Only display buffers whose name matches the default
                          ((equal name "*Messages*"))
                          ((equal name "*Compile-Log*"))
                          ((equal name "*compilation*"))
@@ -833,8 +773,8 @@ font-size
   (setq tabbar-buffer-list-function 'pgs-tabbar-buffer-list))
 
 
-; ==================
-; === Text Mode
+;; ==================
+;; === Text Mode
 
 (add-hook 'text-mode-hook
           '(lambda ()
@@ -843,8 +783,8 @@ font-size
           t)
 
 
-; ==================
-; === VisualBasic Mode
+;; ==================
+;; === VisualBasic Mode
 
 ;; (define-generic-mode 'vb-generic-mode
 ;;    (list ?')
@@ -869,8 +809,8 @@ font-size
               auto-mode-alist))
 
 
-; ==================
-; === X Resource Mode
+;; ==================
+;; === X Resource Mode
 
 (add-hook 'x-resource-generic-mode-hook
           '(lambda ()
@@ -882,31 +822,25 @@ font-size
           t)
 
 
-; ==================
-; === XML Mode
+;; ==================
+;; === XML Mode
 
-(if in-xemacs
-    (add-hook 'xrdb-mode-hook
-              (lambda ()
-                (local-set-key [(meta f6)] 'xrdb-database-merge-buffer-or-region)))
-  (when (and (add-to-list 'load-path "/usr/share/emacs/site-lisp/nxml-mode" t)
-             (add-to-list 'load-path "c:/cygwin/usr/share/emacs/site-lisp/nxml-mode-20041004" t)
-             (load "rng-auto" t))
-    (add-hook 'nxml-mode-hook
-              '(lambda ()
-                 (set 'comment-continue "....")
-                 (define-key nxml-mode-map [(control meta left)]  'nxml-backward-element)
-                 (define-key nxml-mode-map [(control meta right)] 'nxml-forward-element)))))
+(when (and (add-to-list 'load-path "/usr/share/emacs/site-lisp/nxml-mode" t)
+	   (add-to-list 'load-path "c:/cygwin/usr/share/emacs/site-lisp/nxml-mode-20041004" t)
+	   (load "rng-auto" t))
+  (add-hook 'nxml-mode-hook
+	    '(lambda ()
+	       (set 'comment-continue "....")
+	       (define-key nxml-mode-map [(control meta left)]  'nxml-backward-element)
+	       (define-key nxml-mode-map [(control meta right)] 'nxml-forward-element))))
 
 (add-to-list 'auto-mode-alist
              (cons "\\.\\(dti\\|eix\\|eti\\|etx\\|pcf\\|rng\\|xs[dl]\\|xml\\|xhtml\\|xul\\)\\'"
-                   (if in-xemacs
-                       'xml-mode
-                     'nxml-mode)))
+		   'nxml-mode))
 
 
-; ==================
-; === Keyboard Macro
+;; ==================
+;; === Keyboard Macro
 
 ;; (fset 'formatQuestion
 ;;    [C-home down return
@@ -927,11 +861,11 @@ font-size
 ;; (global-set-key (kbd "C-c q") 'formatXMLQuestion)
 
 
-; ==================================================
-; === Fonts, Faces and Frames
+;; ==================================================
+;; === Fonts, Faces and Frames
 
-; To see the font names in Windows, put this in the scratch buffer and press C-j
-; (w32-select-font nil t)
+;; To see the font names in Windows, put this in the scratch buffer and press C-j
+;; (w32-select-font nil t)
 
 (defun hash-table-to-list (table &optional keep-empty)
   (let ((lst))
@@ -942,7 +876,7 @@ font-size
              table)
     lst))
 
-;   todo: frame-height and frame-width should care about whether $DISPLAY is local
+;;   todo: frame-height and frame-width should care about whether $DISPLAY is local
 
 ;; *****check this
 
@@ -953,9 +887,7 @@ font-size
 ;;                         (in-windows "outline-lucida console")
 ;;                         (t          "fixed")))
 ;;           (height 100)
-;;           (font-size   (if in-xemacs
-;;                            "10pt"
-;;                          100))
+;;           (font-size 100)
 ;;           ;; (frame-w     (cond
 ;;           ;;               (in-cygwin 92)
 ;;           ;;               (in-windows 94)))
@@ -1011,17 +943,17 @@ font-size
  '(nxml-prolog-keyword-face ((t (:inherit nxml-name-face :foreground "magenta"))) t)
  '(tabbar-default-face ((t (:inherit variable-pitch :background "gray72" :foreground "black")))))
 
-; modeline has red background for root user
+;; modeline has red background for root user
 (if (eq (user-uid) 0)
     (let ((modeln '(mode-line ((t (:background "red2" :foreground "white" :box (:line-width -1 :style released-button))))))
           (menu '(menu ((((type x-toolkit)) (:background "red2"))))))
       (custom-set-faces menu modeln)))
 
 
-; ==================
-; === Recently Opened Files
+;; ==================
+;; === Recently Opened Files
 
-; Re-open most recently visited file
+;; Re-open most recently visited file
 (recentf-mode t)
 (if (file-readable-p recentf-save-file)
     (if (> (length recentf-list) 0)
