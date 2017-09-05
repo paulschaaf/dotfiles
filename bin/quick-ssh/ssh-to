@@ -115,7 +115,7 @@ case $remote_host in
         ;;
 
     satori*)
-        add_ssh_flag '-X'
+        add_ssh_flag '-Y'
         ;;
 
     *@ftp)
