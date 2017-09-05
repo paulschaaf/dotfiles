@@ -37,7 +37,6 @@ if [ -z "$GW_PL_NUM" ]; then
 fi
 
 # don't use the 'exit' command in case this file is "sourced"
-set -x
 if [ $exitCode -eq 0 ]; then
     if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
         eval cd ${GW_START_DIR}
