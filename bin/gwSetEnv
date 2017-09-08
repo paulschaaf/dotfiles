@@ -82,11 +82,26 @@ esac
 
 if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
     export IDEA_JDK=${IDEA_JDK:-$JAVA_HOME}
-    export GW_ROOT=`echo ${PWD//$HOME/'~'} | sed -rn "
-s_((${GW_PLATFORM}|${GW_PL_NUM})/((ab|bc|cc|pc)/?(active/|release/))?[^/]*).*_\1_i
-s_(^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center)[^/]*).*_\1_i
-T
-p"`
+    export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
+# strip trailing directories (and quit on success) ...
+# ... from Perforce path
+s_^(.*/(ab|cm|bc|cc|pc)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
+t # quit if matched
+
+# ... from git path
+s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc)).*\\$_\1_i
+t
+
+# ... after the one containing the product code+version
+s_^(.*/(ab|cm|bc|cc|pc)[-._0-9]+).*\\$_\1_i
+t
+
+# ... after the one that begins with the product name
+s_^(.*/(ContactManager|(Billing|Claim|Policy)Center)[^/]*).*\\$_\1_i
+t
+
+d # delete pattern space so that empty string is returned
+"`
     typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
 
     echo
@@ -169,7 +184,7 @@ p"`
         export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
         export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
-        typeset -p GW_PORT GW_PORT_DEBUG GW_START_SCRIPT GW_TITLE
+        typeset -p GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
 
         # Fix PATH and CLASSPATH
         replaceInList PATH      'ant'      $ANT_HOME/bin
