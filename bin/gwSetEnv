@@ -147,7 +147,7 @@ p"`
             eval local list=\$$listName
             local regex=$1; shift
             local newVal=$1; shift
-            export ${listName}=`echo :$list | sed -r "s_:[^:]+(/${regex})[^:]*__g; s_^:_${newVal}:_"`
+            export ${listName}=`echo :$list | sed -r "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
         }
 
         typeset -p GW_PRODUCT
