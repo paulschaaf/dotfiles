@@ -172,10 +172,12 @@ d # delete pattern space so that empty string is returned
         # Determine the startup script
         export GW_START_SCRIPT=./gwb
         export GW_START_DIR=$GW_ROOT
+	export GW_LIB_DIR=./lib
 
         if [ ${GW_PL_NUM} -lt 9 ]; then
             GW_START_DIR=${GW_ROOT}/bin
             GW_START_SCRIPT=./$GW_PRODUCT
+	    GW_LIB_DIR=../lib
         fi
 
         $ifCygwin set scriptExtension=.bat
@@ -184,7 +186,7 @@ d # delete pattern space so that empty string is returned
         export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
         export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
-        typeset -p GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
+        typeset -p GW_LIB_DIR GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
 
         # Fix PATH and CLASSPATH
         replaceInList PATH      'ant'      $ANT_HOME/bin
@@ -200,13 +202,17 @@ d # delete pattern space so that empty string is returned
         replaceInList PATH      'maven'       ${M2_HOME}/bin
         replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
 
+	if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
+            CLASSPATH+=:${GW_LIB_DIR}/\*
+	fi
+
         # Remove any empty or duplicate members
         CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
         function _echoList() {
             for arg in $*; do
                 echo -e "\n$arg contains:"
-                eval echo \${${arg}} | sed -r 's_:_\n_g; s_/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*)/_/[4m\1[0m/_g' | cat -n
+                eval echo \${${arg}} | tr ':' '\n' | sed -r "s_(^${GW_LIB_DIR}|/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*))/_[4m\1[0m/_g" | cat -n
             done
             echo
         }
