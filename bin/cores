@@ -1,0 +1,11 @@
+#/bin/sh
+
+sed -rn '
+s/^(model name.*|cpu MHz)[^:]+: +//
+T
+/^Intel/ {
+  s/Intel\(R\) Core\(TM\) |CPU //g
+  s/$/ =>/
+}
+p' /proc/cpuinfo | tr '\n' ' ' | sed -r 's/ (i7-7700)/\n\1/g'
+echo
