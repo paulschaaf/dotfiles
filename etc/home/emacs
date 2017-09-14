@@ -1,6 +1,6 @@
 ;; -*- mode: Lisp; fill-column: 75; comment-column: 50; outline-minor-mode: t -*-
 
-;;(byte-recompile-file "~/.emacs" nil 0)
+;;(byte-compile-file "~/.emacs" 0)
 
 ;; ==================================================
 ;; === Comments
@@ -133,8 +133,6 @@
 ;; === Establish Major and Minor Modes
 
 ;; (pending-delete-mode t)
-
-(recentf-mode)
 
 ;; highlight-regexp
 
@@ -282,8 +280,8 @@
 
 (defun make-scratch-buffer-resilient ()
   (set-buffer (get-buffer-create "*scratch*"))
-  (if initial-scratch-message
-      (insert initial-scratch-message))
+  ;; (if initial-scratch-message
+  ;;     (insert initial-scratch-message))
   (lisp-interaction-mode)
   (make-local-variable 'kill-buffer-query-functions)
   (add-hook 'kill-buffer-query-functions 'kill-scratch-buffer))

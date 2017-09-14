@@ -6,6 +6,8 @@
 /etc/home/emacs.d/*
 !/etc/home/emacs.d/init.el
 !/etc/home/emacs.d/Makefile
+**/emacs*/*.elc
+**/emacs.elc
 
 /etc/ssh/*
 !/etc/ssh/*.pub

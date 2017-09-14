@@ -393,8 +393,11 @@ if [ -n "$HOSTMESSAGE" ]; then
     HOSTMESSAGE+=' '
 fi
 
+currentUser=${USERNAME//pschaaf/}
+currentUser=${currentUser}${currentUser:+@}
+
 PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
-%{$reset_color%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${USERNAME//pschaaf/}@%m%{$reset_color%}$HOSTMESSAGE %{$fg_bold[yellow]%}%62>\>>\$dirs%<<
+%{$reset_color%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%m%{$reset_color%}$HOSTMESSAGE %{$fg_bold[yellow]%}%62>\>>\$dirs%<<
 %{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L/.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "

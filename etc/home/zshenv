@@ -235,7 +235,7 @@ appendLibpath /lib /usr/lib $HOME/lib
 # ======== ls Options
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
 
-export LS_FLAGS=${LS_COLORS:+--color }-BCFbh
+export LS_FLAGS=-BCFbh
 $ifZsh export LS_FLAGS=${LS_FLAGS}H
 
 export PAGER=less
@@ -366,7 +366,7 @@ echoVar() {
 }
 
 alias classpath='echoList CLASSPATH'
-alias grep='command grep --color'
+alias grep='command grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 
@@ -422,19 +422,38 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-alias l=/bin/ls
+alias l='/bin/ls ${LS_COLORS:+--color}'
 
-alias ls="l ${LS_FLAGS}"
+export LS="l ${LS_FLAGS}"
+alias ls=${LS}
 
-alias la='l '${LS_FLAGS}A
-alias ll='l '${LS_FLAGS}l
-alias lla='la -l'
+alias la='ls -A'
+alias ll='ls -l'
+alias lla='ls -Al'
 
-alias llt='ll -rt'
+alias llt='ls -lrt'
 alias lr='ls -R'
-alias lsd="l ${LS_FLAGS/F/}d */"
-alias lld="l ${LS_FLAGS/F/}ld */"
-alias lsda="l ${LS_FLAGS/F/}ld */(D)"
+lsd() {
+    dir=${1}${1:+/}
+    set -x
+    l ${LS_FLAGS/F/} -d ${dir}*/
+}
+lld() {
+    dir=${1:-.}
+    ls -ld ${dir}/*/
+}
+lsda() {
+    if [ $# -eq 0 ]; then
+	l ${LS_FLAGS/F/} -ld */(D)
+    else
+	for dir in ${*}; do
+	    echo
+	    ls -d $dir
+	    l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
+	done
+    fi
+}
+
 alias llda='lsda -l'
 
 lsf() {
