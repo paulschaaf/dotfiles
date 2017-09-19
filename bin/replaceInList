@@ -1,0 +1,16 @@
+#!/bin/sh
+
+regex=$1
+newVal=$2
+
+cat | sed --regexp-extended "
+# prepend a colon
+s&^&:&
+
+# delete every colon-delimited string that substring-matches the regex. 
+# Leave any trailing colon.
+s&:[^:]*${regex}[^:]*&&g
+
+# prepend the new value
+s&^&${newVal}&
+"
