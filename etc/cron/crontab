@@ -1,34 +1,33 @@
 # -*- compile-command: (concat "crontab " buffer-file-name); mode: sh -*-
 
 PATH=/home/pschaaf/bin/win:/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin:/sbin:/usr/sbin:/usr/local/sbin:/home/pschaaf/bin:/c/WINDOWS/system32
-RUBYLIB=/home/pschaaf/lib/ruby:/home/pschaaf/bin
-MAILTO=pschaaf@guidewire.com
 CRON=/home/pschaaf/etc/cron
 NICELY_RUN=/bin/nice -n 19 run-parts
 LOGFILE=/var/log/cron.log
 
-# 0-59   *      *      *  *  $NICELY_RUN $CRON/minute.every    >| $LOGFILE
-# 0-59/2 *      *      *  *  $NICELY_RUN $CRON/minute.even     >| $LOGFILE
-# 1-59/2 *      *      *  *  $NICELY_RUN $CRON/minute.odd      >| $LOGFILE
-# 0,30   *      *      *  *  $NICELY_RUN $CRON/minute.every_30 >| $LOGFILE
+# 0-59   *      *      *  *   $NICELY_RUN $CRON/minute.every    >| $LOGFILE
+# 0-59/2 *      *      *  *   $NICELY_RUN $CRON/minute.even     >| $LOGFILE
+# 1-59/2 *      *      *  *   $NICELY_RUN $CRON/minute.odd      >| $LOGFILE
+# 0,30   *      *      *  *   $NICELY_RUN $CRON/minute.every_30 >| $LOGFILE
 
-5        *      *      *  *  $NICELY_RUN $CRON/hour.every      >| $LOGFILE
-# 10     0-23/2 *      *  *  $NICELY_RUN $CRON/hour.even       >| $LOGFILE
-# 10     1-23/2 *      *  *  $NICELY_RUN $CRON/hour.odd        >| $LOGFILE
+5        *      *      *  *   $NICELY_RUN $CRON/hour.every      >| $LOGFILE
+# 10     0-23/2 *      *  *   $NICELY_RUN $CRON/hour.even       >| $LOGFILE
+# 10     1-23/2 *      *  *   $NICELY_RUN $CRON/hour.odd        >| $LOGFILE
 
-35       12     *      *  *  $NICELY_RUN $CRON/day.every       >| $LOGFILE
+35       12     *      *  *   $NICELY_RUN $CRON/day.every       >| $LOGFILE
+00       9      *      *  1-5 $NICELY_RUN $CRON/day.workdays    >| $LOGFILE
 
-# 35     12     *      *  1  $NICELY_RUN $CRON/week.every      >| $LOGFILE
+# 35     12     *      *  1   $NICELY_RUN $CRON/week.every      >| $LOGFILE
 
-# 45     12     1      *  *  $NICELY_RUN $CRON/month.every     >| $LOGFILE
-# 55     12     2-12/2 *  *  $NICELY_RUN $CRON/month.even      >| $LOGFILE
-# 55     12     1-12/2 *  *  $NICELY_RUN $CRON/month.odd       >| $LOGFILE
+# 45     12     1      *  *   $NICELY_RUN $CRON/month.every     >| $LOGFILE
+# 55     12     2-12/2 *  *   $NICELY_RUN $CRON/month.even      >| $LOGFILE
+# 55     12     1-12/2 *  *   $NICELY_RUN $CRON/month.odd       >| $LOGFILE
 
-# *      *      *      *  *  command to be executed
+# *      *      *      *  *   command to be executed
 # -      -      -      -  -
 # |      |      |      |  |
-# |      |      |      |  +- day of week (0 - 6) (Sunday=0)
-# |      |      |      +---- month (1 - 12)
-# |      |      +----------- day of month (1 - 31)
-# |      +------------------ hour (0 - 23)
-# +------------------------- min (0 - 59)
+# |      |      |      |  +-- day of week (0 - 6) (Sunday=0)
+# |      |      |      +----- month (1 - 12)
+# |      |      +------------ day of month (1 - 31)
+# |      +------------------- hour (0 - 23)
+# +-------------------------- min (0 - 59)
