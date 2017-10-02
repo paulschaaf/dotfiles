@@ -253,7 +253,7 @@ exportDefault SCREENDIR ${HOME}/tmp
 
 export SHELL=/usr/bin/zsh
 
-export STUDIO_JDK=$JAVA8_HOME
+# export STUDIO_JDK=$JAVA8_HOME
 export STUDIO_VM_OPTIONS=~/etc/rc/studio64.vmoptions
 
 export USE_COLOR=true
