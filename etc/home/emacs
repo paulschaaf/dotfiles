@@ -25,6 +25,9 @@
 
 ;; http://www.gnu.org/software/emacs/windows/ntemacs.html
 
+(set-background-color "black")
+(set-foreground-color "white")
+
 
 ;; ==================================================
 ;; === Useful Tricks
@@ -233,7 +236,16 @@
  ;; If there is more than one, they won't work right.
  '(delete-selection-mode t nil (delsel))
  '(load-home-init-file t t)
- '(safe-local-variable-values (quote ((outline-minor-mode . t)))))
+ '(safe-local-variable-values
+   (quote
+    ((eval progn
+	   (highlight-regexp "\\bheader[1-9]+\\b"
+			     (quote hi-green-b))
+	   (highlight-regexp "\\bh1\\b.*"
+			     (quote header1))
+	   (highlight-regexp "\\bh2\\b.*"
+			     (quote header2)))
+     (outline-minor-mode . t)))))
 
 ;; '(sentence-end "[.?!][]\"')}]*\\($\\| $\\|	\\| \\)[ 	\n]*")
 

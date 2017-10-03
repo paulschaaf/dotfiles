@@ -12,6 +12,7 @@
 
 ! Emacs.font: -misc-fixed-medium-r-normal-*-*-120-*-*-*-*-*-*
 ! Emacs.boldFont: -misc-fixed-bold-r-normal-*-10-*-*-*-*-*-*-*
+Emacs.reverseVideo: true
 emacs.geometry: 80x78
 !+82
 ! emacs.visualClass: TrueColor
