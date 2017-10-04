@@ -182,7 +182,7 @@ if [ $exitCode -eq 0 ]; then
                     fi
                     echoVar report
 
-                    fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|${GW_PORT})/${GW_PRODUCT}/), %q(http://$pcfHost/$GW_PRODUCT/))' /tmp/fail.*test.*html && google-chrome file:///'$report'"
+                    fullTask="ruby -pi -e 'gsub(%r(http://\w+:(null|${GW_PORT})/${GW_PRODUCT}/), %q(http://$pcfHost/$GW_PRODUCT/))' /tmp/fail.*[Tt]est.*html && google-chrome file:///'$report'"
                     ;;
                 portCheck)
                     fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
