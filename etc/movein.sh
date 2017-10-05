@@ -4,6 +4,12 @@ cd $HOME
 backup=~/backup
 shell=/usr/bin/zsh
 
+libraries=(
+    libimage-exiftool-perl # edit EXIF data in image
+    libncurses
+    libncurses-dev
+    libevent
+)
 
 # these get installed first, in the order defined
 ordered_packages=(
@@ -36,7 +42,6 @@ unordered_packages=(
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
     latte-dock         # dock app
-    libimage-exiftool-perl # edit EXIF data in image
     lynx               # command line browser
     meld               # merge tool
     mp3fs              # MP3 virtualf ilesystem
@@ -165,6 +170,7 @@ mkdir $backup
 
 h1 PACKAGE INSTALLATION
 apt autoremove
+apt-get-all libraries
 apt-get-all ordered_packages
 apt-get-all unordered_packages
 

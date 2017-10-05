@@ -93,6 +93,21 @@ section('256-COLOR PALETTE (16..255)') {
     Foreground 'echo "\\e[38;5;<color>mHello world"'
     Background 'echo "\\e[48;5;<color>mHello world"'
 STRING
+
+  # truecolor
+  # [48].each {|ground|
+  #   (0x0..0xf).each {|red|
+  #     printf "\n\nR-%x0", red
+  #     (0x0..0xf).each {|green|
+  #       printf "\nG-%x0 ", green
+  #       (0x0..0x1f).each {|blue|
+  #         code="#{ground};2;#{red}0;#{green}0;#{blue}"
+  #         printf "[%sm%.x[0m", code, blue
+  #       }
+  #     }
+  #   }
+  #   puts
+  # }
 }
 
 def printSamples(codeToDesc)
