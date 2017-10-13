@@ -32,16 +32,16 @@ if ARGV[0] == "--radiohead"
   cover = "
    ┌──────────────┐
    │ \e[38;5;227mIN/ RAINBOWS\e[0m │
-   │ \e[38;5;074mIN RAIN/BOWS\e[0m │
+   │ \e[38;5;033mIN RAIN/BOWS\e[0m │
    │ \e[38;5;202mIN RAINBOW/S\e[0m │
-   │ \e[38;5;040mIN RAINBOWS/\e[0m │
+   │ \e[38;5;034mIN RAINBOWS/\e[0m │
    │ \e[38;5;215mIN RAIN_BOWS\e[0m │
-   │ \e[38;5;197mRA DIIOHEA_D\e[0m │
-   │ \e[38;5;253m_RAD IOHEA D\e[0m │
+   │ \e[38;5;196mRA DIIOHEA_D\e[0m │
+   │ \e[38;5;153m_RAD IOHEA D\e[0m │
    └──────────────┘
 "
   print cover
-  print cover.gsub(%r(\e), '\e')
+#  print "\necho \"", cover.gsub(%r(\e), '\e'), "\"\n"
   exit
 end
 
