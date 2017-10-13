@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# coding: utf-8
 
 #require 'matrix'
 Lookup = (ARGV[0] || 0).to_i
@@ -25,6 +26,25 @@ def section(header)
   yield
   puts
 end
+
+# An Easter Egg!
+if ARGV[0] == "--radiohead"
+  cover = "
+   ┌──────────────┐
+   │ \e[38;5;227mIN/ RAINBOWS\e[0m │
+   │ \e[38;5;074mIN RAIN/BOWS\e[0m │
+   │ \e[38;5;202mIN RAINBOW/S\e[0m │
+   │ \e[38;5;040mIN RAINBOWS/\e[0m │
+   │ \e[38;5;215mIN RAIN_BOWS\e[0m │
+   │ \e[38;5;197mRA DIIOHEA_D\e[0m │
+   │ \e[38;5;253m_RAD IOHEA D\e[0m │
+   └──────────────┘
+"
+  print cover
+  print cover.gsub(%r(\e), '\e')
+  exit
+end
+
 
 section('EFFECTS (0..9, 21..29)') {
   effects = {0=>'-unset all-', 1=>'Bold', 2=>'[Dim]', 3=>'[Italic]', 4=>'Underline', 5=>'Blink', 6=>'[Fast blink]', 7=>'Inverse', 8=>'[Concealed]', 9=>'[Strikeout]'}
