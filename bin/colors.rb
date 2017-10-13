@@ -28,7 +28,7 @@ def section(header)
 end
 
 # An Easter Egg!
-if ARGV[0] == "--radiohead"
+if ARGV[0] == "--rainbow"
   cover = "
    ┌──────────────┐
    │ \e[38;5;227mIN/ RAINBOWS\e[0m │
@@ -39,6 +39,7 @@ if ARGV[0] == "--radiohead"
    │ \e[38;5;196mRA D IOHEA_D\e[0m │
    │ \e[38;5;153m_RAD IOHEA D\e[0m │
    └──────────────┘
+https://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s
 "
   print cover
 #  print "\necho \"", cover.gsub(%r(\e), '\e'), "\"\n"
