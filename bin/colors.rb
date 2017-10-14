@@ -29,18 +29,34 @@ end
 
 # An Easter Egg!
 if ARGV[0] == "--rainbow"
-  cover = "
-   ┌──────────────┐
-   │ \e[38;5;227mIN/ RAINBOWS\e[0m │
-   │ \e[38;5;033mIN RAIN/BOWS\e[0m │
-   │ \e[38;5;202mIN RAINBOW/S\e[0m │
-   │ \e[38;5;034mIN RAINBOWS/\e[0m │
-   │ \e[38;5;215mIN RAIN_BOWS\e[0m │
-   │ \e[38;5;196mRA D IOHEA_D\e[0m │
-   │ \e[38;5;153m_RAD IOHEA D\e[0m │
-   └──────────────┘
-https://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s
-"
+  clr = "\e[0m"
+  def fg(c)
+    "\e[38;5;#{c}m"
+  end
+  def bg(c)
+    "\e[48;5;#{c}m"
+  end
+  yel = fg 227
+  blu = fg  33
+  ora = fg 202
+  gre = fg 034
+  btr = fg 214
+  red = fg 196
+  lBl = fg  81
+  
+  cover = ['',
+    "┌────────────┐",
+    "│#{yel}IN/ #{bg 27}R#{bg 0}AINB#{bg 208}O#{bg 0}WS#{clr}│",
+    "│#{blu}IN#{bg 27} #{bg 0}RAIN/#{bg 208}BOW#{bg 0}S#{clr}│",
+    "│#{ora}I#{bg 27}N#{bg 0} RA#{bg 229}I#{bg 0}N#{bg 166}BOW#{bg 0}/S#{clr}│",
+    "│#{gre}I#{bg 27}N#{bg 0} RA#{bg 208}INB#{bg 166}O#{bg 208}W#{bg 0}S/#{clr}│",
+    "│#{btr}I#{bg 27}N#{bg 0} RA#{bg 208}IN_B#{bg 0}OWS#{clr}│",
+    "│#{red}#{bg 208}R#{bg 0}A#{bg 27} #{bg 0}D IOHEA_D#{clr}│",
+    "│#{lBl}_R#{bg 27}A#{bg 0}DIO#{bg 208} #{bg 0}HEA D#{clr}│",
+    "└────────────┘\n",
+    " \e[4;94mhttps://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s\e[0m"
+  ]
+  cover = cover.join("\n   ")
   print cover
 #  print "\necho \"", cover.gsub(%r(\e), '\e'), "\"\n"
   exit
