@@ -54,7 +54,7 @@ if ARGV[0] == "--rainbows"
     "│#{red}R#{bg 0}A#{bg 27} #{bg 0}D I#{bg 172}O#{bg 0}HEA_D#{clr}│",
     "│#{lBl}_R#{bg 27}A#{bg 0}DIO HEA D#{clr}│",
     "└────────────┘\n",
-    " \e[4;94mhttps://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s\e[0m"
+    " \e[4;94mhttps://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s\e[0m\n"
   ]
   cover = cover.join("\n   ")
   print cover
