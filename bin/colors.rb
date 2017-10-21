@@ -28,7 +28,7 @@ def section(header)
 end
 
 # An Easter Egg!
-if ARGV[0] == "--rainbow"
+if ARGV[0] == "--rainbows"
   clr = "\e[0m"
   def fg(c)
     "\e[38;5;#{c}m"
