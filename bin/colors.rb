@@ -49,12 +49,11 @@ if ARGV[0] == "--rainbows"
     "│#{yel}IN/ #{bg 27}R#{bg 0}AINB#{bg 208}O#{bg 0}WS#{clr}│",
     "│#{blu}IN#{bg 27} #{bg 0}RAIN/#{bg 208}BOW#{bg 0}S#{clr}│",
     "│#{ora}I#{bg 27}N#{bg 0} RA#{bg 229}I#{bg 0}N#{bg 166}BOW#{bg 0}/S#{clr}│",
-    "│#{gre}I#{bg 27}N#{bg 0} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 0}S/#{clr}│",
+    "│#{gre}I#{bg 27}N#{bg 0} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 0}S/#{clr}│   \e[4;94mhttps://youtu.be/Q888PBtrWc0\e[0m",
     "│#{btr}I#{bg 27}N#{bg 0} RAI#{bg 172}N#{bg 208}_B#{bg 0}OWS#{clr}│",
     "│#{red}R#{bg 0}A#{bg 27} #{bg 0}D I#{bg 172}O#{bg 0}HEA_D#{clr}│",
     "│#{lBl}_R#{bg 27}A#{bg 0}DIO HEA D#{clr}│",
     "└────────────┘\n",
-    " \e[4;94mhttps://www.youtube.com/watch?v=HeHqt9YcVDs&t=29s\e[0m\n"
   ]
   cover = cover.join("\n   ")
   print cover
