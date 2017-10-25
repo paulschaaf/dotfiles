@@ -175,7 +175,7 @@ export AARDVARK_HOME=/depot/aardvark/alpha
 
 if [ -d /opt/idea16 ]; then
     local ideaDigitHome
-    for home in /opt/idea[1-9][1-9]; do
+    for home in /opt/idea{20,}[1-9][1-9]; do
 	ideaDigitHome=IDEA${home##*idea}_HOME
         export $ideaDigitHome=$home
     done

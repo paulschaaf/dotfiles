@@ -76,7 +76,7 @@ case ${GW_PLATFORM} in
         unsetGWVars
         export IDEA_HOME=$IDEA16_HOME
         export JAVA_HOME=$JAVA8_HOME
-        export IDEA_JDK=${JAVA8_HOME}_nodcevm
+	unset IDEA_JDK
         ;;
 esac
 
