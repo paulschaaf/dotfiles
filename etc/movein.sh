@@ -48,6 +48,7 @@ unordered_packages=(
     mtpfs              # android file transfer
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
+    powerlevel9k       # prompt enhancements
     ruby               # programming language
     silversearcher-ag  # quicker grep
     slack              # IM client
@@ -72,6 +73,12 @@ unofficial_packages=(
     oracle-java7-installer
     oracle-java8-installer
     # oracle-java9-installer
+)
+
+manually_install=(
+    'Master PDF Editor'
+    Frostwire
+    Solarized
 )
 
 git_repos=(
@@ -266,7 +273,4 @@ else
 fi
 
 h1 Manually install the following packages:
-echo "
-Master PDF Editor
-Frostwire
-"
+echo "$manually_install"
