@@ -35,16 +35,14 @@ Usage: #{File.basename($0)} [-n]? [[-c color]* [regex]+]+
         --color=never is provided for compatibility with grep.
 
 Example:
-  ls /etc | lite '\\w*rc[\\w.]*' -c 'red bold' conf -c on_green mail
+  /bin/ls /lib | lite '\w*lib[\w.]*' -c 'red bold' conf -c on_green init
 
-  List the files in /etc, using the following colors:
-     -default color:     a word that contains 'rc'
+  List the files in /lib using the following colors:
+     -default color:     a word that contains 'lib'
      -red bold:          the letters 'conf'
-     -green background:  the letters 'mail'
+     -green background:  the letters 'so'
 
-  ls /etc | lite -n '\\w*rc[\\w.]*' -c red -c bold conf -c on_green mail
-
-Report bugs to <paul_schaaf@yahoo.com>.
+Report bugs to <paul.schaaf@gmail.com>.
 HELP
 
 if ARGV.include?('-h') || ARGV.include?('--help')
@@ -61,25 +59,25 @@ use_color = ENV['USE_COLOR'].instance_eval {
 }
 
 while (line=STDIN.gets(''))
-  if ARGV[0] =~ /-(n|-color=never)/
+  if ARGV[0] =~ /^-(n|-color=never)$/
     use_color = false
     ARGV.shift
-  elsif ARGV[0] =~ /--color=a(lways|uto)/
-    ARGV.shift
+    # elsif ARGV[0] =~ /^--color=(always|auto)$/
+    #   ARGV.shift
   end
 
   until ARGV.empty?
 
     # process all colors
     color = ''
-    while ! ARGV.empty? && ARGV[0] =~ /^#$COLOR_SWITCH/
+    while !ARGV.empty? && ARGV[0] =~ /^#$COLOR_SWITCH/
       ARGV.shift
       ARGV.shift.split(' ').each {|aColor|
-	color += if use_color and Color.respond_to?(aColor)
-	  Color.send(aColor)
-	else
-	  aColor
-	end
+        color += if use_color and Color.respond_to?(aColor)
+                   Color.send(aColor)
+                 else
+                   aColor
+                 end
       }
     end
 
@@ -105,5 +103,5 @@ while (line=STDIN.gets(''))
     end
 
   end
-  print line   # don't add a line terminator of our own as that would "change" the input
+  print line # don't add a line terminator of our own as that would "change" the input
 end

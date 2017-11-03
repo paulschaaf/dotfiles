@@ -1,5 +1,4 @@
-#!/bin/z
-sh
+#!/bin/zsh
 #set -x
 _batchFile=./${0##*/}
 UNAME=`uname`
