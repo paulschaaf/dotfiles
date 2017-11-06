@@ -12,6 +12,13 @@
         <option name="PROGUARD_LOGS_FOLDER_RELATIVE_PATH" value="/../../dotfiles/proguard_logs" />
       </configuration>
     </facet>
+    <facet type="JRUBY" name="JRuby">
+      <configuration>
+        <JRUBY_FACET_CONFIG_ID NAME="JRUBY_SDK_NAME" VALUE="" />
+        <LOAD_PATH number="0" />
+        <I18N_FOLDERS number="0" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />

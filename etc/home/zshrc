@@ -339,13 +339,13 @@ esac
 
 case $CONNECTION in
     ssh)
-        local connection_color='[0;30;48;5;226m'
+        connection_color='[0;30;48;5;226m'
         ;;
     tlnt)
-        local connection_color='[31;1m'
+        connection_color='[31;1m'
         ;;
     sudo)
-        local connection_color='[35;1;40m'
+        connection_color='[35;1;40m'
         ;;
     *)
         ;;
@@ -370,7 +370,9 @@ updateDirs () {
 }
 
 if [ $UID -eq 0 ]; then
-    updateGuidewireVars () { }
+    updateGuidewireVars () {
+        :
+    }
 else
     updateGuidewireVars () {
         source gwSetEnv 2>&1 > /dev/null
@@ -404,6 +406,24 @@ PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 
 pcd .
 $ifZsh compinit
+
+# POWERLEVEL9K
+source ~/.fonts/fontawesome-regular.sh
+POWERLEVEL9K_MODE='nerdfont-complete'
+POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir vcs)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status nvm node_version)
+
+POWERLEVEL9K_OS_ICON_BACKGROUND="white"
+POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
+POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
+POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
+
+#POWERLEVEL9K_MODE='nerdfont-patched'
+#POWERLEVEL9K_MODE='awesome-patched'
+#POWERLEVEL9K_MODE='awesome-fontconfig'
+#source ~/opt/powerlevel9k/powerlevel9k.zsh-theme
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins

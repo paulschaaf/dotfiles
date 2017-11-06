@@ -1,7 +1,8 @@
 [Appearance]
-BoldIntense=true
-ColorScheme=WhiteOnBlack
-Font=Fira Code,7,-1,5,50,0,0,0,0,0
+AntiAliasFonts=true
+BoldIntense=false
+ColorScheme=Solarized
+Font=FuraCode Nerd Font Mono,7,-1,5,53,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8

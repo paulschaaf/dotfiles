@@ -9,6 +9,9 @@
 **/emacs*/*.elc
 **/emacs.elc
 
+.idea/tasks.xml
+.idea/workspace.xml
+
 /etc/ssh/*
 !/etc/ssh/*.pub
 !/etc/ssh/authorized_keys
