@@ -1,7 +1,7 @@
 [Appearance]
 AntiAliasFonts=true
 BoldIntense=false
-ColorScheme=Solarized
+ColorScheme=WhiteOnBlack
 Font=FuraCode Nerd Font Mono,7,-1,5,53,0,0,0,0,0
 
 [Encoding Options]
