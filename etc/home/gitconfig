@@ -1,0 +1,20 @@
+[core]
+	editor = /usr/bin/emacs -nw
+[mergetool]
+	keepbackup = false
+[core]
+   excludesfile = ~/.gitignore
+	autocrlf = input
+[user]
+	name = pschaaf
+	email = pschaaf@guidewire.com
+[merge]
+	tool = bc
+[push]
+	default = current
+[mergetool "bc3"]
+	trustExitCode = true
+[credential]
+	helper = keychain
+[alias]
+	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
