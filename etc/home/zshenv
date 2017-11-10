@@ -435,7 +435,6 @@ alias llt='ls -lrt'
 alias lr='ls -R'
 lsd() {
     dir=${1}${1:+/}
-    set -x
     l ${LS_FLAGS/F/} -d ${dir}*/
 }
 lld() {
