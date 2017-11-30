@@ -29,10 +29,11 @@ unordered_packages=(
     amarok             # music
     ascii              # tree of ascii codes
     byobu              # tmux/screen enhancements
-#    cairo-dock         # Mac-like icon dock
+    cairo-dock         # Mac-like icon dock
     calibre            # e-book manager
     cmake              # multi-platform install system
     davfs2             # mount box.com into filesystem
+    devede             # make video DVDs
     dolphin-plugins    # git integration into KDE file manager
     emacs              # the king of editors
     filezilla          # file transfers
@@ -41,7 +42,7 @@ unordered_packages=(
     gitk               # git tk browser
     k4dirstat          # disk usage report
     keychain           # ssh key organizer
-    latte-dock         # dock app
+#    latte-dock         # dock app
     lynx               # command line browser
     meld               # merge tool
     mp3fs              # MP3 virtualf ilesystem
