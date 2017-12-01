@@ -6,6 +6,7 @@
 // @author       You
 // @match        http://ifdb.tads.org/*
 // @grant        none
+// @ require      file:///home/pschaaf/src/javascript/greasemonkey/IFDB Show XML Record.user.js
 // ==/UserScript==
 
 (function() {
@@ -14,7 +15,6 @@
     link.href = document.location.href + '&ifiction';
     link.target = '_blank';
     link.text = 'XML Record';
-//    link.protocol = "view-source";
 
     var detailsSection = document.getElementsByClassName("details")[0];
     detailsSection.appendChild(link);
