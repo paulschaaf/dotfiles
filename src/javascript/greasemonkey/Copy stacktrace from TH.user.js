@@ -5,7 +5,7 @@
 // @author       P.G. Schaaf
 // @match        https://th.guidewire.com/hippo/ToolsHarness*
 // @grant        GM_setClipboard
-// @ require      file:///home/pschaaf/src/javascript/greasemonkey/Copy stacktrace from TH.user.js
+// @require      file:///home/pschaaf/src/javascript/greasemonkey/Copy stacktrace from TH.user.js
 // ==/UserScript==
 
 document.pgs_getSingleNodeWithXPath = function(xPath) {
@@ -40,8 +40,8 @@ document.pgs_getSingleNodeWithXPath = function(xPath) {
 
             var newContent = document.createElement('div');
             newContent.setAttribute('class', 'content');
-            document.pgs_StackContent.parentNode.appendChild(newContent);
-            document.pgs_getSingleNodeWithXPath('//li[text()="Logs"]').click()
+            document.pgs_StackContent.insertAdjacentElement("afterend", newContent);
+            //document.pgs_getSingleNodeWithXPath('//li[text()="Logs"]').click()
         }
     };
 

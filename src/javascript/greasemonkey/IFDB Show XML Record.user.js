@@ -1,12 +1,12 @@
 // ==UserScript==
 // @name         IFDB Show XML Record
-// @namespace    http://tampermonkey.net/
+// @namespace    tag:paul.schaaf@gmail.com,2010-01-01
 // @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @description  Adds a link to show the XML record to an IFDB entry
+// @author       P.G. Schaaf
 // @match        http://ifdb.tads.org/*
 // @grant        none
-// @ require      file:///home/pschaaf/src/javascript/greasemonkey/IFDB Show XML Record.user.js
+// @require      file:///home/pschaaf/src/javascript/greasemonkey/IFDB Show XML Record.user.js
 // ==/UserScript==
 
 (function() {

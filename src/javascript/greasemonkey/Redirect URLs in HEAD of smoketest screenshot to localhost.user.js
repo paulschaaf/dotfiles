@@ -4,7 +4,7 @@
 // @version      2017.11.16
 // @author       P.G. Schaaf
 // @match        http://thfiles/autofiles/results/*html
-// @ require      file:///home/pschaaf/src/javascript/greasemonkey/Redirect URLs in HEAD of smoketest screenshot to localhost.user.js
+// @require      file:///home/pschaaf/src/javascript/greasemonkey/Redirect URLs in HEAD of smoketest screenshot to localhost.user.js
 // ==/UserScript==
 
 (function() {
