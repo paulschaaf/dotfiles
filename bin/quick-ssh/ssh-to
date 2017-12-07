@@ -191,6 +191,6 @@ echo ${final}
 
 if [ -z "$dry_run" ]; then
     echo k${remote_host}
+    trap 'echo -n k-' EXIT
     eval ${final}
-    echo -n k-
 fi

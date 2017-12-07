@@ -63,7 +63,7 @@ if [ $exitCode -eq 0 ]; then
     }
 
     setGnuScreenTitle() {
-        [ -n "$inScreen" ] && echo -n "\ek${GW_TITLE} ${*}\e\\"
+        echo -n "\ek${GW_TITLE} ${*}\e\\"
     }
 
     log_section() {

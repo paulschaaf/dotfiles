@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Redirect URLs in HEAD of smoketest screenshot to localhost
-// @namespace    http://tampermonkey.net/
-// @version      2017.11.16
+// @namespace    tag:paul.schaaf@gmail.com,2010-01-01
+// @version      2017.12.06
 // @author       P.G. Schaaf
 // @match        http://thfiles/autofiles/results/*html
 // @require      file:///home/pschaaf/src/javascript/greasemonkey/Redirect URLs in HEAD of smoketest screenshot to localhost.user.js
