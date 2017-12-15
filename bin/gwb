@@ -14,6 +14,9 @@ while [ -n "$*" ]; do
             shift
             delay=$1
             ;;
+        --nice)
+            nice='nice '
+            ;;
         --dry-run)
             _dry_run=': '
             ;;
@@ -84,14 +87,14 @@ if [ $exitCode -eq 0 ]; then
     }
 
     runTask() {
-        local task=$1
+        local task=${nice}$1
         local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
         local successIcon=$2
         local failIcon=$3
 
         [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
-        #setGnuScreenTitle ${task}
+        setGnuScreenTitle ${taskSummary}
 
         log_section 44 'START' ${taskSummary}
 
