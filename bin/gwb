@@ -18,7 +18,7 @@ while [ -n "$*" ]; do
             nice='nice '
             ;;
         --dry-run)
-            _dry_run=': '
+            _dry_run='echo '
             ;;
         --)
             echo Unknown option $1
@@ -138,6 +138,8 @@ if [ $exitCode -eq 0 ]; then
 
     pcfHost=localhost:$GW_PORT_DEBUG
 
+    webserver="ruby -run -ehttpd ${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp -p8091"
+
     if [ -z $_dry_run ]; then
         while [ -n "$*" ]; do
             task=$1
@@ -153,6 +155,13 @@ if [ $exitCode -eq 0 ]; then
                         task=dropdb
                     fi
                     taskFailIcon=$failIcon
+                    ;;
+                httpkill)
+                    fullTask="pkill -f '$webserver'"
+                    ;;
+                http*)
+                    spawn=true
+                    fullTask=$webserver
                     ;;
                 idea*)
                     if [ $GW_PL_NUM -lt 9 ]; then

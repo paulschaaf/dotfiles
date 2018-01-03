@@ -172,12 +172,12 @@ d # delete pattern space so that empty string is returned
         # Determine the startup script
         export GW_START_SCRIPT=./gwb
         export GW_START_DIR=$GW_ROOT
-	export GW_LIB_DIR=./lib
+	    export GW_LIB_DIR=./lib
 
         if [ ${GW_PL_NUM} -lt 9 ]; then
             GW_START_DIR=${GW_ROOT}/bin
             GW_START_SCRIPT=./$GW_PRODUCT
-	    GW_LIB_DIR=../lib
+	        GW_LIB_DIR=../lib
         fi
 
         $ifCygwin set scriptExtension=.bat
