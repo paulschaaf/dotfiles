@@ -49,7 +49,6 @@ unordered_packages=(
     mtpfs              # android file transfer
     partitionmanager   # manage disk partitions
     playonlinux        # addons for wine
-    powerlevel9k       # prompt enhancements
     ruby               # programming language
     silversearcher-ag  # quicker grep
     slack              # IM client
@@ -76,9 +75,11 @@ unofficial_packages=(
     # oracle-java9-installer
 )
 
+# Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
 manually_install=(
-    'Master PDF Editor'
+    Gitkraken
     Frostwire
+    "Master+PDF+Editor"
     Solarized
 )
 
@@ -133,7 +134,8 @@ function printFgBg() {
 }
 
 function h1() {
-    printFgBg 255 21 $*
+    echo
+    printFgBg 255 21 ========== $*
 }
 
 function h2() {
@@ -275,3 +277,6 @@ fi
 
 h1 Manually install the following packages:
 echo "$manually_install"
+for pkg in ${manually_install[@]}; do
+    echo google-chrome https://www.google.com/search?q="${pkg// //+}"+ubuntu+download
+done
