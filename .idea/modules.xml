@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/dotfiles.iml" filepath="$PROJECT_DIR$/dotfiles.iml" />
-      <module fileurl="file://$PROJECT_DIR$/src/AndroidClass/DevelopmentEnvironment/Misc/TheAnswer/dotfiles.iml" filepath="$PROJECT_DIR$/src/AndroidClass/DevelopmentEnvironment/Misc/TheAnswer/dotfiles.iml" />
     </modules>
   </component>
 </project>
