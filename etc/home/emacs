@@ -960,7 +960,7 @@
 ;; === Recently Opened Files
 
 ;; Re-open most recently visited file
-(recentf-mode t)
-(if (file-readable-p recentf-save-file)
-    (if (> (length recentf-list) 0)
-        (mapc 'find-file (recentf-elements 10))))
+;; (recentf-mode t)
+;; (if (file-readable-p recentf-save-file)
+;;     (if (> (length recentf-list) 0)
+;;         (mapc 'find-file (recentf-elements 10))))

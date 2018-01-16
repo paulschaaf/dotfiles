@@ -65,6 +65,7 @@ unordered_packages=(
 )
 
 unofficial_ppas=(
+    freecad-maintainers/freecad-stable
     webupd8team/java
 )
 
@@ -73,6 +74,7 @@ unofficial_packages=(
     oracle-java7-installer
     oracle-java8-installer
     # oracle-java9-installer
+    freecad
 )
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
