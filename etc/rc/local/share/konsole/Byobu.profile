@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=false
 ColorScheme=WhiteOnBlack
-Font=Liberation Mono,8,-1,5,50,0,0,0,0,0
+Font=Liberation Mono,12,-1,5,50,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8

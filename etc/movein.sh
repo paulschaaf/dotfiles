@@ -61,6 +61,7 @@ unordered_packages=(
     virtualbox-qt
     vlc                # video player
     vpnc               # vpn to Guidewire
+    winetricks         # wine extensions
     xterm              # the basics
 )
 
