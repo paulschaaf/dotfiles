@@ -208,6 +208,8 @@ if [ -d /usr/lib/jvm/java-8-oracle ]; then
     eval export JAVA_HOME=\$${javaDigitHome}  # keep the highest-numbered version
 fi
 
+export JAVA18_AMD64_HOME=${JAVA8_HOME}
+
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
 

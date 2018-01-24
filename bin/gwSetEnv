@@ -76,17 +76,20 @@ case ${GW_PLATFORM} in
         unsetGWVars
         export IDEA_HOME=$IDEA2017_HOME
         export JAVA_HOME=$JAVA8_HOME
-	unset IDEA_JDK
+	    unset IDEA_JDK
         ;;
 esac
 
-if [ -n "$GW_PLATFORM" ]; then  # if we determined the platform
-    export IDEA_JDK=${IDEA_JDK:-$JAVA_HOME}
-    export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
+if [ -z "$GW_PLATFORM" ]; then  # if we could not determine the platform
+    return 1 2>/dev/null || exit
+fi
+
+export IDEA_JDK=${IDEA_JDK:-$JAVA_HOME}
+export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
 # strip trailing directories (and quit on success) ...
 # ... from Perforce path
 s_^(.*/(ab|cm|bc|cc|pc)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
-t # quit if matched
+t
 
 # ... from git path
 s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc)).*\\$_\1_i
@@ -102,139 +105,140 @@ t
 
 d # delete pattern space so that empty string is returned
 "`
-    typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
+typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
 
+echo
+typeset -p JAVA_HOME
+which java
+java -version 2>&1
+echo
+
+export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
+ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
+if [[ "$UNAME" =~ "CYGWIN" ]]; then
+    # if we are in Cygwin, execute the rest of the line
+    ifCygwin=
+fi
+
+case ${GW_PRODUCT} in
+    ab|contactmanager)
+        export GW_PRODUCT=ab
+        export GW_PORT=8280
+        export GW_COLOR='[106m' # bright white text on aqua
+        $ifCygwin GW_COLOR=3F
+        ;;
+    bc|billingcenter)
+        export GW_PRODUCT=bc
+        export GW_PORT=8380
+        export GW_COLOR='[105m' # bright white text on magenta
+        $ifCygwin GW_COLOR=2F
+        ;;
+    cc|claimcenter)
+        export GW_PRODUCT=cc
+        export GW_PORT=8080
+        export GW_COLOR='[104m' # bright white text on blue
+        $ifCygwin GW_COLOR=1F
+        ;;
+    pc|policycenter)
+        export GW_PRODUCT=pc
+        export GW_PORT=8480
+        export GW_COLOR='[103m' # bright white text on tan/yellow
+        $ifCygwin GW_COLOR=4F
+        ;;
+    gw)
+        export GW_PRODUCT=gw
+        export GW_COLOR='[30;107m' # bright black text on gray
+        $ifCygwin GW_COLOR=4F
+        ;;
+    *)
+        unset GW_PRODUCT GW_TITLE GW_PROMPT
+        export GW_COLOR='[5;101m' # blinking bright white on red
+        $ifCygwin GW_COLOR=0F
+        ;;
+esac
+
+if [ -z "${GW_PRODUCT}" ]; then
+    unsetGWVars
+    return 1 2>/dev/null || exit
+fi
+
+function replaceInList() {
+    local listName=$1; shift
+    eval local list=\$$listName
+    local regex=$1; shift
+    local newVal=$1; shift
+    export ${listName}=`echo :$list | sed -r "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
+}
+
+typeset -p GW_PRODUCT
+
+export GW_PORT_DEBUG=$(($GW_PORT + 10))
+
+# Determine the startup script
+export GW_START_SCRIPT=./gwb
+export GW_START_DIR=$GW_ROOT
+export GW_LIB_DIR=./lib
+
+if [ ${GW_PL_NUM} -lt 9 ]; then
+    export _XX=$GW_PRODUCT
+    typeset -p _XX
+    GW_START_DIR=${GW_ROOT}/bin
+    GW_START_SCRIPT=${GW_START_DIR}/all
+    GW_LIB_DIR=../lib
+fi
+
+$ifCygwin set scriptExtension=.bat
+GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
+
+export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
+export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
+
+typeset -p GW_LIB_DIR GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
+
+# Fix PATH and CLASSPATH
+replaceInList PATH      'ant'      $ANT_HOME/bin
+replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
+
+replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
+replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
+
+replaceInList PATH      'idea[0-9]*'         ${IDEA_HOME}/bin
+replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
+replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
+
+replaceInList PATH      'maven'       ${M2_HOME}/bin
+replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
+
+if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
+    CLASSPATH+=:${GW_LIB_DIR}/\*
+fi
+
+# Remove any empty or duplicate members
+CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
+
+function _echoList() {
+    for arg in $*; do
+        echo -e "\n$arg contains:"
+        eval echo \${${arg}} | tr ':' '\n' | sed -r "s_(^${GW_LIB_DIR}|/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*))/_[4m\1[0m/_g" | cat -n
+    done
     echo
-    typeset -p JAVA_HOME
-    which java
-    java -version 2>&1
-    echo
+}
 
-    export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
-    ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
-    if [[ "$UNAME" =~ "CYGWIN" ]]; then
-        # if we are in Cygwin, execute the rest of the line
-        ifCygwin=
-    fi
+_echoList PATH CLASSPATH
 
-    case ${GW_PRODUCT} in
-        ab|contactmanager)
-            export GW_PRODUCT=ab
-            export GW_PORT=8280
-            export GW_COLOR='[106m' # bright white text on aqua
-            $ifCygwin GW_COLOR=3F
-            ;;
-        bc|billingcenter)
-            export GW_PRODUCT=bc
-            export GW_PORT=8380
-            export GW_COLOR='[105m' # bright white text on magenta
-            $ifCygwin GW_COLOR=2F
-            ;;
-        cc|claimcenter)
-            export GW_PRODUCT=cc
-            export GW_PORT=8080
-            export GW_COLOR='[104m' # bright white text on blue
-            $ifCygwin GW_COLOR=1F
-            ;;
-        pc|policycenter)
-            export GW_PRODUCT=pc
-            export GW_PORT=8480
-            export GW_COLOR='[103m' # bright white text on tan/yellow
-            $ifCygwin GW_COLOR=4F
-            ;;
-        gw)
-            export GW_PRODUCT=gw
-            export GW_COLOR='[30;107m' # bright black text on gray
-            $ifCygwin GW_COLOR=4F
-            ;;
-        *)
-            unset GW_PRODUCT GW_TITLE GW_PROMPT
-            export GW_COLOR='[5;101m' # blinking bright white on red
-            $ifCygwin GW_COLOR=0F
-            ;;
-    esac
+typeset -p ANT_HOME
+ant -version
 
-    if [ -z "${GW_PRODUCT}" ]; then
-        unsetGWVars
-    else
-        function replaceInList() {
-            local listName=$1; shift
-            eval local list=\$$listName
-            local regex=$1; shift
-            local newVal=$1; shift
-            export ${listName}=`echo :$list | sed -r "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
-        }
+echo
+typeset -p AARDVARK_HOME
+vark --version 2>&1 | sed '/^gosu-launch.*$/d'
 
-        typeset -p GW_PRODUCT
+echo
+typeset -p M2_HOME
+mvn -version 2>/dev/null
+echo
 
-        export GW_PORT_DEBUG=$(($GW_PORT + 10))
-
-        # Determine the startup script
-        export GW_START_SCRIPT=./gwb
-        export GW_START_DIR=$GW_ROOT
-	    export GW_LIB_DIR=./lib
-
-        if [ ${GW_PL_NUM} -lt 9 ]; then
-            GW_START_DIR=${GW_ROOT}/bin
-            GW_START_SCRIPT=./$GW_PRODUCT
-	        GW_LIB_DIR=../lib
-        fi
-
-        $ifCygwin set scriptExtension=.bat
-        GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
-
-        export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
-        export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
-
-        typeset -p GW_LIB_DIR GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
-
-        # Fix PATH and CLASSPATH
-        replaceInList PATH      'ant'      $ANT_HOME/bin
-        replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
-
-        replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
-        replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
-
-        replaceInList PATH      'idea[0-9]*'         ${IDEA_HOME}/bin
-        replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
-        replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
-
-        replaceInList PATH      'maven'       ${M2_HOME}/bin
-        replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
-
-	if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
-            CLASSPATH+=:${GW_LIB_DIR}/\*
-	fi
-
-        # Remove any empty or duplicate members
-        CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
-
-        function _echoList() {
-            for arg in $*; do
-                echo -e "\n$arg contains:"
-                eval echo \${${arg}} | tr ':' '\n' | sed -r "s_(^${GW_LIB_DIR}|/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*))/_[4m\1[0m/_g" | cat -n
-            done
-            echo
-        }
-
-        _echoList PATH CLASSPATH
-
-        typeset -p ANT_HOME
-        ant -version
-
-        echo
-        typeset -p AARDVARK_HOME
-        vark --version 2>&1 | sed '/^gosu-launch.*$/d'
-
-        echo
-        typeset -p M2_HOME
-        mvn -version 2>/dev/null
-        echo
-
-        # this will only work if you 'source' this file
-        if [ -n "$inScreen" ]; then
-            echo -n "\ek$GW_TITLE\e\\"  # the screen title
-        fi
-    fi
-
+# this will only work if you 'source' this file
+if [ -n "$inScreen" ]; then
+    echo -n "\ek$GW_TITLE\e\\"  # the screen title
 fi

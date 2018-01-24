@@ -72,18 +72,18 @@ function GWClaimCenter() {
   ];
 
   this.claims = {
-    'Allen Robertson':     '235-53-365871',
-    'Bill Kinman':         '235-53-425891',
-    'Brittany Turner':     '235-53-373871',
-    'Karen Egertson':      '235-53-425892',
-    'Larry Gamney':        '235-53-373906',
-    'Lisa Shiu':           '235-53-373872',
-    'Mark Henderson':      '235-53-373870',
-    'Paladin Financial':   '426-24-366071',
-    'Ray Newton':          '235-53-365870',
-    'Robert Farley':       '235-53-365889',
-    'TipTop Roofing':      '312-36-368889',
-    'Western Farmer\'s':   '426-24-366070',
+    'Allen Robertson': '235-53-365871',
+    'Bill Kinman': '235-53-425891',
+    'Brittany Turner': '235-53-373871',
+    'Karen Egertson': '235-53-425892',
+    'Larry Gamney': '235-53-373906',
+    'Lisa Shiu': '235-53-373872',
+    'Mark Henderson': '235-53-373870',
+    'Paladin Financial': '426-24-366071',
+    'Ray Newton': '235-53-365870',
+    'Robert Farley': '235-53-365889',
+    'TipTop Roofing': '312-36-368889',
+    'Western Farmer\'s': '426-24-366070',
     'Wright Construction': '312-36-368870'
   };
   this.users = {
@@ -133,7 +133,7 @@ function GWClaimCenter() {
 
 var cc = new GWClaimCenter();
 
-var appCode     = document.location.pathname.match(/ab|bc|cc|pc|px/),
+var appCode = document.location.pathname.match(/ab|bc|cc|pc|px/),
     isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
 
 debugInfo
@@ -323,10 +323,14 @@ GWServer.prototype.loginLinksSection = function (users) {
 
 document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
-    var baseLoginFields = document.getElementById('Login-LoginScreen-1');
+    var baseLoginFields =
+        document.getElementById('Login-LoginScreen-1') // cc10+
+        || document.getElementById('Login-table');     // cc9
+
     if (baseLoginFields == null) {
       console.log(triggerName + ': Skipping links because this is not the login screen');
     }
+
     else {
       console.log(triggerName + ': Adding links to the login screen');
 
