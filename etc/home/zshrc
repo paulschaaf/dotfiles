@@ -192,6 +192,14 @@ bindkey -e
 
 # ======== Function Keys
 
+# For the Goldtouch keyboard, swap F11 with PrintScreen and F12 with Break
+if [ $HOSTNAME = "satori" ]; then
+    xmodmap -e "keycode 107 = F11"
+    xmodmap -e "keycode 127 = F12"
+    xmodmap -e "keycode  95 = Print"
+    xmodmap -e "keycode  96 = Pause"
+fi
+
 # Here's what we'd like to accomplish:
 #    __PRESS__  __TO__
 #    F6         cut
