@@ -323,18 +323,20 @@ GWServer.prototype.loginLinksSection = function (users) {
 
 document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
-    var baseLoginFields =
-        document.getElementById('Login-LoginScreen-1') // cc10+
-        || document.getElementById('Login-table');     // cc9
+    if (document.getElementById('Login-LoginScreen-LoginDV-0-AutoLoginLV') != null) return;
+
+    var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
+        || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
+        || document.getElementById('Login-table') // cc9
+        || document.getElementById('Login');      // cc8
 
     if (baseLoginFields == null) {
       console.log(triggerName + ': Skipping links because this is not the login screen');
     }
-
     else {
       console.log(triggerName + ': Adding links to the login screen');
 
-      var pgsStyle = document.createElement('style');
+      var pgsStyle = document.createElement('style')
       pgsStyle.innerHTML = css;
 
       var linksTable = document.createElement('div');
