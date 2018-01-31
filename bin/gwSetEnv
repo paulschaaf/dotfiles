@@ -68,7 +68,7 @@ case ${GW_PLATFORM} in
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-        export IDEA_HOME=$IDEA15_HOME
+        export IDEA_HOME=$IDEA2017_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;

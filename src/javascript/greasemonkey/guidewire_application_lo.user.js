@@ -323,7 +323,9 @@ GWServer.prototype.loginLinksSection = function (users) {
 
 document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
-    if (document.getElementById('Login-LoginScreen-LoginDV-0-AutoLoginLV') != null) return;
+
+    // don't use if product includes its own auto-login control
+    // if (document.getElementById('Login-LoginScreen-LoginDV-0-AutoLoginLV') != null) return;
 
     var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
         || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
