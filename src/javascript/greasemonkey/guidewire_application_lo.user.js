@@ -29,7 +29,7 @@ function eachKeyAndValue(hash, kvFunction) {
 
 // == Style Sheet ==================================================
 var css =
-    '.pgs             { font-size: small; margin-left: auto; margin-right: auto; text-align: left; } ' +
+    '.pgs             { gw margin-left: auto; margin-right: auto; text-align: left; } ' +
     '.rotate          { -webkit-transform: rotate(270deg); -ms-transform: rotate(270deg); -moz-transform: rotate(270deg); -o-transform: rotate(270deg); width: 20px; } ' +
     'tr#favorite      { border-bottom: thin solid black; } ' +
     '.linkGroupCell   { border-right: thin solid black; font-size: large; } ' +
@@ -325,7 +325,8 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
 
     // don't use if product includes its own auto-login control
-    if (document.getElementById('Login-LoginScreen-LoginDV-0-AutoLoginLV') != null) return;
+    if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
+        || document.getElementById('quickLink') != null) return;
 
     var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
         || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
