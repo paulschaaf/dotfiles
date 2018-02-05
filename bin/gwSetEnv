@@ -196,18 +196,32 @@ export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 typeset -p GW_LIB_DIR GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITLE
 
 # Fix PATH and CLASSPATH
-replaceInList PATH      'ant'      $ANT_HOME/bin
-replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
-
-replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
-replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
-
 replaceInList PATH      'idea[0-9]*'         ${IDEA_HOME}/bin
 replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
 replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
 
-replaceInList PATH      'maven'       ${M2_HOME}/bin
-replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
+if [ ${GW_PL_NUM} -lt 9 ]; then
+    replaceInList PATH      'ant'      $ANT_HOME/bin
+    replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
+
+    replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
+    replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
+
+    replaceInList PATH      'maven'       ${M2_HOME}/bin
+    replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
+
+    typeset -p ANT_HOME
+    ant -version
+
+    echo
+    typeset -p AARDVARK_HOME
+    vark --version 2>&1 | sed '/^gosu-launch.*$/d'
+
+    echo
+    typeset -p M2_HOME
+    mvn -version 2>/dev/null
+    echo
+fi
 
 if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
     CLASSPATH+=:${GW_LIB_DIR}/\*
@@ -225,18 +239,6 @@ function _echoList() {
 }
 
 _echoList PATH CLASSPATH
-
-typeset -p ANT_HOME
-ant -version
-
-echo
-typeset -p AARDVARK_HOME
-vark --version 2>&1 | sed '/^gosu-launch.*$/d'
-
-echo
-typeset -p M2_HOME
-mvn -version 2>/dev/null
-echo
 
 # this will only work if you 'source' this file
 if [ -n "$inScreen" ]; then
