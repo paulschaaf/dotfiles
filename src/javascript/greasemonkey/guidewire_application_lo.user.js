@@ -324,9 +324,10 @@ GWServer.prototype.loginLinksSection = function (users) {
 document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
 
-    // don't use if product includes its own auto-login control
+    // don't use if product includes its own auto-login or data-load control
     if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
-        || document.getElementById('quickLink') != null) return;
+        || document.getElementById('quickLink') != null
+        || document.getElementById('Login-LoginScreen-LoginDV-sampleData_inner') != null) return;
 
     var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
         || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
