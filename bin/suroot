@@ -1,5 +1,0 @@
-#!/bin/sh
-SUDO_PROMPT="Enter sudo password for %u@%h: "
-export SUDO_PROMPT
-
-SHLVL=0 sudo /bin/su ${1:-root}
