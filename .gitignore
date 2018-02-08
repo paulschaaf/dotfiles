@@ -6,13 +6,7 @@
 /etc/home/emacs.d/*
 !/etc/home/emacs.d/init.el
 !/etc/home/emacs.d/Makefile
-**/emacs*/*.elc
-**/emacs.elc
 
-.idea/tasks.xml
-.idea/workspace.xml
-
-/etc/ssh/*
 !/etc/ssh/*.pub
 !/etc/ssh/authorized_keys
 !/etc/ssh/config
@@ -21,17 +15,3 @@
 !/etc/ssh/known_hosts
 !/etc/ssh/ssh-open
 !/etc/ssh/sshd_config
-
-**/.DS_Store
-**/.directory
-**/.metadata/*
-**/.ssh-agent
-
-**.class
-**.zip
-**.jar
-
-**/$*
-**/.#*
-**/#*#
-**/*~

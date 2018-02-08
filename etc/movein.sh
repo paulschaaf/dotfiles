@@ -36,6 +36,7 @@ unordered_packages=(
     devede             # make video DVDs
     dolphin-plugins    # git integration into KDE file manager
     emacs              # the king of editors
+    enscript           # convert txt to ps, html, rtf, etc.
     filezilla          # file transfers
     frostwire          # bittorrent client
     g++                # compiler
