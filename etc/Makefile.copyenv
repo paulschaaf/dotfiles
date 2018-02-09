@@ -11,8 +11,10 @@ all:	$(ALL)
 clean:
 	rm -f $(ALL) $(LOCAL_ZSH_COPIES)
 
-Makefile:	Makefile.copyenv_pschaaf
-	cp -f $^ $@
+Makefile:   ~pschaaf/etc/Makefile.copyenv
+	@echo '# If you trust' $^, run the following
+	@echo '  'cp -f $^ $@
+	@echo '  'make
 
 ##### ZSH
 .PHONY=zsh
