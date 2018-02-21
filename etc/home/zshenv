@@ -145,18 +145,19 @@ export CONNECTION
 export EDITOR=/usr/bin/emacs
 export ALTERNATTE_EDITOR=$EDITOR
 
+export ANDROID_SDK_HOME=/opt/Android
+
 case $USER in
     pschaaf)
-        EMAIL=paul.schaaf@gmail.com
+        export EMAIL=paul.schaaf@gmail.com
         ;;
     root)
         EDITOR=${EDITOR}' -u pschaaf -nw'
-        EMAIL=paul.schaaf@gmail.com
+        export EMAIL=paul.schaaf@gmail.com
         ;;
     *)
         ;;
 esac
-export EDITOR EMAIL
 
 export ESHELL=$SHELL
 export FCEDIT=zed
