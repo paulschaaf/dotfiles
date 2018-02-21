@@ -3,6 +3,10 @@
 !/bin/quick-ssh/ssh-to
 !/bin/quick-ssh/make-ssh-config-for
 
+/etc/home/byobu/.screenrc
+/etc/home/byobu/.tmux.conf
+/etc/home/byobu/windows
+/etc/home/byobu/windows.tmux
 /etc/home/emacs.d/*
 !/etc/home/emacs.d/init.el
 !/etc/home/emacs.d/Makefile
