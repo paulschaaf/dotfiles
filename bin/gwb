@@ -150,9 +150,11 @@ if [ $exitCode -eq 0 ]; then
                 cleanIdea)
                     taskFailIcon=$failIcon
                     ;;
-                dropDb*)
+                dropDb*|dropdb*)
                     if [ $GW_PL_NUM -lt 9 ]; then
                         task=dropdb
+                    else
+                        task=dropDb
                     fi
                     taskFailIcon=$failIcon
                     ;;
