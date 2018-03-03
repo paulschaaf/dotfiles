@@ -120,7 +120,7 @@ updateGitVars () {
     if [ -z "$GIT_SUPER_STATUS" ]; then
         unset GIT_STATUS
     else
-        GIT_STATUS="$GIT_SUPER_STATUS  `git config branch.$GIT_BRANCH.description`
+        GIT_STATUS="$GIT_SUPER_STATUS  ${fg_bold[grey]}`git config branch.$GIT_BRANCH.description`
 "
     fi
 }
