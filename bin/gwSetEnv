@@ -77,14 +77,14 @@ esac
 # If these are unset, default them
 export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
-export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
 
 if [ -z "$GW_PLATFORM" ]; then  # if we could not determine the platform
-#    if [ "$1" = "--echo" ]; then
-        typeset -p IDEA_HOME IDEA_JDK JAVA_HOME
-#    fi
+    typeset -p IDEA_HOME JAVA_HOME
+    # IDEA_JDK is unset--let the IDE select it
     return 1 2>/dev/null || exit
 fi
+
+export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
 
 # We're in a Guidewire app installation
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
