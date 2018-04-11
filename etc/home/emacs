@@ -239,6 +239,7 @@
  '(delete-selection-mode t nil (delsel))
  '(inhibit-startup-screen t)
  '(load-home-init-file t t)
+ '(sort-fold-case t t)
  '(safe-local-variable-values (quote ((outline-minor-mode . t)))))
 
 ;; '(sentence-end "[.?!][]\"')}]*\\($\\| $\\|	\\| \\)[ 	\n]*")
