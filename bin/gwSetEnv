@@ -164,7 +164,7 @@ if [ -z "${GW_PRODUCT}" ]; then
     return 1 2>/dev/null || exit
 fi
 
-function replaceInList() {
+fulnction replaceInList() {
     local listName=$1; shift
     eval local list=\$$listName
     local regex=$1; shift
