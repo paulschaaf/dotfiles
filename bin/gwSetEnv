@@ -2,6 +2,9 @@
 
 [ "$1" = "--debug" ] && set -x
 
+# Clear these out
+unset IDEA_HOME IDEA_JDK JAVA_HOME
+
 function unsetGWVars () {
     echo "We've just moved outside of any GW install, so unset every var named GW_*"
     for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
@@ -23,26 +26,23 @@ T
 p'`
 
 case ${GW_PLATFORM} in
-    6|carbon)
-        # export AARDVARK_HOME=/depot/aardvark/0.4
-        # export M2_HOME=/depot/maven/apache-maven-2.2.1
-        # export M2_HOME=/depot/maven/apache-maven-3.0.3
-        export ANT_HOME=/depot/ant/apache-ant-1.7.1
-        export GW_PL_NUM=6
-        export GW_PLATFORM=carbon
-        export IDEA_HOME=$IDEA11_HOME
-        export JAVA_HOME=$JAVA6_HOME_x86
-        export IDEA_JDK=$JAVA6_HOME
-        scriptExtension=.sh
-        ;;
+#    6|carbon)
+#        # export AARDVARK_HOME=/depot/aardvark/0.4
+#        # export M2_HOME=/depot/maven/apache-maven-2.2.1
+#        # export M2_HOME=/depot/maven/apache-maven-3.0.3
+#        export ANT_HOME=/depot/ant/apache-ant-1.7.1
+#        export GW_PL_NUM=6
+#        export GW_PLATFORM=carbon
+#        export JAVA_HOME=$JAVA6_HOME_x86
+#        export IDEA_JDK=$JAVA6_HOME
+#        scriptExtension=.sh
+#        ;;
     7|diamond)
         export AARDVARK_HOME=/depot/aardvark/alpha
         export ANT_HOME=/depot/ant/apache-ant-1.7.1
         export M2_HOME=/depot/maven/apache-maven-2.2.1
 
         export GW_PL_NUM=7
-        export GW_PLATFORM=diamond
-        export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
         export JAVA16_HOME=$JAVA6_HOME
         export IDEA_JDK=$JAVA_HOME
@@ -53,7 +53,6 @@ case ${GW_PLATFORM} in
         export M2_HOME=/depot/maven/apache-maven-3.0.4
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
-        export IDEA_HOME=$IDEA12_HOME
         export JAVA_HOME=$JAVA7_HOME
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
@@ -61,30 +60,33 @@ case ${GW_PLATFORM} in
     9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
-        export IDEA_HOME=$IDEA15_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=$JAVA_HOME
         ;;
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-        export IDEA_HOME=$IDEA2017_HOME
         export JAVA_HOME=$JAVA8_HOME
         export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
     *)
         unsetGWVars
-        export IDEA_HOME=$IDEA2017_HOME
-        export JAVA_HOME=$JAVA8_HOME
-	    unset IDEA_JDK
         ;;
 esac
 
+# If these are unset, default them
+export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
+export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
+
 if [ -z "$GW_PLATFORM" ]; then  # if we could not determine the platform
+    typeset -p IDEA_HOME JAVA_HOME
+    # IDEA_JDK is unset--let the IDE select it
     return 1 2>/dev/null || exit
 fi
 
-export IDEA_JDK=${IDEA_JDK:-$JAVA_HOME}
+export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
+
+# We're in a Guidewire app installation
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
 # strip trailing directories (and quit on success) ...
 # ... from Perforce path

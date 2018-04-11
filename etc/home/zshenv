@@ -174,14 +174,16 @@ export SAVEHIST=1000
 export ANT_HOME=/depot/ant/apache-ant-1.8.2
 export AARDVARK_HOME=/depot/aardvark/alpha
 
-if [ -d /opt/idea16 ]; then
-    local ideaDigitHome
-    for home in /opt/idea{,20}[1-9][1-9]; do
-	ideaDigitHome=IDEA${home##*idea}_HOME
-        export $ideaDigitHome=$home
-    done
-    eval export IDEA_HOME=\$${ideaDigitHome}  # keep the highest-numbered version
-fi
+#if [ -d /opt/idea16 ]; then
+#    local ideaDigitHome
+#    for home in /opt/idea{,20}[1-9][1-9]; do
+#	ideaDigitHome=IDEA${home##*idea}_HOME
+#        export $ideaDigitHome=$home
+#    done
+##    eval export IDEA_HOME=\$${ideaDigitHome}  # keep the highest-numbered version
+#fi
+export IDEA_ROOT=/opt
+export IDEA_HOME=$IDEA_ROOT/idea
 
 local iconDir=/usr/share/icons/oxygen/48x48
 local failIcon=$iconDir/actions/process-stop.png
