@@ -77,32 +77,31 @@ esac
 # If these are unset, default them
 export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
+export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
 
 if [ -z "$GW_PLATFORM" ]; then  # if we could not determine the platform
+    unset IDEA_JDK
     typeset -p IDEA_HOME JAVA_HOME
-    # IDEA_JDK is unset--let the IDE select it
     return 1 2>/dev/null || exit
 fi
-
-export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
 
 # We're in a Guidewire app installation
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
 # strip trailing directories (and quit on success) ...
 # ... from Perforce path
-s_^(.*/(ab|cm|bc|cc|pc)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
+s_^(.*/(ab|cm|bc|cc|pc|pl)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
 t
 
 # ... from git path
-s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc)).*\\$_\1_i
+s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)).*\\$_\1_i
 t
 
 # ... after the one containing the product code+version
-s_^(.*/(ab|cm|bc|cc|pc)[-._0-9]+).*\\$_\1_i
+s_^(.*/(ab|cm|bc|cc|pc|pl)[-._0-9]+).*\\$_\1_i
 t
 
 # ... after the one that begins with the product name
-s_^(.*/(ContactManager|(Billing|Claim|Policy)Center)[^/]*).*\\$_\1_i
+s_^(.*/(ContactManager|(Billing|Claim|Policy)Center|Platform)[^/]*).*\\$_\1_i
 t
 
 d # delete pattern space so that empty string is returned
@@ -115,7 +114,7 @@ which java
 java -version 2>&1
 echo
 
-export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|ContactManager|[bcp]c|(Billing|Claim|Policy)Center).*_\L\1_ip'`
+export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|pl|ContactManager|(Billing|Claim|Policy)Center|Platform).*_\L\1_ip'`
 ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
 if [[ "$UNAME" =~ "CYGWIN" ]]; then
     # if we are in Cygwin, execute the rest of the line
@@ -131,20 +130,26 @@ case ${GW_PRODUCT} in
         ;;
     bc|billingcenter)
         export GW_PRODUCT=bc
-        export GW_PORT=8380
+        export GW_PORT=8390
         export GW_COLOR='[105m' # bright white text on magenta
         $ifCygwin GW_COLOR=2F
         ;;
     cc|claimcenter)
         export GW_PRODUCT=cc
-        export GW_PORT=8080
+        export GW_PORT=8090
         export GW_COLOR='[104m' # bright white text on blue
         $ifCygwin GW_COLOR=1F
         ;;
     pc|policycenter)
         export GW_PRODUCT=pc
-        export GW_PORT=8480
+        export GW_PORT=8490
         export GW_COLOR='[103m' # bright white text on tan/yellow
+        $ifCygwin GW_COLOR=4F
+        ;;
+    pl|platform)
+        export GW_PRODUCT=pl
+        export GW_PORT=8490
+        export GW_COLOR='[30;107m' # bright black text on gray
         $ifCygwin GW_COLOR=4F
         ;;
     gw)
@@ -159,12 +164,13 @@ case ${GW_PRODUCT} in
         ;;
 esac
 
+# is this a GW installation?
 if [ -z "${GW_PRODUCT}" ]; then
     unsetGWVars
     return 1 2>/dev/null || exit
 fi
 
-fulnction replaceInList() {
+function replaceInList() {
     local listName=$1; shift
     eval local list=\$$listName
     local regex=$1; shift
