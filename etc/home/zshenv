@@ -183,7 +183,7 @@ export AARDVARK_HOME=/depot/aardvark/alpha
 ##    eval export IDEA_HOME=\$${ideaDigitHome}  # keep the highest-numbered version
 #fi
 export IDEA_ROOT=/opt
-export IDEA_HOME=$IDEA_ROOT/idea
+export IDEA_HOME=$IDEA_ROOT/ideahead
 
 local iconDir=/usr/share/icons/oxygen/48x48
 local failIcon=$iconDir/actions/process-stop.png
