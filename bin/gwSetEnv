@@ -6,7 +6,7 @@
 unset IDEA_HOME IDEA_JDK JAVA_HOME
 
 function unsetGWVars () {
-    echo "We've just moved outside of any GW install, so unset every var named GW_*"
+    #echo "We've just moved outside of any GW install, so unset every var named GW_*"
     for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
         unset -v $var
     done
@@ -17,7 +17,7 @@ GW_PLATFORM=`echo $PWD | sed -rn '
 s/.*(carbon|diamond|emerald|ferrite|granite).*/\1/
 
 # otherwise extract the version number from the install directory name
-s/.*([bcp]c|ab|cm|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/i
+s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/i
 
 # if no substitutions were made--we could not determine the version--exit now with the empty string
 T
@@ -89,7 +89,7 @@ fi
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
 # strip trailing directories (and quit on success) ...
 # ... from Perforce path
-s_^(.*/(ab|cm|bc|cc|pc|pl)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
+s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
 t
 
 # ... from git path
@@ -97,11 +97,11 @@ s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)).*\\$_\1_i
 t
 
 # ... after the one containing the product code+version
-s_^(.*/(ab|cm|bc|cc|pc|pl)[-._0-9]+).*\\$_\1_i
+s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_i
 t
 
 # ... after the one that begins with the product name
-s_^(.*/(ContactManager|(Billing|Claim|Policy)Center|Platform)[^/]*).*\\$_\1_i
+s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_i
 t
 
 d # delete pattern space so that empty string is returned
@@ -114,7 +114,7 @@ which java
 java -version 2>&1
 echo
 
-export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|pl|ContactManager|(Billing|Claim|Policy)Center|Platform).*_\L\1_ip'`
+export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\L\1_ip'`
 ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
 if [[ "$UNAME" =~ "CYGWIN" ]]; then
     # if we are in Cygwin, execute the rest of the line
