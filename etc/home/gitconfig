@@ -6,8 +6,8 @@
    excludesfile = ~/.gitignore
 	autocrlf = input
 [user]
-	name = pschaaf
-	email = pschaaf@guidewire.com
+	name = Paul Schaaf
+	email = paul.schaaf@gmail.com
 [merge]
 	tool = bc
 [push]
