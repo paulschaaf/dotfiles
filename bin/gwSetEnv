@@ -130,25 +130,25 @@ case ${GW_PRODUCT} in
         ;;
     bc|billingcenter)
         export GW_PRODUCT=bc
-        export GW_PORT=8390
+        export GW_PORT=8380
         export GW_COLOR='[105m' # bright white text on magenta
         $ifCygwin GW_COLOR=2F
         ;;
     cc|claimcenter)
         export GW_PRODUCT=cc
-        export GW_PORT=8090
+        export GW_PORT=8080
         export GW_COLOR='[104m' # bright white text on blue
         $ifCygwin GW_COLOR=1F
         ;;
     pc|policycenter)
         export GW_PRODUCT=pc
-        export GW_PORT=8490
+        export GW_PORT=8480
         export GW_COLOR='[103m' # bright white text on tan/yellow
         $ifCygwin GW_COLOR=4F
         ;;
     pl|platform)
         export GW_PRODUCT=pl
-        export GW_PORT=8490
+        export GW_PORT=8480
         export GW_COLOR='[30;107m' # bright black text on gray
         $ifCygwin GW_COLOR=4F
         ;;
