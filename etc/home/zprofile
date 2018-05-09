@@ -19,5 +19,13 @@ loginsh=1
 
 $ifZsh stty start ''   stop   ''
 
-# stty lnext '^V' eof '^D' quit '^\\' susp '^Z' start '^Q' eol '^-' flush '^O' werase '^H' eol2 '^-' erase '^?' stop '^S' min '1' time '0' intr '^C' rprnt '^R' kill '^U'
+# For the Goldtouch keyboard, swap F11 with PrintScreen and F12 with Break
+if [ "$HOSTNAME" = "satori" -a -z "$SSH_TTY" ]; then
+#    echo Remapping keys for Goldtouch Keyboard
+    xmodmap -e "keycode 107 = F11 F11 F11"
+    xmodmap -e "keycode 127 = F12 F12 F12"
+    xmodmap -e "keycode  95 = Print"
+    xmodmap -e "keycode  96 = Pause"
+fi
+
 #_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
