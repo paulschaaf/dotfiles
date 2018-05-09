@@ -117,7 +117,7 @@ ZSH_THEME_GIT_PROMPT_SEPARATOR="%{$fg_bold[grey]%}|"
 
 updateGitVars () {
     GIT_SUPER_STATUS=`git_super_status`
-    if [ -z "$GIT_SUPER_STATUS" ]; then
+    if [ -z "$GIT_SUPER_STATUS" -o "$GIT_BRANCH" = ":" ]; then
         unset GIT_STATUS
     else
         GIT_STATUS="$GIT_SUPER_STATUS  ${fg_bold[grey]}`git config branch.$GIT_BRANCH.description`

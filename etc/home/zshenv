@@ -214,6 +214,7 @@ if [ -d /usr/lib/jvm/java-8-jdk ]; then
 fi
 
 export JAVA18_AMD64_HOME=${JAVA8_HOME}
+export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v

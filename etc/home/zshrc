@@ -192,6 +192,9 @@ bindkey -e
 
 # ======== Function Keys
 
+bindkey -s "[0d" "popd\n"
+bindkey -s "[Z" "popd\n"
+
 # Here's what we'd like to accomplish:
 #    __PRESS__  __TO__
 #    F6         cut
@@ -200,23 +203,11 @@ bindkey -e
 #    F9         search
 #    F12        exit
 
-# if [ -z "$ifZsh" ]; then
-    bindkey -s "[0d" "popd\n"
-    bindkey -s "[Z" "popd\n"
-    bindkey "[17~" kill-whole-line
-    bindkey "[18~" copy-region-as-kill
-    bindkey "[19~" yank
-    bindkey "[20~" history-incremental-search-backward
-
-    if [ -z "$inScreen" ]; then
-        bindkey -s "[21~" "exit\n"
-    fi
-# else
-#     bind '"\e[17~": kill-whole-line'
-#     bind '"\e[18~": copy-region-as-kill'
-#     bind '"\e[19~": yank'
-# #    bind '"\e[20~": history-incremental-search-backward'
-# fi
+bindkey "[17~" kill-whole-line
+bindkey "[18~" copy-region-as-kill
+bindkey "[19~" yank
+bindkey "[20~" history-incremental-search-backward
+bindkey -s "[21~" "exit\n"
 
 # ======== Other Extra Keys
 
@@ -232,61 +223,55 @@ bindkey -e
 #   ctrl_delete backward-kill-word
 #   delete      delete-char
 
-#set -x
-if [ -z "$ifZsh" ]; then
-    bindkey "\033[3~" delete-char
+bindkey "\033[3~" delete-char
 
-    # echo; (bindkey | grep 'backward-delete-char'; echo; bindkey | grep 'backward-kill-word') | sed 's/" /"\t/g'
+# echo; (bindkey | grep 'backward-delete-char'; echo; bindkey | grep 'backward-kill-word') | sed 's/" /"\t/g'
 
-    bindkey "\M-C\M-5" up-case-word
-    bindkey "\M-C\M-," down-case-word
+bindkey "\M-C\M-5" up-case-word
+bindkey "\M-C\M-," down-case-word
 
-    case ${TERM} in
-        cygwin*)
-            bindkey "\033H"     backward-delete-char
-            bindkey "\033?"     backward-kill-word
-            bindkey "\033[1;5D" backward-word
-            bindkey "\033[1~"   beginning-of-line
-            bindkey "\033[4~"   end-of-line
-            bindkey "\033[1;5C" forward-word
-            bindkey "\033[3;5~" kill-word
-            ;;
-        rxvt*)
-            bindkey "^H"        backward-delete-char
-            bindkey "\033Od"    backward-word
-            bindkey "\033[7~"   beginning-of-line
-            bindkey "\033[3~"   delete-char-or-list
-            bindkey "\033[8~"   end-of-line
-            bindkey "\033Oc"    forward-word
-            bindkey "\033[3;5~" kill-word
+case ${TERM} in
+    cygwin*)
+        bindkey "\033H"     backward-delete-char
+        bindkey "\033?"     backward-kill-word
+        bindkey "\033[1;5D" backward-word
+        bindkey "\033[1~"   beginning-of-line
+        bindkey "\033[4~"   end-of-line
+        bindkey "\033[1;5C" forward-word
+        bindkey "\033[3;5~" kill-word
+        ;;
+    rxvt*)
+        bindkey "^H"        backward-delete-char
+        bindkey "\033Od"    backward-word
+        bindkey "\033[7~"   beginning-of-line
+        bindkey "\033[3~"   delete-char-or-list
+        bindkey "\033[8~"   end-of-line
+        bindkey "\033Oc"    forward-word
+        bindkey "\033[3;5~" kill-word
 
-            bindkey "\033?"     backward-kill-word
-            bindkey "\033[1;5D" backward-word
-            bindkey "\033[1~"   beginning-of-line
-            bindkey "\033[4~"   end-of-line
-            bindkey "\033[1;5C" forward-word
-            bindkey "\033[3;5~" kill-word
-            ;;
-        xterm*)
-            bindkey "^?"        backward-delete-char
-            bindkey "^H"        backward-kill-word
-            bindkey "\033[1;5D" backward-word
-            bindkey "\033[H"    beginning-of-line
-            bindkey "\033[1~"   beginning-of-line
-            bindkey "\033[3~"   delete-char-or-list
-            bindkey "\033[4~"   end-of-line
-            bindkey "\033[F"    end-of-line
-            bindkey "\033[1;5C" forward-word
-            bindkey "\033[3;5~" kill-word
-            ;;
-        *)
-            echo Unknown terminal type: $TERM
-            ;;
-    esac
-
-elif [ -z $ifMinGW ]; then
-    bind    '"\C-?"   backward-kill-word'
-fi
+        bindkey "\033?"     backward-kill-word
+        bindkey "\033[1;5D" backward-word
+        bindkey "\033[1~"   beginning-of-line
+        bindkey "\033[4~"   end-of-line
+        bindkey "\033[1;5C" forward-word
+        bindkey "\033[3;5~" kill-word
+        ;;
+    xterm*)
+        bindkey "^?"        backward-delete-char
+        bindkey "^H"        backward-kill-word
+        bindkey "\033[1;5D" backward-word
+        bindkey "\033[H"    beginning-of-line
+        bindkey "\033[1~"   beginning-of-line
+        bindkey "\033[3~"   delete-char-or-list
+        bindkey "\033[4~"   end-of-line
+        bindkey "\033[F"    end-of-line
+        bindkey "\033[1;5C" forward-word
+        bindkey "\033[3;5~" kill-word
+        ;;
+    *)
+        echo Unknown terminal type: $TERM
+        ;;
+esac
 
 # ======== Macro Keys
 # C-? prepends 'whence' to command line

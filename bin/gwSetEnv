@@ -26,24 +26,23 @@ T
 p'`
 
 case ${GW_PLATFORM} in
-#    6|carbon)
-#        # export AARDVARK_HOME=/depot/aardvark/0.4
+    6|carbon)
+        export AARDVARK_HOME=/depot/aardvark/alpha
 #        # export M2_HOME=/depot/maven/apache-maven-2.2.1
 #        # export M2_HOME=/depot/maven/apache-maven-3.0.3
-#        export ANT_HOME=/depot/ant/apache-ant-1.7.1
-#        export GW_PL_NUM=6
-#        export GW_PLATFORM=carbon
-#        export JAVA_HOME=$JAVA6_HOME_x86
-#        export IDEA_JDK=$JAVA6_HOME
+        export ANT_HOME=/depot/ant/apache-ant-1.7.1
+        export GW_PL_NUM=6
+        export GW_PLATFORM=carbon
+        export JAVA_HOME=$JAVA16_HOME
 #        scriptExtension=.sh
-#        ;;
+        ;;
     7|diamond)
         export AARDVARK_HOME=/depot/aardvark/alpha
         export ANT_HOME=/depot/ant/apache-ant-1.7.1
         export M2_HOME=/depot/maven/apache-maven-2.2.1
 
         export GW_PL_NUM=7
-        export JAVA_HOME=${JAVA6_HOME_x86:-$JAVA6_HOME}
+        export JAVA_HOME=/usr/lib32/jvm/java32-6-jdk
         export JAVA16_HOME=$JAVA6_HOME
         export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
@@ -110,11 +109,6 @@ typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
 
 echo
 typeset -p JAVA_HOME
-if [ -z "$JAVA_HOME" ]; then
-    echo `which java` '     # <- which java'
-fi
-java -version 2>&1
-echo
 
 export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\L\1_ip'`
 ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
@@ -207,8 +201,8 @@ typeset -p GW_LIB_DIR GW_PORT GW_PORT_DEBUG GW_START_DIR GW_START_SCRIPT GW_TITL
 
 # Fix PATH and CLASSPATH
 replaceInList PATH      'idea[0-9]*'         ${IDEA_HOME}/bin
-replaceInList PATH      'java-[0-9]+-oracle' ${JAVA_HOME}/bin
-replaceInList CLASSPATH 'java-[0-9]+-oracle' ${JAVA_HOME}/lib/\*
+replaceInList PATH      'java-[0-9]+-jdk' ${JAVA_HOME}/bin
+replaceInList CLASSPATH 'java-[0-9]+-jdk' ${JAVA_HOME}/lib/\*
 
 if [ ${GW_PL_NUM} -lt 9 ]; then
     replaceInList PATH      'ant'      $ANT_HOME/bin
@@ -220,6 +214,7 @@ if [ ${GW_PL_NUM} -lt 9 ]; then
     replaceInList PATH      'maven'       ${M2_HOME}/bin
     replaceInList CLASSPATH 'maven'       ${M2_HOME}/lib/\*
 
+    echo
     typeset -p ANT_HOME
     ant -version
 
@@ -230,7 +225,6 @@ if [ ${GW_PL_NUM} -lt 9 ]; then
     echo
     typeset -p M2_HOME
     mvn -version 2>/dev/null
-    echo
 fi
 
 if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
@@ -243,12 +237,18 @@ CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", l
 function _echoList() {
     for arg in $*; do
         echo -e "\n$arg contains:"
-        eval echo \${${arg}} | tr ':' '\n' | sed -r "s_(^${GW_LIB_DIR}|/([^/]*(java|apache|aardvark/[.0-9]*)[^/]*))/_[4m\1[0m/_g" | cat -n
+        eval echo \${${arg}} | tr ':' '\n' | sed -r "s_([^/]*(java|apache|aardvark)[^/]*)_[93m\1[0m_g" | cat -n
     done
     echo
 }
 
 _echoList PATH CLASSPATH
+
+if [ -z "$JAVA_HOME" ]; then
+    echo `which java` '     # <- which java'
+fi
+java -version 2>&1
+echo
 
 # this will only work if you 'source' this file
 if [ -n "$inScreen" ]; then
