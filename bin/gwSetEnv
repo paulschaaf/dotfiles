@@ -110,7 +110,9 @@ typeset -p GW_PLATFORM GW_ROOT IDEA_HOME IDEA_JDK
 
 echo
 typeset -p JAVA_HOME
-which java
+if [ -z "$JAVA_HOME" ]; then
+    echo `which java` '     # <- which java'
+fi
 java -version 2>&1
 echo
 
