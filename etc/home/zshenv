@@ -65,7 +65,7 @@ prependToVar() {
 
 member() {
     eval local value=:\$$2:
-    echo $value | grep ":$1:" >&/dev/null
+    echo $value | grep ":$1:" >& /dev/null
 }
 
 prependToList() {
@@ -169,26 +169,19 @@ else
   HISTFILE=~/.history
 fi
 export HISTSIZE=1000
+export LC_ALL=en_US.UTF-8
 export SAVEHIST=1000
 
-export ANT_HOME=/depot/ant/apache-ant-1.8.2
-export AARDVARK_HOME=/depot/aardvark/alpha
+#export ANT_HOME=/depot/ant/apache-ant-1.8.2
+#export AARDVARK_HOME=/depot/aardvark/alpha
 
-#if [ -d /opt/idea16 ]; then
-#    local ideaDigitHome
-#    for home in /opt/idea{,20}[1-9][1-9]; do
-#	ideaDigitHome=IDEA${home##*idea}_HOME
-#        export $ideaDigitHome=$home
-#    done
-##    eval export IDEA_HOME=\$${ideaDigitHome}  # keep the highest-numbered version
-#fi
 export IDEA_ROOT=/opt
-export IDEA_HOME=$IDEA_ROOT/ideahead
+#export IDEA_HOME=$IDEA_ROOT/ideahead
 
-local iconDir=/usr/share/icons/oxygen/48x48
-local failIcon=$iconDir/actions/process-stop.png
+#local iconDir=/usr/share/icons/oxygen/48x48
+#local failIcon=$iconDir/actions/process-stop.png
 # local successIcon=$iconDir/actions/flag-green.png
-local successIcon=/gw/apollo/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
+#local successIcon=/gw/apollo/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
 
 function whichjava() {
     for cmd in 'typeset -p JAVA_HOME' 'which java' 'java -version'; do
@@ -199,10 +192,9 @@ function whichjava() {
 }
 
 if [ -d /usr/lib/jvm/java-8-jdk ]; then
-    local javaDigitHome
     for home in /usr/lib/jvm/java-[0-9]-jdk*; do
-        local digit=${home##*java-};   digit=${digit%%-*}     # everything between the dashes
-        local suffix=${home##*jdk};    suffix=${suffix//-/_}  # everything after the jdk[-_]
+        digit=${home##*java-};   digit=${digit%%-*}     # everything between the dashes
+        suffix=${home##*jdk};    suffix=${suffix//-/_}  # everything after the jdk[-_]
         javaDigitHome=JAVA${digit}_HOME${suffix}
         export $javaDigitHome=$home
         # typeset $javaDigitHome
@@ -211,10 +203,11 @@ if [ -d /usr/lib/jvm/java-8-jdk ]; then
             eval export JAVA_HOME=\$${javaDigitHome}  # keep the highest-numbered version
         fi
     done
+    unset digit javaDigitHome suffix
 fi
 
-export JAVA18_AMD64_HOME=${JAVA8_HOME}
 export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
+export JAVA18_AMD64_HOME=${JAVA8_HOME}
 
 export M2_HOME=/depot/maven/apache-maven-3.0.4
 export P4_HOME=/opt/p4v
