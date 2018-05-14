@@ -14,14 +14,14 @@ Container=Favorites
 sep_display=
 
 #s[Default] Launcher's name:
-Name=IntelliJ IDEA 15 (Ferrite)
+Name=Idea
 
 #S+[Default] Image's name or path:
-Icon=/opt/idea15/bin/idea.png
+Icon=/opt/idea/bin/idea.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
-Exec=$IDEA15_HOME/bin/idea.sh
+Exec=/opt/idea/bin/idea.sh
 
 
 #X[Extra parameters]
@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=5
+Order=6.625
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/PlayOnLinux.desktop
+Origin=
