@@ -17,7 +17,7 @@ sep_display=
 Name=
 
 #S+[Default] Image's name or path:
-Icon=
+Icon=/usr/share/icons/oxygen/base/64x64/places/folder.png
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}

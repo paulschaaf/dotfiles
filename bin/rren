@@ -147,7 +147,7 @@ BANNER_STRING
   opts.on('-c', '--capitalize',      'Change the first letter to uppercase')     { renamer.capitalize }
   opts.on('-l', '--lowercase',       'Change the filename to use all lowercase') { renamer.lowercase }
   opts.on('-u', '--uppercase',       'Change the filename to use all uppercase') { renamer.uppercase }
-  opts.on('-h', '--help',            'Show this help text')                      { puts opts }
+  opts.on('-h', '--help',            'Show this help text')                      {  } # ignore, as the no-arg default prints the help
   opts.on('-f', '--showFrom',        'Show the old name of the affected files')  { renamer.showFrom = true }
   #opts.on('-r', '--reverseSort=sep', 'Renames files such that they will now sort in reverse by prepending an integer followed by sep to the filename. Cannot be combined with a regexp.')                        { renamer.reverseSort = true }
   opts.on('-t', '--showTo',          'Show the new name of the affected files')  { renamer.showTo = true }
