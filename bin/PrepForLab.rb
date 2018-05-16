@@ -24,6 +24,7 @@ require 'debugMethod'
 # end
 
 class Numeric
+  foo = "clm-123"
   alias_method :solution, :slightlyMore
 end
 
