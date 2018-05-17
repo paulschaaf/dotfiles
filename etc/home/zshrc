@@ -180,8 +180,7 @@ wedit () {
 
 
 if [ "$USER" != "pschaaf" ]; then
-    alias  emacs='emacs --user pschaaf'
-    alias xemacs='xemacs --user pschaaf'
+    alias  emacs='emacs -u pschaaf'
 fi
 
 alias exp=dolphin
