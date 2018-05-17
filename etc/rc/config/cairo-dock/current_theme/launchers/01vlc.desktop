@@ -17,11 +17,11 @@ sep_display=
 Name=Perforce
 
 #S+[Default] Image's name or path:
-Icon=/opt/p4v/lib/p4v/P4VResources/icons/P4-V_96x96.png
+Icon=/usr/share/p4v/lib/p4v/P4VResources/icons/p4v.svg
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
-Exec=/opt/p4v/bin/p4v
+Exec=/bin/p4v
 
 
 #X[Extra parameters]
