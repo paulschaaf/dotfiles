@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "${0##*/}" = "ssh-to" ]; then
-    echo Create a symlink to this file named after the server with whom you wishto connect to use as a turbo ssh connections
+    echo Create a symlink to this file named after the server with whom you wish to connect to use as a turbo ssh connections
 fi
 
 # Decrement to not count this script as a level
@@ -151,7 +151,6 @@ if [ -f $configFile ]; then
     add_ssh_flag "-F $configFile"
 fi
 
-set +x
 #
 # We must manually cd before evaluating any remote commands
 # If no command specified, the remote shell is expected to handle the cd
@@ -178,7 +177,7 @@ if [ -n "$env_vars_to_pass" ]; then
     done
 fi
 
-cmd=$environment\ $cmd
+#cmd=$environment\ $cmd
 
 final=${final:-${protocol} ${ssh_flags}${remote_host}${cmd:+ -- }${cmd}}
 
@@ -190,7 +189,7 @@ fi
 echo ${final}
 
 if [ -z "$dry_run" ]; then
-    echo k${remote_host}
-    trap 'echo -n k-' EXIT
+#    echo "\e[k${remote_host}\e["    # set the screen title
+#    trap 'echo -n \e[k-\e[' EXIT    # then set it back on exit
     eval ${final}
 fi
