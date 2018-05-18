@@ -1,0 +1,64 @@
+# - *- eval: (...) - *-
+# (man "ssh_config" "foo")
+# manual-program
+
+# =========================================================================
+# ======= Global Override - Presides over subsequent settings
+
+Host *
+
+# =========================================================================
+# ======= Home Machines
+
+Host copernicus
+   ForwardAgent yes
+   ForwardX11 yes
+
+Host copernicus_home
+   ForwardAgent yes
+   ForwardX11 yes
+
+
+# =========================================================================
+# ======= Guidewire Machines
+
+Host superior
+   ForwardAgent yes
+   ForwardX11 yes
+
+Host ftp ftp.guidewire.com
+   ForwardAgent yes
+   ForwardX11 yes
+   ServerAliveInterval 20
+
+Host instructor
+   ForwardAgent yes
+   ForwardX11 yes
+
+Host isis
+   ForwardAgent yes
+   ForwardX11 yes
+   HostName 192.168.1.199
+
+Host menominee
+   ForwardAgent yes
+   ForwardX11 yes
+
+Host service01
+   ForwardAgent yes
+   ForwardX11 yes
+
+
+# =========================================================================
+# ======= Other Machines
+
+
+
+# =========================================================================
+# ======= Default - Used when value is unspecified
+
+Host *
+   Compression yes
+   ForwardAgent no
+   ForwardX11 no
+   SendEnv CD_TO SHLVL ZDOTDIR
