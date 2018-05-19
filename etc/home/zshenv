@@ -227,7 +227,7 @@ appendClasspath \
     ${ANT_HOME:+$ANT_HOME/lib/\*} \
     ${M2_HOME:+$M2_HOME/lib/\*}
 
-export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 export LESSKEY=${HOME}/.less_$HOSTNAME
 
 # ======== Library Path

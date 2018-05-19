@@ -13,7 +13,7 @@ for issue in ${issues}; do
     issue=${issue%%_*}  # remove any underscore and what follows
 	 if [ -n "$issue" ]; then
         URL="rally1.rallydev.com/#/search?keywords=$issue"
-        echo "google-chrome $URL"
-        google-chrome $URL &
+        echo "chromium $URL"
+        chromium $URL &
 	 fi
 done
