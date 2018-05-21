@@ -222,7 +222,7 @@ if [ $exitCode -eq 0 ]; then
                     fi
                     ;;
                 tasks*)
-                    $GW_START_SCRIPT tasks
+                    $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g"
                     exit
                     ;;
                 testFail*)
