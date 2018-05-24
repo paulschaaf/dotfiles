@@ -43,11 +43,12 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{434058cc-14d2-49f2-82f6-58adcb043ffc}=none,none,Take Rectangular Region Screenshot
-{51199d22-aa70-4e85-81ba-85672e92c475}=Meta+Print,none,Take Active Window Screenshot
-{bde2c428-310d-41e9-8810-6c65239d4775}=Shift+Print,none,Take Full Screen Screenshot
+{427d30bd-53a4-4700-b117-5e3e920fd2bb}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
+{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Ctrl+Alt+T,none,Run Konsole
+{844941c0-3337-4507-b2d4-464765c39224}=Print,none,Start Screenshot Tool
+{afdd843d-0e85-4604-848f-c5e57b2c5731}=none,none,Take Active Window Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-{e39fa7da-384d-4c04-b27f-ce181b27ff96}=none,none,Start Screenshot Tool
+{fa0fd3c3-dc24-47fa-8f30-113181c19a91}=none,none,Take Full Screen Screenshot
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -82,10 +83,10 @@ Invert Screen Colors=none,none,Invert Screen Colors
 Kill Window=Ctrl+Alt+Esc,Ctrl+Alt+Esc,Kill Window
 MoveMouseToCenter=Meta+F6,Meta+F6,Move Mouse to Center
 MoveMouseToFocus=Meta+F5,Meta+F5,Move Mouse to Focus
-MoveZoomDown=,Meta+Down,Move Zoomed Area Downwards
+MoveZoomDown=Meta+Down,Meta+Down,Move Zoomed Area Downwards
 MoveZoomLeft=,Meta+Left,Move Zoomed Area to Left
 MoveZoomRight=,Meta+Right,Move Zoomed Area to Right
-MoveZoomUp=,Meta+Up,Move Zoomed Area Upwards
+MoveZoomUp=Meta+Up,Meta+Up,Move Zoomed Area Upwards
 Remove Window From Group=none,none,Remove Window From Group
 Setup Window Shortcut=none,none,Setup Window Shortcut
 Show Desktop=none,none,Show Desktop
@@ -215,9 +216,41 @@ Window to Screen 5=none,none,Window to Screen 5
 Window to Screen 6=none,none,Window to Screen 6
 Window to Screen 7=none,none,Window to Screen 7
 _k_friendly_name=KWin
-view_actual_size=Meta+0,Meta+0,Actual Size
+view_actual_size=,Meta+0,Actual Size
 view_zoom_in=Meta+=,Meta+=,Zoom In
 view_zoom_out=Meta+-,Meta+-,Zoom Out
+
+[lattedock]
+_k_friendly_name=Latte Dock
+activate task manager entry 1=,Meta+1,Activate Task Manager Entry 1
+activate task manager entry 10=,Meta+0,Activate Task Manager Entry 10
+activate task manager entry 2=,Meta+2,Activate Task Manager Entry 2
+activate task manager entry 3=,Meta+3,Activate Task Manager Entry 3
+activate task manager entry 4=,Meta+4,Activate Task Manager Entry 4
+activate task manager entry 5=,Meta+5,Activate Task Manager Entry 5
+activate task manager entry 6=,Meta+6,Activate Task Manager Entry 6
+activate task manager entry 7=,Meta+7,Activate Task Manager Entry 7
+activate task manager entry 8=,Meta+8,Activate Task Manager Entry 8
+activate task manager entry 9=,Meta+9,Activate Task Manager Entry 9
+clear-history=none,none,Clear Clipboard History
+clipboard_action=,Ctrl+Alt+X,Enable Clipboard Actions
+cycleNextAction=none,none,Next History Item
+cyclePrevAction=none,none,Previous History Item
+edit_clipboard=none,none,Edit Contents...
+new instance for task manager entry 1=Meta+Ctrl+1,Meta+Ctrl+1,New Instance for Task Manager Entry 1
+new instance for task manager entry 10=Meta+Ctrl+0,Meta+Ctrl+0,New Instance for Task Manager Entry 10
+new instance for task manager entry 2=Meta+Ctrl+2,Meta+Ctrl+2,New Instance for Task Manager Entry 2
+new instance for task manager entry 3=Meta+Ctrl+3,Meta+Ctrl+3,New Instance for Task Manager Entry 3
+new instance for task manager entry 4=Meta+Ctrl+4,Meta+Ctrl+4,New Instance for Task Manager Entry 4
+new instance for task manager entry 5=Meta+Ctrl+5,Meta+Ctrl+5,New Instance for Task Manager Entry 5
+new instance for task manager entry 6=Meta+Ctrl+6,Meta+Ctrl+6,New Instance for Task Manager Entry 6
+new instance for task manager entry 7=Meta+Ctrl+7,Meta+Ctrl+7,New Instance for Task Manager Entry 7
+new instance for task manager entry 8=Meta+Ctrl+8,Meta+Ctrl+8,New Instance for Task Manager Entry 8
+new instance for task manager entry 9=Meta+Ctrl+9,Meta+Ctrl+9,New Instance for Task Manager Entry 9
+repeat_action=,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
+show latte dock=Meta+`,Meta+`,Show Latte Dock
+show-barcode=none,none,Show Barcode...
+show-on-mouse-pos=none,none,Open Klipper at Mouse Position
 
 [mediacontrol]
 _k_friendly_name=Media Controller
@@ -240,26 +273,27 @@ _k_friendly_name=Power Management
 [plasmashell]
 _k_friendly_name=Plasma
 activate task manager entry 1=none,Meta+1,Activate Task Manager Entry 1
-activate task manager entry 10=none,Meta+0,Activate Task Manager Entry 10
+activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
 activate task manager entry 2=none,Meta+2,Activate Task Manager Entry 2
 activate task manager entry 3=none,Meta+3,Activate Task Manager Entry 3
 activate task manager entry 4=none,Meta+4,Activate Task Manager Entry 4
 activate task manager entry 5=none,Meta+5,Activate Task Manager Entry 5
-activate task manager entry 6=none,Meta+6,Activate Task Manager Entry 6
-activate task manager entry 7=none,Meta+7,Activate Task Manager Entry 7
-activate task manager entry 8=none,Meta+8,Activate Task Manager Entry 8
-activate task manager entry 9=none,Meta+9,Activate Task Manager Entry 9
+activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
+activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
+activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
+activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 18=Alt+F1,none,Activate Application Menu Widget
+activate widget 24=,none,Activate Application Menu Widget
 clear-history=none,none,Clear Clipboard History
 clipboard_action=Ctrl+Alt+X,Ctrl+Alt+X,Enable Clipboard Actions
 cycleNextAction=none,none,Next History Item
 cyclePrevAction=none,none,Previous History Item
 edit_clipboard=none,none,Edit Contents...
-manage activities=none,Meta+Q,Activities...
+manage activities=Meta+Q,Meta+Q,Activities...
 next activity=Meta+Tab,none,Walk through activities
 previous activity=Meta+Shift+Tab,none,Walk through activities (Reverse)
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
-show dashboard=none,Ctrl+F12,Show Desktop
+show dashboard=Ctrl+F12,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...
 show-on-mouse-pos=none,none,Open Klipper at Mouse Position
 stop current activity=none,Meta+S,Stop Current Activity

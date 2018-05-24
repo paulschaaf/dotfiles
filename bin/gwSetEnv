@@ -92,7 +92,7 @@ s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|sta
 t
 
 # ... from git path
-s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)).*\\$_\1_i
+s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]+).*\\$_\1_i
 t
 
 # ... after the one containing the product code+version
