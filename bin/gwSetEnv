@@ -1,5 +1,14 @@
 #!/bin/bash
 
+if [ "$1" = "--trace" -o "$1" = "--debug" ]; then
+    function trace () {
+        echo "[36m# $*[0m
+"
+    }
+else
+    function trace () { :; }
+fi
+
 [ "$1" = "--debug" ] && set -x
 
 # Clear these out
@@ -78,13 +87,14 @@ export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
 export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
 
-if [ -z "$GW_PLATFORM" ]; then  # if we could not determine the platform
+if [ -z "$GW_PLATFORM" ]; then
+    trace Could not determine the platform version!
     unset IDEA_JDK
     typeset -p IDEA_HOME JAVA_HOME
     return 1 2>/dev/null || exit
 fi
+trace The platform version is $GW_PLATFORM
 
-# We're in a Guidewire app installation
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
 # strip trailing directories (and quit on success) ...
 # ... from Perforce path
@@ -92,7 +102,7 @@ s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|sta
 t
 
 # ... from git path
-s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]+).*\\$_\1_i
+s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_i
 t
 
 # ... after the one containing the product code+version
@@ -113,7 +123,7 @@ typeset -p JAVA_HOME
 export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\L\1_ip'`
 ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
 if [[ "$UNAME" =~ "CYGWIN" ]]; then
-    # if we are in Cygwin, execute the rest of the line
+    trace We are in Cygwin
     ifCygwin=
 fi
 
@@ -160,11 +170,12 @@ case ${GW_PRODUCT} in
         ;;
 esac
 
-# is this a GW installation?
 if [ -z "${GW_PRODUCT}" ]; then
+    trace Could not determine the Guidewire product
     unsetGWVars
     return 1 2>/dev/null || exit
 fi
+trace Determined the GW product
 
 function replaceInList() {
     local listName=$1; shift
