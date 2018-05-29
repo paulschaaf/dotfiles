@@ -53,7 +53,6 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=7
         export JAVA_HOME=/usr/lib32/jvm/java32-6-jdk
         export JAVA16_HOME=$JAVA6_HOME
-        export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
         ;;
     8|emerald)
@@ -62,20 +61,17 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
         export JAVA_HOME=$JAVA7_HOME
-        export IDEA_JDK=$JAVA_HOME
         scriptExtension=.sh
         ;;
     9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
         export JAVA_HOME=$JAVA8_HOME
-        export IDEA_JDK=$JAVA_HOME
         ;;
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
         export JAVA_HOME=$JAVA8_HOME
-        export IDEA_JDK=${JAVA8_HOME}_nodcevm
         ;;
     *)
         unsetGWVars
