@@ -56,6 +56,7 @@ case ${GW_PLATFORM} in
         scriptExtension=.sh
         ;;
     8|emerald)
+        export AARDVARK_HOME=/depot/aardvark/alpha
         export ANT_HOME=/depot/ant/apache-ant-1.8.2
         export M2_HOME=/depot/maven/apache-maven-3.0.4
         export GW_PL_NUM=8

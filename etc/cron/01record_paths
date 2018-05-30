@@ -1,8 +1,0 @@
-#!/bin/sh
-
-cd $HOME
-rm -f cron_env
-env > cron_env
-
-rm -f cron_set
-set > cron_set

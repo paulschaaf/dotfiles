@@ -1,4 +1,0 @@
-#!/bin/bash
-
-pwd >| /tmp/cron.pwd
-touch cron.`date +%F-%H.%M.%S`

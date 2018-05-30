@@ -15,7 +15,7 @@ LOGFILE=/var/log/cron.log
 # 10     1-23/2 *      *  *   $NICELY_RUN $CRON/hour.odd        >| $LOGFILE
 
 35       12     *      *  *   $NICELY_RUN $CRON/day.every       >| $LOGFILE
-00       9      *      *  1-5 $NICELY_RUN $CRON/day.workdays    >| $LOGFILE
+00       7      *      *  1-5 $NICELY_RUN $CRON/day.workdays    >| $LOGFILE
 
 # 35     12     *      *  1   $NICELY_RUN $CRON/week.every      >| $LOGFILE
 

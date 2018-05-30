@@ -30,4 +30,5 @@ class Host
        else
          Color.red
        end)
+    end
 end
