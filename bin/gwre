@@ -1,11 +1,10 @@
 #!/bin/bash
 
-sudo vpnc-connect #2>/dev/null
+#sudo vpnc-connect #2>/dev/null
 
-echo -n 'Connected with IP: '
+#echo -n 'Connected with IP: '
 #ifconfig | grep -A 1 '^tun' | sed -n 's/.*inet addr:\([.0-9]*\).*/\1/gp'
 
 echo ssh to satori; echo
-export VPN_IP=${SSH_CLIENT%% *}
-ssh satori -- 'make-ssh-config-for copernicus ${VPN_IP} | tee ~/bin/quick-ssh/config.copernicus'
+ssh satori -- 'make-ssh-config-for copernicus ${SSH_CLIENT%% *} | tee ~/bin/quick-ssh/config.copernicus'
 echo done
