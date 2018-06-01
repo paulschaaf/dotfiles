@@ -277,6 +277,10 @@ alert() {
 
 alias cd=pushd
 
+df() {
+    eval "/bin/df -h -x devtmpfs -x tmpfs --total -T $*" | lite '^(Filesystem|total).*'
+}
+
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
     if [ -z "$1" ]; then
@@ -467,7 +471,6 @@ lsf() {
 alias ...=../..
 alias ....=../../..
 alias ..='pushd ..'
-alias df='df -h -x supermount -x tmpfs'
 alias du='du -h'
 alias perf='./perf -Ddir.user=pschaaf'
 alias rm='rm -i'
