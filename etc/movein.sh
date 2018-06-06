@@ -4,6 +4,7 @@ cd $HOME
 backup=~/backup
 shell=/bin/zsh
 
+## LIBRARIES AND PACKAGES ===========================================
 libraries=(
     libimage-exiftool-perl # edit EXIF data in image
     libncurses
@@ -13,6 +14,8 @@ libraries=(
 
 # these get installed first, in the order defined
 ordered_packages=(
+    nerd-fonts-fira-code # programming font with ligatures
+
     git                  # version control
     zsh                  # the best shell
     tmux                 # terminal multiplexor
@@ -64,12 +67,8 @@ unordered_packages=(
     vpnc               # vpn to Guidewire
     winetricks         # wine extensions
     xterm              # the basics
-)
 
-#unofficial_ppas=(
-#    freecad-maintainers/freecad-stable
-#    webupd8team/java
-#)
+)
 
 unofficial_packages=(
     oracle-java6-installer
@@ -155,12 +154,12 @@ function install-all() {
     h1 Install $* #: $packages
     skipped=''
     for package in ${packages[@]}; do
-        # if it's not already installed
-        if apt-cache policy $package | grep -q 'Installed: [^(]'; then
+        # is it already installed?
+        if yaourt --query > /dev/null; then
             skipped=${skipped}${package}' '
         else
-            h2 Install $package
-            sudo apt-get -y install $package
+            h2 Installing $package
+            yaourt $package
         fi
     done
     h2 Skipped already installed $*: $skipped
@@ -197,16 +196,7 @@ fi
 
 install-all unofficial_packages
 
-
-h1 SYSTEM SETUP
-#if grep -q /home/pschaaf/box /etc/fstab; then
-#    h2 DavFS already listed in fstab
-#else
-#    h2 Adding DavFS to fstab
-#    backup /etc/fstab
-#    echo 'https://dav.box.com/dav/ /home/pschaaf/box  davfs  rw,user,noauto 0 0' | sudo tee --append /etc/fstab > /dev/null
-#fi
-
+#h1 SYSTEM SETUP
 #if grep '/dev/tty\[1-[^2]' /etc/default/console-setup; then
 #    h1 Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
 #    backup /etc/default/console-setup
@@ -229,20 +219,6 @@ else
     sudo chsh --shell $shell $USER
 fi
 
-#if [ -d .davfs2 ]; then
-#    h2 DavFS2 already set up for Box.com access
-#else
-#    h1 Setup DavFS2 for Box.com access
-#    cp -r /etc/davfs2 .davfs2
-#
-#    sudo adduser $USER davfs2
-#    ( cd .davfs2;
-#      echo -n 'Please type your box.com password:'
-#      read -s password; echo
-#      umask 077;
-#      echo "https://dav.box.com/dav paul666survey@gmail.com \"$password\"" >> secrets
-#    )
-#fi
 
 h1 Setup Symlinks to RC files
 ln-all ~/etc/home/*[^~]
@@ -260,13 +236,6 @@ if rmdir $backup 2>/dev/null; then
 else
     h1 Created backups in $backup
 fi
-
-#[ -d box ] || mkdir box
-#if mount box 2> /dev/null; then
-#    h2 Mounted box.com
-#else
-#    h2 Box.com already mounted!
-#fi
 
 h1 Manually install the following packages:
 echo "$manually_install"

@@ -195,7 +195,7 @@ if [ ${GW_PL_NUM} -lt 9 ]; then
     export _XX=$GW_PRODUCT
     typeset -p _XX
     GW_START_DIR=${GW_ROOT}/bin
-    GW_START_SCRIPT=${GW_START_DIR}/all
+    GW_START_SCRIPT=./all
     GW_LIB_DIR=../lib
 fi
 
