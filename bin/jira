@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+URL="https://jira.guidewire.com/browse/`git issue`"
+echo "chromium $URL"
+chromium $URL &

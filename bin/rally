@@ -4,7 +4,7 @@
 if [ "$1" = "-a" -o "$1" = "--all" ]; then
 	 issues=`git branch | sed -n 's_.*/\(.*\)_\U\1_p'`
 else
-	 issues=${*:-$GIT_BRANCH}
+	 issues=`git issue`
 fi
 
 for issue in ${issues}; do

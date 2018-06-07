@@ -18,3 +18,7 @@
 	helper = keychain
 [alias]
 	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
+	co = checkout
+	issue = "!f(){ echo ${GIT_BRANCH##*/} | sed \"s~_.*~~\"; };f"
+
+
