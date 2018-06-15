@@ -12,16 +12,16 @@ next=none,none,Next Track
 play_pause=none,none,Play/Pause
 playlist_add=Meta+A,Meta+A,Add Media...
 prev=none,none,Previous Track
-rate1=Meta+1,Meta+1,Rate Current Track: 1
-rate2=Meta+2,Meta+2,Rate Current Track: 2
-rate3=Meta+3,Meta+3,Rate Current Track: 3
-rate4=Meta+4,Meta+4,Rate Current Track: 4
-rate5=Meta+5,Meta+5,Rate Current Track: 5
+rate1=none,Meta+1,Rate Current Track: 1
+rate2=none,Meta+2,Rate Current Track: 2
+rate3=none,Meta+3,Rate Current Track: 3
+rate4=none,Meta+4,Rate Current Track: 4
+rate5=none,Meta+5,Rate Current Track: 5
 replay=none,none,Restart current track
 seek_backward_medium=Meta+Shift+-,Meta+Shift+-,Seek Backward by 10 seconds
 seek_forward_medium=Meta+Shift++,Meta+Shift++,Seek Forward by 10 seconds
 showNotificationPopup=Meta+O,Meta+O,Show Notification Popup
-skipTrack=Meta+S,Meta+S,Last.fm: Skip Current Track
+skipTrack=none,Meta+S,Last.fm: Skip Current Track
 stop=none,none,Stop
 stop_after_current=Meta+Shift+V,Meta+Shift+V,Stop after current Track
 toggleMainWindow=none,none,Toggle Main Window
@@ -43,11 +43,11 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{434058cc-14d2-49f2-82f6-58adcb043ffc}=none,none,Take Rectangular Region Screenshot
-{51199d22-aa70-4e85-81ba-85672e92c475}=Meta+Print,none,Take Active Window Screenshot
-{bde2c428-310d-41e9-8810-6c65239d4775}=Shift+Print,none,Take Full Screen Screenshot
+{105a31d0-4119-41cf-98ff-b287421a783e}=Shift+Print,none,Take Full Screen Screenshot
+{65b50c64-a7fe-46d3-a508-a06b0bd8a085}=Print,none,Start Screenshot Tool
+{7b39b015-6801-47c1-8568-30051b61ab1d}=none,none,Take Active Window Screenshot
+{ab39beff-8e07-4641-a2d3-7e36a078b784}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-{e39fa7da-384d-4c04-b27f-ce181b27ff96}=none,none,Start Screenshot Tool
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -65,11 +65,11 @@ run command on clipboard contents=Alt+Shift+F2,Alt+Shift+F2,Run Command on clipb
 
 [ksmserver]
 Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,none,Halt Without Confirmation
-Lock Session=Meta+L\tScreensaver,Ctrl+Alt+L\tScreensaver,Lock Session
+Lock Session=Ctrl+Alt+L\tScreensaver,Ctrl+Alt+L\tScreensaver,Lock Session
 Log Out=Ctrl+Alt+Del,none,Log Out
 Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
 Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
-_k_friendly_name=System Settings
+_k_friendly_name=ksmserver
 
 [kwin]
 Activate Window Demanding Attention=Ctrl+Alt+A,Ctrl+Alt+A,Activate Window Demanding Attention
@@ -83,8 +83,8 @@ Kill Window=Ctrl+Alt+Esc,Ctrl+Alt+Esc,Kill Window
 MoveMouseToCenter=Meta+F6,Meta+F6,Move Mouse to Center
 MoveMouseToFocus=Meta+F5,Meta+F5,Move Mouse to Focus
 MoveZoomDown=Meta+Down,Meta+Down,Move Zoomed Area Downwards
-MoveZoomLeft=,Meta+Left,Move Zoomed Area to Left
-MoveZoomRight=,Meta+Right,Move Zoomed Area to Right
+MoveZoomLeft=Meta+Left,Meta+Left,Move Zoomed Area to Left
+MoveZoomRight=Meta+Right,Meta+Right,Move Zoomed Area to Right
 MoveZoomUp=Meta+Up,Meta+Up,Move Zoomed Area Upwards
 Remove Window From Group=none,none,Remove Window From Group
 Setup Window Shortcut=none,none,Setup Window Shortcut
@@ -172,8 +172,8 @@ Window Pack Up=none,none,Pack Window Up
 Window Quick Tile Bottom=none,none,Quick Tile Window to the Bottom
 Window Quick Tile Bottom Left=none,none,Quick Tile Window to the Bottom Left
 Window Quick Tile Bottom Right=none,none,Quick Tile Window to the Bottom Right
-Window Quick Tile Left=Meta+Left,none,Quick Tile Window to the Left
-Window Quick Tile Right=Meta+Right,none,Quick Tile Window to the Right
+Window Quick Tile Left=none,none,Quick Tile Window to the Left
+Window Quick Tile Right=none,none,Quick Tile Window to the Right
 Window Quick Tile Top=none,none,Quick Tile Window to the Top
 Window Quick Tile Top Left=none,none,Quick Tile Window to the Top Left
 Window Quick Tile Top Right=none,none,Quick Tile Window to the Top Right
@@ -271,12 +271,12 @@ _k_friendly_name=Power Management
 
 [plasmashell]
 _k_friendly_name=Plasma
-activate task manager entry 1=none,Meta+1,Activate Task Manager Entry 1
+activate task manager entry 1=Meta+1,Meta+1,Activate Task Manager Entry 1
 activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
-activate task manager entry 2=none,Meta+2,Activate Task Manager Entry 2
-activate task manager entry 3=none,Meta+3,Activate Task Manager Entry 3
-activate task manager entry 4=none,Meta+4,Activate Task Manager Entry 4
-activate task manager entry 5=none,Meta+5,Activate Task Manager Entry 5
+activate task manager entry 2=Meta+2,Meta+2,Activate Task Manager Entry 2
+activate task manager entry 3=Meta+3,Meta+3,Activate Task Manager Entry 3
+activate task manager entry 4=Meta+4,Meta+4,Activate Task Manager Entry 4
+activate task manager entry 5=Meta+5,Meta+5,Activate Task Manager Entry 5
 activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
 activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
@@ -295,4 +295,4 @@ repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
 show dashboard=Ctrl+F12,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...
 show-on-mouse-pos=none,none,Open Klipper at Mouse Position
-stop current activity=none,Meta+S,Stop Current Activity
+stop current activity=Meta+S,Meta+S,Stop Current Activity

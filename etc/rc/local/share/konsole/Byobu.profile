@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=DejaVu Sans Mono,8,-1,5,50,0,0,0,0,0
+Font=FuraCode Nerd Font Mono,6,-1,5,57,0,0,0,0,0,Medium
 
 [Encoding Options]
 DefaultEncoding=UTF-8

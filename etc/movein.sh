@@ -46,6 +46,7 @@ unordered_packages=(
     nerd-fonts-fira-code # programming font with ligatures
     oracle~jdk7           # Java 1.7
     oracle~jdk8           # Java 1.8
+    tree
     units                 # unit conversions
     vlc                   # video player
     winetricks            # wine extensions
