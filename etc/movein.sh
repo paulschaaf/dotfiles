@@ -32,6 +32,7 @@ ordered_packages=(
 unordered_packages=(
     ascii~utility         # tree of ascii codes
     atom~text~editor
+    bcompare
 #    davfs2                # mount box.com into filesystem
 #    devede                # make video DVDs
     dolphin-plugins       # git integration into KDE file manager
