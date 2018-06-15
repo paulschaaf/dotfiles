@@ -61,7 +61,8 @@ case ${GW_PLATFORM} in
         export M2_HOME=/depot/maven/apache-maven-3.0.4
         export GW_PL_NUM=8
         export GW_PLATFORM=emerald
-        export JAVA_HOME=$JAVA7_HOME
+        export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
+        export JAVA_HOME=/usr/lib/jvm/java-7-jdk
         scriptExtension=.sh
         ;;
     9|ferrite)
