@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'") -*-
 # ; outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..."
 
@@ -244,7 +245,7 @@ export PAGER=less
 
 # ======== RUBYLIB
 export RUBYLIB
-appendRubyLib ${HOME}/src/ruby $HOME/bin
+appendRubyLib /home/pschaaf/src/ruby /home/pschaaf/bin
 
 export MANPAGER=less
 
@@ -278,7 +279,7 @@ alert() {
 alias cd=pushd
 
 df() {
-    eval "/bin/df -h -x devtmpfs -x tmpfs --total -T $*" | lite '^(Filesystem|total).*'
+    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
 }
 
 # cd to the specified directory, or if it's a file, to the containing directory

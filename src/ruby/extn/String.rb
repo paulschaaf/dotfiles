@@ -1,9 +1,5 @@
-# $Source:  $
-# $Revision:  $
 # $Date: 2003/10/23 01:28:06 $
 # $Author: pschaaf $
-# $State: Exp $
-# $Name:  $
 
 # //////////////////////////////////////////////////////////////
 class String

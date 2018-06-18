@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
-# coding: utf-8
 
-#require 'matrix'
 Lookup = (ARGV[0] || 0).to_i
 $success = Lookup == 0
 Pad = 4
@@ -61,7 +59,7 @@ if ARGV[0] == "--rainbows"
       "│#{lBl}_R#{bg 27}A#{bg 16}DIO HEA D#{blk}│",
       "└────────────┘\n",
   ]
-  cover = cover.join("#{clr}\n   #{bg 16}")
+  cover = cover.join("#{clr}\n     #{bg 16}")
   print cover
 
 # elsif ARGV[0] == "--24"
@@ -185,7 +183,6 @@ STRING
 
     printSamples({
                      '91' => 'Bright red foreground (short 8-color notation)',
-                     '38;5;94' => 'Brown foreground',
                      '38;5;94;48;5;33' => 'Brown foreground, light blue background',
                      '1;4;38;5;11' => 'Gold foreground, boldface underlined',
                      '38;5;171;48;5;11' => 'Pink foreground, gold background'
