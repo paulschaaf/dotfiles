@@ -39,18 +39,23 @@ unordered_packages=(
     emacs                 # the king of editors
     enscript              # convert txt to ps, html, rtf, etc.
     jdk-dcevm             # Java Dynamic Code Evolution VM
+    kdiff3
     k4dirstat             # disk usage report
     keychain              # ssh key organizer
     links                 # command line browser
+    lsof
+    manjaro~solarized
     meld                  # merge tool
 #    mp3fs                 # MP3 virtualf ilesystem
     nerd-fonts-fira-code # programming font with ligatures
+    nmap
     oracle~jdk7           # Java 1.7
     oracle~jdk8           # Java 1.8
     tree
     units                 # unit conversions
     vlc                   # video player
     winetricks            # wine extensions
+    xkill
 )
 
 applications=(
