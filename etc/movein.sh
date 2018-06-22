@@ -51,6 +51,7 @@ unordered_packages=(
     nmap
     oracle~jdk7           # Java 1.7
     oracle~jdk8           # Java 1.8
+    sqlops                # MS SQL Server admin tool
     tree
     units                 # unit conversions
     vlc                   # video player

@@ -8,7 +8,7 @@
 frame_maininfo=
 
 #d+ Name of the container it belongs to:
-Container=_MainDock_
+Container=Favorites
 
 #v
 sep_display=
@@ -17,7 +17,7 @@ sep_display=
 Name=
 
 #S+[Default] Image's name or path:
-Icon=/usr/share/icons/oxygen/base/64x64/places/folder.png
+Icon=
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=8.6875
+Order=-0.5
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/org.kde.dolphin.desktop
+Origin=/usr/share/applications/kde4/org.kde.amarok.desktop
