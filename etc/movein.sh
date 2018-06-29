@@ -5,7 +5,7 @@ backup=~/backup
 shell=/bin/zsh
 
 if [ "$host" = "copernicus" ]; then
-    yaourt -S broadcom-wl
+    yay -S broadcom-wl
 fi
 
 ## LIBRARIES AND PACKAGES ===========================================
@@ -22,16 +22,16 @@ ordered_packages=(
     the_silver_searcher  # quicker grep
     chromium             # the best browser
     git                  # version control
-    cairo-dock            # Mac-like icon dock
-    cairo-dock-plug-ins   # Mac-like icon dock
     tmux                 # terminal multiplexor
     byobu                # tmux/screen enhancements
+    cairo-dock           # Mac-like icon dock
+    cairo-dock-plug-ins  # Mac-like icon dock
 )
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
-    ascii~utility         # tree of ascii codes
-    atom~text~editor
+    ascii                # tree of ascii codes
+    atom
     bcompare
 #    davfs2                # mount box.com into filesystem
 #    devede                # make video DVDs
@@ -40,12 +40,10 @@ unordered_packages=(
     enscript              # convert txt to ps, html, rtf, etc.
     jdk-dcevm             # Java Dynamic Code Evolution VM
     kdiff3
-    k4dirstat             # disk usage report
     keychain              # ssh key organizer
-    links                 # command line browser
     lsof
-    manjaro~solarized
-    meld                  # merge tool
+    lynx                  # command line browser
+    manjaro-i3-solarized-settings
 #    mp3fs                 # MP3 virtualf ilesystem
     nerd-fonts-fira-code # programming font with ligatures
     nmap
@@ -55,8 +53,7 @@ unordered_packages=(
     tree
     units                 # unit conversions
     vlc                   # video player
-    winetricks            # wine extensions
-    xkill
+    xorg-xkill
 )
 
 applications=(
@@ -66,12 +63,12 @@ applications=(
     freecad
     frostwire             # bittorrent client
     gitkraken
-    masterpdfeditor
+    masterpdfeditor4
     slack-desktop         # IM client
     sweethome3d           # architectural modelling
     virtualbox            # VM manager
-    virtualbox~ext~oracle
-    virtualbox~guest
+    virtualbox-ext-oracle
+    virtualbox-guest-iso
 )
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
@@ -92,13 +89,17 @@ function printFgBg() {
     echo "[38;5;${fg};48;5;${bg}m${*}[0m"
 }
 
+function setScreenTitle() {
+    echo -n "k$*\\"
+}
+
 function h1() {
-    setScreenTitle $*
     echo
     printFgBg 255 21 === $*
 }
 
 function h2() {
+    setScreenTitle $*
     echo
     printFgBg 250 27 $*
 }
@@ -111,26 +112,24 @@ function backup() {
     cp $* $backup
 }
 
-function setScreenTitle() {
-    echo -n "k$*\\"
-}
-
 function install-all() {
     eval local packages=\${${*}[@]}
     h1 Install $* #: $packages
     skipped=''
+#    set -x
     for pkg in ${packages[@]}; do
         package=${pkg//\~/ }
         # is it already installed?
-        if yaourt --query $package > /dev/null; then
+        if yay --query $package 2> /dev/null; then
             skipped=${skipped}\'${package}\'' '
         else
             h2 Installing \'$package\'
-            LESS+=-"P $package" yaourt --noconfirm $package
+            LESS+=-"P $package" yay --noconfirm $package
             [ "$?" -ne 0 ] && error Could not install \'$package\'
         fi
     done
     h2 Skipped already installed $*: $skipped
+    set +x
 }
 
 function ln-all() {
@@ -149,13 +148,21 @@ function ln-all() {
 ## ====================================================
 mkdir $backup
 
+h1 SYSTEM SETUP
+h2 Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
+file=/etc/systemd/logind.conf
+if grep -q '^#NAutoVTs=6$' $file; then
+    backup $file
+    sudo perl -pi -e "s/^#(NAutoVTs)=6$/\1=3/g" $file
+else
+    echo Already done!
+fi
+
 h1 PACKAGE INSTALLATION
 install-all libraries
 install-all ordered_packages
 install-all unordered_packages
 install-all applications
-
-h1 SYSTEM SETUP
 
 h1 USER SETUP
 #for repo in ${git_repos[@]}; do
