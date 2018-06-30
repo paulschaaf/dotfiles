@@ -14,14 +14,14 @@ Container=Favorites
 sep_display=
 
 #s[Default] Launcher's name:
-Name=Byobu
+Name=
 
 #S+[Default] Image's name or path:
-Icon=/usr/share/icons/gnome/48x48/apps/konsole.png
+Icon=
 
 #s[Default] Command to launch on click:
 #{Example: nautilus --no-desktop, gedit, etc. You can even enter a shortkey, e.g. <Alt>F1, <Ctrl>c,  <Ctrl>v, etc}
-Exec=/usr/bin/konsole --profile Byobu --hide-menubar --hide-tabbar
+Exec=
 
 
 #X[Extra parameters]
@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=4
+Order=3.5
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/org.kde.konsole.desktop
+Origin=/usr/share/applications/bcompare.desktop
