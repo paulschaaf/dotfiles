@@ -278,6 +278,8 @@ alert() {
 
 alias cd=pushd
 
+alias cores='inxi -C'
+
 df() {
     /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
 }

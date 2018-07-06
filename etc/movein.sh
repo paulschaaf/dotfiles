@@ -38,6 +38,7 @@ unordered_packages=(
     dolphin-plugins       # git integration into KDE file manager
     emacs                 # the king of editors
     enscript              # convert txt to ps, html, rtf, etc.
+    inxi                  # system info tool
     jdk-dcevm             # Java Dynamic Code Evolution VM
     kdiff3
     keychain              # ssh key organizer
