@@ -1,4 +1,3 @@
 X11Forwarding yes
 PermitUserEnvironment yes
 AcceptEnv CD_TO SHLVL ZDOTDIR
-Subsystem	sftp	/usr/sbin/sftp-server
