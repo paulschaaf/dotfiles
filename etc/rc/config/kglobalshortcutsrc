@@ -44,10 +44,15 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 [khotkeys]
 _k_friendly_name=KDE Daemon
 {105a31d0-4119-41cf-98ff-b287421a783e}=Shift+Print,none,Take Full Screen Screenshot
+{427d30bd-53a4-4700-b117-5e3e920fd2bb}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
+{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Ctrl+Alt+T,none,Run Konsole
 {65b50c64-a7fe-46d3-a508-a06b0bd8a085}=Print,none,Start Screenshot Tool
 {7b39b015-6801-47c1-8568-30051b61ab1d}=none,none,Take Active Window Screenshot
+{844941c0-3337-4507-b2d4-464765c39224}=none,none,Start Screenshot Tool
 {ab39beff-8e07-4641-a2d3-7e36a078b784}=none,none,Take Rectangular Region Screenshot
+{afdd843d-0e85-4604-848f-c5e57b2c5731}=none,none,Take Active Window Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
+{fa0fd3c3-dc24-47fa-8f30-113181c19a91}=none,none,Take Full Screen Screenshot
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -275,12 +280,12 @@ _k_friendly_name=Power Management
 
 [plasmashell]
 _k_friendly_name=Plasma
-activate task manager entry 1=Meta+1,Meta+1,Activate Task Manager Entry 1
+activate task manager entry 1=none,Meta+1,Activate Task Manager Entry 1
 activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
-activate task manager entry 2=Meta+2,Meta+2,Activate Task Manager Entry 2
-activate task manager entry 3=Meta+3,Meta+3,Activate Task Manager Entry 3
-activate task manager entry 4=Meta+4,Meta+4,Activate Task Manager Entry 4
-activate task manager entry 5=Meta+5,Meta+5,Activate Task Manager Entry 5
+activate task manager entry 2=none,Meta+2,Activate Task Manager Entry 2
+activate task manager entry 3=none,Meta+3,Activate Task Manager Entry 3
+activate task manager entry 4=none,Meta+4,Activate Task Manager Entry 4
+activate task manager entry 5=none,Meta+5,Activate Task Manager Entry 5
 activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
 activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
@@ -297,7 +302,7 @@ manage activities=Meta+Q,Meta+Q,Activities...
 next activity=Meta+Tab,none,Walk through activities
 previous activity=Meta+Shift+Tab,none,Walk through activities (Reverse)
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
-show dashboard=Ctrl+F12,Ctrl+F12,Show Desktop
+show dashboard=none,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...
 show-on-mouse-pos=none,none,Open Klipper at Mouse Position
-stop current activity=Meta+S,Meta+S,Stop Current Activity
+stop current activity=none,Meta+S,Stop Current Activity

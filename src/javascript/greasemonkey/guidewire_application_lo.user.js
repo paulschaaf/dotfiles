@@ -327,7 +327,7 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
     // don't use if product includes its own auto-login or data-load control
     if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
         || document.getElementById('quickLink') != null
-        || document.getElementById('Login-LoginScreen-LoginDV-sampleData_inner') != null) return;
+        || document.getElementById('Login-LoginScreen-LoginDV-sampleData') != null) return;
 
     var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
         || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
