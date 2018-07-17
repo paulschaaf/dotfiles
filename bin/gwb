@@ -1,13 +1,7 @@
 #!/bin/zsh
-#set -x
-_batchFile=./${0##*/}
-UNAME=`uname`
 
-ssh_socket=~/tmp/cc-fwd-socket
-
+# Command-line Switches
 unset _dry_run delay
-
-exitCode=0
 while [ -n "$*" ]; do
     case $1 in
         --delay)
@@ -20,9 +14,9 @@ while [ -n "$*" ]; do
         --dry-run)
             _dry_run='echo '
             ;;
-        --)
+        --*)
             echo Unknown option $1
-            exitCode=1
+            return 1
             ;;
         *)
             break
@@ -31,17 +25,12 @@ while [ -n "$*" ]; do
     shift
 done
 
-_userCmd=$*
-
+# Set up environment
+ssh_socket=~/tmp/cc-fwd-socket
 source ~/bin/gwSetEnv
 if [ -z "$GW_PL_NUM" ]; then
     echo Could not determine Guidewire platform version! >&2
-    exitCode=1
-fi
-
-# don't use the 'exit' command in case this file is "sourced"
-if [ $exitCode -ne 0 ]; then
-  return
+    return 1
 fi
 
 if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
@@ -63,6 +52,7 @@ jvmProcess="$javaExec .*-Dgw.port=${GW_PORT_DEBUG}"
 
 [ -n "$_dry_run" ] && set -x
 
+# Printing Functions
 echoVar() {
     typeset -p $* | sed 's/^declare\( -x\)* / /'
     echo
@@ -89,6 +79,7 @@ log_section() {
     printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
 }
 
+# Other Functions
 runTask() {
     local task=${nice}$1
     local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
@@ -261,17 +252,3 @@ if [ -z $_dry_run ]; then
         runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
     done
 fi
-
-# for CYGWIN
-#     _shell=GWSt_${GW_PL}-${_gwProduct_upcase}.lnk
-#     _priority=' /HIGH'
-#     if [ ! -e $_shell ]; then
-#         echo '# Creating shortcut...'
-#         COMSPEC=`cygpath -au $COMSPEC`
-#         _desc="${GW_PLATFORM}_${GW_PRODUCT}"
-#         _icon=/c${_icon}
-
-#         _mkshortcut="mkshortcut --name=${_shell} --desc=${_desc} --icon=${_icon} --workingdir=$GW_START_DIR ${COMSPEC}"
-#     _start='cmd.exe /C start'
-
-#     ${_dry_run}${_start}${_size}${_priority}$_shell ${_terminate:-/K} "${GW_COLOR:+color $GW_COLOR & }title $GW_TITLE & set CMD=${CMD} & %CMD%"

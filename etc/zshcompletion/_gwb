@@ -25,6 +25,7 @@ _arguments "*: :((
   genWsdl
   idea
   killStudio
+  packageCustomerDist
   studio
   studioClean
   tasks
