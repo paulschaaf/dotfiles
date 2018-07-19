@@ -1,12 +1,5 @@
 #!/usr/bin/env ruby
 
-# $Source: e:/MyDocuments/cvsroot/src/Makefile,v $
-# $Revision: 1.1 $
-# $Date: 2003/08/30 00:16:28 $
-# $Author: pschaaf $
-# $State: Exp $
-# $Name:  $
-
 require 'lib/ansicolor'
 
 $COLOR_SWITCH = '-c'
