@@ -1,10 +1,3 @@
-# $Source: e:/MyDocuments/cvsroot/bin/win/Makefile,v $
-# $Revision: 1.15 $
-# $Date: 2004/05/15 01:15:31 $
-# $Author: pschaaf $
-# $State: Exp $
-# $Name:  $
-
 .SUFFIXES:
 
 -include build.properties
