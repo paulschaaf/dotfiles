@@ -1,18 +1,20 @@
 #!/bin/zsh
 
 # Command-line Switches
-unset _dry_run delay
 while [ -n "$*" ]; do
     case $1 in
         --delay)
             shift
             delay=$1
             ;;
-        --nice)
-            nice='nice '
+        --debug)
+            debug=true
             ;;
         --dry-run)
             _dry_run='echo '
+            ;;
+        --nice)
+            nice='nice '
             ;;
         --*)
             echo Unknown option $1
@@ -26,8 +28,7 @@ while [ -n "$*" ]; do
 done
 
 # Set up environment
-ssh_socket=~/tmp/cc-fwd-socket
-source ~/bin/gwSetEnv
+source $HOME/bin/gwSetEnv
 if [ -z "$GW_PL_NUM" ]; then
     echo Could not determine Guidewire platform version! >&2
     return 1
@@ -39,20 +40,13 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
     echo Running in ${PWD}
 fi
 
-_gwProduct_upcase=`echo $GW_PRODUCT | sed 's/.*/\U\0/'`
+ssh_socket=~/tmp/cc-fwd-socket
+passIcon=/gw-dev/icons/`echo $GW_PRODUCT | sed 's/.*/\U\0/'`_favicon.ico
+failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
+webserver="ruby -run -ehttpd ${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp -p8091"
+jvmProcess="$JAVA_HOME/bin/java .*-Dgw.port=${GW_PORT_DEBUG}"
 
-_icon=/gw-dev/icons/${_gwProduct_upcase}_favicon.ico
-iconDir=/usr/share/icons/oxygen/48x48
-failIcon=$iconDir/actions/process-stop.png
-passIcon=$_icon
-
-javaExec=$JAVA_HOME/bin/java
-whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
-jvmProcess="$javaExec .*-Dgw.port=${GW_PORT_DEBUG}"
-
-[ -n "$_dry_run" ] && set -x
-
-# Printing Functions
+# Printing and Grep Functions
 echoVar() {
     typeset -p $* | sed 's/^declare\( -x\)* / /'
     echo
@@ -79,12 +73,21 @@ log_section() {
     printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
 }
 
-# Other Functions
+grepProcStr() {
+    echo "pgrep -af -- '$1'"
+}
+
+killProcStr() {
+    echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
+}
+
+# Run the Actual Task
 runTask() {
     local task=${nice}$1
     local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
     local successIcon=$2
     local failIcon=$3
+    local whichJava="pwd:  `pwd`\njava: `which java`\n\n`java -version 2>&1`"
 
     [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
@@ -120,23 +123,23 @@ runTask() {
     setGnuScreenTitle
 }
 
-${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${_icon}\;tabTitle=$GW_TITLE
+[ -n "$_dry_run" -o -n "$debug" ] && set -x
 
-grepProcStr() {
-    echo "pgrep -af -- '$1'"
-}
-
-killProcStr() {
-    echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
-}
-
-pcfHost=localhost:$GW_PORT_DEBUG
-
-webserver="ruby -run -ehttpd ${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp -p8091"
+${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${passIcon}\;tabTitle=$GW_TITLE
 
 if [ -z $_dry_run ]; then
     while [ -n "$*" ]; do
         task=$1
+
+        # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
+        if [[ ${task} =~ "Quiet$" ]]; then
+            notify=quiet
+            task=${task%Quiet}
+        elif [[ ${task} =~ "Loud$" ]]; then
+            notify=loud
+            task=${task%Loud}
+        fi
+
         fullTask="$GW_START_SCRIPT $task"
         taskFailIcon=
         taskPassIcon=
@@ -144,7 +147,7 @@ if [ -z $_dry_run ]; then
             cleanIdea)
                 taskFailIcon=$failIcon
                 ;;
-            dropDb*|dropdb*)
+            dropDb)
                 if [ $GW_PL_NUM -lt 9 ]; then
                     task=dropdb
                 else
@@ -155,27 +158,28 @@ if [ -z $_dry_run ]; then
             httpkill)
                 fullTask="pkill -f '$webserver'"
                 ;;
-            http*)
+            http)
                 spawn=true
                 fullTask=$webserver
                 ;;
-            idea*)
+            idea)
                 if [ $GW_PL_NUM -lt 9 ]; then
                     fullTask=${fullTask/idea/gen-ide}
                 fi
                 ;;
-            killStudio*)
+            killStudio)
                 fullTask=`killProcStr "-Dstudio.sdkroot=${PWD}"`
                 taskFailIcon=$failIcon
                 ;;
-            pgrep*)
+            pgrep)
                 fullTask=`grepProcStr ${jvmProcess}`
                 ;;
-            pkill*)
+            pkill)
                 pgrep -af $jvmProcess
                 fullTask=`killProcStr ${jvmProcess}`
                 ;;
-            pcf*)
+            pcf)
+                pcfHost=localhost:$GW_PORT_DEBUG
                 # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG
                 if [[ $task =~ 'pcf=' ]]; then
                     pcfHost=${task##pcf=}
@@ -202,7 +206,7 @@ if [ -z $_dry_run ]; then
                 spawn=true
                 fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
                 ;;
-            studio*)
+            studio)
                 if [ $GW_PL_NUM -lt 9 ]; then
                     spawn=true
                 fi
@@ -210,19 +214,19 @@ if [ -z $_dry_run ]; then
                 unset inScreen
                 taskFailIcon=$failIcon
                 ;;
-            studioClean*)
+            studioClean)
                 if [ $GW_PL_NUM -lt 9 ]; then
                     rm -rf app-cc/cc-studio-run/db
                 fi
                 ;;
-            tasks*)
-                $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g"
+            tasks)
+                $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
                 exit
                 ;;
-            testFail*)
+            testFail)
                 fullTask='time && sleep 1 && ls *wojaljg209'
                 ;;
-            testPass*)
+            testPass)
                 fullTask='time && sleep 1s'
                 ;;
             *)
@@ -233,14 +237,12 @@ if [ -z $_dry_run ]; then
         shift
 
         # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
-        if [[ ${task} =~ "Quiet$" ]]; then
+        if [ "$notify" = "quiet" ]; then
             taskPassIcon=
             taskFailIcon=
-            fullTask=${fullTask%Quiet}
-        elif [[ ${task} =~ "Loud$" ]]; then
+        elif [ "$notify" = "loud" ]; then
             taskPassIcon=$passIcon
             taskFailIcon=$failIcon
-            fullTask=${fullTask%Loud}
         fi
 
         # grab any arguments

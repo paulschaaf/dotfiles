@@ -7,11 +7,11 @@
 //    cookies are filed under the hostname or IP address (whichever you use in the URL), this will allow you to have
 //    several tabs in the same browser logged in as different users simultaneously.
 // @run-at           document-end
-// @match            http://*/ab/ContactCenter.do*
-// @match            http://*/bc/BillingCenter.do*
-// @match            http://*/cc/ClaimCenter.do*
-// @match            http://*/px/ExampleCenter.do*
-// @match            http://*/pc/PolicyCenter.do*
+// @match            http*://*/ContactCenter.do
+// @match            http*://*/BillingCenter.do
+// @match            http*://*/ClaimCenter.do
+// @match            http*://*/ExampleCenter.do
+// @match            http*://*/PolicyCenter.do
 // @copyright 2009+  P.G. Schaaf
 // @require          file:///home/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
 // @require          file:///home/pschaaf/src/javascript/greasemonkey/debugging.js
@@ -56,7 +56,7 @@ document.createElement = function (tagName) {
 
 var debugInfo = new DebugInfoHeader(debugLevel);
 debugInfo.insert = function (info) {
-  document.getElementById('Login-LoginScreen_LocationName').insertAdjacentElement("beforebegin", info);
+  document.getElementById('Login-table').insertAdjacentElement("beforebegin", info);
 };
 
 // ===========================================================
@@ -133,8 +133,25 @@ function GWClaimCenter() {
 
 var cc = new GWClaimCenter();
 
-var appCode = document.location.pathname.match(/ab|bc|cc|pc|px/),
-    isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
+var isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
+var appCode = "";
+
+switch (document.location.pathname) {
+  case "/BillingCenter.do":
+    appCode = "bc";
+    break;
+  case "/ClaimCenter.do":
+    appCode = "cc";
+    break;
+  case "/ContactManager.do":
+    appCode = "ab";
+    break;
+  case "/PolicyCenter.do":
+    appCode = "pc";
+    break;
+  case "/ExampleCenter.do":
+    appCode = "px";
+}
 
 debugInfo
     .addValue('appCode', appCode)
