@@ -178,7 +178,7 @@ if [ -z $_dry_run ]; then
                 pgrep -af $jvmProcess
                 fullTask=`killProcStr ${jvmProcess}`
                 ;;
-            pcf)
+            pcf*)
                 pcfHost=localhost:$GW_PORT_DEBUG
                 # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG
                 if [[ $task =~ 'pcf=' ]]; then
