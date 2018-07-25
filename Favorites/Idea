@@ -1,0 +1,13 @@
+[Desktop Entry]
+Comment=
+Exec=/opt/idea/bin/idea.sh
+Icon=/opt/idea/bin/idea.png
+Name=Idea
+NoDisplay=false
+Path[$e]=
+StartupNotify=true
+Terminal=0
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=

@@ -1,0 +1,15 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Comment=RPN Calculator
+Exec=/home/pschaaf/opt/HP48GX/Emu48.exe
+GenericName=HP 48GX RPN Calculator
+Icon=/home/pschaaf/opt/HP48GX/HP_48GX_small.png
+Name=HP 48GX
+NoDisplay=false
+Path[$e]=
+StartupNotify=true
+Terminal=0
+TerminalOptions=
+Type=Application
+X-KDE-SubstituteUID=false
+X-KDE-Username=
