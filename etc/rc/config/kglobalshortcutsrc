@@ -1,5 +1,5 @@
 [KDE Keyboard Layout Switcher]
-Switch to Next Keyboard Layout=Ctrl+Alt+K,none,Switch to Next Keyboard Layout
+Switch to Next Keyboard Layout=none,none,Switch to Next Keyboard Layout
 _k_friendly_name=KDE Daemon
 
 [amarok]
@@ -44,7 +44,7 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 [khotkeys]
 _k_friendly_name=KDE Daemon
 {427d30bd-53a4-4700-b117-5e3e920fd2bb}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
-{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Ctrl+Alt+T,none,Run Konsole
+{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Meta+T,none,Run Konsole
 {844941c0-3337-4507-b2d4-464765c39224}=none,none,Start Screenshot Tool
 {afdd843d-0e85-4604-848f-c5e57b2c5731}=none,none,Take Active Window Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
@@ -66,7 +66,7 @@ run command on clipboard contents=Alt+Shift+F2,Alt+Shift+F2,Run Command on clipb
 
 [ksmserver]
 Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,none,Halt Without Confirmation
-Lock Session=\tScreensaver,Ctrl+Alt+L\tScreensaver,Lock Session
+Lock Session=Meta+L\tScreensaver,Ctrl+Alt+L\tScreensaver,Lock Session
 Log Out=Ctrl+Alt+Del,none,Log Out
 Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
 Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
