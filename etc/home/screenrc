@@ -73,8 +73,8 @@ bindkey "\033\033[C" next	            # Alt-right: next window
 bindkey "[5~"      eval   "copy" "stuff ^b"
 
 # ======== Other Keys
-bindkey -k kB        stuff  "^Upopd^M" # clear line then popd
-bindkey "[Z"       stuff  "^Upopd^M"
+bindkey -k kB        stuff  "^U popd^M" # clear line then popd
+bindkey "[Z"       stuff  "^U popd^M"
 
 # If we need to restart irb, make sure it stays up.
 bind    r            screen -t '>> |irb' bash -c 'while true; do irb; echo; echo "### Restarting. Press ^C to stop..."; sleep 2; echo; done'

@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile " buffer-file-name); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
