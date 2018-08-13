@@ -192,8 +192,8 @@ bindkey -e
 
 # ======== Function Keys
 
-bindkey -s "[0d" "popd\n"
-bindkey -s "[Z" "popd\n"
+# bindkey -s " [0d" " popd\n"
+bindkey -s "[Z" " popd\n"
 
 # Here's what we'd like to accomplish:
 #    __PRESS__  __TO__
@@ -207,7 +207,7 @@ bindkey "[17~" kill-whole-line
 bindkey "[18~" copy-region-as-kill
 bindkey "[19~" yank
 bindkey "[20~" history-incremental-search-backward
-bindkey -s "[21~" "exit\n"
+bindkey -s "[21~" " exit\n"
 
 # ======== Other Extra Keys
 

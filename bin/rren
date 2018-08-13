@@ -24,6 +24,7 @@ class Renamer
     @files, @mapping = anArray.sort, {}
   end
 
+
   def [](key); @mapping[key]; end
 
   def []=(key, value)
