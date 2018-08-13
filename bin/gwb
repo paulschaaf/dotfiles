@@ -69,11 +69,11 @@ log_section() {
     # indent, then draw an underline the length of the status message
     printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
 
-    # indent with ul, turn ul off & color on, show status, fill remainder with ul
-    printf "  \e[0;1;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
+    # indent with ul, turn ul off, bold & color on, show status, fill remainder with ul
+    printf "  \e[0;1;97;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
 
     # turn off bold and show the task description
-    printf "\e[0;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
+    printf "\e[0;97;${_color}m%-${COLUMNS}s\n\e[0m"  ' '$_taskDesc
 }
 
 grepProcStr() {

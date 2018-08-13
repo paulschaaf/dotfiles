@@ -43,12 +43,11 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{427d30bd-53a4-4700-b117-5e3e920fd2bb}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
-{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Meta+T,none,Run Konsole
-{844941c0-3337-4507-b2d4-464765c39224}=none,none,Start Screenshot Tool
-{afdd843d-0e85-4604-848f-c5e57b2c5731}=none,none,Take Active Window Screenshot
+{48411c1c-5fab-49e7-9a28-b95f8501e4d9}=Meta+Print,none,Take Active Window Screenshot
+{9291ca75-c756-43be-947f-6a61c3e8d934}=none,none,Take Full Screen Screenshot
+{ad74cba6-1eac-4fa5-af0f-5e458eec28bd}=none,none,Take Rectangular Region Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-{fa0fd3c3-dc24-47fa-8f30-113181c19a91}=none,none,Take Full Screen Screenshot
+{d8701d49-9e90-42c1-bc7e-7c245c685843}=none,none,Start Screenshot Tool
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -327,6 +326,7 @@ activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 18=Alt+F1,none,Activate Application Menu Widget
+activate widget 19=,none,Activate Application Menu Widget
 activate widget 24=,none,Activate Application Menu Widget
 activate widget 54=none,none,Activate Application Menu Widget
 clear-history=none,none,Clear Clipboard History
