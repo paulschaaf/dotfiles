@@ -20,6 +20,8 @@ loginsh=1
 
 $ifZsh stty start ''   stop   ''
 
+[ -n "$inIntelliJ" ] && SHLVL=0
+
 # For the Goldtouch keyboard, swap F11 with PrintScreen and F12 with Break
 if [ "$HOSTNAME" = "satori" -a -z "$SSH_TTY" ]; then
 #    echo Remapping keys for Goldtouch Keyboard

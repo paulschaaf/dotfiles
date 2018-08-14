@@ -161,7 +161,7 @@ case ${GW_PRODUCT} in
     cc|claimcenter)
         export GW_PRODUCT=cc
         export GW_PORT=8080
-        export GW_COLOR='[104m' # bright white text on blue
+        export GW_COLOR='[97;104m' # bright white text on blue
         $ifCygwin GW_COLOR=1F
         ;;
     pc|policycenter)
