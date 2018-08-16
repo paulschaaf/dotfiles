@@ -43,10 +43,9 @@ fi
 ssh_socket=~/tmp/cc-fwd-socket
 passIcon=/gw-dev/icons/`echo $GW_PRODUCT | sed 's/.*/\U\0/'`_favicon.ico
 failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
-resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp
-resourcesDirLink=~/tmp
+resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 webserverPort=$((GW_PORT_DEBUG+1))
-webserver="ruby -run -ehttpd ${resourcesDirLink} -p${webserverPort}"
+webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 jvmProcess="$JAVA_HOME/bin/java .*-Dgw.port=${GW_PORT_DEBUG}"
 
 # Printing and Grep Functions
@@ -163,7 +162,6 @@ if [ -z $_dry_run ]; then
                 ;;
             http)
                 spawn=true
-                ln -s ${resourcesDir}/cc ${resourcesDirLink}
                 fullTask=$webserver
                 ;;
             idea)
@@ -199,7 +197,7 @@ if [ -z $_dry_run ]; then
                 fi
                 echoVar report
 
-                fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/${GW_PRODUCT}/), %q(http://$pcfHost/$GW_PRODUCT/))' /tmp/*.html && chromium $report"
+                fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && chromium $report"
                 ;;
             portCheck)
                 fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"

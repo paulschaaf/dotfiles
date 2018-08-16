@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=FuraCode Nerd Font Mono,6,-1,5,57,0,0,0,0,0,Medium
+Font=FuraCode Nerd Font Mono,8,-1,5,57,0,0,0,0,0,Regular
 
 [Encoding Options]
 DefaultEncoding=UTF-8
