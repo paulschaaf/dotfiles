@@ -207,6 +207,10 @@ if [ -d /usr/lib/jvm/java-8-jdk ]; then
     unset digit javaDigitHome suffix
 fi
 
+if [ -d "${JAVA_HOME}_nodcevm" ]; then
+    IDEA_JDK=${JAVA_HOME}_nodcevm
+fi
+
 export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
 export JAVA18_AMD64_HOME=${JAVA8_HOME}
 

@@ -127,7 +127,7 @@ runTask() {
 
 [ -n "$_dry_run" -o -n "$debug" ] && set -x
 
-${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${passIcon}\;tabTitle=$GW_TITLE
+#${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${passIcon}\;tabTitle=$GW_TITLE
 
 if [ -z $_dry_run ]; then
     while [ -n "$*" ]; do
