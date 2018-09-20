@@ -18,8 +18,8 @@ rate3=none,Meta+3,Rate Current Track: 3
 rate4=none,Meta+4,Rate Current Track: 4
 rate5=none,Meta+5,Rate Current Track: 5
 replay=none,none,Restart current track
-seek_backward_medium=Meta+Shift+-,Meta+Shift+-,Seek Backward by 10 seconds
-seek_forward_medium=Meta+Shift++,Meta+Shift++,Seek Forward by 10 seconds
+seek_backward_medium=Meta+Shift+-,Meta+Shift+-,Seek Backward by 10.00 seconds seconds
+seek_forward_medium=Meta+Shift++,Meta+Shift++,Seek Forward by 10.00 seconds seconds
 showNotificationPopup=Meta+O,Meta+O,Show Notification Popup
 skipTrack=none,Meta+S,Last.fm: Skip Current Track
 stop=none,none,Stop
@@ -43,12 +43,12 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=KDE Daemon
-{55db4ea4-0fdc-400b-8e30-3b9d6fb9a31e}=Meta+T,none,Run Konsole
-{afdd843d-0e85-4604-848f-c5e57b2c5731}=none,none,Take Active Window Screenshot
-{fa0fd3c3-dc24-47fa-8f30-113181c19a91}=none,none,Take Full Screen Screenshot
-{427d30bd-53a4-4700-b117-5e3e920fd2bb}=Meta+Shift+Print,none,Take Rectangular Region Screenshot
+{45e30af6-1ce7-4e54-a5a8-877adaed0aef}=Ctrl+Alt+T,none,Launch Konsole
+{48411c1c-5fab-49e7-9a28-b95f8501e4d9}=Meta+Print,none,Take Active Window Screenshot
+{9291ca75-c756-43be-947f-6a61c3e8d934}=none,none,Take Full Screen Screenshot
+{ad74cba6-1eac-4fa5-af0f-5e458eec28bd}=none,none,Take Rectangular Region Screenshot
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
-{844941c0-3337-4507-b2d4-464765c39224}=none,none,Start Screenshot Tool
+{d8701d49-9e90-42c1-bc7e-7c245c685843}=none,none,Start Screenshot Tool
 
 [kmix]
 _k_friendly_name=Audio Volume
@@ -329,6 +329,7 @@ activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
 activate widget 18=Alt+F1,none,Activate Application Menu Widget
 activate widget 19=,none,Activate Application Menu Widget
 activate widget 24=,none,Activate Application Menu Widget
+activate widget 40=none,none,Activate Application Menu Widget
 activate widget 54=none,none,Activate Application Menu Widget
 clear-history=none,none,Clear Clipboard History
 clipboard_action=Ctrl+Alt+X,Ctrl+Alt+X,Enable Clipboard Actions
