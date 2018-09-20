@@ -76,6 +76,7 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
         export JAVA_HOME=$JAVA8_HOME
+        export IDEA_JDK=${JAVA_HOME}_nodcevm
         ;;
     10|granite)
         export GW_PL_NUM=10
@@ -90,7 +91,10 @@ esac
 # If these are unset, default them
 export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
-export IDEA_JDK=${IDEA_JDK:-${JAVA_HOME}_nodcevm}
+
+if [ -z "${IDEA_JDK}" -a -d "${JAVA_HOME}_nodcevm" ]; then
+    IDEA_JDK=${JAVA_HOME}_nodcevm
+fi
 
 function echoAndVerifyFile () {
     for pathVar in ${*}; do
@@ -105,11 +109,10 @@ function echoAndVerifyFile () {
     done
 }
 
-echoAndVerifyFile IDEA_HOME JAVA_HOME
+echoAndVerifyFile IDEA_HOME IDEA_JDK JAVA_HOME
 
 if [ -z "$GW_PLATFORM" ]; then
     trace Could not determine the platform version!
-    unset IDEA_JDK
     return 1 2>/dev/null || exit
 fi
 trace The platform version is $GW_PLATFORM
@@ -149,7 +152,7 @@ case ${GW_PRODUCT} in
     ab|contactmanager)
         export GW_PRODUCT=ab
         export GW_PORT=8280
-        export GW_COLOR='[106m' # bright white text on aqua
+        export GW_COLOR='[30;106m' # bright white text on aqua
         $ifCygwin GW_COLOR=3F
         ;;
     bc|billingcenter)
