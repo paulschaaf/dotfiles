@@ -475,9 +475,8 @@ lsf() {
 }
 
 # ======== Aliases
-alias ...=../..
-alias ....=../../..
 alias ..='pushd ..'
+alias ...="pushd ../.."
 alias du='du -h'
 alias perf='./perf -Ddir.user=pschaaf'
 alias rm='rm -i'
