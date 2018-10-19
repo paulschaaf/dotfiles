@@ -170,7 +170,7 @@ case ${GW_PRODUCT} in
     pc|policycenter)
         export GW_PRODUCT=pc
         export GW_PORT=8480
-        export GW_COLOR='[103m' # bright white text on tan/yellow
+        export GW_COLOR='[30;103m' # black text on tan/yellow
         $ifCygwin GW_COLOR=4F
         ;;
     pl|platform)
