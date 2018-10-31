@@ -24,18 +24,18 @@ function unsetGWVars () {
 case "$1" in
     ''|*[!0-9]*)  # it's empty, or contains non-digits
         GW_PLATFORM=`echo $PWD | sed -rn '
-# check if the path explicitly names the platform version
-s/.*(carbon|diamond|emerald|ferrite|granite).*/\1/
+            # check if the path explicitly names the platform version
+            s/.*(carbon|diamond|emerald|ferrite|granite).*/\1/
 
-# otherwise extract the version number from the install directory name
-s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/i
+            # otherwise extract the version number from the install directory name
+            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/i
 
-# if no substitutions were made--we could not determine the version--exit now with the empty string
-T
+            # if no substitutions were made--we could not determine the version--exit now with the empty string
+            T
 
-# otherwise print what we found
-p'`
-         ;;
+            # otherwise print what we found
+            p'`
+        ;;
     *) # it contains only digits
         GW_PLATFORM=$1
         ;;
@@ -118,28 +118,27 @@ fi
 trace The platform version is $GW_PLATFORM
 
 export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
-# strip trailing directories (and quit on success) ...
-# ... from Perforce path
-s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
-t
+    # strip trailing directories (and quit on success) ...
+    # ... from Perforce path
+    s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
+    t
 
-# ... from git path
-s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_i
-t
+    # ... from git path
+    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_i
+    t
 
-# ... after the one containing the product code+version
-s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_i
-t
+    # ... after the one containing the product code+version
+    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_i
+    t
 
-# ... after the one that begins with the product name
-s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_i
-t
+    # ... after the one that begins with the product name
+    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_i
+    t
 
-d # delete pattern space so that empty string is returned
-"`
+    d # delete pattern space so that empty string is returned"`
 
 typeset -p GW_PLATFORM
-echoAndVerifyFile GW_ROOT IDEA_JDK
+echoAndVerifyFile GW_ROOT
 
 export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\L\1_ip'`
 ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
@@ -280,6 +279,7 @@ _echoList PATH CLASSPATH
 if [ -z "$JAVA_HOME" ]; then
     echo `which java` '     # <- which java'
 fi
+
 java -version 2>&1
 echo
 

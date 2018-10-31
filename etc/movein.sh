@@ -19,7 +19,8 @@ libraries=(
 # these get installed first, in the order defined
 ordered_packages=(
     mlocate
-    the_silver_searcher  # quicker grep
+    ripgrep
+#    the_silver_searcher  # quicker grep
     chromium             # the best browser
     git                  # version control
     tmux                 # terminal multiplexor

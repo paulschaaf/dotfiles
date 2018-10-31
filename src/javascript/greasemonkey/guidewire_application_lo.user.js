@@ -7,11 +7,10 @@
 //    cookies are filed under the hostname or IP address (whichever you use in the URL), this will allow you to have
 //    several tabs in the same browser logged in as different users simultaneously.
 // @run-at           document-end
-// @match            http*://*/ContactCenter.do
-// @match            http*://*/BillingCenter.do
-// @match            http*://*/ClaimCenter.do
-// @match            http*://*/ExampleCenter.do
-// @match            http*://*/PolicyCenter.do
+// @match            http*://*/*Center.do
+// @match            http*://*/*/*Center.do
+// @match            http*://*/ContactManager.do
+// @match            http*://*/*/ContactManager.do
 // @copyright 2009+  P.G. Schaaf
 // @require          file:///home/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
 // @require          file:///home/pschaaf/src/javascript/greasemonkey/debugging.js
@@ -344,7 +343,10 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
     // don't use if product includes its own auto-login or data-load control
     if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
         || document.getElementById('quickLink') != null
-        || document.getElementById('Login-LoginScreen-LoginDV-sampleData') != null) return;
+        || document.getElementById('Login-LoginScreen-LoginDV-sampleData') != null) {
+      console.log(triggerName + ': Skipping links because this already contains the quick login links LV');
+      return;
+    }
 
     var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
         || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
@@ -380,6 +382,8 @@ document.gw_server = new GWServer();
 window.setTimeout(function () {
   document.addLinksIfLoginScreen('setTimeout', document.gw_server);
 });
+
+console.log(triggerName + ': Checking whether to enable the Login links.');
 
 /*
   var login = document.getElementsByName('Login-LoginScreen-LoginDV-username')[0];
