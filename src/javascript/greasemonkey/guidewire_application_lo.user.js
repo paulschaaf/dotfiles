@@ -132,26 +132,26 @@ function GWClaimCenter() {
 
 var cc = new GWClaimCenter();
 
-var isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
-var appCode = "";
+var appCode = document.location.pathname.match(/ab|bc|cc|pc|px/),
+    isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
 
-switch (document.location.pathname) {
-  case "/BillingCenter.do":
+if (!appCode) {
+  if (document.location.pathname.match("/BillingCenter.do$")) {
     appCode = "bc";
-    break;
-  case "/ClaimCenter.do":
+  }
+  else if (document.location.pathname.match("/ClaimCenter.do$")) {
     appCode = "cc";
-    break;
-  case "/ContactManager.do":
+  }
+  else if (document.location.pathname.match("/ContactManager.do$")) {
     appCode = "ab";
-    break;
-  case "/PolicyCenter.do":
+  }
+  else if (document.location.pathname.match("/PolicyCenter.do$")) {
     appCode = "pc";
-    break;
-  case "/ExampleCenter.do":
+  }
+  else if (document.location.pathname.match("/ExampleCenter.do$")) {
     appCode = "px";
+  };
 }
-
 debugInfo
     .addValue('appCode', appCode)
     .addValue('isLocalHost', isLocalHost);
