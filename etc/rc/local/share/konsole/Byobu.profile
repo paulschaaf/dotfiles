@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Droid Sans Mono,8,-1,5,50,0,0,0,0,0,Regular
+Font=Droid Sans Mono,7,-1,5,50,0,0,0,0,0,Regular
 
 [Encoding Options]
 DefaultEncoding=UTF-8

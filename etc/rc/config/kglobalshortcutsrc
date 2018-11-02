@@ -1,3 +1,6 @@
+[ActivityManager]
+_k_friendly_name=Activity Manager
+
 [KDE Keyboard Layout Switcher]
 Switch to Next Keyboard Layout=none,none,Switch to Next Keyboard Layout
 _k_friendly_name=KDE Daemon
