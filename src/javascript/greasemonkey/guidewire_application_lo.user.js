@@ -341,7 +341,8 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
 
     // don't use if product includes its own auto-login or data-load control
-    if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
+    if (document.getElementById('Login-LoginScreen-LoginLinksPanelSet') != null
+        || document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
         || document.getElementById('quickLink') != null
         || document.getElementById('Login-LoginScreen-LoginDV-sampleData') != null) {
       console.log(triggerName + ': Skipping links because this already contains the quick login links LV');
@@ -383,7 +384,7 @@ window.setTimeout(function () {
   document.addLinksIfLoginScreen('setTimeout', document.gw_server);
 });
 
-console.log(triggerName + ': Checking whether to enable the Login links.');
+console.log('Checking whether to enable the Login links.');
 
 /*
   var login = document.getElementsByName('Login-LoginScreen-LoginDV-username')[0];
