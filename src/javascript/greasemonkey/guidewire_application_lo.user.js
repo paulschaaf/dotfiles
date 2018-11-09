@@ -132,26 +132,26 @@ function GWClaimCenter() {
 
 var cc = new GWClaimCenter();
 
-var isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
-var appCode = "";
+var appCode = document.location.pathname.match(/ab|bc|cc|pc|px/),
+    isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
 
-switch (document.location.pathname) {
-  case "/BillingCenter.do":
+if (!appCode) {
+  if (document.location.pathname.match("/BillingCenter.do$")) {
     appCode = "bc";
-    break;
-  case "/ClaimCenter.do":
+  }
+  else if (document.location.pathname.match("/ClaimCenter.do$")) {
     appCode = "cc";
-    break;
-  case "/ContactManager.do":
+  }
+  else if (document.location.pathname.match("/ContactManager.do$")) {
     appCode = "ab";
-    break;
-  case "/PolicyCenter.do":
+  }
+  else if (document.location.pathname.match("/PolicyCenter.do$")) {
     appCode = "pc";
-    break;
-  case "/ExampleCenter.do":
+  }
+  else if (document.location.pathname.match("/ExampleCenter.do$")) {
     appCode = "px";
+  };
 }
-
 debugInfo
     .addValue('appCode', appCode)
     .addValue('isLocalHost', isLocalHost);
@@ -341,7 +341,8 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
   if (document.loginLinksElem == null) {
 
     // don't use if product includes its own auto-login or data-load control
-    if (document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
+    if (document.getElementById('Login-LoginScreen-LoginLinksPanelSet') != null
+        || document.getElementById('Login-LoginScreen-LoginDV-AutoLoginLV') != null
         || document.getElementById('quickLink') != null
         || document.getElementById('Login-LoginScreen-LoginDV-sampleData') != null) {
       console.log(triggerName + ': Skipping links because this already contains the quick login links LV');
@@ -383,7 +384,7 @@ window.setTimeout(function () {
   document.addLinksIfLoginScreen('setTimeout', document.gw_server);
 });
 
-console.log(triggerName + ': Checking whether to enable the Login links.');
+console.log('Checking whether to enable the Login links.');
 
 /*
   var login = document.getElementsByName('Login-LoginScreen-LoginDV-username')[0];
