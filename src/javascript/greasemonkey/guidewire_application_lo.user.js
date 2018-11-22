@@ -322,6 +322,8 @@ GWServer.prototype.loginLinkTableForUsers = function (users) {
 
 GWServer.prototype.loginLinksSection = function (users) {
   var container = document.createElement('span');
+  
+  container.appendChild(this.loginLinkTableForUsers(users));
 
   if (this.isLocalHost) {
     this.openLinkInNewTab = true;
@@ -330,7 +332,7 @@ GWServer.prototype.loginLinksSection = function (users) {
     container.appendChild(document.createElement('br'));
     this.openLinkInNewTab = false;
   }
-  container.appendChild(this.loginLinkTableForUsers(users));
+
   return container;
 };
 
