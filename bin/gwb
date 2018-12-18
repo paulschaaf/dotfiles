@@ -197,7 +197,7 @@ if [ -z $_dry_run ]; then
                 fi
                 echoVar report
 
-                fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && chromium $report"
+                fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ll $report && chromium $report"
                 ;;
             portCheck)
                 fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
