@@ -119,17 +119,17 @@ function install-all() {
     h1 Install $* #: $packages
     skipped=''
 #    set -x
-    for pkg in ${packages[@]}; do
-        package=${pkg//\~/ }
-        # is it already installed?
-        if yay --query $package 2> /dev/null; then
-            skipped=${skipped}\'${package}\'' '
-        else
-            h2 Installing \'$package\'
-            LESS+=-"P $package" yay --noconfirm $package
-            [ "$?" -ne 0 ] && error Could not install \'$package\'
-        fi
-    done
+#    for pkg in ${packages[@]}; do
+#        package=${pkg//\~/ }
+#        # is it already installed?
+#        if yay --query $package 2> /dev/null; then
+#            skipped=${skipped}\'${package}\'' '
+#        else
+#            h2 Installing \'$package\'
+#            LESS+=-"P $package" yay --noconfirm $package
+#            [ "$?" -ne 0 ] && error Could not install \'$package\'
+#        fi
+#    done
     h2 Skipped already installed $*: $skipped
     set +x
 }

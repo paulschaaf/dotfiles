@@ -99,7 +99,7 @@ fi
 function echoAndVerifyFile () {
     for pathVar in ${*}; do
         eval value=\${${pathVar}}
-        output=`typeset -p $pathVar`
+        output=`typeset -p $pathVar 2>/dev/null || echo '*undefined*'`
         if [ -e ${value/\~/$HOME} ]; then
             output=${output/=\"/'="[32m'}
         else

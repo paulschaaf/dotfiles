@@ -425,3 +425,4 @@ fi
 # edits are lost if this file is re-generated.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
+set +x

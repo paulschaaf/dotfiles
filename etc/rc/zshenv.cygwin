@@ -12,10 +12,13 @@ exportDefault CYGROOT 'c:\cygwin'
 exportDefault USER $LOGNAME
 exportDefault HOME ${HOME/\/c\///}  # e.g. turn /c/home/.. into /home/...
 
-fixDosPathIn CYGPATH
+if [ -n "$CYGPATH" ]; then
+    fixDOSPathIn CYGPATH
+fi
+
 prependPath $HOME/bin/win
 
-alias classpath='RS=\; echoList CLASSPATH'
+alias classpath='RS=\; echosourcList CLASSPATH'
 alias cp='nocorrect cp'
 alias exp=explorer
 alias gosu=gosu.cmd
@@ -62,5 +65,4 @@ prependClasspath () {
     prependToCygList CLASSPATH $*
 }
 
-
-
+set +x

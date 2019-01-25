@@ -12,10 +12,7 @@
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 log=:
-
 umask 22
-set +x
-
 export TERM=xterm-256color
 
 # ======== Default Settings
@@ -114,15 +111,15 @@ prependRubyLib() {
 cleanList() {
     local listName=$1; shift
     eval local contents=\$$listName
-	 eval $listName=`echo $contents | sed -r '
-     s_::+_:_g                  # remove empty elements
-     s_//+_/_g                  # remove double slashes
-     s_:([a-z]):/_:/\1/_g       # change windows leading drive letter into *nix path
-     s_^:__
-     s_:$__
+	eval $listName=`echo $contents | sed -r '
+      s_::+_:_g                  # remove empty elements
+      s_//+_/_g                  # remove double slashes
+      s_:([a-z]):/_:/\1/_g       # change windows leading drive letter into *nix path
+      s_ _\\\\ _g                # escape any spaces
+      s_^:__
+      s_:$__
    '`
 }
-
 
 # ======== Path
 prependPath $HOME/bin
@@ -512,3 +509,4 @@ cleanList CLASSPATH
 # against the left margin on a line by itself.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
+set +x
