@@ -49,6 +49,8 @@ unordered_packages=(
 #    mp3fs                 # MP3 virtualf ilesystem
     nerd-fonts-fira-code # programming font with ligatures
     nmap
+    nodejs
+    npm
     oracle~jdk7           # Java 1.7
     oracle~jdk8           # Java 1.8
     sqlops                # MS SQL Server admin tool
@@ -204,5 +206,10 @@ if [ -n "$manually_install" ]; then
         echo google-chrome https://www.google.com/search?q="${pkg// //+}"+ubuntu+download
     done
 fi
+
+h1 Other packages
+rehash
+h2 npm yarn
+sudo npm install -g yarn
 
 setScreenTitle

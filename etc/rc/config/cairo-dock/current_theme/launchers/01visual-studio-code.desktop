@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=8.6875
+Order=8.75
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/systemsettings.desktop
+Origin=/usr/share/applications/visual-studio-code.desktop

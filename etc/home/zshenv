@@ -412,6 +412,8 @@ pcd() {
     cd "$@"; popd +1 2>/dev/null
 }
 
+alias term='echoVar TERM'
+
 alias vpnc-connect='sudo vpnc-connect'
 alias vpnc-disconnect='sudo vpnc-disconnect'
 
