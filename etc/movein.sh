@@ -21,7 +21,7 @@ ordered_packages=(
     mlocate
     ripgrep
 #    the_silver_searcher  # quicker grep
-    chromium             # the best browser
+    google-chrome        # the best browser
     git                  # version control
     tmux                 # terminal multiplexor
     byobu                # tmux/screen enhancements
@@ -32,7 +32,7 @@ ordered_packages=(
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
     ascii                # tree of ascii codes
-    atom
+#    atom
     bcompare
 #    davfs2                # mount box.com into filesystem
 #    devede                # make video DVDs
@@ -44,7 +44,7 @@ unordered_packages=(
     kdiff3
     keychain              # ssh key organizer
     lsof
-    lynx                  # command line browser
+#    lynx                  # command line browser
     manjaro-i3-solarized-settings
 #    mp3fs                 # MP3 virtualf ilesystem
     nerd-fonts-fira-code # programming font with ligatures
@@ -61,18 +61,19 @@ unordered_packages=(
 )
 
 applications=(
-    amarok                # music
+#    amarok                # music
     calibre               # e-book manager
     filezilla             # file transfers
-    freecad
+#    freecad
     frostwire             # bittorrent client
-    gitkraken
+#    gitkraken
     masterpdfeditor4
     slack-desktop         # IM client
     sweethome3d           # architectural modelling
-    virtualbox            # VM manager
-    virtualbox-ext-oracle
-    virtualbox-guest-iso
+#    virtualbox            # VM manager
+#    virtualbox-ext-oracle
+#    virtualbox-guest-iso
+    visual-studio-code
 )
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
@@ -105,12 +106,13 @@ function h1() {
 function h2() {
     setScreenTitle $*
     echo
+    echo -n '   '
     printFgBg 250 27 $*
 }
 
-#function error() {
-#    printFgBg 255 196 $*
-#}
+function error() {
+    printFgBg 255 196 $*
+}
 
 function backup() {
     cp $* $backup
@@ -121,17 +123,17 @@ function install-all() {
     h1 Install $* #: $packages
     skipped=''
 #    set -x
-#    for pkg in ${packages[@]}; do
-#        package=${pkg//\~/ }
-#        # is it already installed?
-#        if yay --query $package 2> /dev/null; then
-#            skipped=${skipped}\'${package}\'' '
-#        else
-#            h2 Installing \'$package\'
-#            LESS+=-"P $package" yay --noconfirm $package
-#            [ "$?" -ne 0 ] && error Could not install \'$package\'
-#        fi
-#    done
+    for pkg in ${packages[@]}; do
+        package=${pkg//\~/ }
+        # is it already installed?
+        if yaourt --query $package 2> /dev/null; then
+            skipped=${skipped}\'${package}\'' '
+        else
+            h2 Installing \'$package\'
+            LESS+=-"P $package" yaourt --noconfirm $package
+            [ "$?" -ne 0 ] && error Could not install \'$package\'
+        fi
+    done
     h2 Skipped already installed $*: $skipped
     set +x
 }
@@ -142,7 +144,7 @@ function ln-all() {
         # echo src=$src
         # readlink $target
         if [ "$(readlink $target)" == "$src" ]; then
-            echo The link $target is already correct
+            echo '   '$target is already correct
         else
             ln -s $src ${target}
         fi
@@ -173,13 +175,13 @@ h1 USER SETUP
 #    h1 Downloading Git Repository: $repo
 #    git clone $repo
 #done
-#
-#if grep --quiet $USER:$shell /etc/passwd; then
-#    h2 Default shell already set to ${shell##*/}
-#else
-#    h1 Changing default shell to ${shell##*/}
+
+if grep --quiet $USER:$shell /etc/passwd; then
+    h2 Default shell already set to ${shell##*/}
+else
+    h1 Changing default shell to ${shell##*/}
 #    sudo chsh --shell $shell $USER
-#fi
+fi
 
 
 h1 Setup Symlinks to RC files
