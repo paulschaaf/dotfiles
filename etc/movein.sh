@@ -27,6 +27,7 @@ ordered_packages=(
     byobu                # tmux/screen enhancements
     cairo-dock           # Mac-like icon dock
     cairo-dock-plug-ins  # Mac-like icon dock
+    nvm                  # nodejs version manager
 )
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
