@@ -392,6 +392,9 @@ PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 pcd .
 $ifZsh compinit
 
+# Bootstrap the huge nvm (Node version manager) function
+alias nvm='unalias nvm; echo Installing...; source /usr/share/nvm/init-nvm.sh; nvm'
+
 # POWERLEVEL9K
 #source ~/.fonts/fontawesome-regular.sh
 #POWERLEVEL9K_MODE='nerdfont-complete'
