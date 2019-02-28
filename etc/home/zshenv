@@ -250,6 +250,8 @@ appendRubyLib /home/pschaaf/src/ruby /home/pschaaf/bin
 
 export MANPAGER=less
 
+export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
+
 exportDefault SCREENDIR ${HOME}/tmp
 
 export SHELL=/usr/bin/zsh
@@ -392,8 +394,6 @@ path() {
     fi
     echoList ${show_type} PATH $*
 }
-
-alias rg="rg --type-add 'gosu:*.gs' --type-add 'pcf:include:xml' --type-add 'eti:include:xml' --type-add 'eix:include:xml' --type-add 'etx:include:xml' --type-add 'tti:include:xml' --type-add 'tix:include:xml' --type-add 'ttx:include:xml'"
 
 rubylib() {
     echoVar RUBYLIB

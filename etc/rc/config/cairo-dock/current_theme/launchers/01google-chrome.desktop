@@ -14,7 +14,7 @@ Container=Favorites
 sep_display=
 
 #s[Default] Launcher's name:
-Name=
+Name=Chrome
 
 #S+[Default] Image's name or path:
 Icon=
@@ -43,8 +43,8 @@ Terminal=false
 ShowOnViewport=0
 
 #f[0;100] Order you want for this launcher among the others:
-Order=7.5
+Order=5.5
 
 Icon Type=0
 Type=Application
-Origin=/usr/share/applications/p4v.desktop
+Origin=/usr/share/applications/google-chrome.desktop
