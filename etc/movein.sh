@@ -41,6 +41,7 @@ unordered_packages=(
     emacs                 # the king of editors
     enscript              # convert txt to ps, html, rtf, etc.
     inxi                  # system info tool
+    irb                   # Ruby REPL
     jdk-dcevm             # Java Dynamic Code Evolution VM
     kdiff3
     keychain              # ssh key organizer
