@@ -5,7 +5,7 @@ backup=~/backup
 shell=/bin/zsh
 
 if [ "$host" = "copernicus" ]; then
-    yay -S broadcom-wl
+    yaourt -S broadcom-wl
 fi
 
 ## LIBRARIES AND PACKAGES ===========================================
@@ -19,20 +19,19 @@ libraries=(
 # these get installed first, in the order defined
 ordered_packages=(
     mlocate
-    ripgrep
-#    the_silver_searcher  # quicker grep
-    google-chrome        # the best browser
-    git                  # version control
-    tmux                 # terminal multiplexor
-    byobu                # tmux/screen enhancements
-    cairo-dock           # Mac-like icon dock
-    cairo-dock-plug-ins  # Mac-like icon dock
-    nvm                  # nodejs version manager
+    ripgrep               # quicker grep
+    google-chrome         # the best browser
+    git                   # version control
+    tmux                  # terminal multiplexer
+    byobu                 # tmux/screen enhancements
+    cairo-dock            # Mac-like icon dock
+    cairo-dock-plug-ins   # Mac-like icon dock
+    nvm                   # nodejs version manager
 )
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
 unordered_packages=(
-    ascii                # tree of ascii codes
+    ascii                 # tree of ascii codes
 #    atom
     bcompare
 #    davfs2                # mount box.com into filesystem
@@ -49,7 +48,7 @@ unordered_packages=(
 #    lynx                  # command line browser
     manjaro-i3-solarized-settings
 #    mp3fs                 # MP3 virtualf ilesystem
-    nerd-fonts-fira-code # programming font with ligatures
+    nerd-fonts-fira-code  # programming font with ligatures
     nmap
     nodejs
     npm
