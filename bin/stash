@@ -3,4 +3,4 @@
 #commit=`git branch | sed '/^[^*].*/d; s/^[^A-Za-z]*//g; s_/_%2F_g'`
 
 #chromium https://stash.guidewire.com/projects/CC/repos/cc/commits?until=$commit &
-chromium https://stash.guidewire.com/projects/CC/repos/cc/pull-requests?state=OPEN&author=$USERNAME
+browse https://stash.guidewire.com/projects/CC/repos/cc/pull-requests?state=OPEN&author=$USERNAME

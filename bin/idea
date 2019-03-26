@@ -7,7 +7,6 @@ if [ -z "$IDEA_HOME" ]; then
     echo
     echo IDEA_HOME must be specified!
 else
-    echo Starting ./idea.sh from $IDEA_HOME/bin
-    cd $IDEA_HOME/bin
-    exec ./idea.sh
+    echo Starting ./idea.sh #from $IDEA_HOME/bin
+    exec $IDEA_HOME/bin/idea.sh
 fi
