@@ -4,7 +4,7 @@
 	keepbackup = false
 [core]
    excludesfile = ~/.gitignore
-	autocrlf = true
+	autocrlf = input
 [user]
 	name = Paul Schaaf
 	email = paul.schaaf@gmail.com
