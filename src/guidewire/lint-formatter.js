@@ -1,20 +1,32 @@
 /* eslint-disable import/no-extraneous-dependencies */
-const chalk = require('chalk');
 
-const errorSeverity = 2;
-const fileNameWidth = 44;
+// configurable settings
+const fileNameWidth = 75;
 const ruleIDWidth = 33;
 const ruleViolationCountWidth = 2;
+
+const chalk = (() => {
+  try {
+    return require('chalk');
+  } catch (e) {
+  }
+  return {
+    bold: (str) => `** ${str} **`,
+    red: (str) => `error  ${str}`,
+    yellow: (str) => `warn   ${str}`,
+  };
+})();
+
 
 // Functions
 const colorize = (isError, str) => (isError ? chalk.red(str) : chalk.yellow(str));
 
 const ruleIdUrl = (id) => {
   const [ruleLabel, lintPlugin = ''] = id.split('/')
-    .reverse();
+      .reverse();
   const ruleName = ruleLabel.replace(/ /g, '');
   switch (lintPlugin) {
-    case '':
+    case '':  // no plugin--it's built-in
       return `https://eslint.org/docs/rules/${ruleName}`;
     case 'import':
       return `https://github.com/benmosher/eslint-plugin-import/blob/master/docs/rules/${ruleName}.md`;
@@ -54,9 +66,9 @@ const recordViolation = (isError, id) => {
 };
 
 const violations = () => violationMap
-  .map(({ id, count }, ruleName) => ({ id, count, ruleName }))
-  .sort((a, b) => (a.count <= b.count ? 1 : -1)) // descending by frequency
-  .map(({ id, count, ruleName }) => `${String(count).padStart(ruleViolationCountWidth)}: ${ruleName} ${ruleIdUrl(id)}`);
+    .map(({id, count}, ruleName) => ({id, count, ruleName}))
+    .sort((a, b) => (a.count <= b.count ? 1 : -1)) // descending by frequency
+    .map(({id, count, ruleName}) => `${String(count).padStart(ruleViolationCountWidth)}: ${ruleName} ${ruleIdUrl(id)}`);
 
 const violationsTable = () => [
   chalk.bold(`${violationMap.errors} error(s), ${violationMap.warnings} warning(s)`),
@@ -67,24 +79,26 @@ const cwdLength = process.cwd().length + 1;
 
 // Main export
 
+const errorSeverity = 2;
+
 module.exports = (results) => {
   const output = [];
 
   results
-    .filter(fileResult => fileResult.messages.length > 0)
-    .forEach(({ filePath, messages }) => {
-      const relativePath = filePath.substr(cwdLength);
+      .filter(fileResult => fileResult.messages.length > 0)
+      .forEach(({filePath, messages}) => {
+        const relativePath = filePath.substr(cwdLength);
 
-      messages.forEach(({ fatal, severity, line, column, ruleId, message }) => {
-        const isError = fatal || severity === errorSeverity;
-        const location = `${relativePath}:${line}:${column}`;
-        const id = ruleId.padEnd(ruleIDWidth);
-        recordViolation(isError, id);
+        messages.forEach(({fatal, severity, line, column, ruleId, message}) => {
+          const isError = fatal || severity === errorSeverity;
+          const location = `${relativePath}:${line}:${column}`;
+          const id = ruleId.padEnd(ruleIDWidth);
+          recordViolation(isError, id);
 
-        output.push(`${location.padEnd(fileNameWidth)}  ${id}  ${colorize(isError, message)}`);
+          output.push(`${location.padEnd(fileNameWidth)}  ${id}  ${colorize(isError, message)}`);
+        });
+        output.push('');
       });
-      output.push('');
-    });
 
   return [...output, ...violationsTable(), ''].join('\n');
 };
