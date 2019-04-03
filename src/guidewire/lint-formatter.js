@@ -80,9 +80,11 @@ const cwdLength = process.cwd().length + 1;
 // Main export
 
 const errorSeverity = 2;
+let maxLocationLength = 0;
+let maxIdLength = 0;
 
 module.exports = (results) => {
-  const output = [];
+  const lines = [];
 
   results
       .filter(fileResult => fileResult.messages.length > 0)
@@ -95,10 +97,17 @@ module.exports = (results) => {
           const id = ruleId.padEnd(ruleIDWidth);
           recordViolation(isError, id);
 
-          output.push(`${location.padEnd(fileNameWidth)}  ${id}  ${colorize(isError, message)}`);
+          maxLocationLength = Math.max(maxLocationLength, location.length)
+          maxIdLength = Math.max(maxIdLength, id.length)
+
+          lines.push(`${location.padEnd(fileNameWidth)}  ${id}  ${colorize(isError, message)}`);
         });
-        output.push('');
+        lines.push('');
       });
+
+  const output = lines.map(([location, id, message], index, arr)_ => {
+    `${location.padEnd(maxLocationLength)}  ${id.padEnd(maxIdLength)}  ${message}`
+  });
 
   return [...output, ...violationsTable(), ''].join('\n');
 };
