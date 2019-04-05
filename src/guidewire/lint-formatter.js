@@ -1,8 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 // configurable settings
-const fileNameWidth = 75;
-const ruleIDWidth = 33;
 const ruleViolationCountWidth = 2;
 
 const chalk = (() => {
@@ -12,15 +10,13 @@ const chalk = (() => {
   }
   return {
     bold: (str) => `** ${str} **`,
-    red: (str) => `error  ${str}`,
-    yellow: (str) => `warn   ${str}`,
+    red: (str) => `ERROR  ${str}`,
+    yellow: (str) => `WARN   ${str}`,
   };
 })();
 
 
 // Functions
-const colorize = (isError, str) => (isError ? chalk.red(str) : chalk.yellow(str));
-
 const ruleIdUrl = (id) => {
   const [ruleLabel, lintPlugin = ''] = id.split('/')
       .reverse();
@@ -51,6 +47,8 @@ violationMap.map = (block) => {
 violationMap.errors = 0;
 violationMap.warnings = 0;
 
+const colorize = (isError, str) => (isError ? chalk.red(str) : chalk.yellow(str));
+
 const recordViolation = (isError, id) => {
   const colorizedName = colorize(isError, id);
   if (isError) {
@@ -63,16 +61,19 @@ const recordViolation = (isError, id) => {
     id,
     count: count + 1,
   });
+  return colorizedName;
 };
 
-const violations = () => violationMap
+const violations = (idColumnWidth) => violationMap
     .map(({id, count}, ruleName) => ({id, count, ruleName}))
     .sort((a, b) => (a.count <= b.count ? 1 : -1)) // descending by frequency
-    .map(({id, count, ruleName}) => `${String(count).padStart(ruleViolationCountWidth)}: ${ruleName} ${ruleIdUrl(id)}`);
+    .map(({id, count, ruleName}) => `${String(count).padStart(ruleViolationCountWidth)}: ${ruleName.padEnd(idColumnWidth)}  ${ruleIdUrl(id)}`);
 
-const violationsTable = () => [
+const violationsTable = (idColumnWidth) => [
   chalk.bold(`${violationMap.errors} error(s), ${violationMap.warnings} warning(s)`),
-  ...violations(),
+  ...violations(idColumnWidth),
+    '',
+    'To targetted disable use // eslint-disable-line <rule> or // eslint-disable-next-line <rule>',
 ];
 
 const cwdLength = process.cwd().length + 1;
@@ -81,7 +82,7 @@ const cwdLength = process.cwd().length + 1;
 
 const errorSeverity = 2;
 let maxLocationLength = 0;
-let maxIdLength = 0;
+let maxViolationNameLength = 0;
 
 module.exports = (results) => {
   const lines = [];
@@ -94,20 +95,20 @@ module.exports = (results) => {
         messages.forEach(({fatal, severity, line, column, ruleId, message}) => {
           const isError = fatal || severity === errorSeverity;
           const location = `${relativePath}:${line}:${column}`;
-          const id = ruleId.padEnd(ruleIDWidth);
-          recordViolation(isError, id);
+          let violationName = recordViolation(isError, ruleId);
 
-          maxLocationLength = Math.max(maxLocationLength, location.length)
-          maxIdLength = Math.max(maxIdLength, id.length)
+          maxLocationLength = Math.max(maxLocationLength, location.length);
+          maxViolationNameLength = Math.max(maxViolationNameLength, violationName.length);
 
-          lines.push(`${location.padEnd(fileNameWidth)}  ${id}  ${colorize(isError, message)}`);
+          lines.push([location, violationName, message]);
         });
         lines.push('');
       });
 
-  const output = lines.map(([location, id, message], index, arr)_ => {
-    `${location.padEnd(maxLocationLength)}  ${id.padEnd(maxIdLength)}  ${message}`
-  });
+  const output = lines.map(([location, ruleId, message], index, arr) => location
+        ? `${location.padEnd(maxLocationLength)}  ${ruleId.padEnd(maxViolationNameLength)}  ${message}`
+        : ''
+  );
 
-  return [...output, ...violationsTable(), ''].join('\n');
+  return [...output, ...violationsTable(maxViolationNameLength), ''].join('\n');
 };
