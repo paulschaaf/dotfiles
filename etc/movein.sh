@@ -120,23 +120,25 @@ function backup() {
 }
 
 function install-all() {
-    eval local packages=\${${*}[@]}
-    h1 Install $* #: $packages
-    skipped=''
-#    set -x
-    for pkg in ${packages[@]}; do
-        package=${pkg//\~/ }
-        # is it already installed?
-        if yaourt --query $package 2> /dev/null; then
-            skipped=${skipped}\'${package}\'' '
-        else
-            h2 Installing \'$package\'
-            LESS+=-"P $package" yaourt --noconfirm $package
-            [ "$?" -ne 0 ] && error Could not install \'$package\'
-        fi
-    done
-    h2 Skipped already installed $*: $skipped
-    set +x
+    if [ `uname` = "linux" ]; then
+        eval local packages=\${${*}[@]}
+        h1 Install $* #: $packages
+        skipped=''
+    #    set -x
+        for pkg in ${packages[@]}; do
+            package=${pkg//\~/ }
+            # is it already installed?
+            if yaourt --query $package 2> /dev/null; then
+                skipped=${skipped}\'${package}\'' '
+            else
+                h2 Installing \'$package\'
+                LESS+=-"P $package" yaourt --noconfirm $package
+                [ "$?" -ne 0 ] && error Could not install \'$package\'
+            fi
+        done
+        h2 Skipped already installed $*: $skipped
+        set +x
+    fi
 }
 
 function ln-all() {
@@ -181,7 +183,7 @@ if grep --quiet $USER:$shell /etc/passwd; then
     h2 Default shell already set to ${shell##*/}
 else
     h1 Changing default shell to ${shell##*/}
-#    sudo chsh --shell $shell $USER
+    sudo chsh --shell $shell $USER
 fi
 
 

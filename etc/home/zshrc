@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
 # This script is run by interactive shells
@@ -13,7 +13,7 @@
 log=:
 #log=echo
 $log '*** In .zshrc'
-
+#set -x
 interactive=true
 
 # ======== Zsh Compinstall
@@ -115,34 +115,6 @@ man() {
     export _NROFF_U=1
 #    PATH="$HOME/bin:$PATH"
 	 command man "$@"
-}
-
-setfont () {
-    local name
-    case $1 in
-        unreadable)
-            name=nil2
-            ;;
-        tiny)
-            name=5x7
-            ;;
-        small)
-            name=6x10
-            ;;
-        medium)
-            name=7x13
-            ;;
-        large)
-            name=9x15
-            ;;
-        huge)
-            name=10x20
-            ;;
-        *)
-            name=$1
-            ;;
-    esac
-    echo "]50;$name"
 }
 
 setScreenTitle () {
@@ -281,11 +253,9 @@ bindkey -s ""^_"" "\C-apath \C-e\C-m"
 #         #bindkey "\C-h\C-k" describe-key-briefly	#
 #     fi
 
-
 updateManpath () {
     appendManpath `echo $PATH | awk '/\/bin$/ {gsub(/\/bin$/, "/man"); print}' RS=':'`
 }
-
 
 export OLD_PS1=${PS1/\\n$ */}
 
@@ -299,6 +269,9 @@ case $HOSTNAME:$UNAME in
     *:CYGWIN*)
         # white on green
         hostColor='[37;42m'
+        ;;
+    *:Darwin*)
+        hostColor='[32;40m'
         ;;
     *:HPUX*)
         # cyan
@@ -343,37 +316,36 @@ if [ -n "$connection_color" ]; then
     CONNECTION="%{$connection_color%}$CONNECTION%{[0m%} "
 fi
 
-source /home/pschaaf/etc/rc/git_zshrc.sh
+source ~/etc/rc/git_zshrc.sh
 
 export dirs
 
 updateDirs () {
     dirs="`builtin dirs -p | awk '
-       NR == 2 {printf(\"%{%s%}\", \"[0;38;5;243m\")};
+       NR == 2 {printf(\"%s\", \"[0;38;5;243m\")};
        {print}
     ' ORS=' '`"
 }
 
-if [ $UID -eq 0 ]; then
-    updateGuidewireVars () {
-        :
-    }
-else
-    updateGuidewireVars () {
-        source gwSetEnv 2>&1 > /dev/null
-    }
-fi
+#if [ $UID -eq 0 ]; then
+#    updateGuidewireVars () {
+#        :
+#    }
+#else
+#    updateGuidewireVars () {
+#        source gwSetEnv 2>&1 > /dev/null
+#    }
+#fi
 
-alias fixprompt='updateGuidewireVars; updateGitVars'
+alias fixprompt='updateGitVars'
 
 function git () {
     command git $*
-    echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGuidewireVars && updateGitVars
+    echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
 }
 
 autoload -U add-zsh-hook
-add-zsh-hook chpwd  updateDirs
-add-zsh-hook chpwd  updateGuidewireVars
+add-zsh-hook chpwd updateDirs
 add-zsh-hook precmd updateGitVars
 
 if [ -n "$HOSTMESSAGE" ]; then
@@ -392,34 +364,19 @@ PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 pcd .
 $ifZsh compinit
 
+# Guidewire
+alias granite='source ~/src/guidewire/granite.env'
+
 # Bootstrap the huge nvm (Node version manager) function
-alias nvm='unalias nvm; echo Installing...; source /usr/share/nvm/init-nvm.sh; nvm'
-
-# POWERLEVEL9K
-#source ~/.fonts/fontawesome-regular.sh
-#POWERLEVEL9K_MODE='nerdfont-complete'
-#POWERLEVEL9K_SHORTEN_DIR_LENGTH=2
-#POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(os_icon dir vcs)
-#POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status nvm node_version)
-#
-#POWERLEVEL9K_OS_ICON_BACKGROUND="white"
-#POWERLEVEL9K_OS_ICON_FOREGROUND="blue"
-#POWERLEVEL9K_DIR_HOME_FOREGROUND="white"
-#POWERLEVEL9K_DIR_HOME_SUBFOLDER_FOREGROUND="white"
-#POWERLEVEL9K_DIR_DEFAULT_FOREGROUND="white"
-
-#POWERLEVEL9K_MODE='nerdfont-patched'
-#POWERLEVEL9K_MODE='awesome-patched'
-#POWERLEVEL9K_MODE='awesome-fontconfig'
-#source ~/opt/powerlevel9k/powerlevel9k.zsh-theme
+#alias nvm='unalias nvm; echo Installing...; source /usr/share/nvm/init-nvm.sh; nvm'
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
 # /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
 # source $HOME/.keychain/$HOSTNAME-sh
-if [ $UID -gt 0 ]; then  # if I'm not root
-    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
-fi
+#if [ $UID -gt 0 ]; then  # if I'm not root
+#    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
+#fi
 ### End-Keychain ###
 
 # Move this heredoc around in the file to temporarily disable sections
@@ -429,3 +386,6 @@ fi
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
 set +x
+
+export NVM_DIR="/Users/pschaaf/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

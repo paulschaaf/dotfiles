@@ -23,17 +23,20 @@ function unsetGWVars () {
 
 case "$1" in
     ''|*[!0-9]*)  # it's empty, or contains non-digits
-        GW_PLATFORM=`echo $PWD | sed -rn '
+        GW_PLATFORM=`echo $PWD | sed -En '
             # check if the path explicitly names the platform version
             s/.*(carbon|diamond|emerald|ferrite|granite).*/\1/
 
             # otherwise extract the version number from the install directory name
-            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/i
+            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/
+
+            t print
 
             # if no substitutions were made--we could not determine the version--exit now with the empty string
-            T
+            #T
 
             # otherwise print what we found
+            :print
             p'`
         ;;
     *) # it contains only digits
@@ -81,7 +84,8 @@ case ${GW_PLATFORM} in
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-        export JAVA_HOME=$JAVA8_HOME
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_172.jdk/Contents/Home
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app'
         ;;
     *)
         unsetGWVars
@@ -90,17 +94,18 @@ esac
 
 # If these are unset, default them
 export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
-export IDEA_HOME=$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM
+export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
-if [ -z "${IDEA_JDK}" -a -d "${JAVA_HOME}_nodcevm" ]; then
-    IDEA_JDK=${JAVA_HOME}_nodcevm
-fi
+#if [ -z "${IDEA_JDK}" -a -d "${JAVA_HOME}_nodcevm" ]; then
+    IDEA_JDK=${JAVA_HOME}
+    #IDEA_JDK=${JAVA_HOME}_nodcevm
+#fi
 
 function echoAndVerifyFile () {
     for pathVar in ${*}; do
         eval value=\${${pathVar}}
         output=`typeset -p $pathVar 2>/dev/null || echo '*undefined*'`
-        if [ -e ${value/\~/$HOME} ]; then
+        if [ -e "${value/\~/$HOME}" ]; then
             output=${output/=\"/'="[32m'}
         else
             output=${output/=\"/'="[101m'}
@@ -109,84 +114,72 @@ function echoAndVerifyFile () {
     done
 }
 
-echoAndVerifyFile IDEA_HOME IDEA_JDK JAVA_HOME
+typeset -p IDEA_HOME IDEA_JDK JAVA_HOME
 
 if [ -z "$GW_PLATFORM" ]; then
     trace Could not determine the platform version!
     return 1 2>/dev/null || exit
 fi
-trace The platform version is $GW_PLATFORM
 
-export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -r "
+export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -E "
     # strip trailing directories (and quit on success) ...
     # ... from Perforce path
     s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
     t
 
     # ... from git path
-    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_i
+    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_
     t
 
     # ... after the one containing the product code+version
-    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_i
+    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_
     t
 
     # ... after the one that begins with the product name
-    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_i
+    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_
     t
 
-    d # delete pattern space so that empty string is returned"`
+    # delete pattern space so that empty string is returned
+    d"`
 
-typeset -p GW_PLATFORM
-echoAndVerifyFile GW_ROOT
+typeset -p GW_PL_NUM GW_PLATFORM GW_ROOT
 
-export GW_PRODUCT=`echo ${GW_ROOT} | sed -nr 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\L\1_ip'`
-ifCygwin=:  # when we're not in Cygwin, ignore any line beginning with $inCygwin
-if [[ "$UNAME" =~ "CYGWIN" ]]; then
-    trace We are in Cygwin
-    ifCygwin=
-fi
+export GW_PRODUCT=`echo ${GW_ROOT} | sed -nE 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\1_p'`
+typeset -p GW_PRODUCT
 
 case ${GW_PRODUCT} in
     ab|contactmanager)
         export GW_PRODUCT=ab
         export GW_PORT=8280
         export GW_COLOR='[30;106m' # bright white text on aqua
-        $ifCygwin GW_COLOR=3F
         ;;
     bc|billingcenter)
         export GW_PRODUCT=bc
         export GW_PORT=8380
         export GW_COLOR='[105m' # bright white text on magenta
-        $ifCygwin GW_COLOR=2F
         ;;
     cc|claimcenter)
         export GW_PRODUCT=cc
         export GW_PORT=8080
         export GW_COLOR='[97;104m' # bright white text on blue
-        $ifCygwin GW_COLOR=1F
         ;;
     pc|policycenter)
         export GW_PRODUCT=pc
         export GW_PORT=8480
         export GW_COLOR='[30;103m' # black text on tan/yellow
-        $ifCygwin GW_COLOR=4F
         ;;
     pl|platform)
         export GW_PRODUCT=pl
         export GW_PORT=8480
         export GW_COLOR='[30;107m' # bright black text on gray
-        $ifCygwin GW_COLOR=4F
         ;;
     gw)
         export GW_PRODUCT=gw
         export GW_COLOR='[30;107m' # bright black text on gray
-        $ifCygwin GW_COLOR=4F
         ;;
     *)
         unset GW_PRODUCT GW_TITLE GW_PROMPT
         export GW_COLOR='[5;101m' # blinking bright white on red
-        $ifCygwin GW_COLOR=0F
         ;;
 esac
 
@@ -202,7 +195,7 @@ function replaceInList() {
     eval local list=\$$listName
     local regex=$1; shift
     local newVal=$1; shift
-    export ${listName}=`echo :$list | sed -r "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
+    export ${listName}=`echo :$list | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
 }
 
 typeset -p GW_PRODUCT
@@ -222,14 +215,13 @@ if [ ${GW_PL_NUM} -lt 9 ]; then
     GW_LIB_DIR=../lib
 fi
 
-$ifCygwin set scriptExtension=.bat
 GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
 
 export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
 export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 
 typeset -p GW_PORT GW_PORT_DEBUG GW_TITLE
-echoAndVerifyFile GW_LIB_DIR GW_START_DIR GW_START_SCRIPT
+typeset -p GW_LIB_DIR GW_START_DIR GW_START_SCRIPT
 
 # Fix PATH and CLASSPATH
 replaceInList PATH      'idea[0-9]*'      ${IDEA_HOME}/bin
@@ -246,17 +238,17 @@ if [ ${GW_PL_NUM} -lt 9 ]; then
     replaceInList PATH      'maven'    ${M2_HOME}/bin
     replaceInList CLASSPATH 'maven'    ${M2_HOME}/lib/\*
 
-    echo
-    typeset -p ANT_HOME
-    ant -version
-
-    echo
-    typeset -p AARDVARK_HOME
-    vark --version 2>&1 | sed '/^gosu-launch.*$/d'
-
-    echo
-    typeset -p M2_HOME
-    mvn -version 2>/dev/null
+#    echo
+#    typeset -p ANT_HOME
+#    ant -version
+#
+#    echo
+#    typeset -p AARDVARK_HOME
+#    vark --version 2>&1 | sed '/^gosu-launch.*$/d'
+#
+#    echo
+#    typeset -p M2_HOME
+#    mvn -version 2>/dev/null
 fi
 
 if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
@@ -266,24 +258,25 @@ fi
 # Remove any empty or duplicate members
 CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
 
-function _echoList() {
-    for arg in $*; do
-        echo -e "\n$arg contains:"
-        eval echo \${${arg}} | tr ':' '\n' | sed -r "s_([^/]*(java|apache|aardvark)[^/]*)_[93m\1[0m_g" | cat -n
-    done
-    echo
-}
-
-_echoList PATH CLASSPATH
-
-if [ -z "$JAVA_HOME" ]; then
-    echo `which java` '     # <- which java'
-fi
-
-java -version 2>&1
-echo
+#function _echoList() {
+#    for arg in $*; do
+#        echo -e "\n$arg contains:"
+#        eval echo \${${arg}} | tr ':' '\n' | sed -E "s_([^/]*(java|apache|aardvark)[^/]*)_[93m\1[0m_g" | cat -n
+#    done
+#    echo
+#}
+#
+#_echoList PATH CLASSPATH
+#
+#if [ -z "$JAVA_HOME" ]; then
+#    echo `which java` '     # <- which java'
+#fi
+#
+#java -version 2>&1
+#echo
+typeset -p PATH CLASSPATH
 
 # this will only work if you 'source' this file
-if [ -n "$inScreen" ]; then
-    echo -n "\ek$GW_TITLE\e\\"  # the screen title
-fi
+#if [ -n "$inScreen" ]; then
+#    echo -n "\ek$GW_TITLE\e\\"  # the screen title
+#fi

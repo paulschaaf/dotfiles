@@ -111,14 +111,9 @@ prependRubyLib() {
 cleanList() {
     local listName=$1; shift
     eval local contents=\$$listName
-	eval $listName=`echo $contents | sed -r '
-      s_::+_:_g                  # remove empty elements
-      s_//+_/_g                  # remove double slashes
-      s_:([a-z]):/_:/\1/_g       # change windows leading drive letter into *nix path
-      s_ _\\\\ _g                # escape any spaces
-      s_^:__
-      s_:$__
-   '`
+	# remove empty elements and double slashes, escape any spaces
+	eval $listName=`echo $contents | sed -E 's_::+_:_g; s_//+_/_g; s_ _\\\\ _g; s_^:__; s_:$__'`
+   #   's_:([a-z]):/_:/\1/_g;   ' \   # change windows leading drive letter into *nix path
 }
 
 # ======== Path
@@ -281,10 +276,15 @@ alias cd=pushd
 
 alias cores='inxi -C'
 
-df() {
-    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
-}
-
+if [ "$UNAME" = "Darwin" ]; then
+    df() {
+        /bin/df -hl $*
+    }
+else
+    df() {
+        /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
+    }
+fi
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
     if [ -z "$1" ]; then
@@ -315,7 +315,7 @@ echoList() {
                 ;;
             --rm)
                 shift
-                contents=`echo $contents | awk 'NR != RM_ROW {printf ":" ""; print}' RM_ROW=$1 RS=: ORS='' | sed -r 's/::+/:/g; s/^:|:$//g'`
+                contents=`echo $contents | awk 'NR != RM_ROW {printf ":" ""; print}' RM_ROW=$1 RS=: ORS='' | sed -E 's/::+/:/g; s/^:|:$//g'`
                 eval $listName=$contents
                ;;
             *)
@@ -433,7 +433,11 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-alias l='/bin/ls ${LS_COLORS:+--color}'
+if [ `uname` = "Darwin" ]; then
+    alias l='/bin/ls -G'
+else
+    alias l='/bin/ls ${LS_COLORS:+--color}'
+fi
 
 export LS="l ${LS_FLAGS}"
 alias ls=${LS}
@@ -501,7 +505,7 @@ case ${UNAME} in
         ;;
 esac
 
-cleanList PATH
+#cleanList PATH
 cleanList CLASSPATH
 
 # Move this heredoc around in the file to temporarily disable sections

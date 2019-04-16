@@ -28,7 +28,10 @@ while [ -n "$*" ]; do
 done
 
 # Set up environment
-source $HOME/bin/gwSetEnv
+eval "source $HOME/bin/gwSetEnv"
+echo GW_PL_NUM=${GW_PL_NUM}
+echo GW_PLATFORM=${GW_PLATFORM}
+
 if [ -z "$GW_PL_NUM" ]; then
     echo Could not determine Guidewire platform version! >&2
     return 1

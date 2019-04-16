@@ -116,7 +116,6 @@ case $remote_host in
 
     satori*)
         add_ssh_flag '-Y'
-        remote_host=satori.guidewire.com
         ;;
 
     *@ftp)

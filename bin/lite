@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'lib/ansicolor'
+require '~/src/ruby/lib/ansicolor'
 
 $COLOR_SWITCH = '-c'
 
