@@ -1,4 +1,6 @@
 --glob
+!package-lock.json
+--glob
 !node_modules/*
 --glob
 !build/*
