@@ -85,7 +85,7 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_172.jdk/Contents/Home
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app'
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
         ;;
     *)
         unsetGWVars

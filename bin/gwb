@@ -44,8 +44,10 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
 fi
 
 ssh_socket=~/tmp/cc-fwd-socket
+#passIcon=/gw-dev/icons/`echo $GW_PRODUCT | sed 's/.*/\U\0/'`_favicon.ico
 passIcon=/gw-dev/icons/`echo $GW_PRODUCT | sed 's/.*/\U\0/'`_favicon.ico
-failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
+#failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
+failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
 resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 webserverPort=$((GW_PORT_DEBUG+1))
 webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
@@ -69,7 +71,7 @@ log_section() {
     local _status=" $(date '+%R') - ${_status} "
 
     # indent, then draw an underline the length of the status message
-    printf "  \e[4;38;5;243m%-${#_status}s\n" ' '
+    printf "\n  \e[4;38;5;243m%-${#_status}s\n" ' '
 
     # indent with ul, turn ul off, bold & color on, show status, fill remainder with ul
     printf "  \e[0;1;97;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
@@ -88,7 +90,7 @@ killProcStr() {
 
 notify() {
 #    notify-send -c idea -t 5000 -i $successIcon $1
-    terminal-notifier -title idea -activate com.apple.Terminal -message $1
+    terminal-notifier -title idea -activate com.apple.Terminal -message $*
 }
 
 # Run the Actual Task
@@ -127,7 +129,7 @@ runTask() {
     else
         log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
         if [ $failIcon ]; then
-            notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava
+            notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava -appIcon "$failIcon"
         fi
     fi
 
@@ -239,7 +241,7 @@ if [ -z $_dry_run ]; then
                 exit
                 ;;
             testFail)
-                fullTask='time && sleep 1 && ls *wojaljg209'
+                fullTask='time && sleep 1 && ls *someNonexistentFile%%'
                 ;;
             testPass)
                 fullTask='time && sleep 1s'
