@@ -195,7 +195,8 @@ function replaceInList() {
     eval local list=\$$listName
     local regex=$1; shift
     local newVal=$1; shift
-    export ${listName}=`echo :$list | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
+    local newList=`echo :${list// /\\ } | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
+    export ${listName}=$newList
 }
 
 typeset -p GW_PRODUCT

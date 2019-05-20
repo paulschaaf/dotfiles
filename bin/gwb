@@ -86,6 +86,11 @@ killProcStr() {
     echo `grepProcStr "$1"`" && pkill -KILL -f -- '$1'"
 }
 
+notify() {
+#    notify-send -c idea -t 5000 -i $successIcon $1
+    terminal-notifier -title idea -activate com.apple.Terminal -message $1
+}
+
 # Run the Actual Task
 runTask() {
     local task=${nice}$1
@@ -107,7 +112,8 @@ runTask() {
     else
         # make sure we source the gwb script instead of just running it
         # if it's a Java cmd, display each option indented on a separate line
-        eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g }'
+        eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g
+        }'
         # keep the exit code from the first command in the chain (i.e. not the sed)
         exitCode=$pipestatus[1]
     fi
@@ -116,12 +122,12 @@ runTask() {
     if [ $exitCode -eq 0 ]; then
         log_section 42 "DONE $elapsedTime" $taskSummary
         if [ $successIcon ]; then
-            notify-send -c idea -t 5000 -i $successIcon "Completed $GW_TITLE:'$taskSummary'" $whichJava
+            notify "Completed $GW_TITLE:'$taskSummary'" $whichJava
         fi
     else
         log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
         if [ $failIcon ]; then
-            notify-send -c idea -t 10000 -u critical -i $failIcon "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava
+            notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava
         fi
     fi
 
