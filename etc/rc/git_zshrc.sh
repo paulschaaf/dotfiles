@@ -1,3 +1,4 @@
+#@IgnoreInspection BashAddShebang
 # To install source this file from your .zshrc file
 
 # see documentation at http://linux.die.net/man/1/zshexpn
@@ -123,4 +124,5 @@ updateGitVars () {
         GIT_STATUS="$GIT_SUPER_STATUS  ${fg_bold[grey]}`git config branch.$GIT_BRANCH.description`
 "
     fi
+    export GIT_REPO=`git config --get remote.origin.url | sed 's_.*/\(.*\)\.git_\1_g'`
 }

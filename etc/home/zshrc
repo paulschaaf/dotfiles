@@ -118,7 +118,8 @@ man() {
 }
 
 setScreenTitle () {
-    echo -n "\ek$*\e\\"
+#    echo -n "\ek$*\e\\"
+    printf '\e]1;%s\a' $*
 }
 
 splitFlac() {
