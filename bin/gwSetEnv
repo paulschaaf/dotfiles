@@ -87,7 +87,7 @@ case ${GW_PLATFORM} in
 #        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_172.jdk/Contents/Home
 #        export IDEA_HOME='/Applications/IntelliJ IDEA 2017 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2019.app/Contents'
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         ;;
     *)
         unsetGWVars

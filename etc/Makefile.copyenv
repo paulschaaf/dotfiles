@@ -24,7 +24,7 @@ Makefile:   ~pschaaf/etc/Makefile.copyenv
 zsh:	$(COMPILED_ZSH_RESOURCES)
 
 $(COMPILED_ZSH_RESOURCES):	%.zwc:	%
-	/usr/bin/zsh -c 'zcompile $^'
+	/bin/zsh -c 'zcompile $^'
 	@echo
 
 $(LOCAL_ZSH_COPIES):	$(HOME)/.%:	$(ZSH_RESOURCE_ROOT)/%

@@ -278,7 +278,7 @@ alias cores='inxi -C'
 
 if [ "$UNAME" = "Darwin" ]; then
     df() {
-        /bin/df -hl $*
+        /bin/df -Phl $*
     }
 else
     df() {
