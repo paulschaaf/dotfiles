@@ -177,7 +177,7 @@ export IDEA_ROOT=/opt
 #local successIcon=/gw/apollo/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
 
 function whichjava() {
-    for cmd in 'typeset -p JAVA_HOME' 'which java' 'java -version'; do
+    for cmd in 'which java' 'java -version' 'typeset -p JAVA_HOME IDEA_HOME IDEA_JDK'; do
         echo \# $cmd
         eval $cmd
         echo

@@ -119,7 +119,8 @@ runTask() {
         # keep the exit code from the first command in the chain (i.e. not the sed)
         exitCode=$pipestatus[1]
     fi
-    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+# tries to display the elapsed seconds as something like 0:00.00. Doesn't work on MacOS.
+#    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
     if [ $exitCode -eq 0 ]; then
         log_section 42 "DONE $elapsedTime" $taskSummary

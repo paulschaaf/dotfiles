@@ -3,7 +3,7 @@
 [mergetool]
 	keepbackup = false
 [core]
-   excludesfile = ~/.gitignore
+    excludesfile = ~/.gitignore
 	autocrlf = input
 [user]
 	name = Paul Schaaf

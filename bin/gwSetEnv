@@ -84,8 +84,6 @@ case ${GW_PLATFORM} in
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-#        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_172.jdk/Contents/Home
-#        export IDEA_HOME='/Applications/IntelliJ IDEA 2017 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         ;;
@@ -99,7 +97,7 @@ export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
 #if [ -z "${IDEA_JDK}" -a -d "${JAVA_HOME}_nodcevm" ]; then
-    IDEA_JDK=${JAVA_HOME}
+    export IDEA_JDK=${JAVA_HOME}
     #IDEA_JDK=${JAVA_HOME}_nodcevm
 #fi
 
@@ -200,8 +198,6 @@ function replaceInList() {
     local newList=`echo :${list// /\\ } | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
     export ${listName}=$newList
 }
-
-typeset -p GW_PRODUCT
 
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
 

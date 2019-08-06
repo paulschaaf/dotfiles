@@ -85,13 +85,9 @@ The lamp is turned off.
 >look at sword
 There's nothing special about the sword.
 
->look at lettin
-I don't know the word "lettin".
-
 >look at lettering
 The engravings translate to "This space intentionally left blank."
 
->
 >move
 What do you want to move?
 
@@ -138,7 +134,10 @@ This is the attic. The only exit is a stairway leading down.
 A large coil of rope is lying in the corner.
 On a table is a nasty-looking knife.
 
->>w
+>d
+Kitchen
+
+>w
 Living Room
 
 >d
