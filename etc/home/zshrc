@@ -83,14 +83,14 @@ function @#() {
 }
 
 frotz () {
-    pushd ~/private/sync/int-fic
-    local stories=".*/${1:-.*}\\.\\(dat\\|z5\\)\$"
+    pushd ~/sync/Interactive\ Fiction/
+    local stories=".*/${1:-.*}\\.dat\$"
     if [ "$*" = "" ]; then
         # if no args, show all game files
-        find -regex $stories -print | sed 's/^\.\///; s/\.\(dat\|z5\)$//'
+        find . -regex $stories -print | sed 's/^\.\//  /; s/\.dat$//' | sort
     else
         # otherwise run the one requested
-        local story=`find -maxdepth 1 -regex $stories -print -quit`
+        local story=`find . -maxdepth 1 -regex $stories -print -quit`
         command frotz $story
     fi
     popd
