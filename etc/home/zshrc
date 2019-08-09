@@ -83,7 +83,7 @@ function @#() {
 }
 
 frotz () {
-    pushd ~/sync/Interactive\ Fiction/
+    pushd ~/Box\ Sync/Infocom
     local stories=".*/${1:-.*}\\.dat\$"
     if [ "$*" = "" ]; then
         # if no args, show all game files
