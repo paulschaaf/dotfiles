@@ -91,7 +91,18 @@ frotz () {
     else
         # otherwise run the one requested
         local story=`find . -maxdepth 1 -regex $stories -print -quit`
-        command frotz $story
+        story=${story#./}
+        echo Story is $story
+        if [ -f ${story} ]; then
+            dir=${story%%.*}
+            mkdir $dir
+            builtin cd $dir
+            command frotz ../$story
+            builtin cd ..
+            rmdir $dir 2>/dev/null // remove only if empty
+        else
+            echo Cannot find story "$story"
+        fi
     fi
     popd
 }

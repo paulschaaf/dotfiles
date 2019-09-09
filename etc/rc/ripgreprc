@@ -4,6 +4,8 @@
 !node_modules/*
 --glob
 !build/*
+--glob
+!**/*.snap
 --type-add
 gosu:*.gs
 --type-add

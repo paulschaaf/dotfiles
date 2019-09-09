@@ -184,8 +184,9 @@ function whichjava() {
     done
 }
 
-if [ -d /usr/lib/jvm/java-8-jdk ]; then
-    for home in /usr/lib/jvm/java-[0-9]-jdk*; do
+java_root=/usr/lib/jvm
+if [ -d $java_root ]; then
+    for home in ${java_root}/java-[0-9]-jdk*; do
         digit=${home##*java-};   digit=${digit%%-*}     # everything between the dashes
         suffix=${home##*jdk};    suffix=${suffix//-/_}  # everything after the jdk[-_]
         javaDigitHome=JAVA${digit}_HOME${suffix}
@@ -197,7 +198,10 @@ if [ -d /usr/lib/jvm/java-8-jdk ]; then
         fi
     done
     unset digit javaDigitHome suffix
+else
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
 fi
+
 
 if [ -d "${JAVA_HOME}_nodcevm" ]; then
     IDEA_JDK=${JAVA_HOME}_nodcevm

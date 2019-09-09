@@ -78,14 +78,14 @@ case ${GW_PLATFORM} in
     9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
-        export JAVA_HOME=$JAVA8_HOME
-        export IDEA_JDK=${JAVA_HOME}_nodcevm
+        export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
         ;;
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
     *)
         unsetGWVars
@@ -96,10 +96,13 @@ esac
 export JAVA_HOME=${JAVA_HOME:-$JAVA8_HOME}
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
-#if [ -z "${IDEA_JDK}" -a -d "${JAVA_HOME}_nodcevm" ]; then
-    export IDEA_JDK=${JAVA_HOME}
-    #IDEA_JDK=${JAVA_HOME}_nodcevm
-#fi
+if [ -z "${IDEA_JDK}" ]; then
+    if [ -d "${JAVA_HOME}_nodcevm" ]; then
+        IDEA_JDK=${JAVA_HOME}_nodcevm
+    else
+        export IDEA_JDK=${JAVA_HOME}
+    fi
+fi
 
 function echoAndVerifyFile () {
     for pathVar in ${*}; do
