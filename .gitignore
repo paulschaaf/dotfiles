@@ -19,3 +19,4 @@
 !/etc/ssh/known_hosts
 !/etc/ssh/ssh-open
 !/etc/ssh/sshd_config
+/secrets

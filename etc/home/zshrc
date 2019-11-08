@@ -1,4 +1,5 @@
 #@IgnoreInspection BashAddShebang
+#@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
 # This script is run by interactive shells
@@ -113,7 +114,7 @@ if [ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]; then
     }
 fi
 
-setScreenTitle () {
+settitle () {
     printf '\e]1;%s\a' ${*:-$GIT_REPO}
 }
 

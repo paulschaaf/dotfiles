@@ -35,7 +35,7 @@ case "$1" in
             s/.*(carbon|diamond|emerald|ferrite|granite|halite).*/\1/
 
             # otherwise extract the version number from the install directory name
-            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(1[0-9]|[1-9]).*/\2/
+            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(5[0-9]|[1-9]|10).*/\2/
 
             t print
 
@@ -102,8 +102,8 @@ case ${GW_PLATFORM} in
         export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
-    11|halite)
-        export GW_PL_NUM=11
+    50|halite)
+        export GW_PL_NUM=50
         export GW_PLATFORM=halite
         export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
@@ -188,11 +188,6 @@ case ${GW_PRODUCT} in
         export GW_PORT=8380
         export GW_COLOR='[105m' # bright white text on magenta
         ;;
-    cc|claimcenter)
-        export GW_PRODUCT=cc
-        export GW_PORT=8080
-        export GW_COLOR='[97;104m' # bright white text on blue
-        ;;
     pc|policycenter)
         export GW_PRODUCT=pc
         export GW_PORT=8480
@@ -207,10 +202,15 @@ case ${GW_PRODUCT} in
         export GW_PRODUCT=gw
         export GW_COLOR='[30;107m' # bright black text on gray
         ;;
-    *)
-        unset GW_PRODUCT GW_TITLE GW_PROMPT
-        export GW_COLOR='[5;101m' # blinking bright white on red
+    cc|claimcenter|*)
+        export GW_PRODUCT=cc
+        export GW_PORT=8080
+        export GW_COLOR='[97;104m' # bright white text on blue
         ;;
+#    *)
+#        unset GW_PRODUCT GW_TITLE GW_PROMPT
+#        export GW_COLOR='[5;101m' # blinking bright white on red
+#        ;;
 esac
 
 # exit if we can't determine the Guidewire product

@@ -512,6 +512,10 @@ esac
 #cleanList PATH
 cleanList CLASSPATH
 
+if [ -f ~/dotfiles/secrets ]; then
+    source ~/dotfiles/secrets
+fi
+
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
 # against the left margin on a line by itself.
