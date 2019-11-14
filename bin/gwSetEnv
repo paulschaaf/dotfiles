@@ -4,17 +4,15 @@
 # FUNCTIONS
 #
 
-if [ "$1" = "--trace" -o "$1" = "--debug" ]; then
-    function trace () {
-        echo "[36m# $*[0m
+function trace () {
+    if [[ "$1" = "--trace" || "$1" = "--debug" ]]; then
+            echo "[36m# $*[0m
 "
-    }
-    shift
-else
-    function trace () { :; }
-fi
+        shift
+    fi
+}
 
-[ "$1" = "--debug" ] && set -x
+[[ "$1" = "--debug" ]] && set -x
 
 function unsetGWVars () {
     #echo "We've just moved outside of any GW install, so unset every var named GW_*"
@@ -23,9 +21,13 @@ function unsetGWVars () {
     done
 }
 
+function announce () {
+    printf "\e[93m${*}\e[0m\n"
+}
+
 
 #
-# PROCESS THE COMMAND LINE
+# DETERMINE THE PLATFORM
 #
 
 case "$1" in
@@ -48,12 +50,13 @@ case "$1" in
         ;;
     *) # it contains only digits
         GW_PLATFORM=$1
+        shift
         ;;
 esac
 
 
 #
-# DETERMINE THE PLATFORM
+# SET THE JDK AND PLATFORM CONFIGURATION
 #
 
 # Clear these out
@@ -101,6 +104,14 @@ case ${GW_PLATFORM} in
         export GW_PLATFORM=granite
         export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+
+        # for <= 10.0.1
+        if [[ "$1" = "old" ]]; then
+            announce 'Using older config for this platform version'
+            export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
+            export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+            shift
+        fi
         ;;
     50|halite)
         export GW_PL_NUM=50
@@ -116,8 +127,8 @@ esac
 # If these are empty, default them
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
-if [ -z "${IDEA_JDK}" ]; then
-    if [ -d "${JAVA_HOME}_nodcevm" ]; then
+if [[ -z "${IDEA_JDK}" ]]; then
+    if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
         export IDEA_JDK=${JAVA_HOME}_nodcevm
     else
         export IDEA_JDK=${JAVA_HOME}
@@ -127,13 +138,13 @@ fi
 typeset -p IDEA_HOME IDEA_JDK JAVA_HOME  GW_PL_NUM GW_PLATFORM
 
 # exit if not a Guidewire installation
-if [ -z "$GW_PLATFORM" ]; then
+if [[ -z "$GW_PLATFORM" ]]; then
     trace Could not determine the platform version!
     return 1 2>/dev/null || exit
 fi
 
-if [ ${GW_PL_NUM} -lt 9 ]; then
-    export _XX=$GW_PRODUCT
+if [[ ${GW_PL_NUM} -lt 9 ]]; then
+    export _XX=${GW_PRODUCT}
     typeset -p _XX
     GW_START_DIR=${GW_ROOT}/bin
     GW_START_SCRIPT=./all

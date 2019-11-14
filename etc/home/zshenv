@@ -512,9 +512,11 @@ esac
 #cleanList PATH
 cleanList CLASSPATH
 
+# Guidewire
 if [ -f ~/dotfiles/secrets ]; then
     source ~/dotfiles/secrets
 fi
+export TEAMCITY_USER=$USER
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
