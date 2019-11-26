@@ -313,7 +313,12 @@ if [ -n "$connection_color" ]; then
     CONNECTION="%{$connection_color%}$CONNECTION%{[0m%} "
 fi
 
-source ~/etc/rc/git_zshrc.sh
+if [[ -f ~/etc/rc/git_zshrc.sh ]]; then
+    source ~/etc/rc/git_zshrc.sh
+else
+    function updateGitVars() {}
+    GIT_STATUS=''
+fi
 
 export dirs
 

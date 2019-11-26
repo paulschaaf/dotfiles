@@ -3,5 +3,12 @@
   <component name="BashSupportProjectSettings">
     <option name="autocompleteBuiltinVars" value="true" />
     <option name="evalEscapesEnabled" value="true" />
+    <option name="globalVariables">
+      <set>
+        <option value="GW_PRODUCT" />
+        <option value="GW_ROOT" />
+        <option value="JAVA16_HOME" />
+      </set>
+    </option>
   </component>
 </project>

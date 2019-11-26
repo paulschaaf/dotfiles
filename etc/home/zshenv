@@ -437,7 +437,7 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-if [ `uname` = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
     alias l='/bin/ls -G'
 else
     alias l='/bin/ls ${LS_COLORS:+--color}'
@@ -517,6 +517,8 @@ if [ -f ~/dotfiles/secrets ]; then
     source ~/dotfiles/secrets
 fi
 export TEAMCITY_USER=$USER
+export RULES_ENGINE_URL=http://localhost:8080/api/v1/rules
+export GW_SELF_URL=http://localhost:8090/cc
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
