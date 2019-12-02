@@ -1,6 +1,28 @@
 #!/bin/bash
 
 #
+# PLATFORMS
+#
+
+export ifCygwin=:
+export ifDarwin=:
+export ifLinux=:
+case `uname` in
+    CYGWIN*)
+        ifCygwin=
+    ;;
+    Darwin)
+        ifDarwin=
+    ;;
+    Linux*)
+        ifLinux=
+    ;;
+    *)
+    ;;
+esac
+
+
+#
 # FUNCTIONS
 #
 
@@ -116,12 +138,10 @@ case ${GW_PLATFORM} in
     50|halite)
         export GW_PL_NUM=50
         export GW_PLATFORM=halite
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
-        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-        if [[ "$UNAME" = "Linux" ]]; then
-          export IDEA_HOME=/opt/idea_halite/
-          export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
-        fi
+        export IDEA_HOME=/opt/idea_halite/
+        export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
+        $ifDarwin export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
+        $ifDarwin export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
     *)
         unsetGWVars
