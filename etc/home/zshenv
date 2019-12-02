@@ -437,7 +437,7 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-if [ `uname` = "Darwin" ]; then
+if [ "$UNAME" = "Darwin" ]; then
     alias l='/bin/ls -G'
 else
     alias l='/bin/ls ${LS_COLORS:+--color}'
