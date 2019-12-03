@@ -1,12 +1,43 @@
 #!/bin/bash
 
 #
+# FUNCTIONS
+#
+
+if [[ "$1" = "--trace" || "$1" = "--debug" ]]; then
+    shift
+    function trace () {
+        echo "[36m# $*[0m"
+    }
+else
+    function trace () {
+        :
+    }
+fi
+
+[[ "$1" = "--debug" ]] && set -x
+
+function unsetGWVars () {
+    trace "We've just moved outside of any GW install, so unset every var named GW_*:"
+    for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
+        unset -v $var
+        trace "   ... $var"
+    done
+}
+
+function announce () {
+    printf "\e[93m${*}\e[0m\n"
+}
+
+
+#
 # PLATFORMS
 #
 
 export ifCygwin=:
 export ifDarwin=:
 export ifLinux=:
+trace uname is "`uname`"
 case `uname` in
     CYGWIN*)
         ifCygwin=
@@ -23,38 +54,14 @@ esac
 
 
 #
-# FUNCTIONS
-#
-
-function trace () {
-    if [[ "$1" = "--trace" || "$1" = "--debug" ]]; then
-            echo "[36m# $*[0m
-"
-        shift
-    fi
-}
-
-[[ "$1" = "--debug" ]] && set -x
-
-function unsetGWVars () {
-    #echo "We've just moved outside of any GW install, so unset every var named GW_*"
-    for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
-        unset -v $var
-    done
-}
-
-function announce () {
-    printf "\e[93m${*}\e[0m\n"
-}
-
-
-#
 # DETERMINE THE PLATFORM
 #
 
+trace \$1=$1
 case "$1" in
-    ''|*[!0-9]*)  # it's empty, or contains non-digits
-        GW_PLATFORM=`echo $PWD | sed -En '
+    ''|*[!0-9]*)
+        trace \$1 is empty, or contains non-digits
+        export GW_PLATFORM=`echo $PWD | sed -En '
             # check if the path explicitly names the platform version
             s/.*(carbon|diamond|emerald|ferrite|granite|halite).*/\1/
 
@@ -70,11 +77,13 @@ case "$1" in
             :print
             p'`
         ;;
-    *) # it contains only digits
-        GW_PLATFORM=$1
+    *)
+        trace \$1 contains only digits
+        export GW_PLATFORM=$1
         shift
         ;;
 esac
+trace Initial guess for platform is \'$GW_PLATFORM\'
 
 
 #
@@ -148,6 +157,14 @@ case ${GW_PLATFORM} in
         ;;
 esac
 
+# exit if not a Guidewire installation
+if [[ -z "$GW_PLATFORM" ]]; then
+    trace Could not determine the platform version!
+    return 1 2>/dev/null || exit
+fi
+
+trace GW_PLATFORM=$GW_PLATFORM
+
 # If these are empty, default them
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
@@ -160,12 +177,6 @@ if [[ -z "${IDEA_JDK}" ]]; then
 fi
 
 typeset -p IDEA_HOME IDEA_JDK JAVA_HOME  GW_PL_NUM GW_PLATFORM
-
-# exit if not a Guidewire installation
-if [[ -z "$GW_PLATFORM" ]]; then
-    trace Could not determine the platform version!
-    return 1 2>/dev/null || exit
-fi
 
 if [[ ${GW_PL_NUM} -lt 9 ]]; then
     export _XX=${GW_PRODUCT}
@@ -291,7 +302,7 @@ replaceInList PATH      'idea[0-9]*'      ${IDEA_HOME}/bin
 replaceInList PATH      'java-[0-9]+-jdk' ${JAVA_HOME}/bin
 replaceInList CLASSPATH 'java-[0-9]+-jdk' ${JAVA_HOME}/lib/\*
 
-if [ ${GW_PL_NUM} -lt 9 ]; then
+if [[ ${GW_PL_NUM} -lt 9 ]]; then
     replaceInList PATH      'ant'      $ANT_HOME/bin
     replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
 

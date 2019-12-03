@@ -7,12 +7,17 @@ GridSize = 6
 BlackBackground="\e[0;48;5;16m"
 
 def getColorString(code, text=code, pad=Pad)
+  open, close = '', ''
   if text == Lookup
     $success = true
     pad -= 1
     print "\e[5m>#{BlackBackground}"
+  elsif text[0] == '['
+    text = text[1..-2] # remove brackets
+    pad += 2
+    open, close = '[', ']'
   end
-  sprintf "\e[%sm%#{pad}s#{BlackBackground}", code, text
+  sprintf "#{open}\e[%sm%#{pad}s#{BlackBackground}#{close}", code, text
 end
 
 def printColorString(code, text=code, pad=Pad)

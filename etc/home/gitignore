@@ -19,9 +19,7 @@ nohup.out
 **/.metadata/*
 **/.ssh/*
 **/ssh/*
-**/.idea/tasks.xml
-**/.idea/workspace.xml
-
+**/.idea/**
 
 /logs/
 hs_err_pid*.log
