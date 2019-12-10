@@ -5,9 +5,16 @@
     <option name="evalEscapesEnabled" value="true" />
     <option name="globalVariables">
       <set>
+        <option value="CD_TO" />
         <option value="GW_PRODUCT" />
         <option value="GW_ROOT" />
         <option value="JAVA16_HOME" />
+        <option value="REMOTEHOST" />
+        <option value="REMOTEUSER" />
+        <option value="SSH_TTY" />
+        <option value="SUDO_USER" />
+        <option value="UNAME" />
+        <option value="USER" />
       </set>
     </option>
   </component>
