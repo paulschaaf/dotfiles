@@ -34,18 +34,18 @@ exportDefault() {
 exportDefault UNAME    `uname`
 exportDefault HOSTNAME `hostname`
 
-export ifCygwin=:
-export ifDarwin=:
-export ifLinux=:
+alias ifCygwin=false
+alias ifMacOS=false
+alias ifLinux=false
 case "$UNAME" in
     CYGWIN)
-        ifCygwin=
+        alias ifCygwin=
     ;;
     Darwin)
-        ifDarwin=
+        alias ifMacOS=
     ;;
     Linux)
-        ifLinux=
+        alias ifLinux=
     ;;
     *)
     ;;
@@ -53,7 +53,7 @@ esac
 
 
 # ======== Global Flags
-if [ -n "$CD_TO" ]; then
+if [[ -n "$CD_TO" ]]; then
     builtin cd "$CD_TO" && unset CD_TO
 fi
 
@@ -381,7 +381,7 @@ echoVar() {
     local var
     for var; do
         echo -n "\n # ${var} has type ${(Pt)var}\n "
-        typeset -p $var | sed 's/^typeset -x//'
+        typeset -p ${var} | sed 's/^typeset -x//'
     done
 }
 
@@ -444,11 +444,7 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-if [ "$UNAME" = "Darwin" ]; then
-    alias l='/bin/ls -G'
-else
-    alias l='/bin/ls ${LS_COLORS:+--color}'
-fi
+ifMacOS alias l='/bin/ls -G' || alias l='/bin/ls ${LS_COLORS:+--color}'
 
 export LS="l ${LS_FLAGS}"
 alias ls=${LS}

@@ -110,7 +110,8 @@ frotz () {
 
 if [ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]; then
     function rg() {
-        command rg --no-heading $* ${PWD}
+        pattern=$1; shift
+        command rg --no-heading $pattern ${*:-$PWD}
     }
 fi
 
@@ -316,7 +317,7 @@ fi
 if [[ -f ~/etc/rc/git_zshrc.sh ]]; then
     source ~/etc/rc/git_zshrc.sh
 else
-    function updateGitVars() {}
+    function updateGitVars() { : }
     GIT_STATUS=''
 fi
 
