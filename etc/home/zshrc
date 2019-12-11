@@ -79,9 +79,13 @@ if [ -z "$ifZsh" ]; then
         share_history
 fi
 
-function @#() {
-    printf "\e[48;5;21m\n--- $*\e[0m\n"
-}
+# set terminalSize
+ifMacOS alias home="printf '\e[8;142;100t'"
+ifMacOS alias work="printf '\e[8;104;100t'"
+
+#function @#() {
+#    printf "\e[48;5;21m\n--- $*\e[0m\n"
+#}
 
 frotz () {
     pushd ~/Box\ Sync/Infocom
