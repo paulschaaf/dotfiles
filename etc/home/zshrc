@@ -79,9 +79,9 @@ if [ -z "$ifZsh" ]; then
         share_history
 fi
 
-# set terminalSize
-ifMacOS alias home="printf '\e[8;142;100t'"
-ifMacOS alias work="printf '\e[8;104;100t'"
+# move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+ifMacOS alias home="printf '\e[3;0;0;1t\e[8;142;100t'"
+ifMacOS alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 #function @#() {
 #    printf "\e[48;5;21m\n--- $*\e[0m\n"
