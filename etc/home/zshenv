@@ -51,6 +51,13 @@ case "$UNAME" in
     ;;
 esac
 
+alias ifRoot=false
+alias ifNotRoot=true
+if [[ $UID -eq 0 ]]; then
+    alias ifRoot=
+else
+    alias ifNotRoot=
+fi
 
 # ======== Global Flags
 if [[ -n "$CD_TO" ]]; then
@@ -296,6 +303,7 @@ else
         /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
     }
 fi
+
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
     if [ -z "$1" ]; then
@@ -465,13 +473,13 @@ lld() {
 }
 lsda() {
     if [ $# -eq 0 ]; then
-	l ${LS_FLAGS/F/} -ld */(D)
+	    l ${LS_FLAGS/F/} -ld */(D)
     else
-	for dir in ${*}; do
-	    echo
-	    ls -d $dir
-	    l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
-	done
+        for dir in ${*}; do
+            echo
+            ls -d $dir
+            l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
+        done
     fi
 }
 
@@ -520,6 +528,7 @@ if [ -f ~/dotfiles/secrets ]; then
     source ~/dotfiles/secrets
 fi
 export TEAMCITY_USER=$USER
+export ARTIFACTORY_USERNAME=$USER
 #export RULES_ENGINE_URL=http://localhost:8080/api/v1/rules
 #export GW_SELF_URL=http://localhost:8090/cc
 

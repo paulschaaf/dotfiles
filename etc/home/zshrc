@@ -123,6 +123,23 @@ settitle () {
     printf '\e]1;%s\a' ${*:-$GIT_REPO}
 }
 
+splitMp3() {
+   local file=$1
+   local base=${1%%.*}
+   local extension=${1##*.}
+   local title=${2:-$base}
+   local index=1
+   set -x
+   ffmpeg -i ${file} -f segment -segment_time 600 -c copy tmp_${base}%03d.${extension}
+
+   count=`ls -1q tmp_* | awk 'END {print NR}'`
+   for track in tmp_*; do
+      ffmpeg -i ${track} -metadata title="${title} ${index}/${count}" -c copy ${track##tmp_}
+      rm -f ${track}
+      : $((index++))
+   done
+}
+
 splitFlac() {
     local cue=$1
     local flac=$2
@@ -166,7 +183,6 @@ bindkey -e
 
 # ======== Function Keys
 
-# bindkey -s " [0d" " popd\n"
 bindkey -s "[Z" " popd\n"
 
 # Here's what we'd like to accomplish:
@@ -259,15 +275,13 @@ updateManpath () {
     appendManpath `echo $PATH | awk '/\/bin$/ {gsub(/\/bin$/, "/man"); print}' RS=':'`
 }
 
-export OLD_PS1=${PS1/\\n$ */}
-
 rootColorString='[37;1;41m'
 
 case $HOSTNAME:$UNAME in
-    *:AIX*)
-        # blue
-        hostColor='[34;40m'
-        ;;
+#    *:AIX*)
+#        # blue
+#        hostColor='[34;40m'
+#        ;;
     *:CYGWIN*)
         # white on green
         hostColor='[37;42m'
@@ -275,18 +289,18 @@ case $HOSTNAME:$UNAME in
     *:Darwin*)
         hostColor='[32;40m'
         ;;
-    *:HPUX*)
-        # cyan
-        hostColor='[36;40m'
-        ;;
+#    *:HPUX*)
+#        # cyan
+#        hostColor='[36;40m'
+#        ;;
     *:Linux*)
         # green
         hostColor='[32;40m'
         ;;
-    *:SunOS*)
-        # yellow
-        hostColor='[33;40m'
-        ;;
+#    *:SunOS*)
+#        # yellow
+#        hostColor='[33;40m'
+#        ;;
     *:Windows*)
         # white bold on blue
         hostColor='[37;1;44m'
