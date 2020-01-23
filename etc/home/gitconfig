@@ -1,5 +1,5 @@
 [core]
-	editor = /usr/bin/emacs -nw
+	editor = $EDITOR -nw
 [mergetool]
 	keepbackup = false
 [core]
@@ -21,10 +21,12 @@
 	co = checkout
 	issue = "!f(){ echo ${GIT_BRANCH##*/} | sed \"s~_.*~~\"; };f"
 
-
 [filesystem "Amazon.com Inc.|11.0.3|/dev/disk1s1"]
 	timestampResolution = 11000 nanoseconds
 	minRacyThreshold = 0 nanoseconds
 [filesystem "AdoptOpenJDK|11.0.1.6|/dev/disk1s1"]
 	timestampResolution = 8000 nanoseconds
+	minRacyThreshold = 0 nanoseconds
+[filesystem "Amazon.com Inc.|11.0.3|/dev/disk1s5"]
+	timestampResolution = 11000 nanoseconds
 	minRacyThreshold = 0 nanoseconds

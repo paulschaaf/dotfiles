@@ -150,6 +150,7 @@ fi
 export CONNECTION
 
 export EDITOR=/usr/bin/emacs
+ifMacOS export EDITOR=/usr/local/bin/emacs
 export ALTERNATTE_EDITOR=$EDITOR
 
 export ANDROID_SDK_HOME=/opt/Android

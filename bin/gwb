@@ -30,8 +30,8 @@ done
 # Set up environment
 #eval `$HOME/bin/gwSetEnv | sed 's/ -x / /g'`
 source $HOME/bin/gwSetEnv
-echo GW_PL_NUM=${GW_PL_NUM}
-echo GW_PLATFORM=${GW_PLATFORM}
+# echo GW_PL_NUM=${GW_PL_NUM}
+# echo GW_PLATFORM=${GW_PLATFORM}
 
 if [ -z "$GW_PL_NUM" ]; then
   echo Could not determine Guidewire platform version! >&2
