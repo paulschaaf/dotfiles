@@ -87,6 +87,8 @@ ifMacOS alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 #    printf "\e[48;5;21m\n--- $*\e[0m\n"
 #}
 
+ifMacOS find () { [[ $1 == -* ]] && command find . $* || command find $* }
+
 frotz () {
     pushd ~/Box\ Sync/Infocom
     local stories=".*/${1:-.*}\\.dat\$"
@@ -112,10 +114,10 @@ frotz () {
     popd
 }
 
-if [ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]; then
+if [[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]]; then
     function rg() {
         pattern=$1; shift
-        command rg --no-heading $pattern ${*:-$PWD}
+        command rg --no-heading $pattern ${*:-$PWD} | sed "s_^/_${GW_PRODUCT:+file://}/_"
     }
 fi
 
