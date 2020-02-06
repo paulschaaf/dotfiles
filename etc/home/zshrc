@@ -18,7 +18,7 @@ $log '*** In .zshrc'
 interactive=true
 
 # ======== Zsh Compinstall
-if [ -z "$ifZsh" ]; then
+if  [[ -z "$ifZsh" ]]; then
     zstyle ':completion:*' expand prefix suffix
     zstyle ':completion:*' file-sort name
     zstyle ':completion:*' group-name ''
@@ -46,7 +46,7 @@ fi
 
 # limit coredumpsize 0
 
-if [ -z "$ifZsh" ]; then
+if  [[ -z "$ifZsh" ]]; then
     unsetopt \
         beep \
         clobber \
@@ -87,12 +87,12 @@ ifMacOS alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 #    printf "\e[48;5;21m\n--- $*\e[0m\n"
 #}
 
-ifMacOS && find () { [[ $1 == -* ]] && command find . $* || command find $* }
+ifMacOS find () { [[ $1 == -* ]] && command find . $* || command find $* }
 
 frotz () {
     pushd ~/Box\ Sync/Infocom
     local stories=".*/${1:-.*}\\.dat\$"
-    if [ "$*" = "" ]; then
+    if [[ "$*" = "" ]]; then
         # if no args, show all game files
         find . -regex $stories -print | sed 's/^\.\//  /; s/\.dat$//' | sort
     else
@@ -100,7 +100,7 @@ frotz () {
         local story=`find . -maxdepth 1 -regex $stories -print -quit`
         story=${story#./}
         echo Story is $story
-        if [ -f ${story} ]; then
+        if [[ -f ${story} ]]; then
             dir=${story%%.*}
             mkdir $dir
             builtin cd $dir
@@ -115,9 +115,17 @@ frotz () {
 }
 
 if [[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]]; then
-    function rg() {
-        pattern=$1; shift
-        command rg --no-heading $pattern ${*:-$PWD} | sed "s_^/_${GW_PRODUCT:+file://}/_"
+    rg() {
+        command rg --no-heading --column ${*:-.} | sed -E "
+# prepend PWD to all relative paths
+s_^([^/])_${PWD}/\\1_;
+
+# remove unnecessary relative paths
+s_/\\./_/_;
+
+# if in gw-studio, prepend file:// to each absolute path so it appears as a link
+s_^/_${GW_PRODUCT:+file://}/_
+"
     }
 fi
 
@@ -145,7 +153,7 @@ splitMp3() {
 splitFlac() {
     local cue=$1
     local flac=$2
-    if [ "${2##*.}" = "cue" ]; then
+    if [[ "${2##*.}" = "cue" ]]; then
         cue=$2
         flac=$1
     fi
@@ -173,7 +181,7 @@ wedit () {
 # }
 
 
-if [ "$USER" != "pschaaf" ]; then
+if [[ "$USER" != "pschaaf" ]]; then
     alias  emacs='emacs -u pschaaf'
 fi
 
@@ -268,7 +276,7 @@ esac
 # ======== Macro Keys
 # C-? prepends 'whence' to command line
 bindkey -s ""^_"" "\C-apath \C-e\C-m"
-#     if [ -z "$CONNECTION" ]; then
+#     if [[ -z "$CONNECTION" ]]; then
 #         #bindkey -r "\C-h" 	# remove binding
 #         #bindkey "\C-h\C-k" describe`-key-briefly	#
 #     fi
@@ -326,11 +334,11 @@ case $CONNECTION in
     *)
         ;;
 esac
-if [ -n "$CONNECTION" ]; then
+if [[ -n "$CONNECTION" ]]; then
     hostColor=${hostColor/m/;4m}  # underline the host name
 fi
 
-if [ -n "$connection_color" ]; then
+if [[ -n "$connection_color" ]]; then
     CONNECTION="%{$connection_color%}$CONNECTION%{[0m%} "
 fi
 
@@ -350,7 +358,7 @@ updateDirs () {
     ' ORS=' '`"
 }
 
-#if [ $UID -eq 0 ]; then
+#if [[ $UID -eq 0 ]]; then
 #    updateGuidewireVars () {
 #        :
 #    }
@@ -371,7 +379,7 @@ autoload -U add-zsh-hook
 add-zsh-hook chpwd updateDirs
 add-zsh-hook precmd updateGitVars
 
-if [ -n "$HOSTMESSAGE" ]; then
+if [[ -n "$HOSTMESSAGE" ]]; then
     HOSTMESSAGE+=' '
 fi
 
@@ -397,7 +405,7 @@ alias granite='source ~/src/guidewire/granite.env'
 # Let  re-use ssh-agent and/or gpg-agent between logins
 # /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
 # source $HOME/.keychain/$HOSTNAME-sh
-#if [ $UID -gt 0 ]; then  # if I'm not root
+#if [[ $UID -gt 0 ]]; then  # if I'm not root
 #    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 #fi
 ### End-Keychain ###
@@ -411,4 +419,4 @@ DEBUG_NO_EXEC
 set +x
 
 export NVM_DIR="/Users/pschaaf/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

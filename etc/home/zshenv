@@ -34,29 +34,29 @@ exportDefault() {
 exportDefault UNAME    `uname`
 exportDefault HOSTNAME `hostname`
 
-alias ifCygwin=false
-alias ifMacOS=false
-alias ifLinux=false
+alias ifCygwin='false &&'
+alias ifMacOS='false &&'
+alias ifLinux='false &&'
 case "$UNAME" in
     CYGWIN)
-        alias ifCygwin=
+        alias ifCygwin='true &&'
     ;;
     Darwin)
-        alias ifMacOS=
+        alias ifMacOS='true &&'
     ;;
     Linux)
-        alias ifLinux=
+        alias ifLinux='true &&'
     ;;
     *)
     ;;
 esac
 
-alias ifRoot=false
-alias ifNotRoot=true
+alias ifRoot='false &&'
+alias ifNotRoot='false &&'
 if [[ $UID -eq 0 ]]; then
-    alias ifRoot=
+    alias ifRoot='true &&'
 else
-    alias ifNotRoot=
+    alias ifNotRoot='true &&'
 fi
 
 # ======== Global Flags
@@ -138,13 +138,13 @@ appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~/Android/Sdk/platform-too
 exportDefault CLASSPATH .
 
 # ======== Remote sessions
-if   [ -n "$SSH_TTY"    ]; then
+if [[ -n "$SSH_TTY"    ]]; then
     CONNECTION=ssh
-elif [ -n "$REMOTEHOST" ]; then
+elif [[ -n "$REMOTEHOST" ]]; then
     CONNECTION=tlnt
-elif [ -n "$SUDO_USER"  ]; then
+elif [[ -n "$SUDO_USER"  ]]; then
     CONNECTION=sudo
-elif [ -n "$REMOTEUSER" ]; then
+elif [[ -n "$REMOTEUSER" ]]; then
     CONNECTION=tlnt
 fi
 export CONNECTION
@@ -200,7 +200,7 @@ function whichjava() {
 }
 
 java_root=/usr/lib/jvm
-if [ -d $java_root ]; then
+if [[ -d $java_root ]]; then
     for home in ${java_root}/java-*-jdk*; do
         digits=${home##*java-};  digits=${digits%%-*}   # everything between the dashes
         suffix=${home##*jdk};    suffix=${suffix//-/_}  # everything after the jdk[-_]
@@ -208,7 +208,7 @@ if [ -d $java_root ]; then
         export $javaDigitsHome=$home
         # typeset $javaDigitsHome
         alias java${digits}${suffix}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitsHome}; JAVA_HOME=\$$javaDigitsHome; whichjava"
-        if [ -z "${suffix}" ]; then
+        if [[ -z "${suffix}" ]]; then
             eval export JAVA_HOME=\$${javaDigitsHome}  # keep the highest-numbered version
         fi
     done
@@ -221,7 +221,7 @@ else
 fi
 unset java_root
 
-if [ -d "${JAVA_HOME}_nodcevm" ]; then
+if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
     IDEA_JDK=${JAVA_HOME}_nodcevm
 fi
 
@@ -283,7 +283,7 @@ export WORDCHARS='|*?-~\\$%^'
 # # ======== Functions
 
 alert() {
-  if [ $? -eq 0 ]; then
+  if [[ $? -eq 0 ]]; then
     notify-send -t 3000 -i info Success\! "\n$1"
   else
     notify-send -t 5000 -i error Failed\! "\n$1"
@@ -295,7 +295,7 @@ alias cd=pushd
 
 alias cores='inxi -C'
 
-if [ "$UNAME" = "Darwin" ]; then
+if [[ "$UNAME" = "Darwin" ]]; then
     df() {
         /bin/df -Phl $*
     }
@@ -307,9 +307,9 @@ fi
 
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
-    if [ -z "$1" ]; then
+    if [[ -z "$1" ]]; then
         builtin pushd
-    elif [ -f "$1" ]; then
+    elif [[ -f "$1" ]]; then
         builtin pushd ${1:h}
     else
         builtin pushd ${1}
@@ -322,7 +322,7 @@ echoList() {
     listName=$1
     eval local contents=\$${listName}
     shift
-    while [ -n "$*" ]; do  # process switches
+    while [[ -n "$*" ]]; do  # process switches
         case $1 in
             --help)
                 echo --help      Show this screen
@@ -345,8 +345,8 @@ echoList() {
         shift
     done
 
-    if [ -z "$exit" ]; then
-        if [ -z "$ifZsh" ]; then
+    if [[ -z "$exit" ]]; then
+        if [[ -z "$ifZsh" ]]; then
             echo " ${listName} has type ${(Pt)listName}"
         fi
 
@@ -401,11 +401,11 @@ alias libpath='echoList LD_LIBRARY_PATH'
 
 path() {
     show_type=''
-    if [ "$1" = "--show-type" -o "$1" = "-t" ]; then
+    if [[ "$1" = "--show-type" || "$1" = "-t" ]]; then
         show_type='--show-type'
         shift
     fi
-    if [ -z "$ifZsh" ]; then
+    if [[ -z "$ifZsh" ]]; then
 #        set -x
         local regex="${*// /\|}"
         echo
@@ -473,7 +473,7 @@ lld() {
     ls -ld ${dir}/*/
 }
 lsda() {
-    if [ $# -eq 0 ]; then
+    if [[ $# -eq 0 ]]; then
 	    l ${LS_FLAGS/F/} -ld */(D)
     else
         for dir in ${*}; do
@@ -525,7 +525,7 @@ esac
 cleanList CLASSPATH
 
 # Guidewire
-if [ -f ~/dotfiles/secrets ]; then
+if [[ -f ~/dotfiles/secrets ]]; then
     source ~/dotfiles/secrets
 fi
 export TEAMCITY_USER=$USER
