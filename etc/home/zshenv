@@ -52,12 +52,10 @@ case "$UNAME" in
 esac
 
 alias ifRoot='false &&'
-alias ifNotRoot='false &&'
 if [[ $UID -eq 0 ]]; then
     alias ifRoot='true &&'
-else
-    alias ifNotRoot='true &&'
 fi
+alias ifNotRoot='! ifRoot'
 
 # ======== Global Flags
 if [[ -n "$CD_TO" ]]; then
@@ -295,15 +293,10 @@ alias cd=pushd
 
 alias cores='inxi -C'
 
-if [[ "$UNAME" = "Darwin" ]]; then
-    df() {
-        /bin/df -Phl $*
-    }
-else
-    df() {
-        /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
-    }
-fi
+df() {
+    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
+}
+ifMacOS function df () { /bin/df -Phl $* }
 
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
