@@ -98,7 +98,6 @@ ${LINKS}:
 ${HOME}/.bash_profile:	login.bash
 ${HOME}/.bashrc:	$(RC_ENTRY_POINT).bash
 ${HOME}/.tcshrc:	$(RC_ENTRY_POINT).tcsh
-${HOME}/.zprofile:	login.zsh
 ${HOME}/.zshrc:	$(RC_ENTRY_POINT).zsh
 
 resolve_local.bash resolve_local.zsh:	resolve_local.sh

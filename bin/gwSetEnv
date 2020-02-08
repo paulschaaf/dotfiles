@@ -126,8 +126,8 @@ case ${GW_PLATFORM} in
         export GW_PLATFORM=halite
         export IDEA_HOME=/opt/idea_halite/
         export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
-        ifMacOS export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
-        ifMacOS export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        ifMacOS && export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
+        ifMacOS && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
     *)
         unsetGWVars

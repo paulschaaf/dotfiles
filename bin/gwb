@@ -239,7 +239,6 @@ while [ -n "$*" ]; do
     if [ $GW_PL_NUM -lt 9 ]; then
       spawn=true
     fi
-    export inIntelliJ=true
     unset inScreen
     taskFailIcon=$failIcon
     ;;

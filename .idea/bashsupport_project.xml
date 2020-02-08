@@ -6,8 +6,10 @@
     <option name="globalVariables">
       <set>
         <option value="CD_TO" />
+        <option value="CONNECTION" />
         <option value="GW_PRODUCT" />
         <option value="GW_ROOT" />
+        <option value="HOST" />
         <option value="JAVA16_HOME" />
         <option value="REMOTEHOST" />
         <option value="REMOTEUSER" />
@@ -16,6 +18,8 @@
         <option value="TERM" />
         <option value="UNAME" />
         <option value="USER" />
+        <option value="ifZsh" />
+        <option value="inIntelliJ" />
       </set>
     </option>
   </component>

@@ -8,9 +8,9 @@ fixDOSPathIn () {
     done
 }
 
-exportDefault CYGROOT 'c:\cygwin'
-exportDefault USER $LOGNAME
-exportDefault HOME ${HOME/\/c\///}  # e.g. turn /c/home/.. into /home/...
+export CYGROOT=${CYGROOT:=c:\cygwin}
+export USER=${USER:=$LOGNAME}
+export HOME=${HOME/\/c\///}  # e.g. turn /c/home/.. into /home/...
 
 if [ -n "$CYGPATH" ]; then
     fixDOSPathIn CYGPATH

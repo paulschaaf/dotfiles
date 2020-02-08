@@ -12,60 +12,48 @@
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 log=:
+$log '*** In .zshenv'
+
 umask 22
-export TERM=xterm-256color
 
 # ======== Default Settings
-# default is to ignore remaining line
-# but enable the line if we're running the right shell
+export UNAME=${UNAME:=`uname`}
+
 export ifZsh=:
 if [[ "$0" =~ "zsh" ]]; then
     $log zsh!
     ifZsh=
 fi
 
-$log '*** In .zshenv'
-
-exportDefault() {
-    eval : \${$1:='$2'}
-    export $1
-}
-
-exportDefault UNAME    `uname`
-exportDefault HOSTNAME `hostname`
-
-alias ifCygwin='false &&'
-alias ifMacOS='false &&'
-alias ifLinux='false &&'
-case "$UNAME" in
+alias ifCygwin=false
+alias ifMacOS=false
+alias ifLinux=false
+case "${UNAME:=`uname`}" in
     CYGWIN)
-        alias ifCygwin='true &&'
+        alias ifCygwin=true
     ;;
     Darwin)
-        alias ifMacOS='true &&'
+        alias ifMacOS=true
     ;;
     Linux)
-        alias ifLinux='true &&'
+        alias ifLinux=true
     ;;
     *)
     ;;
 esac
 
-alias ifRoot='false &&'
+alias ifRoot=false
 if [[ $UID -eq 0 ]]; then
-    alias ifRoot='true &&'
+    alias ifRoot=true
 fi
 alias ifNotRoot='! ifRoot'
 
 # ======== Global Flags
-if [[ -n "$CD_TO" ]]; then
-    builtin cd "$CD_TO" && unset CD_TO
-fi
-
 typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH
 
 
 # ======== Pathing Functions
+
 appendToVar() {
     local var=$1; shift; eval "$var=\${$var}$*"
 }
@@ -128,43 +116,32 @@ cleanList() {
    #   's_:([a-z]):/_:/\1/_g;   ' \   # change windows leading drive letter into *nix path
 }
 
+
 # ======== Path
 prependPath $HOME/bin
 appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~/Android/Sdk/platform-tools
 
-# ======== Environment and Shell Variables
-exportDefault CLASSPATH .
+export CLASSPATH=${CLASSPATH:=.}
+
 
 # ======== Remote sessions
 if [[ -n "$SSH_TTY"    ]]; then
-    CONNECTION=ssh
+    export CONNECTION=ssh
 elif [[ -n "$REMOTEHOST" ]]; then
-    CONNECTION=tlnt
+    export CONNECTION=tlnt
 elif [[ -n "$SUDO_USER"  ]]; then
-    CONNECTION=sudo
+    export CONNECTION=sudo
 elif [[ -n "$REMOTEUSER" ]]; then
-    CONNECTION=tlnt
+    export CONNECTION=tlnt
 fi
-export CONNECTION
 
+
+# ======== Exported Variables
 export EDITOR=/usr/bin/emacs
-ifMacOS export EDITOR=/usr/local/bin/emacs
-export ALTERNATTE_EDITOR=$EDITOR
+ifMacOS && EDITOR=/usr/local/bin/emacs
+ifRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
 
-export ANDROID_SDK_HOME=/opt/Android
-
-case $USER in
-    pschaaf)
-        export EMAIL=paul.schaaf@gmail.com
-        ;;
-    root)
-        EDITOR=${EDITOR}' -u pschaaf -nw'
-        export EMAIL=paul.schaaf@gmail.com
-        ;;
-    *)
-        ;;
-esac
-
+export EMAIL=paul.schaaf@gmail.com
 export ESHELL=$SHELL
 export FCEDIT=zed
 export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
@@ -175,20 +152,36 @@ else
   HISTFILE=~/.history
 fi
 export HISTSIZE=1000
+[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
 export LC_ALL=en_US.UTF-8
 export SAVEHIST=1000
+ifLinux && export IDEA_ROOT=/opt
+export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESSKEY=${HOME}/.less_$HOSTNAME
+#export LIBPATH_NAME=LD_LIBRARY_PATH
+appendLibpath /lib /usr/lib $HOME/lib
+export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
+export LS_FLAGS=-BCFbh
+$ifZsh export LS_FLAGS=${LS_FLAGS}H
+export P4_HOME=/opt/p4v
+export P4CLIENT=pschaaf_satori_1124
+export PAGER=less
+export RUBYLIB
+appendRubyLib /home/pschaaf/src/ruby /home/pschaaf/bin
+export MANPAGER=less
+export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
+export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
+export SHELL=/usr/bin/zsh
+export TERM=xterm-256color
+export USE_COLOR=true
 
-#export ANT_HOME=/depot/ant/apache-ant-1.8.2
-#export AARDVARK_HOME=/depot/aardvark/alpha
+# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
+# The remaining punctuation chars are considered separate words, regardless of
+# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
+export WORDCHARS='|*?-~\\$%^'
 
-export IDEA_ROOT=/opt
-#export IDEA_HOME=$IDEA_ROOT/ideahead
 
-#local iconDir=/usr/share/icons/oxygen/48x48
-#local failIcon=$iconDir/actions/process-stop.png
-# local successIcon=$iconDir/actions/flag-green.png
-#local successIcon=/gw/apollo/cc/app-cc/cc/webresources/themes/shared/resources/images/app/favicon.ico
-
+# ======== Java
 function whichjava() {
     for cmd in 'which java' 'java -version' 'typeset -p JAVA_HOME IDEA_HOME IDEA_JDK'; do
         echo \# $cmd
@@ -219,63 +212,14 @@ else
 fi
 unset java_root
 
+prependPath ${JAVA_HOME}/bin
+
 if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
     IDEA_JDK=${JAVA_HOME}_nodcevm
 fi
 
 export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
 export JAVA18_AMD64_HOME=${JAVA8_HOME}
-
-export M2_HOME=/depot/maven/apache-maven-3.0.4
-export P4_HOME=/opt/p4v
-
-export P4CLIENT=pschaaf_satori_1124
-
-# prependPath ${AARDVARK_HOME:+$AARDVARK_HOME/bin}
-# prependPath ${ANT_HOME:+$ANT_HOME/bin}
-# prependPath ${M2_HOME:+$M2_HOME/bin}
-prependPath ${JAVA_HOME}/bin
-# prependPath ${P4_HOME}/bin
-
-# appendClasspath ${M2_HOME:+$M2_HOME/lib/\*}
-# appendClasspath ${AARDVARK_HOME:+$AARDVARK_HOME/lib/\*}
-# appendClasspath ${ANT_HOME:+$ANT_HOME/lib/\*}
-
-export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESSKEY=${HOME}/.less_$HOSTNAME
-
-# ======== Library Path
-export LIBPATH_NAME=LD_LIBRARY_PATH
-appendLibpath /lib /usr/lib $HOME/lib
-
-# ======== ls Options
-export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
-
-export LS_FLAGS=-BCFbh
-$ifZsh export LS_FLAGS=${LS_FLAGS}H
-
-export PAGER=less
-
-# ======== RUBYLIB
-export RUBYLIB
-appendRubyLib /home/pschaaf/src/ruby /home/pschaaf/bin
-
-export MANPAGER=less
-
-export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
-
-exportDefault SCREENDIR ${HOME}/tmp
-
-export SHELL=/usr/bin/zsh
-
-#export STUDIO_VM_OPTIONS=~/etc/rc/studio64.vmoptions
-
-export USE_COLOR=true
-
-# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
-# The remaining punctuation chars are considered separate words, regardless of
-# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
-export WORDCHARS='|*?-~\\$%^'
 
 
 # # ======== Functions
@@ -287,26 +231,6 @@ alert() {
     notify-send -t 5000 -i error Failed\! "\n$1"
     return 1
   fi
-}
-
-alias cd=pushd
-
-alias cores='inxi -C'
-
-df() {
-    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
-}
-ifMacOS function df () { /bin/df -Phl $* }
-
-# cd to the specified directory, or if it's a file, to the containing directory
-pushd() {
-    if [[ -z "$1" ]]; then
-        builtin pushd
-    elif [[ -f "$1" ]]; then
-        builtin pushd ${1:h}
-    else
-        builtin pushd ${1}
-    fi
 }
 
 echoList() {
@@ -446,7 +370,9 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-ifMacOS alias l='/bin/ls -G' || alias l='/bin/ls ${LS_COLORS:+--color}'
+ifMacOS \
+    && alias l='/bin/ls -G' \
+    || alias l='/bin/ls ${LS_COLORS:+--color}'
 
 export LS="l ${LS_FLAGS}"
 alias ls=${LS}
@@ -523,8 +449,10 @@ if [[ -f ~/dotfiles/secrets ]]; then
 fi
 export TEAMCITY_USER=$USER
 export ARTIFACTORY_USERNAME=$USER
-#export RULES_ENGINE_URL=http://localhost:8080/api/v1/rules
-#export GW_SELF_URL=http://localhost:8090/cc
+
+if [[ -n "$CD_TO" ]]; then
+    builtin cd "$CD_TO" && unset CD_TO
+fi
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag

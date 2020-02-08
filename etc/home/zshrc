@@ -1,5 +1,4 @@
 #@IgnoreInspection BashAddShebang
-#@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
 # This script is run by interactive shells
@@ -18,6 +17,7 @@ $log '*** In .zshrc'
 interactive=true
 
 # ======== Zsh Compinstall
+
 if  [[ -z "$ifZsh" ]]; then
     zstyle ':completion:*' expand prefix suffix
     zstyle ':completion:*' file-sort name
@@ -39,12 +39,11 @@ if  [[ -z "$ifZsh" ]]; then
     unalias  run-help 2>/dev/null && autoload run-help
     zmodload -i zsh/complist
 #    autoload -U compinit
+    compinit
 fi
 
 
 # ======== Shell Options
-
-# limit coredumpsize 0
 
 if  [[ -z "$ifZsh" ]]; then
     unsetopt \
@@ -79,17 +78,36 @@ if  [[ -z "$ifZsh" ]]; then
         share_history
 fi
 
+
+# ======== Functions and Aliases
+
+alias cd=pushd
+alias cores='inxi -C'
+
+df() {
+    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
+}
+ifMacOS && function df() { /bin/df -Phl $* }
+
 # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-ifMacOS alias home="printf '\e[3;0;0;1t\e[8;142;100t'"
-ifMacOS alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
+ifMacOS \
+    && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" \
+    && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 #function @#() {
 #    printf "\e[48;5;21m\n--- $*\e[0m\n"
 #}
 
-ifMacOS find () { [[ $1 == -* ]] && command find . $* || command find $* }
+# basename() { echo ${(F)@:t} }
+# dirname() { echo ${(F)@:h} }
 
-frotz () {
+if [[ "$USER" != "pschaaf" ]]; then
+    alias emacs='emacs -u pschaaf'
+fi
+
+ifMacOS && find() { [[ $1 == -* ]] && command find . $* || command find $* }
+
+frotz() {
     pushd ~/Box\ Sync/Infocom
     local stories=".*/${1:-.*}\\.dat\$"
     if [[ "$*" = "" ]]; then
@@ -114,7 +132,12 @@ frotz () {
     popd
 }
 
-if [[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]]; then
+ifCygwin && alias open=explorer
+ifLinux && alias open=dolphin
+
+alias pd=popd
+
+if [[ -n "$inIntelliJ" ]]; then
     rg() {
         command rg --no-heading --column ${*:-.} | sed -E "
 # prepend PWD to all relative paths
@@ -129,9 +152,18 @@ s_^/_${GW_PRODUCT:+file://}/_
     }
 fi
 
-settitle () {
-    printf '\e]1;%s\a' ${*:-$GIT_REPO}
+# cd to the specified directory, or if it's a file, to the containing directory
+pushd() {
+    if [[ -z "$1" ]]; then
+        builtin pushd
+    elif [[ -f "$1" ]]; then
+        builtin pushd ${1:h}
+    else
+        builtin pushd ${1}
+    fi
 }
+
+settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 
 splitMp3() {
    local file=$1
@@ -162,7 +194,7 @@ splitFlac() {
     shnsplit -f $cue -t %n-%t -o flac $flac
 }
 
-wedit () {
+wedit() {
     local cmd file x
     for x in $*
     do
@@ -171,27 +203,11 @@ wedit () {
     eval $cmd
 }
 
-# ======== Dir Functions
 
-# basename () {
-#     echo ${(F)@:t}
-# }
-# dirname  () {
-#     echo ${(F)@:h}
-# }
-
-
-if [[ "$USER" != "pschaaf" ]]; then
-    alias  emacs='emacs -u pschaaf'
-fi
-
-alias exp=dolphin
-alias pd=popd
+# ======== Function Keys
 
 # Use Emacs key bindings
 bindkey -e
-
-# ======== Function Keys
 
 bindkey -s "[Z" " popd\n"
 
@@ -281,17 +297,12 @@ bindkey -s ""^_"" "\C-apath \C-e\C-m"
 #         #bindkey "\C-h\C-k" describe`-key-briefly	#
 #     fi
 
-updateManpath () {
-    appendManpath `echo $PATH | awk '/\/bin$/ {gsub(/\/bin$/, "/man"); print}' RS=':'`
-}
+
+# ======== The Prompt
 
 rootColorString='[37;1;41m'
 
 case $HOSTNAME:$UNAME in
-#    *:AIX*)
-#        # blue
-#        hostColor='[34;40m'
-#        ;;
     *:CYGWIN*)
         # white on green
         hostColor='[37;42m'
@@ -299,18 +310,10 @@ case $HOSTNAME:$UNAME in
     *:Darwin*)
         hostColor='[32;40m'
         ;;
-#    *:HPUX*)
-#        # cyan
-#        hostColor='[36;40m'
-#        ;;
     *:Linux*)
         # green
         hostColor='[32;40m'
         ;;
-#    *:SunOS*)
-#        # yellow
-#        hostColor='[33;40m'
-#        ;;
     *:Windows*)
         # white bold on blue
         hostColor='[37;1;44m'
@@ -351,26 +354,16 @@ fi
 
 export dirs
 
-updateDirs () {
+updateDirs() {
     dirs="`builtin dirs -p | awk '
        NR == 2 {printf(\"%s\", \"[0;38;5;243m\")};
        {print}
     ' ORS=' '`"
 }
 
-#if [[ $UID -eq 0 ]]; then
-#    updateGuidewireVars () {
-#        :
-#    }
-#else
-#    updateGuidewireVars () {
-#        source gwSetEnv 2>&1 > /dev/null
-#    }
-#fi
-
 alias fixprompt='updateGitVars'
 
-function git () {
+function git() {
     command git $*
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
 }
@@ -380,10 +373,10 @@ add-zsh-hook chpwd updateDirs
 add-zsh-hook precmd updateGitVars
 
 if [[ -n "$HOSTMESSAGE" ]]; then
-    HOSTMESSAGE+=' '
+    HOSTMESSAGE=" [35;40m$HOSTMESSAGE"
 fi
 
-currentUser=${USERNAME//pschaaf/}
+currentUser=${USER//pschaaf/}
 currentUser=${currentUser}${currentUser:+@}
 
 PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
@@ -393,9 +386,9 @@ PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
 PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 
 pcd .
-$ifZsh compinit
 
-# Guidewire
+
+# ======== Guidewire
 alias granite='source ~/src/guidewire/granite.env'
 
 # Bootstrap the huge nvm (Node version manager) function
