@@ -5,11 +5,22 @@
 # This script is run first by every type of zsh, login, interactive, both, or neither
 
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
+#    (All invocations unless the -f option is set.) Should contain commands to set the PATH and other important
+#    environment variables, but not those that produce output or assume the shell is attached to a tty.
+
 # 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
+#    Meant as an alternative to `.zlogin' for ksh fans; though possible the two are not intended to be used together
+
 # 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+#    Should contain commands to set up aliases, functions, options, key bindings, etc.
+
 # 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+#    Should be used to set the terminal type and run a series of external commands (fortune, msgs, etc). Not the place
+#    for alias definitions, options, env vars, etc.: it should not change the shell environment at all.
+
 # ...
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
+#    Sourced when login shells exit.
 
 log=:
 $log '*** In .zshenv'
