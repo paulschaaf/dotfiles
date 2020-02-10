@@ -101,7 +101,7 @@ ifMacOS \
 # basename() { echo ${(F)@:t} }
 # dirname() { echo ${(F)@:h} }
 
-if [[ "$USER" != "pschaaf" ]]; then
+if [[ $USER != pschaaf ]]; then
     alias emacs='emacs -u pschaaf'
 fi
 
@@ -137,7 +137,7 @@ ifLinux && alias open=dolphin
 
 alias pd=popd
 
-if [[ -n "$inIntelliJ" ]]; then
+if [[ -n $inIntelliJ ]]; then
     rg() {
         command rg --no-heading --column ${*:-.} | sed -E "
 # prepend PWD to all relative paths
@@ -411,5 +411,5 @@ alias granite='source ~/src/guidewire/granite.env'
 DEBUG_NO_EXEC
 set +x
 
-export NVM_DIR="/Users/pschaaf/.nvm"
+export NVM_DIR=/Users/pschaaf/.nvm
 [[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

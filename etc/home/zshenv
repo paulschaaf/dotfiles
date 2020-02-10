@@ -63,7 +63,7 @@ alias ifNotRoot='! ifRoot'
 typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH
 
 
-# ======== Pathing Functions
+# ======== List Functions
 
 appendToVar() {
     local var=$1; shift; eval "$var=\${$var}$*"
@@ -245,73 +245,101 @@ alert() {
 }
 
 echoList() {
-    show_type=''
-    rm_row=0
-    listName=$1
+    local listName=$1; shift
     eval local contents=\$${listName}
-    shift
-    while [[ -n "$*" ]]; do  # process switches
+
+    local debug=:
+    local show_type=''
+    local rm_row=
+    local RS=${RS:-:}
+
+    while [[ -n "$*" ]]; do
         case $1 in
+            --debug)
+                debug=
+                echo "listName=$listName"
+                echo "contents=$contents"
+                shift
+                ;;
             --help)
+                echo PSCHAAF %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 echo --help      Show this screen
                 echo --show-type Shows the type of the argument files
                 echo --rm #      Removes item number # from the list and print the new value
-                local exit='true'
-                ;;
-            --show-type)
-                show_type='file -L'
+                return
                 ;;
             --rm)
                 shift
-                contents=`echo $contents | awk 'NR != RM_ROW {printf ":" ""; print}' RM_ROW=$1 RS=: ORS='' | sed -E 's/::+/:/g; s/^:|:$//g'`
-                eval $listName=$contents
+                rm_row=$1
+                shift
                ;;
+            --show-type)
+                show_type='file -L'
+                shift
+                ;;
+           --*)
+                echo Unrecognized option "$1"!
+                return 1
+                ;;
             *)
                 break
                 ;;
         esac
-        shift
     done
 
-    if [[ -z "$exit" ]]; then
-        if [[ -z "$ifZsh" ]]; then
-            echo " ${listName} has type ${(Pt)listName}"
-        fi
+    $debug echo '=====' contents=$contents
 
-        # save all AWK output to the end to avoid screen flicker
-        echo -E ${contents} | awk '
-        NR == 1 {split(file, files, " ")}
-        {
-          gsub("/c" ENVIRON["HOME"],"~")
-          gsub(ENVIRON["HOME"],"~")
-          dirname = $0
-          carat = " "
-          startColor = ""
-          endColor = ""
-          for (idx in files) {  # note if any of the argument files are in this dir
-            fullpath = $1 "/" files[idx]
-            if (! system("test -f " fullpath)) {
-                startColor = "[1;33m"
-                endColor = "[0m"
-                matches = matches " " fullpath
-                carat=">"
-                break
-            }
-          }
-          output = output sprintf("\n%s%2d %s%s%s", carat, NR, startColor, dirname, endColor)
+    $ifZsh echo " ${listName} has type ${(Pt)listName}"
+
+    # save all AWK output to the end to avoid screen flicker
+    echo -E ${contents} | awk '
+    NR == 1 {split(file, files, " ")}
+    {
+      gsub("/c" ENVIRON["HOME"],"~")
+      gsub(ENVIRON["HOME"],"~")
+      dirname = $0
+      carat = " "
+      startColor = ""
+      endColor = "[0m"
+      for (idx in files) {  # note if any of the argument files are in this dir
+        fullpath = $1 "/" files[idx]
+        if (! system("test -f " fullpath)) {
+            startColor = "[1;33m"
+            matches = matches " " fullpath
+            carat=">"
+            break
         }
-        END {
-            print output
-            if (matches) {
-                print ls matches "\n"
-                system(ls matches)
-                if (show_type) {
-                    print "\n" show_type matches "\n"
-                    system(show_type matches)
-                }
+      }
+      if (NR == rm_row) {
+          startColor = sprintf("%s", "[101m")
+      }
+      output = output sprintf("\n%s%2d %s%s%s", carat, NR, startColor, dirname, endColor)
+    }
+    END {
+        print output
+        if (matches) {
+            print ls matches "\n"
+            system(ls matches)
+            if (show_type) {
+                print "\n" show_type matches "\n"
+                system(show_type matches)
             }
-        }' RS=${RS:-:} file=${@} ls="/bin/ls \${LS_FLAGS} -HUl" show_type=${show_type}
+        }
+    }' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} -Hl" rm_row="${rm_row:-999}" show_type=${show_type}
+
+    if [[ -n $rm_row ]]; then
+        contents=`echo $contents | awk 'NR != RM_ROW {printf ":" ""; print}' RM_ROW=$rm_row RS=${RS} ORS='' | sed -E 's/::+/:/g; s/^:|:$//g'`
+        eval $listName=$contents # update the var
+        echo Removed row $rm_row from $listName
+        $debug echo "listName=$listName"
+        $debug echo "contents=$contents"
     fi
+
+    [[ $# -lt 1 ]] && return
+
+    shift
+    echo "\nIgnored extra arguments: '$*'!"
+    return 1
 }
 
 echoVar() {
@@ -326,20 +354,7 @@ alias classpath='echoList CLASSPATH'
 alias grep='command grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
-
-path() {
-    show_type=''
-    if [[ "$1" = "--show-type" || "$1" = "-t" ]]; then
-        show_type='--show-type'
-        shift
-    fi
-    if [[ -z "$ifZsh" ]]; then
-#        set -x
-        local regex="${*// /\|}"
-        echo
-    fi
-    echoList ${show_type} PATH $*
-}
+alias path='echoList PATH'
 
 rubylib() {
     echoVar RUBYLIB
@@ -381,9 +396,10 @@ wless()  {
 
 # ======== ls Aliases and Functions
 unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
+alias l=/bin/ls
 ifMacOS \
-    && alias l='/bin/ls -G' \
-    || alias l='/bin/ls ${LS_COLORS:+--color}'
+    && LS_FLAGS="${LS_FLAGS}G" \
+    || LS_FLAGS="${LS_FLAGS}${LS_COLORS:+ --color}"
 
 export LS="l ${LS_FLAGS}"
 alias ls=${LS}
