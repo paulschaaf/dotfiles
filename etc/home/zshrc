@@ -16,6 +16,231 @@ $log '*** In .zshrc'
 #set -x
 interactive=true
 
+# ======== Exported Variables
+export EDITOR=/usr/bin/emacs
+ifMacOS && EDITOR=/usr/local/bin/emacs
+ifRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
+
+export ESHELL=$SHELL
+export FCEDIT=zed
+export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
+if (( ! EUID )); then
+  HISTFILE=~/.history_root
+else
+  HISTFILE=~/.history
+fi
+export HISTSIZE=1000
+export SAVEHIST=1000
+export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESSKEY=${HOME}/.less_$HOSTNAME
+export NVM_DIR=$HOME/.nvm
+export PAGER=less
+export MANPAGER=less
+export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
+export USE_COLOR=true
+
+# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
+# The remaining punctuation chars are considered separate words, regardless of
+# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
+export WORDCHARS='|*?-~\\$%^'
+
+
+# ======== Aliases
+alias ..='pushd ..'
+alias ...="pushd ../.."
+alias cd=pushd
+alias cores='inxi -C'
+alias du='du -h'
+[[ $USER != pschaaf ]] && alias emacs='emacs -u pschaaf'
+ifMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+ifCygwin && alias open=explorer
+ifLinux && alias open=dolphin
+alias perf='./perf -Ddir.user=pschaaf'
+alias pd=popd
+alias rm='rm -i'
+alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
+alias term='echoVar TERM'
+alias tree="tree -a --dirsfirst"
+alias vpnc-connect='sudo vpnc-connect'
+alias vpnc-disconnect='sudo vpnc-disconnect'
+ifMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
+
+
+# ======== ls Aliases and Functions
+export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
+export LS_FLAGS=-BCFbh
+$ifZsh export LS_FLAGS=${LS_FLAGS}H
+unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
+alias l=/bin/ls
+ifMacOS \
+    && LS_FLAGS="${LS_FLAGS}G" \
+    || LS_FLAGS="${LS_FLAGS}${LS_COLORS:+ --color}"
+
+export LS="l ${LS_FLAGS}"
+alias ls=${LS}
+
+alias la='ls -A'
+alias ll='ls -l'
+alias lla='ls -Al'
+
+alias llt='ls -lrt'
+alias lr='ls -R'
+lsd() {
+    dir=${1}${1:+/}
+    l ${LS_FLAGS/F/} -d ${dir}*/
+}
+lld() {
+    dir=${1:-.}
+    ls -ld ${dir}/*/
+}
+lsda() {
+    if [[ $# -eq 0 ]]; then
+	    l ${LS_FLAGS/F/} -ld */(D)
+    else
+        for dir in ${*}; do
+            echo
+            ls -d $dir
+            l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
+        done
+    fi
+}
+
+alias llda='lsda -l'
+
+lsf() {
+    local x
+    for x in ${*:-*}; do
+        echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
+    done | column -t -s ':'
+}
+
+
+# ======== Var and List Processing
+
+echoList() {
+    local listName=$1; shift
+    eval local contents=\$${listName}
+
+    local ifDebug=:
+    local show_type=''
+    local rm_row=
+    local RS=${RS:-:}
+
+    while [[ -n "$*" ]]; do
+        case $1 in
+            --debug)
+                ifDebug=
+                shift
+                ;;
+            --help)
+                echo '--help       Show this screen'
+                echo '--show-type  Shows the type of the argument files'
+                echo '--rm \#      Removes item number # from the list and print the new value'
+                return
+                ;;
+            --rm)
+                shift
+                rm_row=$1
+                shift
+               ;;
+            --show-type)
+                show_type='file -L'
+                shift
+                ;;
+           --*)
+                echo Unrecognized option "$1"!
+                return 1
+                ;;
+            *)
+                break
+                ;;
+        esac
+    done
+
+    $ifDebug echo '=====' "listName=$listName"
+    $ifDebug echo '=====' "contents=$contents"
+
+    $ifZsh echo " ${listName} has type ${(Pt)listName}"
+
+    # let us know if it's also a function or alias
+    local override=`type $1`
+    override=${override//$1 is \/*/} # it's neither
+    override=${override//not found/is not an alias, function or executable}
+
+    echo -E ${contents} | awk '
+    NR == 1 {split(file, files, " ")}
+    {
+      gsub("/c" ENVIRON["HOME"],"~")
+      gsub(ENVIRON["HOME"],"~")
+      dirname = $0
+      carat = " "
+      startColor = ""
+      endColor = "[0m"
+      for (idx in files) {  # note if any of the argument files are in this dir
+        fullpath = $1 "/" files[idx]
+        if (! system("test -f " fullpath)) {
+            startColor = "[1;33m"
+            matches = matches " " fullpath
+            carat=">"
+            break
+        }
+      }
+      if (NR == rm_row) {
+          startColor = sprintf("%s", "[101m")
+      }
+      printf("\n%s%2d %s%s%s", carat, NR, startColor, dirname, endColor)
+    }
+    END {
+        if (override) {
+            print "\n" override
+        }
+        if (matches) {
+            print "\n" ls matches
+            system(ls matches)
+            if (show_type) {
+                print "\n" show_type matches "\n"
+                system(show_type matches)
+            }
+        }
+    }' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} -Hl" override=$override rm_row="${rm_row:-999}" show_type=${show_type}
+
+    if [[ -n $rm_row ]]; then
+        contents=`echo ${contents} | awk 'NR != RM_ROW {print}' RM_ROW=$rm_row RS=${RS} ORS=${RS}`
+        eval $listName=$contents # update the var
+        echo "\n"Removed row $rm_row from $listName
+        $ifDebug echo '=====' "listName=$listName"
+        $ifDebug echo '=====' "contents=$contents"
+    fi
+
+    [[ $# -lt 2 ]] && return
+
+    shift
+    echo "\nIgnored extra arguments: '$*'!"
+    return 1
+}
+
+echoVar() {
+    local var
+    for var; do
+        echo -n "\n # ${var} has type ${(Pt)var}\n "
+        typeset -p ${var} | sed 's/^typeset -x//'
+    done
+}
+
+alias classpath='echoList CLASSPATH'
+alias grep='command grep --extended-regexp --color'
+alias fpath='echoList FPATH'
+alias libpath='echoList LD_LIBRARY_PATH'
+alias path='echoList PATH'
+
+rubylib() {
+    echoVar RUBYLIB
+    echo
+    local RUBYLIB=`ruby -e 'print $:.join(":")'`
+    echoList RUBYLIB | sed -e 's/^  *RUBYLIB .*/ Including implicit dirs:/'
+}
+
+
 # ======== Zsh Compinstall
 
 if  [[ -z "$ifZsh" ]]; then
@@ -81,18 +306,24 @@ fi
 
 # ======== Functions and Aliases
 
-alias cd=pushd
-alias cores='inxi -C'
+alert() {
+  if [[ $? -eq 0 ]]; then
+    notify-send -t 3000 -i info Success\! "\n$1"
+  else
+    notify-send -t 5000 -i error Failed\! "\n$1"
+    return 1
+  fi
+}
 
 df() {
     /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
 }
 ifMacOS && function df() { /bin/df -Phl $* }
 
-# move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-ifMacOS \
-    && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" \
-    && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
+ddu() {
+    # show the size of each subdirectory
+    find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n
+}
 
 #function @#() {
 #    printf "\e[48;5;21m\n--- $*\e[0m\n"
@@ -100,10 +331,6 @@ ifMacOS \
 
 # basename() { echo ${(F)@:t} }
 # dirname() { echo ${(F)@:h} }
-
-if [[ $USER != pschaaf ]]; then
-    alias emacs='emacs -u pschaaf'
-fi
 
 ifMacOS && find() { [[ $1 == -* ]] && command find . $* || command find $* }
 
@@ -132,11 +359,6 @@ frotz() {
     popd
 }
 
-ifCygwin && alias open=explorer
-ifLinux && alias open=dolphin
-
-alias pd=popd
-
 if [[ -n $inIntelliJ ]]; then
     rg() {
         command rg --no-heading --column ${*:-.} | sed -E "
@@ -151,6 +373,11 @@ s_^/_${GW_PRODUCT:+file://}/_
 "
     }
 fi
+
+pcd() {
+    # Change to the specified dir & remove starting place from dir stack
+    cd "$@"; popd +1 2>/dev/null
+}
 
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
@@ -194,6 +421,11 @@ splitFlac() {
     shnsplit -f $cue -t %n-%t -o flac $flac
 }
 
+wcat() { cat $(which $*) }
+wcd() { cd $(which $*) }
+wfile()  { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
+whence() { builtin whence -ac $* }
+wless()  { ${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 wedit() {
     local cmd file x
     for x in $*
@@ -204,7 +436,8 @@ wedit() {
 }
 
 
-# ======== Function Keys
+
+# ======== Key Bindings
 
 # Use Emacs key bindings
 bindkey -e
@@ -298,7 +531,21 @@ bindkey -s ""^_"" "\C-apath \C-e\C-m"
 #     fi
 
 
+# ======== Remote sessions
+if [[ -n "$SSH_TTY"    ]]; then
+    export CONNECTION=ssh
+elif [[ -n "$REMOTEHOST" ]]; then
+    export CONNECTION=tlnt
+elif [[ -n "$SUDO_USER"  ]]; then
+    export CONNECTION=sudo
+elif [[ -n "$REMOTEUSER" ]]; then
+    export CONNECTION=tlnt
+fi
+
+
 # ======== The Prompt
+
+export GIT_PS1_SHOWDIRTYSTATE=1
 
 rootColorString='[37;1;41m'
 
@@ -392,7 +639,8 @@ pcd .
 alias granite='source ~/src/guidewire/granite.env'
 
 # Bootstrap the huge nvm (Node version manager) function
-#alias nvm='unalias nvm; echo Installing...; source /usr/share/nvm/init-nvm.sh; nvm'
+alias nvm='echo Installing...; [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" && unalias nvm && nvm || echo ...failed!'
+
 
 ### START-Keychain ###
 # Let  re-use ssh-agent and/or gpg-agent between logins
@@ -410,6 +658,3 @@ alias granite='source ~/src/guidewire/granite.env'
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
 set +x
-
-export NVM_DIR=/Users/pschaaf/.nvm
-[[ -s "$NVM_DIR/nvm.sh" ]] && \. "$NVM_DIR/nvm.sh"  # This loads nvm

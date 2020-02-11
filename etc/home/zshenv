@@ -9,7 +9,7 @@
 #    environment variables, but not those that produce output or assume the shell is attached to a tty.
 
 # 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
-#    Meant as an alternative to `.zlogin' for ksh fans; though possible the two are not intended to be used together
+#    Meant as an alternative to `.zlogin' for ksh fans; the two are not intended to be used together
 
 # 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
 #    Should contain commands to set up aliases, functions, options, key bindings, etc.
@@ -25,9 +25,9 @@
 log=:
 $log '*** In .zshenv'
 
-umask 22
 
 # ======== Default Settings
+umask 22
 export UNAME=${UNAME:=`uname`}
 
 export ifZsh=:
@@ -39,7 +39,7 @@ fi
 alias ifCygwin=false
 alias ifMacOS=false
 alias ifLinux=false
-case "${UNAME:=`uname`}" in
+case ${UNAME} in
     CYGWIN)
         alias ifCygwin=true
     ;;
@@ -59,8 +59,16 @@ if [[ $UID -eq 0 ]]; then
 fi
 alias ifNotRoot='! ifRoot'
 
-# ======== Global Flags
-typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH
+
+# ======== Exported Variables
+[[ -n "$CD_TO" ]] && builtin cd "$CD_TO" && unset CD_TO
+export EMAIL=paul.schaaf@gmail.com
+[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
+export LC_ALL=en_US.UTF-8
+ifLinux && export IDEA_ROOT=/opt
+export P4_HOME=/opt/p4v
+export P4CLIENT=pschaaf_satori_1124
+export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
 
 
 # ======== List Functions
@@ -128,68 +136,16 @@ cleanList() {
 }
 
 
-# ======== Path
+# ======== Paths
+# Keep only the first occurrence of duplicates
+typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
 prependPath $HOME/bin
 appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~/Android/Sdk/platform-tools
-
 export CLASSPATH=${CLASSPATH:=.}
-
-
-# ======== Remote sessions
-if [[ -n "$SSH_TTY"    ]]; then
-    export CONNECTION=ssh
-elif [[ -n "$REMOTEHOST" ]]; then
-    export CONNECTION=tlnt
-elif [[ -n "$SUDO_USER"  ]]; then
-    export CONNECTION=sudo
-elif [[ -n "$REMOTEUSER" ]]; then
-    export CONNECTION=tlnt
-fi
-
-
-# ======== Exported Variables
-export EDITOR=/usr/bin/emacs
-ifMacOS && EDITOR=/usr/local/bin/emacs
-ifRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
-
-export EMAIL=paul.schaaf@gmail.com
-export ESHELL=$SHELL
-export FCEDIT=zed
-export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
-export GIT_PS1_SHOWDIRTYSTATE=1
-if (( ! EUID )); then
-  HISTFILE=~/.history_root
-else
-  HISTFILE=~/.history
-fi
-export HISTSIZE=1000
-[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
-export LC_ALL=en_US.UTF-8
-export SAVEHIST=1000
-ifLinux && export IDEA_ROOT=/opt
-export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESSKEY=${HOME}/.less_$HOSTNAME
-#export LIBPATH_NAME=LD_LIBRARY_PATH
 appendLibpath /lib /usr/lib $HOME/lib
-export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
-export LS_FLAGS=-BCFbh
-$ifZsh export LS_FLAGS=${LS_FLAGS}H
-export P4_HOME=/opt/p4v
-export P4CLIENT=pschaaf_satori_1124
-export PAGER=less
+appendRubyLib $HOME/src/ruby $HOME/bin
 export RUBYLIB
-appendRubyLib /home/pschaaf/src/ruby /home/pschaaf/bin
-export MANPAGER=less
-export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
-export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
-export SHELL=/usr/bin/zsh
-export TERM=xterm-256color
-export USE_COLOR=true
-
-# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
-# The remaining punctuation chars are considered separate words, regardless of
-# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
-export WORDCHARS='|*?-~\\$%^'
+cleanList CLASSPATH
 
 
 # ======== Java
@@ -233,222 +189,7 @@ export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
 export JAVA18_AMD64_HOME=${JAVA8_HOME}
 
 
-# ======== Var and List Functions
-
-echoList() {
-    local listName=$1; shift
-    eval local contents=\$${listName}
-
-    local ifDebug=:
-    local show_type=''
-    local rm_row=
-    local RS=${RS:-:}
-
-    while [[ -n "$*" ]]; do
-        case $1 in
-            --debug)
-                ifDebug=
-                shift
-                ;;
-            --help)
-                echo '--help       Show this screen'
-                echo '--show-type  Shows the type of the argument files'
-                echo '--rm \#      Removes item number # from the list and print the new value'
-                return
-                ;;
-            --rm)
-                shift
-                rm_row=$1
-                shift
-               ;;
-            --show-type)
-                show_type='file -L'
-                shift
-                ;;
-           --*)
-                echo Unrecognized option "$1"!
-                return 1
-                ;;
-            *)
-                break
-                ;;
-        esac
-    done
-
-    $ifDebug echo '=====' "listName=$listName"
-    $ifDebug echo '=====' "contents=$contents"
-
-    $ifZsh echo " ${listName} has type ${(Pt)listName}"
-
-    # save all AWK output to the end to avoid screen flicker
-    echo -E ${contents} | awk '
-    NR == 1 {split(file, files, " ")}
-    {
-      gsub("/c" ENVIRON["HOME"],"~")
-      gsub(ENVIRON["HOME"],"~")
-      dirname = $0
-      carat = " "
-      startColor = ""
-      endColor = "[0m"
-      for (idx in files) {  # note if any of the argument files are in this dir
-        fullpath = $1 "/" files[idx]
-        if (! system("test -f " fullpath)) {
-            startColor = "[1;33m"
-            matches = matches " " fullpath
-            carat=">"
-            break
-        }
-      }
-      if (NR == rm_row) {
-          startColor = sprintf("%s", "[101m")
-      }
-      output = output sprintf("\n%s%2d %s%s%s", carat, NR, startColor, dirname, endColor)
-    }
-    END {
-        print output
-        if (matches) {
-            print ls matches "\n"
-            system(ls matches)
-            if (show_type) {
-                print "\n" show_type matches "\n"
-                system(show_type matches)
-            }
-        }
-    }' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} -Hl" rm_row="${rm_row:-999}" show_type=${show_type}
-
-    if [[ -n $rm_row ]]; then
-    set -x
-        contents=`echo ${contents} | awk 'NR != RM_ROW {print}' RM_ROW=$rm_row RS=${RS} ORS=${RS}`
-        eval $listName=$contents # update the var
-        echo Removed row $rm_row from $listName
-        $ifDebug echo '=====' "listName=$listName"
-        $ifDebug echo '=====' "contents=$contents"
-    fi
-
-    [[ $# -lt 1 ]] && return
-
-    shift
-    echo "\nIgnored extra arguments: '$*'!"
-    return 1
-}
-
-echoVar() {
-    local var
-    for var; do
-        echo -n "\n # ${var} has type ${(Pt)var}\n "
-        typeset -p ${var} | sed 's/^typeset -x//'
-    done
-}
-
-alias classpath='echoList CLASSPATH'
-alias grep='command grep --extended-regexp --color'
-alias fpath='echoList FPATH'
-alias libpath='echoList LD_LIBRARY_PATH'
-alias path='echoList PATH'
-
-rubylib() {
-    echoVar RUBYLIB
-    echo
-    local RUBYLIB=`ruby -e 'print $:.join(":")'`
-    echoList RUBYLIB | sed 's/^.*has type.*/ Including implicit dirs:/'
-}
-
-
-# ======== Functions
-
-alert() {
-  if [[ $? -eq 0 ]]; then
-    notify-send -t 3000 -i info Success\! "\n$1"
-  else
-    notify-send -t 5000 -i error Failed\! "\n$1"
-    return 1
-  fi
-}
-
-ddu() {
-    # show the size of each subdirectory
-    find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n
-}
-
-pcd() {
-    # Change to the specified dir & remove starting place from dir stack
-    cd "$@"; popd +1 2>/dev/null
-}
-
-alias term='echoVar TERM'
-
-alias vpnc-connect='sudo vpnc-connect'
-alias vpnc-disconnect='sudo vpnc-disconnect'
-
-wcat()   {
-	cat $(which $*)
-}
-wcd()    {
-	cd $(which $*)
-}
-wfile()  {
-	file $(which ${@}) 2>/dev/null || echo \'${@}\' not found
-}
-whence() {
-	builtin whence -ac $*
-}
-wless()  {
-	${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found
-}
-
-# ======== ls Aliases and Functions
-unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-alias l=/bin/ls
-ifMacOS \
-    && LS_FLAGS="${LS_FLAGS}G" \
-    || LS_FLAGS="${LS_FLAGS}${LS_COLORS:+ --color}"
-
-export LS="l ${LS_FLAGS}"
-alias ls=${LS}
-
-alias la='ls -A'
-alias ll='ls -l'
-alias lla='ls -Al'
-
-alias llt='ls -lrt'
-alias lr='ls -R'
-lsd() {
-    dir=${1}${1:+/}
-    l ${LS_FLAGS/F/} -d ${dir}*/
-}
-lld() {
-    dir=${1:-.}
-    ls -ld ${dir}/*/
-}
-lsda() {
-    if [[ $# -eq 0 ]]; then
-	    l ${LS_FLAGS/F/} -ld */(D)
-    else
-        for dir in ${*}; do
-            echo
-            ls -d $dir
-            l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
-        done
-    fi
-}
-
-alias llda='lsda -l'
-
-lsf() {
-    local x
-    for x in ${*:-*}; do
-        echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
-    done | column -t -s ':'
-}
-
-# ======== Aliases
-alias ..='pushd ..'
-alias ...="pushd ../.."
-alias du='du -h'
-alias perf='./perf -Ddir.user=pschaaf'
-alias rm='rm -i'
-alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
-alias tree="tree -a --dirsfirst"
+# ======== OS-Specific
 
 case ${UNAME} in
     CYGWIN*)
@@ -469,19 +210,14 @@ case ${UNAME} in
         ;;
 esac
 
-#cleanList PATH
-cleanList CLASSPATH
 
-# Guidewire
+# ======== Guidewire
 if [[ -f ~/dotfiles/secrets ]]; then
     source ~/dotfiles/secrets
 fi
-export TEAMCITY_USER=$USER
 export ARTIFACTORY_USERNAME=$USER
+export TEAMCITY_USER=$USER
 
-if [[ -n "$CD_TO" ]]; then
-    builtin cd "$CD_TO" && unset CD_TO
-fi
 
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag

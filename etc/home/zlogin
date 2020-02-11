@@ -8,15 +8,15 @@
 # ...
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-#echo '*** In .zprofile'
+#echo '*** In .zlogin'
 
-# this script is run only by login shells, but after .zshenv
 loginsh=1
 
 # ======== Terminal Settings
 # if [ "$TERM" = "screen" ]; then
 #    export TERM=xterm
 # fi
+export TERM=xterm-256color
 
 $ifZsh stty start ''   stop   ''
 
