@@ -1,5 +1,5 @@
 #-*- mode: Makefile -*-
-ZSH_RESOURCES=zprofile zshrc zshenv
+ZSH_RESOURCES=zlogin zshrc zshenv
 ZSH_RESOURCE_ROOT=~pschaaf/dotfiles/etc/home
 
 ifeq ($(USER),su)

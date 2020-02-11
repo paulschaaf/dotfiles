@@ -55,11 +55,9 @@ case ${UNAME} in
     ;;
 esac
 
-alias ifRoot=false
-if [[ $UID -eq 0 ]]; then
-    alias ifRoot=true
-fi
-alias ifNotRoot='! ifRoot'
+[[ $UID -eq 0 ]] \
+    && alias ifRoot=true \
+    || alias ifRoot=false
 
 
 # ======== Exported Variables
