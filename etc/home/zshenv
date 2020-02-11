@@ -23,7 +23,9 @@
 #    Sourced when login shells exit.
 
 log=:
+#log=echo
 $log '*** In .zshenv'
+#set -x
 
 
 # ======== Default Settings

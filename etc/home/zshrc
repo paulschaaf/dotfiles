@@ -14,7 +14,6 @@ log=:
 #log=echo
 $log '*** In .zshrc'
 #set -x
-interactive=true
 
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
@@ -55,10 +54,9 @@ alias du='du -h'
 ifMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 ifCygwin && alias open=explorer
 ifLinux && alias open=dolphin
-alias perf='./perf -Ddir.user=pschaaf'
 alias pd=popd
 alias rm='rm -i'
-alias root='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
+alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
 alias vpnc-connect='sudo vpnc-connect'

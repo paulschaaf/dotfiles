@@ -72,7 +72,7 @@ do
     cmd="ln -s '$dest' '${x%%.lnk}'"
 
 
-    if [ -n "$interactive" ]; then
+    if [ -n "$PS1" ]; then # if the shell's interactive
         echo ' Repair using'
         echo -n "   $cmd   (y|N)? "
         case `read`

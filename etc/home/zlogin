@@ -10,8 +10,6 @@
 
 #echo '*** In .zlogin'
 
-loginsh=1
-
 # ======== Terminal Settings
 # if [ "$TERM" = "screen" ]; then
 #    export TERM=xterm
