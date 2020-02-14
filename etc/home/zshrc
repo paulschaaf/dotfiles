@@ -9,7 +9,7 @@
 # 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-
+zmodload zsh/zprof
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
 ifMacOS && EDITOR=/usr/local/bin/emacs
@@ -236,7 +236,7 @@ rubylib() {
 
 # ======== Zsh Compinstall
 
-if  [[ -z "$ifZsh" ]]; then
+if  [[ -z "${ifZsh}${COMPINIT}" ]]; then
     zstyle ':completion:*' expand prefix suffix
     zstyle ':completion:*' file-sort name
     zstyle ':completion:*' group-name ''
@@ -252,7 +252,8 @@ if  [[ -z "$ifZsh" ]]; then
 
     fpath=(~/etc/zshcompletion $fpath)
 
-    autoload -U compinit && compinit
+    autoload -U colors   && colors
+    autoload -U compinit && compinit && export COMPINIT=true
     autoload zed                  && alias fned='zed -f'
     unalias  run-help 2>/dev/null && autoload run-help
     zmodload -i zsh/complist
@@ -290,6 +291,7 @@ if  [[ -z "$ifZsh" ]]; then
         hist_reduce_blanks \
         ignore_eof \
         inc_append_history \
+        prompt_subst \
         pushd_silent \
         share_history
 fi
@@ -538,8 +540,6 @@ fi
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-rootColorString='[37;1;41m'
-
 case ${HOSTNAME}:${UNAME} in
     *:CYGWIN*)
         # white on green
@@ -561,6 +561,8 @@ case ${HOSTNAME}:${UNAME} in
         hostColor='[35;40m'
         ;;
 esac
+
+rootColorString='[37;1;41m'
 
 case ${CONNECTION} in
     ssh)
@@ -590,16 +592,14 @@ else
     GIT_STATUS=''
 fi
 
-export dirs
+export dirs=`dirs`
 
 updateDirs() {
-    dirs="`builtin dirs -p | awk '
-       NR == 2 {printf(\"%s\", \"[0;38;5;243m\")};
+    dirs=`builtin dirs -p | awk '
+       NR == 2 {printf "[0;38;5;243m"};
        {print}
-    ' ORS=' '`"
+    ' ORS=' '`
 }
-
-alias fixprompt='updateGitVars'
 
 function git() {
     command git $*
@@ -622,9 +622,6 @@ PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
 %{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
-
-pcd .
-
 
 # ======== Guidewire
 # Bootstrap the huge nvm (Node version manager) function
