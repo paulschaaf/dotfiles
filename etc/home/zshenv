@@ -2,31 +2,15 @@
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'") -*-
 # ; outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..."
 
-# This script is run first by every type of zsh, login, interactive, both, or neither
-
+# This script is run first by every type of zsh unless the -f option is set. It should contain commands to set the
+# PATH and other important environment variables, but not those that produce output or assume the shell is attached
+# to a tty.
+#
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
-#    (All invocations unless the -f option is set.) Should contain commands to set the PATH and other important
-#    environment variables, but not those that produce output or assume the shell is attached to a tty.
-
-# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
-#    Meant as an alternative to `.zlogin' for ksh fans; the two are not intended to be used together
-
-# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
-#    Should contain commands to set up aliases, functions, options, key bindings, etc.
-
-# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
-#    Should be used to set the terminal type and run a series of external commands (fortune, msgs, etc). Not the place
-#    for alias definitions, options, env vars, etc.: it should not change the shell environment at all.
-
+# 2) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
-# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-#    Sourced when login shells exit.
-
-log=:
-#log=echo
-$log '*** In .zshenv'
-#set -x
-
+# 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 # ======== Default Settings
 umask 22
@@ -34,7 +18,6 @@ export UNAME=${UNAME:=`uname`}
 
 export ifZsh=:
 if [[ "$0" =~ "zsh" ]]; then
-    $log zsh!
     ifZsh=
 fi
 
@@ -58,6 +41,7 @@ esac
 [[ $UID -eq 0 ]] \
     && alias ifRoot=true \
     || alias ifRoot=false
+
 
 
 # ======== Exported Variables
@@ -219,9 +203,11 @@ export ARTIFACTORY_USERNAME=$USER
 export TEAMCITY_USER=$USER
 
 
+# ======== Debugging
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
-# against the left margin on a line by itself.
+# against the left margin on a line by itself. Don't forget that any
+# edits are lost if this file is re-generated.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
 set +x

@@ -139,7 +139,7 @@ I manage data that should be global to a File Import session, including a cache 
   def doIfInProperSession(properSessionBlock0, improperSessionBlock0, noSessionBlock0)
     super
   ensure
-    self closeReferencedStreams
+    self.closeReferencedStreams
   end
   
   ##----------

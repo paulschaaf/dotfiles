@@ -1,19 +1,14 @@
 #@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
-# This script is run by interactive shells
-
+# This script is run by interactive shells. It should contain commands to set up aliases, functions, options, key
+# bindings, etc.
+#
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
-# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
-# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
-# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# 2) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
-# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-
-log=:
-#log=echo
-$log '*** In .zshrc'
-#set -x
+# 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
@@ -545,7 +540,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 
 rootColorString='[37;1;41m'
 
-case $HOSTNAME:$UNAME in
+case ${HOSTNAME}:${UNAME} in
     *:CYGWIN*)
         # white on green
         hostColor='[37;42m'
@@ -567,7 +562,7 @@ case $HOSTNAME:$UNAME in
         ;;
 esac
 
-case $CONNECTION in
+case ${CONNECTION} in
     ssh)
         connection_color='[0;30;48;5;226m'
         ;;
@@ -624,7 +619,7 @@ currentUser=${currentUser}${currentUser:+@}
 
 PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
 %{$reset_color%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%m%{$reset_color%}$HOSTMESSAGE %{$fg_bold[yellow]%}%62>\>>\$dirs%<<
-%{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L/.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
+%{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
 
 PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 
@@ -632,21 +627,20 @@ pcd .
 
 
 # ======== Guidewire
-alias granite='source ~/src/guidewire/granite.env'
-
 # Bootstrap the huge nvm (Node version manager) function
 alias nvm='echo Installing...; [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" && unalias nvm && nvm || echo ...failed!'
 
 
-### START-Keychain ###
-# Let  re-use ssh-agent and/or gpg-agent between logins
+# ======== Keychain
+# Let's re-use ssh-agent and/or gpg-agent between logins
 # /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
 # source $HOME/.keychain/$HOSTNAME-sh
 #if [[ $UID -gt 0 ]]; then  # if I'm not root
 #    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 #fi
-### End-Keychain ###
 
+
+# ======== Debugging
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
 # against the left margin on a line by itself. Don't forget that any

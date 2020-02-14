@@ -13,6 +13,7 @@
         <option value="JAVA16_HOME" />
         <option value="REMOTEHOST" />
         <option value="REMOTEUSER" />
+        <option value="SHLVL" />
         <option value="SSH_TTY" />
         <option value="SUDO_USER" />
         <option value="TERM" />

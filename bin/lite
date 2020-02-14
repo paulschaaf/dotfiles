@@ -28,11 +28,11 @@ Usage: #{File.basename($0)} [-n]? [[-c color]* [regex]+]+
         --color=never is provided for compatibility with grep.
 
 Example:
-  /bin/ls /lib | lite '\w*lib[\w.]*' -c 'red bold' conf -c on_green init
+  /bin/ls /etc | lite '^su.*' -c 'red bold' sh -c on_green rc
 
-  List the files in /lib using the following colors:
-     -default color:     a word that contains 'lib'
-     -red bold:          the letters 'conf'
+  List the files in /etc using the following colors:
+     -default color:     a word that begins with 'su'
+     -red bold:          the letters 'sh'
      -green background:  the letters 'so'
 
 Report bugs to <paul.schaaf@gmail.com>.

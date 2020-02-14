@@ -51,6 +51,7 @@ if ARGV[0] == "--rainbows"
   red = fg(196)
   lBl = fg(81)
   blk = "#{BlackBackground}"
+  link = "https://tinyurl.com/RadioheadInRainbows"
 
   cover = [
       '',
@@ -58,7 +59,7 @@ if ARGV[0] == "--rainbows"
       "│#{yel}IN/ #{bg 27}R#{bg 16}AINB#{bg 208}O#{bg 16}WS#{blk}│",
       "│#{blu}IN#{bg 27} #{bg 16}RAIN/#{bg 208}BOW#{bg 16}S#{blk}│",
       "│#{ora}I#{bg 27}N#{bg 16} RA#{bg 229}I#{bg 16}N#{bg 166}BOW#{bg 16}/S#{blk}│",
-      "│#{gre}I#{bg 27}N#{bg 16} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 16}S/#{blk}│#{clr}   #{fg "33;4"}https://youtu.be/irvHYIDIMVQ\e[0m",
+      "│#{gre}I#{bg 27}N#{bg 16} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 16}S/#{blk}│#{clr}   #{fg "33;4"}#{link}\e[0m",
       "│#{btr}I#{bg 27}N#{bg 16} RAI#{bg 172}N#{bg 208}_B#{bg 16}OWS#{blk}│",
       "│#{red}R#{bg 16}A#{bg 27} #{bg 16}D I#{bg 172}O#{bg 16}HEA_D#{blk}│",
       "│#{lBl}_R#{bg 27}A#{bg 16}DIO HEA D#{blk}│",
@@ -67,21 +68,21 @@ if ARGV[0] == "--rainbows"
   cover = cover.join("#{clr}\n     #{bg 16}")
   print cover
 
-# elsif ARGV[0] == "--24"
-#   # truecolor
-#   [48].each {|ground|
-#     (0x0..0xf).each {|red|
-#       printf "\n\nR-%x0", red
-#       (0x0..0xf).each {|green|
-#         printf "\nG-%x0 ", green
-#         (0x0..0xf).each {|blue|
-#           code="#{ground};2;#{red}0;#{green}0;#{blue}"
-#           printf "\e[%sm%.x\e[0m", code, blue
-#         }
-#       }
-#     }
-#     puts
-#   }
+elsif ARGV[0] == "--24"
+  # truecolor
+  [48].each {|ground|
+    (0x0..0xf).each {|red|
+      printf "\n\nR-%x0", red
+      (0x0..0xf).each {|green|
+        printf "\nG-%x0 ", green
+        (0x0..0xf).each {|blue|
+          code="#{ground};2;#{red}0;#{green}0;#{blue}"
+          printf "\e[%sm%.x\e[0m", code, blue
+        }
+      }
+    }
+    puts
+  }
 
 elsif ARGV[0] == "--prompt"
   cmd=''

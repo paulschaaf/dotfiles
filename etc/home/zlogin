@@ -1,20 +1,23 @@
 #@IgnoreInspection BashAddShebang
 # -*- mode: shell-script; compile-command: (concat "zcompile " buffer-file-name); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
+# This script is run by login shells. It should be used to set the terminal type and run a series of external commands
+# (fortune, msgs, etc). Not the place for alias definitions, options, env vars, etc.: it should not change the shell
+# environment at all.
+#
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
-# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
-# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
-# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# 2) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
-# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-
-#echo '*** In .zlogin'
+# 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 # ======== Terminal Settings
 # if [ "$TERM" = "screen" ]; then
 #    export TERM=xterm
 # fi
 export TERM=xterm-256color
+# export TERM=xterm-24bit
+# export COLORTERM=truecolor
 
 $ifZsh stty start ''   stop   ''
 
