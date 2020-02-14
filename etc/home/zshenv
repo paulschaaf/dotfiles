@@ -12,6 +12,8 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
+# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+
 # ======== Default Settings
 umask 22
 export UNAME=${UNAME:=`uname`}
@@ -57,79 +59,51 @@ export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
 
 # ======== List Functions
 
-appendToVar() {
-    local var=$1; shift; eval "$var=\${$var}$*"
-}
-prependToVar() {
-	local var=$1; shift; eval "$var=$*\${$var}"
-}
-
-member() {
-    eval local value=:\$$2:
-    echo $value | grep ":$1:" >& /dev/null
-}
-
-prependToList() {
-    local each var=$1; shift
-    for each; do
-        member $each $var || eval "$var=\"$each\${$var:+${RS:-:}\$$var}\""
-    done
-}
-
-appendToList() {
-    local each var=$1; shift
-    for each; do
-        member $each $var || eval "$var=\"\${$var:+\$$var${RS:-:}}$each\""
-    done
-}
-
-appendClasspath() {
-    appendToList  CLASSPATH $*
-}
-prependClasspath() {
-    prependToList CLASSPATH $*
-}
-
-appendLibpath() {
-	appendToList  LD_LIBRARY_PATH $*
-}
-prependLibpath() {
-	prependToList LD_LIBRARY_PATH $*
-}
-
-appendPath() {
-	appendToList  PATH $*
-}
-prependPath() {
-	prependToList PATH $*
-}
-
-appendRubyLib() {
-	appendToList  RUBYLIB $*
-}
-prependRubyLib() {
-	prependToList RUBYLIB $*
-}
-
-cleanList() {
-    local listName=$1; shift
-    eval local contents=\$$listName
-	# remove empty elements and double slashes, escape any spaces
-	eval $listName=`echo $contents | sed -E 's_::+_:_g; s_//+_/_g; s_ _\\\\ _g; s_^:__; s_:$__'`
-   #   's_:([a-z]):/_:/\1/_g;   ' \   # change windows leading drive letter into *nix path
-}
+#appendToVar() {
+#    local var=$1; shift; eval "$var=\${$var}$*"
+#}
+#prependToVar() {
+#	local var=$1; shift; eval "$var=$*\${$var}"
+#}
+#
+#member() {
+#    eval local value=:\$$2:
+#    echo $value | grep ":$1:" >& /dev/null
+#}
+#
+#prependToList() {
+#    local each var=$1; shift
+##    echo Prepending to $var: $*
+#    for each; do
+#        member $each $var || eval "$var=\"$each\${$var:+${RS:-:}\$$var}\""
+#    done
+#}
+#
+#appendToList() {
+#    local each var=$1; shift
+#    for each; do
+#        member $each $var || eval "$var=\"\${$var:+\$$var${RS:-:}}$each\""
+#    done
+#}
+#
+#cleanList() {
+#    local listName=$1; shift
+#    eval local contents=\$$listName
+#	# remove empty elements and double slashes, escape any spaces
+#	eval $listName=`echo $contents | sed -E 's_::+_:_g; s_//+_/_g; s_ _\\\\ _g; s_^:__; s_:$__'`
+#   #   's_:([a-z]):/_:/\1/_g;   ' \   # change windows leading drive letter into *nix path
+#}
 
 
 # ======== Paths
 # Keep only the first occurrence of duplicates
 typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
-prependPath $HOME/bin
-appendPath ~/bin/quick-ssh /usr/X11R6/bin /opt/git-gw ~/Android/Sdk/platform-tools
-export CLASSPATH=${CLASSPATH:=.}
-appendLibpath /lib /usr/lib $HOME/lib
-appendRubyLib $HOME/src/ruby $HOME/bin
-export RUBYLIB
-cleanList CLASSPATH
+export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
+
+CLASSPATH=${CLASSPATH:=.}
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:$HOME/lib
+PATH=$HOME/bin:${PATH}:~/bin/quick-ssh:/usr/X11R6/bin:/opt/git-gw:~/Android/Sdk/platform-tools
+RUBYLIB=${RUBYLIB}:$HOME/src/ruby:$HOME/bin
 
 
 # ======== Java
@@ -163,7 +137,7 @@ else
 fi
 unset java_root
 
-prependPath ${JAVA_HOME}/bin
+PATH=${JAVA_HOME}/bin:${PATH}
 
 if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
     IDEA_JDK=${JAVA_HOME}_nodcevm

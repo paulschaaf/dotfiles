@@ -16,7 +16,7 @@ if [ -n "$CYGPATH" ]; then
     fixDOSPathIn CYGPATH
 fi
 
-prependPath $HOME/bin/win
+PATH=$HOME/bin/win:${PATH}
 
 alias classpath='RS=\; echosourcList CLASSPATH'
 alias cp='nocorrect cp'
@@ -42,6 +42,11 @@ locate() {
     command locate $* | sed -e '/^\/c\/\(home\|cygwin\)/d; s_'${HOME}'_~_g;'
 }
 
+member() {
+    eval local value=:\$$2:
+    echo $value | grep ":$1:" >& /dev/null
+}
+
 prependToCygList () {
     local each var=$1; shift
     for each; do
@@ -58,11 +63,11 @@ appendToCygList () {
     done
 }
 
-appendClasspath  () {
-    appendToCygList  CLASSPATH $*
-}
-prependClasspath () {
-    prependToCygList CLASSPATH $*
-}
+#appendClasspath  () {
+#    appendToCygList  CLASSPATH $*
+#}
+#prependClasspath () {
+#    prependToCygList CLASSPATH $*
+#}
 
 set +x

@@ -9,7 +9,9 @@
 # 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-zmodload zsh/zprof
+
+# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
 ifMacOS && EDITOR=/usr/local/bin/emacs
@@ -623,10 +625,10 @@ PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
 
 PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 
+
 # ======== Guidewire
 # Bootstrap the huge nvm (Node version manager) function
-alias nvm='echo Installing...; [[ -s "$NVM_DIR/nvm.sh" ]] && source "$NVM_DIR/nvm.sh" && unalias nvm && nvm || echo ...failed!'
-
+alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
 
 # ======== Keychain
 # Let's re-use ssh-agent and/or gpg-agent between logins
