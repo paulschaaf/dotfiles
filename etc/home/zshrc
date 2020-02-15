@@ -12,6 +12,43 @@
 
 # zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
 
+# ======== Shell Options
+
+if  [[ -z "$ifZsh" ]]; then
+    unsetopt \
+        beep \
+        clobber \
+        flow_control \
+        hup \
+        notify \
+        print_exit_value \
+        rm_star_silent
+
+    setopt \
+        auto_list \
+        auto_menu \
+        auto_param_slash \
+        auto_pushd \
+        auto_remove_slash \
+        bang_hist \
+        correct \
+        extended_history \
+        function_argzero \
+        hash_cmds \
+        hash_dirs \
+        hist_find_no_dups \
+        hist_ignore_dups \
+        hist_ignore_space \
+        hist_no_functions \
+        hist_reduce_blanks \
+        ignore_eof \
+        inc_append_history \
+        prompt_subst \
+        pushd_silent \
+        share_history
+fi
+
+
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
 ifMacOS && EDITOR=/usr/local/bin/emacs
@@ -262,43 +299,6 @@ if  [[ -z "${ifZsh}${COMPINIT}" ]]; then
 fi
 
 
-# ======== Shell Options
-
-if  [[ -z "$ifZsh" ]]; then
-    unsetopt \
-        beep \
-        clobber \
-        flow_control \
-        hup \
-        notify \
-        print_exit_value \
-        rm_star_silent
-
-    setopt \
-        auto_list \
-        auto_menu \
-        auto_param_slash \
-        auto_pushd \
-        auto_remove_slash \
-        bang_hist \
-        correct \
-        extended_history \
-        function_argzero \
-        hash_cmds \
-        hash_dirs \
-        hist_find_no_dups \
-        hist_ignore_dups \
-        hist_ignore_space \
-        hist_no_functions \
-        hist_reduce_blanks \
-        ignore_eof \
-        inc_append_history \
-        prompt_subst \
-        pushd_silent \
-        share_history
-fi
-
-
 # ======== Functions and Aliases
 
 alert() {
@@ -363,8 +363,8 @@ s_^([^/])_${PWD}/\\1_;
 # remove unnecessary relative paths
 s_/\\./_/_;
 
-# if in gw-studio, prepend file:// to each absolute path so it appears as a link
-s_^/_${GW_PRODUCT:+file://}/_
+# if in IntelliJ, prepend file:// to each absolute path so it appears as a link
+s_^/_${inIntelliJ:+file://}/_
 "
     }
 fi
@@ -431,95 +431,50 @@ wedit() {
 }
 
 
-
 # ======== Key Bindings
 
 # Use Emacs key bindings
 bindkey -e
 
-bindkey -s "[Z" " popd\n"
+bindkey "\033[17~"   kill-whole-line       # F6
+bindkey "\033[18~"   copy-region-as-kill   # F7
+bindkey "\033[19~"   yank                  # F8
+bindkey "\033[20~"   history-incremental-search-backward # F9
 
-# Here's what we'd like to accomplish:
-#    __PRESS__  __TO__
-#    F6         cut
-#    F7         copy
-#    F8         paste
-#    F9         search
-#    F12        exit
+bindkey "\033[1;5D"  backward-word         # ctrl_left
+bindkey "\033[1;5C"  forward-word          # ctrl_right
 
-bindkey "[17~" kill-whole-line
-bindkey "[18~" copy-region-as-kill
-bindkey "[19~" yank
-bindkey "[20~" history-incremental-search-backward
-bindkey -s "[21~" " exit\n"
+bindkey "\033[1~"    beginning-of-line     # home
+bindkey "\033[4~"    end-of-line           # end
 
-# ======== Other Extra Keys
+bindkey "\M-C\M-5"   up-case-word
+bindkey "\M-C\M-,"   down-case-word
 
-# Here's what we'd like to accomplish:
+bindkey "\033[3~"    delete-char           # delete
+bindkey "^?"         backward-delete-char  # backspace
 
-#   __PRESS __  __TO__
-#   ctrl_left   backward-word
-#   ctrl_right  forward-word
-
-#   home        beginning-of-line
-#   end         end-of-line
-
-#   ctrl_delete backward-kill-word
-#   delete      delete-char
-
-bindkey "\033[3~" delete-char
-
-# echo; (bindkey | grep 'backward-delete-char'; echo; bindkey | grep 'backward-kill-word') | sed 's/" /"\t/g'
-
-bindkey "\M-C\M-5" up-case-word
-bindkey "\M-C\M-," down-case-word
+bindkey "\033[3;5~"  kill-word             # ctrl_delete
+bindkey "^H"         backward-kill-word    # ctrl_backspace
 
 case ${TERM} in
     cygwin*)
-        bindkey "\033H"     backward-delete-char
-        bindkey "\033?"     backward-kill-word
-        bindkey "\033[1;5D" backward-word
-        bindkey "\033[1~"   beginning-of-line
-        bindkey "\033[4~"   end-of-line
-        bindkey "\033[1;5C" forward-word
-        bindkey "\033[3;5~" kill-word
+        bindkey "\033H"  backward-delete-char
+        bindkey "\033?"  backward-kill-word
         ;;
     rxvt*)
-        bindkey "^H"        backward-delete-char
-        bindkey "\033Od"    backward-word
-        bindkey "\033[7~"   beginning-of-line
-        bindkey "\033[3~"   delete-char-or-list
-        bindkey "\033[8~"   end-of-line
-        bindkey "\033Oc"    forward-word
-        bindkey "\033[3;5~" kill-word
-
-        bindkey "\033?"     backward-kill-word
-        bindkey "\033[1;5D" backward-word
-        bindkey "\033[1~"   beginning-of-line
-        bindkey "\033[4~"   end-of-line
-        bindkey "\033[1;5C" forward-word
-        bindkey "\033[3;5~" kill-word
-        ;;
-    xterm*)
-        bindkey "^?"        backward-delete-char
-        bindkey "^H"        backward-kill-word
-        bindkey "\033[1;5D" backward-word
-        bindkey "\033[H"    beginning-of-line
-        bindkey "\033[1~"   beginning-of-line
-        bindkey "\033[3~"   delete-char-or-list
-        bindkey "\033[4~"   end-of-line
-        bindkey "\033[F"    end-of-line
-        bindkey "\033[1;5C" forward-word
-        bindkey "\033[3;5~" kill-word
+        bindkey "^H"     backward-delete-char
+        bindkey "\033?"  backward-kill-word
         ;;
     *)
-        echo Unknown terminal type: $TERM
         ;;
 esac
 
 # ======== Macro Keys
-# C-? prepends 'whence' to command line
-bindkey -s ""^_"" "\C-apath \C-e\C-m"
+
+bindkey -s "\033[21~"  ' exit\n'                  # F10
+bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
+bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
+
 #     if [[ -z "$CONNECTION" ]]; then
 #         #bindkey -r "\C-h" 	# remove binding
 #         #bindkey "\C-h\C-k" describe`-key-briefly	#
@@ -591,7 +546,6 @@ if [[ -f ~/etc/rc/git_zshrc.sh ]]; then
     source ~/etc/rc/git_zshrc.sh
 else
     function updateGitVars() { : }
-    GIT_STATUS=''
 fi
 
 export dirs=`dirs`
@@ -610,7 +564,6 @@ function git() {
 
 autoload -U add-zsh-hook
 add-zsh-hook chpwd updateDirs
-add-zsh-hook precmd updateGitVars
 
 if [[ -n "$HOSTMESSAGE" ]]; then
     HOSTMESSAGE=" [35;40m$HOSTMESSAGE"

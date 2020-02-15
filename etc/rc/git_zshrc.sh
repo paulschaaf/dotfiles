@@ -19,7 +19,7 @@ setopt PROMPT_SUBST
 autoload -U add-zsh-hook
 
 add-zsh-hook chpwd   update_git_vars_chpwd
-add-zsh-hook precmd  update_git_vars_precmd
+add-zsh-hook precmd updateGitVars
 add-zsh-hook preexec update_git_vars_preexec
 
 ## Function definitions
@@ -126,3 +126,7 @@ updateGitVars () {
     fi
     export GIT_REPO=`git config --get remote.origin.url | sed 's_.*/\(.*\)\.git_\1_g'`
 }
+
+add-zsh-hook precmd updateGitVars
+update_current_git_vars
+#update_git_vars_chpwd

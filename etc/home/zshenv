@@ -12,7 +12,7 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
 
 # ======== Default Settings
 umask 22
@@ -43,7 +43,6 @@ esac
 [[ $UID -eq 0 ]] \
     && alias ifRoot=true \
     || alias ifRoot=false
-
 
 
 # ======== Exported Variables
