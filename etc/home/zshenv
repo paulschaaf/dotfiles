@@ -96,12 +96,18 @@ export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
 
 # ======== Paths
 # Keep only the first occurrence of duplicates
-typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
+typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH path RUBYLIB
 export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
 
 CLASSPATH=${CLASSPATH:=.}
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:$HOME/lib
-PATH=$HOME/bin:${PATH}:~/bin/quick-ssh:/usr/X11R6/bin:/opt/git-gw:~/Android/Sdk/platform-tools
+path=(
+    $HOME/bin
+    ${PATH}
+    ~/bin/quick-ssh
+    /usr/X11R6/bin
+    /opt/git-gw
+)
 RUBYLIB=${RUBYLIB}:$HOME/src/ruby:$HOME/bin
 
 
