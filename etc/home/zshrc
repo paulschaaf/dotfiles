@@ -65,6 +65,13 @@ fi
 export HISTSIZE=1000
 export SAVEHIST=1000
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESS_TERMCAP_mb=$'\e[1;32m'
+export LESS_TERMCAP_md=$'\e[1;32m'
+export LESS_TERMCAP_me=$'\e[0m'
+export LESS_TERMCAP_se=$'\e[0m'
+export LESS_TERMCAP_so=$'\e[01;33m'
+export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_us=$'\e[1;4;31m'
 export LESSKEY=${HOME}/.less_$HOSTNAME
 export NVM_DIR=$HOME/.nvm
 export PAGER=less
@@ -149,107 +156,7 @@ lsf() {
 
 # ======== Var and List Processing
 
-echoList() {
-    local listName=$1; shift
-    eval local contents=\$${listName}
-
-    local ifDebug=:
-    local show_type=''
-    local rm_row=
-    local RS=${RS:-:}
-
-    while [[ -n "$*" ]]; do
-        case $1 in
-            --debug)
-                ifDebug=
-                shift
-                ;;
-            --help)
-                echo '--help       Show this screen'
-                echo '--show-type  Shows the type of the argument files'
-                echo '--rm \#      Removes item number # from the list and print the new value'
-                return
-                ;;
-            --rm)
-                shift
-                rm_row=$1
-                shift
-               ;;
-            --show-type)
-                show_type='file -L'
-                shift
-                ;;
-           --*)
-                echo Unrecognized option "$1"!
-                return 1
-                ;;
-            *)
-                break
-                ;;
-        esac
-    done
-
-    $ifDebug echo '=====' "listName=$listName"
-    $ifDebug echo '=====' "contents=$contents"
-
-    $ifZsh echo " ${listName} has type ${(Pt)listName}"
-
-    # let us know if it's also a function or alias
-    local override=`type $1`
-    override=${override//$1 is \/*/} # it's neither
-    override=${override//not found/is not an alias, function or executable}
-
-    echo -E ${contents} | awk '
-    NR == 1 {split(file, files, " ")}
-    {
-      gsub("/c" ENVIRON["HOME"],"~")
-      gsub(ENVIRON["HOME"],"~")
-      dirname = $0
-      carat = " "
-      startColor = ""
-      endColor = "[0m"
-      for (idx in files) {  # note if any of the argument files are in this dir
-        fullpath = $1 "/" files[idx]
-        if (! system("test -f " fullpath)) {
-            startColor = "[1;33m"
-            matches = matches " " fullpath
-            carat=">"
-            break
-        }
-      }
-      if (NR == rm_row) {
-          startColor = sprintf("%s", "[101m")
-      }
-      printf("\n%s%2d %s%s%s", carat, NR, startColor, dirname, endColor)
-    }
-    END {
-        if (override) {
-            print "\n" override
-        }
-        if (matches) {
-            print "\n" ls matches
-            system(ls matches)
-            if (show_type) {
-                print "\n" show_type matches "\n"
-                system(show_type matches)
-            }
-        }
-    }' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} -Hl" override=$override rm_row="${rm_row:-999}" show_type=${show_type}
-
-    if [[ -n $rm_row ]]; then
-        contents=`echo ${contents} | awk 'NR != RM_ROW {print}' RM_ROW=$rm_row RS=${RS} ORS=${RS}`
-        eval $listName=$contents # update the var
-        echo "\n"Removed row $rm_row from $listName
-        $ifDebug echo '=====' "listName=$listName"
-        $ifDebug echo '=====' "contents=$contents"
-    fi
-
-    [[ $# -lt 2 ]] && return
-
-    shift
-    echo "\nIgnored extra arguments: '$*'!"
-    return 1
-}
+autoload echoList
 
 echoVar() {
     local var
@@ -289,8 +196,6 @@ if  [[ -z "${ifZsh}${COMPINIT}" ]]; then
     zstyle ':completion:*' verbose true
     zstyle  :compinstall filename "$HOME/etc/rc/$HOST.zsh"
 
-    fpath=(~/etc/zshcompletion $fpath)
-
     autoload -U colors   && colors
     autoload -U compinit
     ifRoot \
@@ -313,6 +218,8 @@ alert() {
     return 1
   fi
 }
+
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
 df() {
     /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
@@ -473,7 +380,7 @@ case ${TERM} in
         ;;
 esac
 
-# ======== Macro Keys
+# Macro Keys
 
 bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
@@ -504,36 +411,36 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 case ${HOSTNAME}:${UNAME} in
     *:CYGWIN*)
         # white on green
-        hostColor='[37;42m'
+        hostColor=$'\e[37;42m'
         ;;
     *:Darwin*)
-        hostColor='[32;40m'
+        hostColor=$'\e[32;40m'
         ;;
     *:Linux*)
         # green
-        hostColor='[32;40m'
+        hostColor=$'\e[32;40m'
         ;;
     *:Windows*)
         # white bold on blue
-        hostColor='[37;1;44m'
+        hostColor=$'\e[37;1;44m'
         ;;
     *:UNKN*|*)
         # magenta
-        hostColor='[35;40m'
+        hostColor=$'\e[35;40m'
         ;;
 esac
 
-rootColorString='[37;1;41m'
+rootColorString=$'\e[37;1;41m'
 
 case ${CONNECTION} in
     ssh)
-        connection_color='[0;30;48;5;226m'
+        connection_color=$'\e[0;30;48;5;226m'
         ;;
     tlnt)
-        connection_color='[31;1m'
+        connection_color=$'\e[31;1m'
         ;;
     sudo)
-        connection_color='[35;1;40m'
+        connection_color=$'\e[35;1;40m'
         ;;
     *)
         ;;
@@ -586,6 +493,7 @@ PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
 # ======== Guidewire
 # Bootstrap the huge nvm (Node version manager) function
 alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
+
 
 # ======== Keychain
 # Let's re-use ssh-agent and/or gpg-agent between logins

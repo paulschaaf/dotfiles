@@ -12,7 +12,7 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
 
 # ======== Default Settings
 umask 22
@@ -43,6 +43,7 @@ esac
 [[ $UID -eq 0 ]] \
     && alias ifRoot=true \
     || alias ifRoot=false
+
 
 
 # ======== Exported Variables
@@ -96,10 +97,12 @@ export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
 
 # ======== Paths
 # Keep only the first occurrence of duplicates
-typeset -U CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH path RUBYLIB
+typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH PATH path RUBYLIB
 export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
 
 CLASSPATH=${CLASSPATH:=.}
+fpath=(~pschaaf/etc/zshfunctions $fpath)
+
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:$HOME/lib
 path=(
     $HOME/bin
