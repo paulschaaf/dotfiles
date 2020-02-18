@@ -292,7 +292,11 @@ if  [[ -z "${ifZsh}${COMPINIT}" ]]; then
     fpath=(~/etc/zshcompletion $fpath)
 
     autoload -U colors   && colors
-    autoload -U compinit && compinit && export COMPINIT=true
+    autoload -U compinit
+    ifRoot \
+        && compinit -u \
+        || compinit
+    export COMPINIT=true
     autoload zed                  && alias fned='zed -f'
     unalias  run-help 2>/dev/null && autoload run-help
     zmodload -i zsh/complist
