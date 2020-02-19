@@ -439,7 +439,7 @@ case ${CONNECTION} in
         ;;
 esac
 if [[ -n "$CONNECTION" ]]; then
-    hostColor=${hostColor/m/;4m}  # underline the host name
+    hostColor=${hostColor/m/;$color[underline]m}  # underline the host name
 fi
 
 if [[ -n "$connection_color" ]]; then

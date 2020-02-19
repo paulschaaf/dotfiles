@@ -103,6 +103,18 @@ elsif ARGV[0] == "--prompt"
   foreground, and %K to change the background. Lowercase the let-
   ters to turn it off.\n", cmd
 
+elsif ARGV[0] == "--help"
+  puts <<STRING
+Usage: colors.rb [-24] [--prompt] [number]
+  When passed a number without a switch, highlight that number in the 256 color table
+
+  --24 Show 24-bit color display
+  --prompt Show color codes to use in a prompt
+  
+
+  Usage:  echo "\\e[<number>mHello world"
+STRING
+
 else
   section('EFFECTS (0..9, 21..29)') {
     # print effect names
