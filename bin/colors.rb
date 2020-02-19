@@ -150,7 +150,8 @@ STRING
   }
 
   section('256-COLOR PALETTE (16..255)') {
-    [38, 48].each {|ground|
+    foreground, background = 38, 48
+    [foreground, background].each {|ground|
       rowCounts = (0...GridSize).to_a
       (0..2).each {|section|
         rowCounts.each {|row|
@@ -158,12 +159,12 @@ STRING
           [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52, 16].each {|cell|
             color = cell + row + (72*section)
             colorCode = "#{ground};5;#{color}"
-            colorCode = '30;' + colorCode if [40, 46, 82, 76].include?(cell)
+            colorCode = '30;' + colorCode if ground == background and [40, 46, 82, 76].include?(cell) # set foreground color to black
             printColorString colorCode, color
           }
           puts
         }
-        rowCounts = rowCounts.reverse if section == 0
+        rowCounts = rowCounts.reverse
       }
 
       # now do the grayscales
@@ -190,9 +191,9 @@ STRING
 
   def printSamples(codeToDesc)
     codeToDesc.each {|code, desc|
-      print '  echo "\e[' + code + 'm'
+      print '  echo $\'\e[' + code + 'm'
       printColorString code, desc
-      puts '"'
+      puts "'"
     }
   end
 

@@ -2,15 +2,15 @@
 
 switches=()
 while [ -n "$*" ]; do
-  case $1 in
-  -*)
-    switches=($switches $1)
-    ;;
-  *)
-    break
-    ;;
-  esac
-  shift
+    case $1 in
+        -*)
+            switches=($switches $1)
+            ;;
+        *)
+            break
+            ;;
+    esac
+    shift
 done
 
 local files=${*}
