@@ -45,7 +45,6 @@ esac
     || alias ifRoot=false
 
 
-
 # ======== Exported Variables
 [[ -n "$CD_TO" ]] && builtin cd "$CD_TO" && unset CD_TO
 export EMAIL=paul.schaaf@gmail.com

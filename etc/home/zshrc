@@ -220,7 +220,8 @@ alert() {
   fi
 }
 
-[ -f /usr/local/etc/profile.d/autojump.sh ] && source /usr/local/etc/profile.d/autojump.sh
+ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
+ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
 df() {
     /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
