@@ -49,6 +49,34 @@ if  [[ -z "$ifZsh" ]]; then
 fi
 
 
+# ======== Zsh Compinstall
+
+if  [[ -z ${ifZsh} ]]; then
+    zstyle ':completion:*' expand prefix suffix
+    zstyle ':completion:*' file-sort name
+    zstyle ':completion:*' group-name ''
+    zstyle ':completion:*' ignore-parents parent ..
+    zstyle ':completion:*' list-colors ''
+    zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+    zstyle ':completion:*' menu select=0
+    zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+    zstyle ':completion:*' squeeze-slashes true
+    zstyle ':zftp:' titlebar true
+    zstyle ':completion:*' verbose true
+    zstyle  :compinstall filename "$HOME/etc/rc/$HOST.zsh"
+
+    autoload -U colors && colors
+    autoload -U compinit
+    ifRoot \
+        && compinit -u \
+        || compinit
+    autoload zed                  && alias fned='zed -f'
+#    unalias  run-help 2>/dev/null && autoload run-help
+    zmodload -i zsh/complist
+    zrecompile ~/.zcompdump
+fi
+
+
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
 ifMacOS && EDITOR=/usr/local/bin/emacs
@@ -65,13 +93,14 @@ fi
 export HISTSIZE=1000
 export SAVEHIST=1000
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESS_TERMCAP_mb=$'\e[1;32m'
-export LESS_TERMCAP_md=$'\e[1;32m'
-export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_se=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[01;33m'
-export LESS_TERMCAP_ue=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[1;4;31m'
+export LESS_TERMCAP_mb=$fg_bold[green]
+export LESS_TERMCAP_md=$fg_bold[green]
+export LESS_TERMCAP_me=$reset_color
+export LESS_TERMCAP_se=$reset_color
+export LESS_TERMCAP_so=$fg_bold[yellow]
+export LESS_TERMCAP_ue=$reset_color
+export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
+
 export LESSKEY=${HOME}/.less_$HOSTNAME
 export NVM_DIR=$HOME/.nvm
 export PAGER=less
@@ -180,34 +209,6 @@ rubylib() {
 }
 
 
-# ======== Zsh Compinstall
-
-if  [[ -z "${ifZsh}${COMPINIT}" ]]; then
-    zstyle ':completion:*' expand prefix suffix
-    zstyle ':completion:*' file-sort name
-    zstyle ':completion:*' group-name ''
-    zstyle ':completion:*' ignore-parents parent ..
-    zstyle ':completion:*' list-colors ''
-    zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
-    zstyle ':completion:*' menu select=0
-    zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
-    zstyle ':completion:*' squeeze-slashes true
-    zstyle ':zftp:' titlebar true
-    zstyle ':completion:*' verbose true
-    zstyle  :compinstall filename "$HOME/etc/rc/$HOST.zsh"
-
-    autoload -U colors   && colors
-    autoload -U compinit
-    ifRoot \
-        && compinit -u \
-        || compinit
-    export COMPINIT=true
-    autoload zed                  && alias fned='zed -f'
-    unalias  run-help 2>/dev/null && autoload run-help
-    zmodload -i zsh/complist
-fi
-
-
 # ======== Functions and Aliases
 
 alert() {
@@ -219,7 +220,7 @@ alert() {
   fi
 }
 
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
+[ -f /usr/local/etc/profile.d/autojump.sh ] && source /usr/local/etc/profile.d/autojump.sh
 
 df() {
     /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
@@ -230,10 +231,6 @@ ddu() {
     # show the size of each subdirectory
     find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n
 }
-
-#function @#() {
-#    printf "\e[48;5;21m\n--- $*\e[0m\n"
-#}
 
 # basename() { echo ${(F)@:t} }
 # dirname() { echo ${(F)@:h} }
@@ -410,37 +407,33 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 
 case ${HOSTNAME}:${UNAME} in
     *:CYGWIN*)
-        # white on green
-        hostColor=$'\e[37;42m'
+        hostColor=$fg_bold[white]$bg[green]
         ;;
     *:Darwin*)
-        hostColor=$'\e[32;40m'
+        hostColor=$fg[green]$bg[black]
         ;;
     *:Linux*)
-        # green
-        hostColor=$'\e[32;40m'
+        hostColor=$fg[green]$bg[black]
         ;;
     *:Windows*)
-        # white bold on blue
-        hostColor=$'\e[37;1;44m'
+        hostColor=$fg_bold[white]$bg[blue]
         ;;
     *:UNKN*|*)
-        # magenta
-        hostColor=$'\e[35;40m'
+        hostColor=$fg_bold[white]$bg[black]
         ;;
 esac
 
-rootColorString=$'\e[37;1;41m'
+rootColorString=$fg_bold[white]$bg[red]
 
 case ${CONNECTION} in
     ssh)
-        connection_color=$'\e[0;30;48;5;226m'
+        connection_color=${fg[black]/m/;48;5;226m}
         ;;
     tlnt)
-        connection_color=$'\e[31;1m'
+        connection_color=$fg_bold[red]
         ;;
     sudo)
-        connection_color=$'\e[35;1;40m'
+        connection_color=$fg[magenta]
         ;;
     *)
         ;;
@@ -450,11 +443,11 @@ if [[ -n "$CONNECTION" ]]; then
 fi
 
 if [[ -n "$connection_color" ]]; then
-    CONNECTION="%{$connection_color%}$CONNECTION%{[0m%} "
+    CONNECTION="%{$connection_color%}$CONNECTION%{$reset_color%} "
 fi
 
 if [[ -f ~/etc/rc/git_zshrc.sh ]]; then
-    source ~/etc/rc/git_zshrc.sh
+    zrecompile ~/etc/rc/git_zshrc.sh && source ~/etc/rc/git_zshrc.sh
 else
     function updateGitVars() { : }
 fi
@@ -477,7 +470,7 @@ autoload -U add-zsh-hook
 add-zsh-hook chpwd updateDirs
 
 if [[ -n "$HOSTMESSAGE" ]]; then
-    HOSTMESSAGE=" [35;40m$HOSTMESSAGE"
+    HOSTMESSAGE=" $fg[magenta]$bg[black]$HOSTMESSAGE"
 fi
 
 currentUser=${USER//pschaaf/}
@@ -487,7 +480,7 @@ PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
 %{$reset_color%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%m%{$reset_color%}$HOSTMESSAGE %{$fg_bold[yellow]%}%62>\>>\$dirs%<<
 %{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
 
-PS2="(%{[35;1m%}%_%{$reset_color%}) %(!.#.$) "
+PS2="(%{$fg_bold[magenta]%}%_%{$reset_color%}) %(!.#.$) "
 
 
 # ======== Guidewire

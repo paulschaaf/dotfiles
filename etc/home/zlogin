@@ -23,15 +23,8 @@ $ifZsh stty start ''   stop   ''
 
 [ -n "$inIntelliJ" ] && SHLVL=0
 
-function zrecompile() {
-    local src=${1}
-    local compiled=${src}.zwc
-    [[ -s ${src} && (! -s ${compiled} || ${src} -nt ${compiled}) ]] && zcompile ${src} && echo Recompiled ${src}
-}
-
-zrecompile .zshenv
-zrecompile .zshrc
-zrecompile .zlogin
-zrecompile .zcompdump
+zrecompile ~/.zshenv | sed $'s/$/. \e[101mLog in again to use the new version.\e[0m/'
+zrecompile ~/.zlogin | sed $'s/$/. \e[101mLog in again to use the new version.\e[0m/'
+zrecompile ~/.zshrc
 
 #_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true
