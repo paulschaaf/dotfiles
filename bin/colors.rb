@@ -25,18 +25,17 @@ INVERSE = effect 7
 BLACKBACKGROUND = CLR + bg(16)
 
 def printColorString(code, text = code, pad = PAD)
-  close = ''
+  open, close = '', ''
   if text[0] == '[' # if the text is in brackets
     text = text[1..-2] # extract them so they don't get formatted
-    print '['
-    close = ']'
+    open, close = '[', ']'
     pad += 2
   elsif text == LOOKUP # if this is the color the user asked about
     pad -= 1 # back up one
-    print "#{BLINK}>#{BLACKBACKGROUND}" # and add a blinking carat
+    open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat
   end
   text = sprintf "%#{pad}s", text
-  print effect(code) + text + BLACKBACKGROUND + close
+  print open, effect(code), text, BLACKBACKGROUND, close
 end
 
 def section(header, subHeader = '')
