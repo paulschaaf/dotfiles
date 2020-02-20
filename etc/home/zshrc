@@ -263,25 +263,25 @@ frotz() {
     popd
 }
 
-if [[ -n $inIntelliJ ]]; then
+if [[ -n ${inIntelliJ} ]]; then
     rg() {
-        command rg --no-heading --column ${*:-.} | sed -E "
+        command rg --no-heading --column ${*} | sed -E "
 # prepend PWD to all relative paths
 s_^([^/])_${PWD}/\\1_;
 
-# remove unnecessary relative paths
+# replace all occurrences of /./ with /
 s_/\\./_/_;
 
-# if in IntelliJ, prepend file:// to each absolute path so it appears as a link
-s_^/_${inIntelliJ:+file://}/_
+${GW_PLATFORM:+s_(:[0-9:]+)_ \\1_; # if in GW Studio add a space after the filename}
+
+# prepend file:// to each absolute path so it appears as a link
+s_^/_file:///_;
 "
     }
 fi
 
-pcd() {
-    # Change to the specified dir & remove starting place from dir stack
-    cd "$@"; popd +1 2>/dev/null
-}
+# Change to the specified dir & remove starting place from dir stack
+pcd() { cd "$@" && popd +1 2>/dev/null }
 
 # cd to the specified directory, or if it's a file, to the containing directory
 pushd() {
@@ -325,15 +325,14 @@ splitFlac() {
     shnsplit -f $cue -t %n-%t -o flac $flac
 }
 
-wcat() { cat $(which $*) }
-wcd() { cd $(which $*) }
-wfile()  { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
-whence() { builtin whence -ac $* }
-wless()  { ${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
+wcat()  { cat $(which $*) }
+wcd()   { cd $(which $*) }
+wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
+whence(){ builtin whence -ac $* }
+wless() { ${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 wedit() {
     local cmd file x
-    for x in $*
-    do
+    for x in $*; do
         file=$(which $x) && cmd="${cmd:-edit} $file" || echo $file
     done
     eval $cmd
