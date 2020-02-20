@@ -1,43 +1,54 @@
 #!/usr/bin/env ruby
 
-Lookup = (ARGV[0] || 0).to_i
-$success = Lookup == 0
-Pad = 4
-GridSize = 6
-BlackBackground = "\e[0;48;5;16m"
+LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
+abort "ERROR: Color #{LOOKUP} is out of range. It must be between 0 and 255!" if LOOKUP and !(0..255).member? LOOKUP
 
-def printColorString(code, text = code, pad = Pad)
-  open, close = '', ''
-  if text == Lookup # if we're about to draw the one the user asked about
-    $success = true
-    pad -= 1 # back up one
-    print "\e[5m>#{BlackBackground}" # add a blinking carat
-  elsif text[0] == '[' # if the text is in brackets
-    text = text[1..-2] # remove them
-    pad += 2
-    open, close = '[', ']'
-  end
-  printf "#{open}\e[%sm%#{pad}s#{BlackBackground}#{close}", code, text
+CLR = "\e[0m"
+PAD = 4
+GRIDSIZE = 6
+
+def effect(n)
+  "\e[#{n}m"
 end
 
-def section(header)
-  puts "#{BlackBackground}"
-  printColorString 4, header + "\n"
+def fg(c)
+  effect "38;5;#{c}"
+end
+
+def bg(c)
+  effect "48;5;#{c}"
+end
+
+BLINK = effect 5
+INVERSE = effect 7
+
+BLACKBACKGROUND = CLR + bg(16)
+
+def printColorString(code, text = code, pad = PAD)
+  close = ''
+  if text[0] == '[' # if the text is in brackets
+    text = text[1..-2] # extract them so they don't get formatted
+    print '['
+    close = ']'
+    pad += 2
+  elsif text == LOOKUP # if this is the color the user asked about
+    pad -= 1 # back up one
+    print "#{BLINK}>#{BLACKBACKGROUND}" # and add a blinking carat
+  end
+  text = sprintf "%#{pad}s", text
+  print effect(code) + text + BLACKBACKGROUND + close
+end
+
+def section(header, subHeader = '')
+  puts "#{BLACKBACKGROUND}"
+  printColorString 4, header
+  printColorString 0, " #{subHeader}\n"
   yield
   puts
 end
 
 # An Easter Egg!
 if ARGV[0] == "--rainbows"
-  clr = "\e[0m"
-
-  def fg(c)
-    "\e[38;5;#{c}m"
-  end
-
-  def bg(c)
-    "\e[48;5;#{c}m"
-  end
 
   yel = fg(227)
   blu = fg(33)
@@ -46,23 +57,23 @@ if ARGV[0] == "--rainbows"
   btr = fg(214)
   red = fg(196)
   lBl = fg(81)
-  blk = "#{BlackBackground}"
+  blk = "#{BLACKBACKGROUND}"
   link = "https://tinyurl.com/RadioheadInRainbows"
 
-  cover = [
-      '',
-      "┌────────────┐",
-      "│#{yel}IN/ #{bg 27}R#{bg 16}AINB#{bg 208}O#{bg 16}WS#{blk}│",
-      "│#{blu}IN#{bg 27} #{bg 16}RAIN/#{bg 208}BOW#{bg 16}S#{blk}│",
-      "│#{ora}I#{bg 27}N#{bg 16} RA#{bg 229}I#{bg 16}N#{bg 166}BOW#{bg 16}/S#{blk}│",
-      "│#{gre}I#{bg 27}N#{bg 16} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 16}S/#{blk}│#{clr}   #{fg "33;4"}#{link}\e[0m",
-      "│#{btr}I#{bg 27}N#{bg 16} RAI#{bg 172}N#{bg 208}_B#{bg 16}OWS#{blk}│",
-      "│#{red}R#{bg 16}A#{bg 27} #{bg 16}D I#{bg 172}O#{bg 16}HEA_D#{blk}│",
-      "│#{lBl}_R#{bg 27}A#{bg 16}DIO HEA D#{blk}│",
-      "└────────────┘\n",
-  ]
-  cover = cover.join("#{clr}\n     #{bg 16}")
-  print cover
+  print <<STRING
+
+     ┌────────────┐
+     │#{yel}IN/ #{bg 27}R#{bg 16}AINB#{bg 208}O#{bg 16}WS#{blk}│
+     │#{blu}IN#{bg 27} #{bg 16}RAIN/#{bg 208}BOW#{bg 16}S#{blk}│
+     │#{ora}I#{bg 27}N#{bg 16} RA#{bg 229}I#{bg 16}N#{bg 166}BOW#{bg 16}/S#{blk}│
+     │#{gre}I#{bg 27}N#{bg 16} RA#{bg 172}I#{bg 208}NB#{bg 166}O#{bg 208}W#{bg 16}S/#{blk}│#{CLR}   #{fg "33;4"}#{link}#{CLR}
+     │#{btr}I#{bg 27}N#{bg 16} RAI#{bg 172}N#{bg 208}_B#{bg 16}OWS#{blk}│
+     │#{red}R#{bg 16}A#{bg 27} #{bg 16}D I#{bg 172}O#{bg 16}HEA_D#{blk}│
+     │#{lBl}_R#{bg 27}A#{bg 16}DIO HEA D#{blk}│
+     └────────────┘
+
+STRING
+
 
 elsif ARGV[0] == "--24"
   # truecolor
@@ -73,7 +84,7 @@ elsif ARGV[0] == "--24"
         printf "\nG-%x0 ", green
         (0x0..0xf).each { |blue|
           code = "#{ground};2;#{red}0;#{green}0;#{blue}"
-          printf "\e[%sm%.x\e[0m", code, blue
+          printf "\e[%sm%.x#{CLR}", code, blue
         }
       }
     }
@@ -106,7 +117,7 @@ Usage: colors.rb [--24] [--sort] [number]
 STRING
 
 else
-  section('EFFECTS (0..9, add 20 to unset effect)') {
+  section('EFFECTS', '(0..9, add 20 to unset effect)') {
     # print effect names
     effects = {0 => '-unset all-', 1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
     pad = effects.values.map { |e| e.strip.length }.max + 1
@@ -120,11 +131,11 @@ else
 
   Bracketed effects are not widely supported. #2 is "Dim" and #8 is "concealed".
 
-  Usage:  echo "\\e[<number>mHello world"
+  Usage:  echo "\\e[#{INVERSE}color#{CLR}mHello world"
 STRING
   }
 
-  section('8-COLOR PALETTE (30..37, 90..97, 40..47, 100..107)') {
+  section('8-COLOR PALETTE', '(30..37, 40..47, 90..97, 100..107)') {
     [0, 10].each { |ground|
       {0 => 'Dim', 60 => 'Bright'}.each { |intensity, intensityName|
         printf '  %-7s ', intensityName
@@ -135,14 +146,23 @@ STRING
         puts
       }
     }
-    puts "\n  Usage:  echo \"\\e[<color>mHello world\"' "
+    puts "\n  Usage:  echo \"\\e[#{INVERSE}color#{CLR}mHello world\""
   }
 
-  section('256-COLOR PALETTE (16..255)') {
+  section('256-COLOR PALETTE', '(0..255)') {
     foreground, background = 38, 48
     [foreground, background].each { |ground|
       puts if ground == background
-      rowCounts = (0...GridSize).to_a
+      [0, 8].each { |page|
+        print '  '
+        (0..7).each { |col|
+          color = col + page
+          colorCode = "#{ground};5;#{color}"
+          printColorString colorCode, color
+        }
+        puts
+      }
+      rowCounts = (0...GRIDSIZE).to_a
       (0..2).each { |section|
         rowCounts.each { |row|
           print '  '
@@ -163,7 +183,7 @@ STRING
       [0, 1, 3, 2].each { |row|
         shades = shades.reverse if row == 2
         shades.each { |cell|
-          color = cell + (row * GridSize)
+          color = cell + (row * GRIDSIZE)
           colorCode = (ground == background and color >= 250) \
             ? "#{color};30" # set fg to black when bg nears solid white
                           : color
@@ -174,14 +194,14 @@ STRING
       puts <<STRING
 
 
-  echo "\\e[#{ground};5;\e[4mcolor\e[0mmHello world";
-  print -P "%#{ground == foreground ? 'F' : 'K'}{\e[4mcolor\e[0m}Hello world%#{ground == foreground ? 'f' : 'k'}"
+  echo "\\e[#{ground};5;#{INVERSE}color#{CLR}mHello world";
+  print -P "%#{ground == foreground ? 'F' : 'K'}{#{INVERSE}color#{CLR}}Hello world%#{ground == foreground ? 'f' : 'k'}"
 STRING
     }
   }
 
   section('APPLICATION') {
-    puts '  Begin your text with "\e[<effect*>;<foreground>;<background>m"', ''
+    puts '  Begin your text with "\e[<effect>;<foreground>;<background>m"', ''
 
     {'91' => 'Bright red foreground (short 8-color notation)',
      '38;5;94;48;5;33' => 'Brown foreground, light blue background',
@@ -192,6 +212,4 @@ STRING
       puts "'"
     }
   }
-
-  abort "\e[101mERROR:\e[0m No such color #{Lookup}!" unless $success
 end
