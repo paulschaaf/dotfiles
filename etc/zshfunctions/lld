@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+dir=${1:-.}
+ls -ld ${dir}/*/

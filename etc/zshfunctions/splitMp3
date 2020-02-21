@@ -1,0 +1,16 @@
+#!/bin/zsh
+
+local file=$1
+local base=${1%%.*}
+local extension=${1##*.}
+local title=${2:-$base}
+local index=1
+set -x
+ffmpeg -i ${file} -f segment -segment_time 600 -c copy tmp_${base}%03d.${extension}
+
+count=`ls -1q tmp_* | awk 'END {print NR}'`
+for track in tmp_*; do
+  ffmpeg -i ${track} -metadata title="${title} ${index}/${count}" -c copy ${track##tmp_}
+  rm -f ${track}
+  : $((index++))
+done

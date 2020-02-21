@@ -1,0 +1,7 @@
+#!/bin/zsh
+
+local var
+for var; do
+    echo -n "\n # ${var} has type ${(Pt)var}\n "
+    typeset -p ${var} | sed 's/^typeset -x//'
+done

@@ -1,0 +1,8 @@
+#!/bin/zsh
+
+if [[ $? -eq 0 ]]; then
+    notify-send -t 3000 -i info Success\! "\n$1"
+else
+    notify-send -t 5000 -i error Failed\! "\n$1"
+    return 1
+fi

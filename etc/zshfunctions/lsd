@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+dir=${1}${1:+/}
+command ls ${LS_FLAGS/F/} -d ${dir}*/

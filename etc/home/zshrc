@@ -13,7 +13,6 @@
 # zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
 
 # ======== Shell Options
-
 if  [[ -z "$ifZsh" ]]; then
     unsetopt \
         beep \
@@ -50,7 +49,6 @@ fi
 
 
 # ======== Zsh Compinstall
-
 if  [[ -z ${ifZsh} ]]; then
     zstyle ':completion:*' expand prefix suffix
     zstyle ':completion:*' file-sort name
@@ -78,10 +76,6 @@ fi
 
 
 # ======== Exported Variables
-export EDITOR=/usr/bin/emacs
-ifMacOS && EDITOR=/usr/local/bin/emacs
-ifRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
-
 export ESHELL=$SHELL
 export FCEDIT=zed
 export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
@@ -106,7 +100,7 @@ export NVM_DIR=$HOME/.nvm
 export PAGER=less
 export MANPAGER=less
 export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
-export USE_COLOR=true
+# export USE_COLOR=true
 
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word.
 # The remaining punctuation chars are considered separate words, regardless of
@@ -120,7 +114,6 @@ alias ...="pushd ../.."
 alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
-[[ $USER != pschaaf ]] && alias emacs='emacs -u pschaaf'
 ifMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 ifCygwin && alias open=explorer
 ifLinux && alias open=dolphin
@@ -136,155 +129,65 @@ ifMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 # ======== ls Aliases and Functions
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
-export LS_FLAGS=-BCFbh
-$ifZsh export LS_FLAGS=${LS_FLAGS}H
-unalias l la ll ls lsd lld lsda lldarm d s p rd 2>/dev/null
-alias l=/bin/ls
+export LS_FLAGS=-BCFbhH
 ifMacOS \
     && LS_FLAGS="${LS_FLAGS}G" \
     || LS_FLAGS="${LS_FLAGS}${LS_COLORS:+ --color}"
 
-export LS="l ${LS_FLAGS}"
-alias ls=${LS}
-
+alias ls="ls ${LS_FLAGS}"
 alias la='ls -A'
 alias ll='ls -l'
 alias lla='ls -Al'
-
 alias llt='ls -lrt'
 alias lr='ls -R'
-lsd() {
-    dir=${1}${1:+/}
-    l ${LS_FLAGS/F/} -d ${dir}*/
-}
-lld() {
-    dir=${1:-.}
-    ls -ld ${dir}/*/
-}
-lsda() {
-    if [[ $# -eq 0 ]]; then
-	    l ${LS_FLAGS/F/} -ld */(D)
-    else
-        for dir in ${*}; do
-            echo
-            ls -d $dir
-            l ${LS_FLAGS/F/} -ld ${dir}/*/(D)
-        done
-    fi
-}
-
+autoload lsd
+autoload lld
+autoload lsda
 alias llda='lsda -l'
-
-lsf() {
-    local x
-    for x in ${*:-*}; do
-        echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
-    done | column -t -s ':'
-}
+autoload lsf
 
 
 # ======== Var and List Processing
-
 autoload echoList
-
-echoVar() {
-    local var
-    for var; do
-        echo -n "\n # ${var} has type ${(Pt)var}\n "
-        typeset -p ${var} | sed 's/^typeset -x//'
-    done
-}
-
+autoload echoVar
 alias classpath='echoList CLASSPATH'
 alias grep='command grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 alias path='echoList PATH'
-
-rubylib() {
-    echoVar RUBYLIB
-    echo
-    local RUBYLIB=`ruby -e 'print $:.join(":")'`
-    echoList RUBYLIB | sed -e 's/^  *RUBYLIB .*/ Including implicit dirs:/'
-}
+autoload rubylib
 
 
 # ======== Functions and Aliases
-
-alert() {
-  if [[ $? -eq 0 ]]; then
-    notify-send -t 3000 -i info Success\! "\n$1"
-  else
-    notify-send -t 5000 -i error Failed\! "\n$1"
-    return 1
-  fi
-}
+autoload alert
 
 ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
 ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
-df() {
-    /bin/df -hl -x devtmpfs -x tmpfs --total -T $* | lite -c cyan '^total.*' -c underline '^Filesystem.*'
-}
-ifMacOS && function df() { /bin/df -Phl $* }
+ifMacOS \
+    && alias df='command df -Phl' \
+    || autoload df
 
-ddu() {
-    # show the size of each subdirectory
-    find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n
-}
+autoload ddu
 
-# basename() { echo ${(F)@:t} }
-# dirname() { echo ${(F)@:h} }
+# function basename() { echo ${(F)@:t} }
+# function dirname() { echo ${(F)@:h} }
 
-ifMacOS && find() { [[ $1 == -* ]] && command find . $* || command find $* }
+ifMacOS && function find() { [[ $1 == -* ]] && command find . $* || command find $* }
 
-frotz() {
-    pushd ~/Box\ Sync/Infocom
-    local stories=".*/${1:-.*}\\.dat\$"
-    if [[ "$*" = "" ]]; then
-        # if no args, show all game files
-        find . -regex $stories -print | sed 's/^\.\//  /; s/\.dat$//' | sort
-    else
-        # otherwise run the one requested
-        local story=`find . -maxdepth 1 -regex $stories -print -quit`
-        story=${story#./}
-        echo Story is $story
-        if [[ -f ${story} ]]; then
-            dir=${story%%.*}
-            mkdir $dir
-            builtin cd $dir
-            command frotz ../$story
-            builtin cd ..
-            rmdir $dir 2>/dev/null // remove only if empty
-        else
-            echo Cannot find story "$story"
-        fi
-    fi
-    popd
-}
+autoload frotz
+autoload mkfunction
 
 if [[ -n ${inIntelliJ} ]]; then
-    rg() {
-        command rg --no-heading --column ${*} | sed -E "
-# prepend PWD to all relative paths
-s_^([^/])_${PWD}/\\1_;
-
-# replace all occurrences of /./ with /
-s_/\\./_/_;
-
-${GW_PLATFORM:+s_(:[0-9:]+)_ \\1_; # if in GW Studio add a space after the filename}
-
-# prepend file:// to each absolute path so it appears as a link
-s_^/_file:///_;
-"
-    }
+    autoload rg_intellij
+    alias rg=rg_intellij
 fi
 
 # Change to the specified dir & remove starting place from dir stack
-pcd() { cd "$@" && popd +1 2>/dev/null }
+function pcd() { cd "$@" && popd +1 2>/dev/null }
 
 # cd to the specified directory, or if it's a file, to the containing directory
-pushd() {
+function pushd() {
     if [[ -z "$1" ]]; then
         builtin pushd
     elif [[ -f "$1" ]]; then
@@ -294,55 +197,19 @@ pushd() {
     fi
 }
 
-settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
+function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 
-splitMp3() {
-   local file=$1
-   local base=${1%%.*}
-   local extension=${1##*.}
-   local title=${2:-$base}
-   local index=1
-   set -x
-   ffmpeg -i ${file} -f segment -segment_time 600 -c copy tmp_${base}%03d.${extension}
+autoload splitMp3
+autoload splitFlac
 
-   count=`ls -1q tmp_* | awk 'END {print NR}'`
-   for track in tmp_*; do
-      ffmpeg -i ${track} -metadata title="${title} ${index}/${count}" -c copy ${track##tmp_}
-      rm -f ${track}
-      : $((index++))
-   done
-}
-
-splitFlac() {
-    local cue=$1
-    local flac=$2
-    if [[ "${2##*.}" = "cue" ]]; then
-        cue=$2
-        flac=$1
-    fi
-    echo "    CUE  = $cue"
-    echo "    FLAC = $flac"
-    shnsplit -f $cue -t %n-%t -o flac $flac
-}
-
-wcat()  { cat $(which $*) }
-wcd()   { cd $(which $*) }
-wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
-whence(){ builtin whence -ac $* }
-wless() { ${PAGER} $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
-wedit() {
-    local cmd file x
-    for x in $*; do
-        file=$(which $x) && cmd="${cmd:-edit} $file" || echo $file
-    done
-    eval $cmd
-}
+function wcat()  { cat $(which $*) }
+function wcd()   { cd $(which $*) }
+function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
+alias whence='whence -ac'
 
 
 # ======== Key Bindings
-
-# Use Emacs key bindings
-bindkey -e
+bindkey -e # Use Emacs key bindings
 
 bindkey "\033[17~"   kill-whole-line       # F6
 bindkey "\033[18~"   copy-region-as-kill   # F7
@@ -402,7 +269,6 @@ fi
 
 
 # ======== The Prompt
-
 export GIT_PS1_SHOWDIRTYSTATE=1
 
 case ${HOSTNAME}:${UNAME} in
@@ -454,7 +320,7 @@ fi
 
 export dirs=`dirs`
 
-updateDirs() {
+function updateDirs() {
     dirs=`builtin dirs -p | awk '
        NR == 2 {printf "[0;38;5;243m"};
        {print}
@@ -504,4 +370,3 @@ alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source 
 # edits are lost if this file is re-generated.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
-set +x

@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+local x
+for x in ${*:-*}; do
+    echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
+done | column -t -s ':'

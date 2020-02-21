@@ -1,0 +1,4 @@
+#!/bin/zsh
+
+# show the size of each subdirectory
+find ${*:-.} -maxdepth 1 -type d -print0 | xargs -0 du -hs | sort -n

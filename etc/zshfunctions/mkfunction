@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+echo "#!${SHELL}\n" > ~pschaaf/dotfiles/etc/zshfunctions/$1

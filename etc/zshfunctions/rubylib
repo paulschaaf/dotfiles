@@ -1,0 +1,6 @@
+#!/bin/zsh
+
+echoVar RUBYLIB
+echo
+local RUBYLIB=`ruby -e 'print $:.join(":")'`
+echoList RUBYLIB | sed -e 's/^  *RUBYLIB .*/ Including implicit dirs:/'
