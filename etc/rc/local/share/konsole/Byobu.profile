@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Droid Sans Mono,7,-1,5,50,0,0,0,0,0,Regular
+Font=xos4 Terminus,6,-1,5,50,0,0,0,0,0,Regular
 
 [Encoding Options]
 DefaultEncoding=UTF-8
@@ -14,6 +14,8 @@ Environment=TERM=xterm,SHLVL=
 Name=Byobu
 Parent=FALLBACK/
 StartInCurrentSessionDir=false
+TerminalColumns=100
+TerminalRows=24
 
 [Interaction Options]
 AutoCopySelectedText=true
