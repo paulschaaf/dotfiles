@@ -83,21 +83,21 @@ typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH PATH path RUBYLIB
 export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
 
 CLASSPATH=${CLASSPATH:=.}
-fpath=(~pschaaf/etc/zshfunctions $fpath)
+fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:$HOME/lib
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:${HOME}/lib
 path=(
-    $HOME/bin
-    ${PATH}
+    ${HOME}/bin
+    ${path}
     ~/bin/quick-ssh
     /usr/X11R6/bin
     /opt/git-gw
 )
-RUBYLIB=${RUBYLIB}:$HOME/src/ruby:$HOME/bin
+RUBYLIB=${RUBYLIB}:${HOME}/src/ruby:${HOME}/bin
 
 
 # ======== Java
-autoload whichjava
+autoload -Uz whichjava
 
 java_root=/usr/lib/jvm
 if [[ -d $java_root ]]; then

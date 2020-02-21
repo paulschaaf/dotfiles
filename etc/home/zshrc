@@ -61,15 +61,15 @@ if  [[ -z ${ifZsh} ]]; then
     zstyle ':completion:*' squeeze-slashes true
     zstyle ':zftp:' titlebar true
     zstyle ':completion:*' verbose true
-    zstyle  :compinstall filename "$HOME/etc/rc/$HOST.zsh"
+    zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
 
-    autoload -U colors && colors
-    autoload -U compinit
+    autoload -Uz colors && colors
+    autoload -Uz compinit
     ifRoot \
         && compinit -u \
         || compinit
-    autoload zed                  && alias fned='zed -f'
-#    unalias  run-help 2>/dev/null && autoload run-help
+    autoload -Uz zed                  && alias fned='zed -f'
+#    unalias  run-help 2>/dev/null && autoload -Uz run-help
     zmodload -i zsh/complist
     zrecompile ~/.zcompdump
 fi
@@ -95,10 +95,10 @@ export LESS_TERMCAP_so=$fg_bold[yellow]
 export LESS_TERMCAP_ue=$reset_color
 export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
 
-export LESSKEY=${HOME}/.less_$HOSTNAME
-export NVM_DIR=$HOME/.nvm
-export PAGER=less
+export LESSKEY=${HOME}/.less_${HOSTNAME}
 export MANPAGER=less
+export NVM_DIR=${HOME}/.nvm
+export PAGER=less
 export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
 # export USE_COLOR=true
 
@@ -140,46 +140,47 @@ alias ll='ls -l'
 alias lla='ls -Al'
 alias llt='ls -lrt'
 alias lr='ls -R'
-autoload lsd
-autoload lld
-autoload lsda
+autoload -Uz lsd
+autoload -Uz lld
+autoload -Uz lsda
 alias llda='lsda -l'
-autoload lsf
+autoload -Uz lsf
 
 
 # ======== Var and List Processing
-autoload echoList
-autoload echoVar
+autoload -Uz echoList
+autoload -Uz echoVar
 alias classpath='echoList CLASSPATH'
 alias grep='command grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 alias path='echoList PATH'
-autoload rubylib
+autoload -Uz rubylib
+
 
 
 # ======== Functions and Aliases
-autoload alert
+autoload -Uz alert
 
 ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
 ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
 ifMacOS \
     && alias df='command df -Phl' \
-    || autoload df
+    || autoload -Uz df
 
-autoload ddu
+autoload -Uz ddu
 
 # function basename() { echo ${(F)@:t} }
 # function dirname() { echo ${(F)@:h} }
 
 ifMacOS && function find() { [[ $1 == -* ]] && command find . $* || command find $* }
 
-autoload frotz
-autoload mkfunction
+autoload -Uz frotz
+autoload -Uz mkfunction
 
 if [[ -n ${inIntelliJ} ]]; then
-    autoload rg_intellij
+    autoload -Uz rg_intellij
     alias rg=rg_intellij
 fi
 
@@ -199,13 +200,14 @@ function pushd() {
 
 function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 
-autoload splitMp3
-autoload splitFlac
+autoload -Uz splitMp3
+autoload -Uz splitFlac
 
 function wcat()  { cat $(which $*) }
 function wcd()   { cd $(which $*) }
 function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 alias whence='whence -ac'
+
 
 
 # ======== Key Bindings
@@ -332,7 +334,7 @@ function git() {
     echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
 }
 
-autoload -U add-zsh-hook
+autoload -Uz add-zsh-hook
 add-zsh-hook chpwd updateDirs
 
 if [[ -n "$HOSTMESSAGE" ]]; then
@@ -356,8 +358,8 @@ alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source 
 
 # ======== Keychain
 # Let's re-use ssh-agent and/or gpg-agent between logins
-# /usr/bin/keychain $HOME/.ssh/id_rsa $HOME/.ssh/id_dsa
-# source $HOME/.keychain/$HOSTNAME-sh
+# /usr/bin/keychain ${HOME}/.ssh/id_rsa ${HOME}/.ssh/id_dsa
+# source ${HOME}/.keychain/$HOSTNAME-sh
 #if [[ $UID -gt 0 ]]; then  # if I'm not root
 #    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 #fi
