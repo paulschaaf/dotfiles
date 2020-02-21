@@ -3,13 +3,16 @@
 LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
 abort "ERROR: Color #{LOOKUP} is out of range. It must be between 0 and 255!" if LOOKUP and !(0..255).member? LOOKUP
 
-CLR = "\e[0m"
 PAD = 4
 GRIDSIZE = 6
 
 def effect(n)
   "\e[#{n}m"
 end
+
+BLINK = effect 5
+CLR = effect 0
+INVERSE = effect 7
 
 def fg(c)
   effect "38;5;#{c}"
@@ -18,9 +21,6 @@ end
 def bg(c)
   effect "48;5;#{c}"
 end
-
-BLINK = effect 5
-INVERSE = effect 7
 
 BLACKBACKGROUND = CLR + bg(16)
 
@@ -32,7 +32,7 @@ def printColorString(code, text = code, pad = PAD)
     pad += 2
   elsif text == LOOKUP # if this is the color the user asked about
     pad -= 1 # back up one
-    open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat
+    open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat instead of the space
   end
   text = sprintf "%#{pad}s", text
   print open, effect(code), text, BLACKBACKGROUND, close
@@ -118,17 +118,18 @@ STRING
 else
   section('EFFECTS', '(0..9, add 20 to unset effect)') {
     # print effect names
-    effects = {0 => '-unset all-', 1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
-    pad = effects.values.map { |e| e.strip.length }.max + 1
+    effects = {1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
+    pad = effects.values.map { |e| e.strip.length }.max
     effects.each { |effectNum, effectName|
-      printf '%4d: ', effectNum
+      printf '%3d: ', effectNum
       printColorString effectNum, effectName, -pad
-      puts if (effectNum + 1) % 4 == 0
+      puts if effectNum % 4 == 0
     }
     puts <<STRING
 
 
-  Bracketed effects are not widely supported. #2 is "Dim" and #8 is "concealed".
+  0 unsets all, 2 is "Dim" and 8 is "concealed". Bracketed effects
+  are not widely supported. 
 
   Usage:  echo "\\e[#{INVERSE}color#{CLR}mHello world"
 STRING
