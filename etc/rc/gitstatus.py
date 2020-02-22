@@ -62,4 +62,3 @@ out = ' '.join([
 	untracked,
 	])
 print(out, end='')
-

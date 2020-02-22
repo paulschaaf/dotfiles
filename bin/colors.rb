@@ -13,6 +13,7 @@ end
 BLINK = effect 5
 CLR = effect 0
 INVERSE = effect 7
+UNDERLINE = effect 4
 
 def fg(c)
   effect "38;5;#{c}"
@@ -152,7 +153,7 @@ STRING
   section('256-COLOR PALETTE', '(0..255)') {
     foreground, background = 38, 48
     [foreground, background].each { |ground|
-      puts if ground == background
+      print("\n  #{UNDERLINE}Page #{ground}: #{ground == foreground ? 'Fore' : 'Back'}grounds#{BLACKBACKGROUND}\n\n")
       [0, 8].each { |page|
         print '  '
         (0..7).each { |col|

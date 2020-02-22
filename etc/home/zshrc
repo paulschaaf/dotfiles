@@ -151,7 +151,7 @@ autoload -Uz lsf
 autoload -Uz echoList
 autoload -Uz echoVar
 alias classpath='echoList CLASSPATH'
-alias grep='command grep --extended-regexp --color'
+alias grep='grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 alias path='echoList PATH'
@@ -166,7 +166,7 @@ ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/et
 ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
 ifMacOS \
-    && alias df='command df -Phl' \
+    && alias df='df -Phl' \
     || autoload -Uz df
 
 autoload -Uz ddu
@@ -320,14 +320,13 @@ else
     function updateGitVars() { : }
 fi
 
-export dirs=`dirs`
-
 function updateDirs() {
-    dirs=`builtin dirs -p | awk '
+    dirs=`dirs -p | awk '
        NR == 2 {printf "[0;38;5;243m"};
        {print}
     ' ORS=' '`
 }
+export dirs=`dirs`
 
 function git() {
     command git $*
