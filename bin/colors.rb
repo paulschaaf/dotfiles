@@ -119,18 +119,17 @@ STRING
 else
   section('EFFECTS', '(0..9, add 20 to unset effect)') {
     # print effect names
-    effects = {1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
+    effects = {0 => '-unset all-', 1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
     pad = effects.values.map { |e| e.strip.length }.max
     effects.each { |effectNum, effectName|
       printf '%3d: ', effectNum
       printColorString effectNum, effectName, -pad
-      puts if effectNum % 4 == 0
+      puts if (effectNum + 1) % 4 == 0
     }
     puts <<STRING
 
 
-  0 unsets all, 2 is "Dim" and 8 is "concealed". Bracketed effects
-  are not widely supported. 
+  2 is "Dim" and 8 is "concealed". Bracketed effects are not widely supported.
 
   Usage:  echo "\\e[#{INVERSE}color#{CLR}mHello world"
 STRING
