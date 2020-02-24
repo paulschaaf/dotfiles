@@ -314,8 +314,8 @@ if [[ -n "$connection_color" ]]; then
     CONNECTION="%{$connection_color%}$CONNECTION%{$reset_color%} "
 fi
 
-if [[ -f ~/etc/rc/git_zshrc.sh ]]; then
-    zrecompile ~/etc/rc/git_zshrc.sh && source ~/etc/rc/git_zshrc.sh
+if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
+    zrecompile ~/etc/rc/git/git_zshrc.sh && source ~/etc/rc/git/git_zshrc.sh
 else
     function updateGitVars() { : }
 fi
