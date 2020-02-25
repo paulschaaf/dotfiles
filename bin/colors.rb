@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 
-LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
+LOOKUP = nil
+
 abort "ERROR: Color #{LOOKUP} is out of range. It must be between 0 and 255!" if LOOKUP and !(0..255).member? LOOKUP
 
 PAD = 4
@@ -33,6 +34,7 @@ def printColorString(code, text = code, pad = PAD)
     open, close = '[', ']'
     pad += 2
   elsif text == LOOKUP # if this is the color the user asked about
+    puts "LOOKUP is '#{LOOKUP}'"
     pad -= 1 # back up one
     open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat instead of the space
   end
@@ -79,14 +81,16 @@ STRING
 elsif ARGV[0] == "--24"
   # truecolor
   [BG].each { |ground|
-    (0..23).each { |red|
-      printf("\n\n%sR=%02i#{CLR} %sBlue ", effect(101), red, effect(12))
+    (0..23).step(2).each { |redSet|
       (0..23).each { |green|
-        printf("\n%sG-%02i#{CLR}", effect(42), green)
-        (0..23).each { |blue|
-          printf " \e[#{ground};2;#{red}0;#{green}0;#{blue}0m%02i", blue
+        puts
+        [redSet, redSet + 1].each {|red|
+          printf("%s%02i%s%02i#{CLR}", effect(101), red, effect(42), green)
+          (0..23).each { |blue|
+            printf " \e[#{ground};2;#{red}0;#{green}0;#{blue}0m%02i", blue
+          }
+          print(CLR, ' ')
         }
-        printf CLR
       }
     }
     puts
@@ -123,6 +127,8 @@ Usage: colors.rb [--24] [--sort] [number]
 STRING
 
 else
+  LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
+
   section('EFFECTS', '(0..9, add 20 to unset effect)') {
     # print effect names
     effects = {0 => '-unset all-', 1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}
