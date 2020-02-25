@@ -58,7 +58,6 @@ module Term
 
     @@colors=@@foregrounds.valuesSortedByKey
 
-    # 'reverse' is not used to avoid confusion with String.reverse
     @@common_effects = {
       1 => :bold,
       2 => :dim,
@@ -198,7 +197,8 @@ print Color.yellow { Color.on_black { "yellow on_black" } }, "\n\n"
 
 # Anyway, I don't define any of Term::ANSIColor's methods in this example
 # and I want to keep it short:
-include Term::ANSIColor
+#include Term::ANSIColor
+# include Color
 
 print red, bold, "Usage as constants:", reset, "\n"
 print clear, "clear", reset, reset, "reset", reset,

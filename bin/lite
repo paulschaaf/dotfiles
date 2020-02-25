@@ -18,13 +18,12 @@ Usage: #{File.basename($0)} [-n]? [[-c color]* [regex]+]+
         (even if it is the default). If combining the colors causes a
         conflict, the last one wins: e.g. '-c blue -c red' equals
         '-c red'. Regex\'s may overlap and are applied in the order
-        specified. $USE_COLOR must be set to some non-nil value (see -n).
+        specified.
 
   -n, --color=never
         Do not use color. This treats any -c color values as strings
         rather than color specifications, and uses them to 'bookend'
-        the matches. This is equivalent to having $USE_COLOR unset or
-        set to 'f', 'false', 'n', or 'no' (case insensitive). 
+        the matches. 
         --color=never is provided for compatibility with grep.
 
 Example:
@@ -47,9 +46,7 @@ end
 #   ARGV.push('.*')
 # end
 
-use_color = ENV['USE_COLOR'].instance_eval {
-  self.empty? or self !~ /^(no?|f(alse)?)$/i unless nil?
-}
+use_color = true
 
 while (line=STDIN.gets(''))
   if ARGV[0] =~ /^-(n|-color=never)$/

@@ -14,13 +14,14 @@ BLINK = effect 5
 CLR = effect 0
 INVERSE = effect 7
 UNDERLINE = effect 4
+FG, BG = 38, 48
 
 def fg(c)
-  effect "38;5;#{c}"
+  effect "#{FOREGROUND};5;#{c}"
 end
 
 def bg(c)
-  effect "48;5;#{c}"
+  effect "#{BG};5;#{c}"
 end
 
 BLACKBACKGROUND = CLR + bg(16)
@@ -77,18 +78,23 @@ STRING
 
 elsif ARGV[0] == "--24"
   # truecolor
-  [48].each { |ground|
-    (0x0..0xf).each { |red|
-      printf "\n\nR-%x0", red
-      (0x0..0xf).each { |green|
-        printf "\nG-%x0 ", green
-        (0x0..0xf).each { |blue|
-          code = "#{ground};2;#{red}0;#{green}0;#{blue}"
-          printf "\e[%sm%.x#{CLR}", code, blue
+  [BG].each { |ground|
+    (0..23).each { |red|
+      printf("\n\n%sR=%02i#{CLR} %sBlue ", effect(101), red, effect(12))
+      (0..23).each { |green|
+        printf("\n%sG-%02i#{CLR}", effect(42), green)
+        (0..23).each { |blue|
+          printf " \e[#{ground};2;#{red}0;#{green}0;#{blue}0m%02i", blue
         }
+        printf CLR
       }
     }
     puts
+  }
+
+  [FG, BG].each { |ground|
+    printf(ground == FG ? '  Foreground: ' : '  Background: ')
+    puts "echo $'\\e[#{ground};2;#{UNDERLINE}R#{CLR}0;#{UNDERLINE}G#{CLR}0;#{UNDERLINE}B#{CLR}0mSome Text'"
   }
 
 elsif ARGV[0] == "--sort"
@@ -150,9 +156,8 @@ STRING
   }
 
   section('256-COLOR PALETTE', '(0..255)') {
-    foreground, background = 38, 48
-    [foreground, background].each { |ground|
-      print("\n  #{UNDERLINE}Page #{ground}: #{ground == foreground ? 'Fore' : 'Back'}grounds#{BLACKBACKGROUND}\n\n")
+    [FG, BG].each { |ground|
+      print("\n  #{UNDERLINE}Page #{ground}: #{ground == FG ? 'Fore' : 'Back'}grounds#{BLACKBACKGROUND}\n\n")
       [0, 8].each { |page|
         print '  '
         (0..7).each { |col|
@@ -169,7 +174,7 @@ STRING
           [16, 22, 28, 34, 40, 46, 82, 76, 70, 64, 58, 52, 16].each { |cell|
             color = cell + row + (72 * section)
             colorCode = "#{ground};5;#{color}"
-            colorCode = '30;' + colorCode if ground == background and [40, 46, 82, 76].include?(cell) # set foreground color to black for readability
+            colorCode = '30;' + colorCode if ground == BG and [40, 46, 82, 76].include?(cell) # set foreground color to black for readability
             printColorString colorCode, color
           }
           puts
@@ -184,7 +189,7 @@ STRING
         shades = shades.reverse if row == 2
         shades.each { |cell|
           color = cell + (row * GRIDSIZE)
-          colorCode = (ground == background and color >= 250) \
+          colorCode = (ground == BG and color >= 250) \
             ? "#{color};30" # set fg to black when bg nears solid white
                           : color
           printColorString "#{ground};5;#{colorCode}", color
@@ -195,7 +200,7 @@ STRING
 
 
   echo "\\e[#{ground};5;#{INVERSE}color#{CLR}mHello world";
-  print -P "%#{ground == foreground ? 'F' : 'K'}{#{INVERSE}color#{CLR}}Hello world%#{ground == foreground ? 'f' : 'k'}"
+  print -P "%#{ground == FG ? 'F' : 'K'}{#{INVERSE}color#{CLR}}Hello world%#{ground == FG ? 'f' : 'k'}"
 STRING
     }
   }
@@ -204,8 +209,8 @@ STRING
     puts '  Begin your text with "\e[<effect>;<foreground>;<background>m"', ''
 
     {'91' => 'Bright red foreground (short 8-color notation)',
-     '38;5;94;48;5;33' => 'Brown foreground, light blue background',
-     '1;4;38;5;11' => 'Bold underlined, gold foreground',
+     "#{FOREGROUND};5;94;#{BACKGROUND};5;33" => 'Brown foreground, light blue background',
+     "1;4;#{FOREGROUND};5;11" => 'Bold underlined, gold foreground',
     }.each { |code, desc|
       print '  echo $\'\e[' + code + 'm'
       printColorString code, desc
