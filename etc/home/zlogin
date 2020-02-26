@@ -11,6 +11,8 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
+#type zprof>/dev/null || (zmodload zsh/zprof && echo Running zprof from zlogin) # uncomment to profile startup
+
 # ======== Terminal Settings
 # if [ "$TERM" = "screen" ]; then
 #    export TERM=xterm
@@ -19,12 +21,12 @@ export TERM=xterm-256color
 # export TERM=xterm-24bit
 # export COLORTERM=truecolor
 
-$ifZsh stty start ''   stop   ''
+stty start ''   stop   ''
 
 [ -n "$inIntelliJ" ] && SHLVL=0
 
-zrecompile ~/.zshenv | sed $'s/$/. \e[101mLog in again to use the new version.\e[0m/'
-zrecompile ~/.zlogin | sed $'s/$/. \e[101mLog in again to use the new version.\e[0m/'
+zrecompile ~/.zshenv
+zrecompile ~/.zlogin
 zrecompile ~/.zshrc
 
 #_byobu_sourced=1 . /usr/bin/byobu-launch 2>/dev/null || true

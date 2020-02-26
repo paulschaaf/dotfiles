@@ -24,6 +24,11 @@ for src in $files; do
         echo ${0:t}: Can\'t open file ${src}
         exit 1
     elif [[ ! -s ${compiled} || ${src} -nt ${compiled} ]]; then
-        zcompile ${switches} ${src} && echo Recompiled ${src}
+        zcompile ${switches} ${src} && echo -n Recompiled ${src}
+        if [[ "$src" =~ ".zshrc$" || "$src" =~ ".zlogin$" ]]; then
+            echo ". \e[101mLog in again to use the new version.\e[0m"
+        else
+            echo
+        fi
     fi
 done

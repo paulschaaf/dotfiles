@@ -10,69 +10,41 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+#type zprof>/dev/null || (zmodload zsh/zprof && echo Running zprof from zshrc) # uncomment to profile startup
 
 # ======== Shell Options
-if  [[ -z "$ifZsh" ]]; then
-    unsetopt \
-        beep \
-        clobber \
-        flow_control \
-        hup \
-        notify \
-        print_exit_value \
-        rm_star_silent
+unsetopt \
+    beep \
+    clobber \
+    flow_control \
+    hup \
+    notify \
+    print_exit_value \
+    rm_star_silent
 
-    setopt \
-        auto_list \
-        auto_menu \
-        auto_param_slash \
-        auto_pushd \
-        auto_remove_slash \
-        bang_hist \
-        correct \
-        extended_history \
-        function_argzero \
-        hash_cmds \
-        hash_dirs \
-        hist_find_no_dups \
-        hist_ignore_dups \
-        hist_ignore_space \
-        hist_no_functions \
-        hist_reduce_blanks \
-        ignore_eof \
-        inc_append_history \
-        prompt_subst \
-        pushd_silent \
-        share_history
-fi
+setopt \
+    auto_list \
+    auto_menu \
+    auto_param_slash \
+    auto_pushd \
+    auto_remove_slash \
+    bang_hist \
+    correct \
+    extended_history \
+    function_argzero \
+    hash_cmds \
+    hash_dirs \
+    hist_find_no_dups \
+    hist_ignore_dups \
+    hist_ignore_space \
+    hist_no_functions \
+    hist_reduce_blanks \
+    ignore_eof \
+    inc_append_history \
+    prompt_subst \
+    pushd_silent \
+    share_history
 
-
-# ======== Zsh Compinstall
-if  [[ -z ${ifZsh} ]]; then
-    zstyle ':completion:*' expand prefix suffix
-    zstyle ':completion:*' file-sort name
-    zstyle ':completion:*' group-name ''
-    zstyle ':completion:*' ignore-parents parent ..
-    zstyle ':completion:*' list-colors ''
-    zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
-    zstyle ':completion:*' menu select=0
-    zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
-    zstyle ':completion:*' squeeze-slashes true
-    zstyle ':zftp:' titlebar true
-    zstyle ':completion:*' verbose true
-    zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
-
-    autoload -Uz colors && colors
-    autoload -Uz compinit
-    ifRoot \
-        && compinit -u \
-        || compinit
-    autoload -Uz zed                  && alias fned='zed -f'
-#    unalias  run-help 2>/dev/null && autoload -Uz run-help
-    zmodload -i zsh/complist
-    zrecompile ~/.zcompdump
-fi
 
 
 # ======== Exported Variables
@@ -165,6 +137,8 @@ autoload -Uz alert
 ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
 ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
+autoload -Uz colors && colors
+
 ifMacOS \
     && alias df='df -Phl' \
     || autoload -Uz df
@@ -207,6 +181,8 @@ function wcat()  { cat $(which $*) }
 function wcd()   { cd $(which $*) }
 function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 alias whence='whence -ac'
+
+autoload -Uz zed                  && alias fned='zed -f'
 
 
 
@@ -362,6 +338,32 @@ alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source 
 #if [[ $UID -gt 0 ]]; then  # if I'm not root
 #    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 #fi
+
+
+# ======== Zsh Compinstall
+zstyle ':completion:*' expand prefix suffix
+zstyle ':completion:*' file-sort name
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' ignore-parents parent ..
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character to insert%s'
+zstyle ':completion:*' menu select=0
+zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
+zstyle ':completion:*' squeeze-slashes true
+zstyle ':zftp:' titlebar true
+zstyle ':completion:*' verbose true
+zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
+
+autoload -Uz compinit
+if [ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump) ]; then
+    ifRoot && compinit -u || compinit
+else
+    ifRoot && compinit -Cu || compinit -C
+fi
+
+#    unalias  run-help 2>/dev/null && autoload -Uz run-help
+zmodload -i zsh/complist
+zrecompile ~/.zcompdump
 
 
 # ======== Debugging

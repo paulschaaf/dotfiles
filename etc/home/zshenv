@@ -12,16 +12,11 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-# zmodload zsh/zprof # uncomment, then run zprof afterward to profile this file
+#zmodload zsh/zprof && echo Running zprof from zshenv # uncomment to profile startup
 
 # ======== Default Settings
 umask 22
 export UNAME=${UNAME:=`uname`}
-
-export ifZsh=:
-if [[ "$0" =~ "zsh" ]]; then
-    ifZsh=
-fi
 
 alias ifCygwin=false
 alias ifMacOS=false
