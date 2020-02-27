@@ -18,7 +18,7 @@ UNDERLINE = effect 4
 FG, BG = 38, 48
 
 def fg(c)
-  effect "#{FOREGROUND};5;#{c}"
+  effect "#{FG};5;#{c}"
 end
 
 def bg(c)
@@ -34,7 +34,6 @@ def printColorString(code, text = code, pad = PAD)
     open, close = '[', ']'
     pad += 2
   elsif text == LOOKUP # if this is the color the user asked about
-    puts "LOOKUP is '#{LOOKUP}'"
     pad -= 1 # back up one
     open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat instead of the space
   end
@@ -215,8 +214,8 @@ STRING
     puts '  Begin your text with "\e[<effect>;<foreground>;<background>m"', ''
 
     {'91' => 'Bright red foreground (short 8-color notation)',
-     "#{FOREGROUND};5;94;#{BACKGROUND};5;33" => 'Brown foreground, light blue background',
-     "1;4;#{FOREGROUND};5;11" => 'Bold underlined, gold foreground',
+     "#{FG};5;94;#{BG};5;33" => 'Brown foreground, light blue background',
+     "1;4;#{FG};5;11" => 'Bold underlined, gold foreground',
     }.each { |code, desc|
       print '  echo $\'\e[' + code + 'm'
       printColorString code, desc

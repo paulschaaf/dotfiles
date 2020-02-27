@@ -235,59 +235,54 @@ bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 
 
 # ======== Remote sessions
-if [[ -n "$SSH_TTY"    ]]; then
+if [[ -n "$SSH_TTY" ]]; then
     export CONNECTION=ssh
-elif [[ -n "$REMOTEHOST" ]]; then
+    colored_connection=${fg[black]/m/;48;5;226m}
+elif [[ -n "$REMOTEHOST" || -n "$REMOTEUSER" ]]; then
     export CONNECTION=tlnt
+    colored_connection=$fg_bold[red]
 elif [[ -n "$SUDO_USER"  ]]; then
     export CONNECTION=sudo
-elif [[ -n "$REMOTEUSER" ]]; then
-    export CONNECTION=tlnt
+    colored_connection=$fg[magenta]
+fi
+
+if [[ -n ${colored_connection} ]]; then
+    colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
 fi
 
 
 # ======== The Prompt
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-case ${HOSTNAME}:${UNAME} in
-    *:CYGWIN*)
-        hostColor=$fg_bold[white]$bg[green]
-        ;;
-    *:Darwin*)
-        hostColor=$fg[green]$bg[black]
-        ;;
-    *:Linux*)
-        hostColor=$fg[green]$bg[black]
-        ;;
-    *:Windows*)
-        hostColor=$fg_bold[white]$bg[blue]
-        ;;
-    *:UNKN*|*)
-        hostColor=$fg_bold[white]$bg[black]
-        ;;
-esac
-
 rootColorString=$fg_bold[white]$bg[red]
+currentUser=${USER//pschaaf/}
 
-case ${CONNECTION} in
-    ssh)
-        connection_color=${fg[black]/m/;48;5;226m}
-        ;;
-    tlnt)
-        connection_color=$fg_bold[red]
-        ;;
-    sudo)
-        connection_color=$fg[magenta]
-        ;;
-    *)
-        ;;
-esac
-if [[ -n "$CONNECTION" ]]; then
-    hostColor=${hostColor/m/;$color[underline]m}  # underline the host name
+if [[ -n ${currentUser} ]]; then
+    case ${HOSTNAME}:${UNAME} in
+        *:CYGWIN*)
+            hostColor=$fg_bold[white]$bg[green]
+            ;;
+        *:Darwin*)
+            hostColor=$fg[green]$bg[black]
+            ;;
+        *:Linux*)
+            hostColor=$fg[green]$bg[black]
+            ;;
+        *:Windows*)
+            hostColor=$fg_bold[white]$bg[blue]
+            ;;
+        *:UNKN*|*)
+            hostColor=$fg_bold[white]$bg[black]
+            ;;
+    esac
 fi
 
-if [[ -n "$connection_color" ]]; then
-    CONNECTION="%{$connection_color%}$CONNECTION%{$reset_color%} "
+if [[ -n ${CONNECTION} ]]; then
+    currentUser=${currentUser}${currentUser:+@}'%m' # add the host machine
+fi
+
+if [[ -n ${currentUser} ]]; then
+    currentUser=" %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%{$reset_color%}"
 fi
 
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
@@ -313,15 +308,12 @@ autoload -Uz add-zsh-hook
 add-zsh-hook chpwd updateDirs
 
 if [[ -n "$HOSTMESSAGE" ]]; then
-    HOSTMESSAGE=" $fg[magenta]$bg[black]$HOSTMESSAGE"
+    HOSTMESSAGE=" $fg[magenta]$bg[black]$HOSTMESSAGE "
 fi
 
-currentUser=${USER//pschaaf/}
-currentUser=${currentUser}${currentUser:+@}
-
-PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}
-%{$reset_color%}%T %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%m%{$reset_color%}$HOSTMESSAGE %{$fg_bold[yellow]%}%62>\>>\$dirs%<<
-%{$reset_color%}\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%} $CONNECTION$SCRIPTING_MSG\$GW_PROMPT%(!.#.$) "
+PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}%{$reset_color%}
+%T${currentUser}${HOSTMESSAGE} %{$fg_bold[yellow]%}%62>\>>\$dirs%<<%{$reset_color%}
+\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%}${colored_connection} \$GW_PROMPT%(!.#.$) "
 
 PS2="(%{$fg_bold[magenta]%}%_%{$reset_color%}) %(!.#.$) "
 
@@ -355,15 +347,22 @@ zstyle ':completion:*' verbose true
 zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
 
 autoload -Uz compinit
-if [ $(date +'%j') != $(/usr/bin/stat -f '%Sm' -t '%j' ${ZDOTDIR:-$HOME}/.zcompdump) ]; then
-    ifRoot && compinit -u || compinit
+# if the day of the year == the day the cache was last changed
+# Load and initialize the completion system ignoring insecure directories with a
+# cache time of 20 hours, so it should almost always regenerate the first time a
+# shell is opened each day.
+autoload -Uz compinit
+_comp_files=(${ZDOTDIR:-$HOME}/.zcompdump(Nm-20))
+if (( $#_comp_files )); then
+    compinit -i -C
 else
-    ifRoot && compinit -Cu || compinit -C
+    compinit -i
+    { zrecompile ~/.zcompdump } &! # run in the background
 fi
+unset _comp_files
 
 #    unalias  run-help 2>/dev/null && autoload -Uz run-help
 zmodload -i zsh/complist
-zrecompile ~/.zcompdump
 
 
 # ======== Debugging
