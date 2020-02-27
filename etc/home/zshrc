@@ -252,39 +252,6 @@ fi
 
 
 # ======== The Prompt
-export GIT_PS1_SHOWDIRTYSTATE=1
-
-rootColorString=$fg_bold[white]$bg[red]
-currentUser=${USER//pschaaf/}
-
-if [[ -n ${currentUser} ]]; then
-    case ${HOSTNAME}:${UNAME} in
-        *:CYGWIN*)
-            hostColor=$fg_bold[white]$bg[green]
-            ;;
-        *:Darwin*)
-            hostColor=$fg[green]$bg[black]
-            ;;
-        *:Linux*)
-            hostColor=$fg[green]$bg[black]
-            ;;
-        *:Windows*)
-            hostColor=$fg_bold[white]$bg[blue]
-            ;;
-        *:UNKN*|*)
-            hostColor=$fg_bold[white]$bg[black]
-            ;;
-    esac
-fi
-
-if [[ -n ${CONNECTION} ]]; then
-    currentUser=${currentUser}${currentUser:+@}'%m' # add the host machine
-fi
-
-if [[ -n ${currentUser} ]]; then
-    currentUser=" %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%{$reset_color%}"
-fi
-
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
     zrecompile ~/etc/rc/git/git_zshrc.sh && source ~/etc/rc/git/git_zshrc.sh
 else
@@ -306,6 +273,39 @@ function git() {
 
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd updateDirs
+
+export GIT_PS1_SHOWDIRTYSTATE=1
+
+rootColorString=$fg_bold[white]$bg[red]
+currentUser=${USER//pschaaf/}
+
+if [[ -n ${currentUser} -o -n ${CONNECTION} ]]; then
+    case ${HOSTNAME}:${UNAME} in
+        *:CYGWIN*)
+            hostColor=$fg_bold[white]$bg[green]
+            ;;
+        *:Darwin*)
+            hostColor=$fg[green]$bg[black]
+            ;;
+        *:Linux*)
+            hostColor=$fg[green]$bg[black]
+            ;;
+        *:Windows*)
+            hostColor=$fg_bold[white]$bg[blue]
+            ;;
+        *:UNKN*|*)
+            hostColor=$fg_bold[white]$bg[black]
+            ;;
+    esac
+fi
+
+if [[ -n ${CONNECTION} ]]; then
+    currentUser=${currentUser}${currentUser:+@}'%m' # if a remote session, add the host machine
+fi
+
+if [[ -n ${currentUser} ]]; then
+    currentUser=" %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%{$reset_color%}"
+fi
 
 if [[ -n "$HOSTMESSAGE" ]]; then
     HOSTMESSAGE=" $fg[magenta]$bg[black]$HOSTMESSAGE "
