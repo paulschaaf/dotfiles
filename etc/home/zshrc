@@ -10,7 +10,14 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-#type zprof>/dev/null || (zmodload zsh/zprof && echo Running zprof from zshrc) # uncomment to profile startup
+# ======== Profiling
+#echo Sourcing ${(%):-%N}
+if [[ -n "$zprof" ]]; then
+    zmodload zsh/zprof
+    echo Running zprof from ${(%):-%N}
+    unset zprof
+fi
+
 
 # ======== Shell Options
 unsetopt \
@@ -183,6 +190,7 @@ function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 alias whence='whence -ac'
 
 autoload -Uz zed                  && alias fned='zed -f'
+autoload -Uz zrecompile
 
 
 

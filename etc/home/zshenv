@@ -1,6 +1,5 @@
 #@IgnoreInspection BashAddShebang
-# -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'") -*-
-# ; outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..."
+# -*- mode: shell-script; compile-command: (concat "zcompile '" buffer-file-name "'"); outline-regexp: "^[\t ]*#[\t ]+[^=]\\|^# +\\|^[\t ]*..." -*-
 
 # This script is run first by every type of zsh unless the -f option is set. It should contain commands to set the
 # PATH and other important environment variables, but not those that produce output or assume the shell is attached
@@ -12,7 +11,14 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-#zmodload zsh/zprof && echo Running zprof from zshenv # uncomment to profile startup
+# ======== Profiling
+#echo Sourcing ${(%):-%N}
+if [[ -n "$zprof" ]]; then
+    zmodload zsh/zprof
+    echo Running zprof from ${(%):-%N}
+    unset zprof
+fi
+
 
 # ======== Default Settings
 umask 22
@@ -21,16 +27,20 @@ export UNAME=${UNAME:=`uname`}
 alias ifCygwin=false
 alias ifMacOS=false
 alias ifLinux=false
+alias ifMingW32=false
 case ${UNAME} in
     CYGWIN)
         alias ifCygwin=true
-    ;;
+        ;;
     Darwin)
         alias ifMacOS=true
-    ;;
+        ;;
     Linux)
         alias ifLinux=true
-    ;;
+        ;;
+    MINGW32_NT*)
+        alias ifMingW32=true
+        ;;
     *)
     ;;
 esac
@@ -126,24 +136,18 @@ export JAVA18_AMD64_HOME=${JAVA8_HOME}
 
 
 # ======== OS-Specific
-case ${UNAME} in
-    CYGWIN*)
-        zrecompile ~/etc/rc/zshenv.cygwin && source ~/etc/rc/zshenv.cygwin
-        ;;
-    MINGW32_NT*)
-        # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
-        # all slashes, replace semicolons with colons. We can't use cygpath.exe
-        # for this because it collapses all references to $CYGROOT to /, which
-        # doesn't work outside of Cygwin (since $CYGWIN won't be the root
-        # directory)
-        CYGROOT=`echo $CYGROOT | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
-        alias cygpath=${CYGROOT}/bin/cygpath.exe
+ifCygwin && source ~/etc/rc/zshenv.cygwin
+ifMingW32 && (
+    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
+    # all slashes, replace semicolons with colons. We can't use cygpath.exe
+    # for this because it collapses all references to $CYGROOT to /, which
+    # doesn't work outside of Cygwin (since $CYGWIN won't be the root
+    # directory)
+    CYGROOT=`echo $CYGROOT | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+    alias cygpath=${CYGROOT}/bin/cygpath.exe
 
-        fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
-        ;;
-    *)
-        ;;
-esac
+    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
+)
 
 
 # ======== Guidewire
