@@ -155,7 +155,7 @@ autoload -Uz ddu
 # function basename() { echo ${(F)@:t} }
 # function dirname() { echo ${(F)@:h} }
 
-ifMacOS && function find() { [[ $1 == -* ]] && command find . $* || command find $* }
+ifMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
 
 autoload -Uz frotz
 autoload -Uz mkfunction
@@ -354,7 +354,6 @@ zstyle ':zftp:' titlebar true
 zstyle ':completion:*' verbose true
 zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
 
-autoload -Uz compinit
 # if the day of the year == the day the cache was last changed
 # Load and initialize the completion system ignoring insecure directories with a
 # cache time of 20 hours, so it should almost always regenerate the first time a
@@ -365,7 +364,7 @@ if (( $#_comp_files )); then
     compinit -i -C
 else
     compinit -i
-    { zrecompile ~/.zcompdump } &! # run in the background
+    zrecompile ~/.zcompdump
 fi
 unset _comp_files
 

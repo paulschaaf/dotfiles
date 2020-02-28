@@ -13,22 +13,23 @@ while [ -n "$*" ]; do
     shift
 done
 
-local files=${*}
-if [[ -z "$files" ]]; then
+local files=(${@})
+if [[ $#files -eq 0 ]]; then
     files=(~/.zshenv ~/.zlogin ~/.zshrc)
 fi
 
-for src in $files; do
-    local compiled=${src}.zwc
+for src in ${files}; do
     if [[ ! -s ${src} ]]; then
         echo ${0:t}: Can\'t open file ${src}
         return 1
-    elif [[ ! -s ${compiled} || ${src} -nt ${compiled} ]]; then
+    fi
+    local compiled=${src}.zwc
+    [[ ! -s ${compiled} || ${src} -nt ${compiled} ]] && {
         zcompile ${switches} ${src} && echo -n Recompiled ${src}
-        if [[ "$src" =~ ".zshenv$" ||  "$src" =~ ".zshrc$" || "$src" =~ ".zlogin$" ]]; then
+        if [[ "$src" =~ ".zshenv$" ||  "$src" =~ ".zshrc$" || "$src" =~ ".zlogin$" || "$src" =~ ".zprofile$" ]]; then
             echo ". \e[101mLog in again to use the new version.\e[0m"
         else
             echo
         fi
-    fi
+    } &! # run in the background
 done
