@@ -12,7 +12,7 @@
 
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
-if [[ -n "$zprof" ]]; then
+if (( $#zprof )); then
     zmodload zsh/zprof
     echo Running zprof from ${(%):-%N}
     unset zprof
@@ -160,7 +160,7 @@ ifMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command fi
 autoload -Uz frotz
 autoload -Uz mkfunction
 
-if [[ -n ${inIntelliJ} ]]; then
+if (( $#inIntelliJ )); then
     autoload -Uz rg_intellij
     alias rg=rg_intellij
 fi
@@ -243,80 +243,75 @@ bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 
 
 # ======== Remote sessions
-if [[ -n "$SSH_TTY" ]]; then
-    export CONNECTION=ssh
-    colored_connection=${fg[black]/m/;48;5;226m}
-elif [[ -n "$REMOTEHOST" || -n "$REMOTEUSER" ]]; then
-    export CONNECTION=tlnt
-    colored_connection=$fg_bold[red]
-elif [[ -n "$SUDO_USER"  ]]; then
+if (( $#SUDO_USER )); then
     export CONNECTION=sudo
     colored_connection=$fg[magenta]
+elif (( $#SSH_TTY )); then
+    export CONNECTION=ssh
+    colored_connection=${fg[black]/m/;48;5;226m}
+elif (( $#REMOTEHOST || $#REMOTEUSER )); then
+    export CONNECTION=tlnt
+    colored_connection=$fg_bold[red]
 fi
 
-if [[ -n ${colored_connection} ]]; then
-    colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
-fi
+(( $#colored_connection )) && colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
+
 
 
 # ======== The Prompt
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
     zrecompile ~/etc/rc/git/git_zshrc.sh
     source ~/etc/rc/git/git_zshrc.sh
-else
-    function updateGitVars() { : }
+
+    function git() {
+        command git $*
+        echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
+    }
 fi
 
 function updateDirs() {
     dirs=`dirs -p | awk 'NR == 2 {printf "[0;38;5;243m"}; {print}' ORS=' '`
 }
-(( $#dirs )) || updateDirs
-export dirs
-
-function git() {
-    command git $*
-    echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
-}
+(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
 
 autoload -Uz add-zsh-hook
 add-zsh-hook chpwd updateDirs
 
 export GIT_PS1_SHOWDIRTYSTATE=1
 
-rootColorString=$fg_bold[white]$bg[red]
 currentUser=${USER//pschaaf/}
 
-if [[ -n "${currentUser}${CONNECTION}" ]]; then
-    case ${HOSTNAME}:${UNAME} in
-        *:CYGWIN*)
-            hostColor=$fg_bold[white]$bg[green]
-            ;;
-        *:Darwin*)
-            hostColor=$fg[green]$bg[black]
-            ;;
-        *:Linux*)
-            hostColor=$fg[green]$bg[black]
-            ;;
-        *:Windows*)
-            hostColor=$fg_bold[white]$bg[blue]
-            ;;
-        *:UNKN*|*)
-            hostColor=$fg_bold[white]$bg[black]
-            ;;
-    esac
+if (( $#currentUser || $#CONNECTION )); then # unless it's simply pschaaf@localhost
+    if ifRoot; then
+        hostColor=$fg_bold[white]$bg[red]
+    else
+        case ${UNAME}:${HOSTNAME} in
+            CYGWIN*)
+                hostColor=$fg_bold[white]$bg[green]
+                ;;
+            Darwin*)
+                hostColor=$fg[green]$bg[black]
+                ;;
+            Linux*)
+                hostColor=$fg[green]$bg[black]
+                ;;
+            Windows*)
+                hostColor=$fg_bold[white]$bg[blue]
+                ;;
+            *)
+                hostColor=$fg_bold[white]$bg[black]
+                ;;
+        esac
+    fi
+
+    # append the host machine, maybe preceeded by an @
+    (( $#CONNECTION )) && currentUser=${currentUser}${currentUser:+@}'%m'
+
+    currentUser=" %{$hostColor%}${currentUser}%{$reset_color%}"
+    unset hostColor
 fi
 
-if [[ -n ${CONNECTION} ]]; then
-    currentUser=${currentUser}${currentUser:+@}'%m' # if a remote session, add the host machine
-fi
-
-if [[ -n ${currentUser} ]]; then
-    currentUser=" %{%(!.%{$rootColorString%}.%{$hostColor%})%}${currentUser}%{$reset_color%}"
-fi
-
-if [[ -n "$HOSTMESSAGE" ]]; then
-    HOSTMESSAGE=" $fg[magenta]$bg[black]$HOSTMESSAGE "
-fi
+(( $#HOSTMESSAGE )) && HOSTMESSAGE=" $fg_bold[magenta]$bg[black]$HOSTMESSAGE%{$reset_color%}"
 
 PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}%{$reset_color%}
 %T${currentUser}${HOSTMESSAGE} %{$fg_bold[yellow]%}%62>\>>\$dirs%<<%{$reset_color%}

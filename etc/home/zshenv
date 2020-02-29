@@ -13,7 +13,7 @@
 
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
-if [[ -n "$zprof" ]]; then
+if (( $#zprof )); then
     zmodload zsh/zprof
     echo Running zprof from ${(%):-%N}
     unset zprof
@@ -49,7 +49,7 @@ esac
     && alias ifRoot=true \
     || alias ifRoot=false
 
-[[ -n "$CD_TO" ]] && builtin cd "$CD_TO" && unset CD_TO
+(( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
 
 
 
@@ -114,7 +114,7 @@ if [[ -d $java_root ]]; then
         # typeset $javaDigitsHome
         alias java${digits}${suffix}="PATH=\${PATH//\$JAVA_HOME/\$$javaDigitsHome}; JAVA_HOME=\$$javaDigitsHome; whichjava"
     done
-    if [[ -n "$JAVA11_HOME" ]]; then
+    if (( $#JAVA11_HOME )); then
         JAVA_HOME=$JAVA11_HOME
     fi
     unset digits javaDigitsHome suffix
