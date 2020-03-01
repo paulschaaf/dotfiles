@@ -10,6 +10,7 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
+
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
 if (( $#zprof )); then
@@ -53,7 +54,6 @@ setopt \
     share_history
 
 
-
 # ======== Exported Variables
 export ESHELL=$SHELL
 export FCEDIT=zed
@@ -93,23 +93,23 @@ alias ...="pushd ../.."
 alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
-ifMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-ifCygwin && alias open=explorer
-ifLinux && alias open=dolphin
+inMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+inCygwin && alias open=explorer
+inLinux && alias open=dolphin
 alias pd=popd
 alias rm='rm -i'
-ifRoot || alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
+isRoot || alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
 alias vpnc-connect='sudo vpnc-connect'
 alias vpnc-disconnect='sudo vpnc-disconnect'
-ifMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
+inMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 
 # ======== ls Aliases and Functions
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
 export LS_FLAGS=-BCFbhH
-ifMacOS \
+inMacOS \
     && LS_FLAGS="${LS_FLAGS}G" \
     || LS_FLAGS="${LS_FLAGS}${LS_COLORS:+ --color}"
 
@@ -137,16 +137,15 @@ alias path='echoList PATH'
 autoload -Uz rubylib
 
 
-
 # ======== Functions and Aliases
 autoload -Uz alert
 
-ifMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
-ifLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
+inMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
+inLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
 
 autoload -Uz colors && colors
 
-ifMacOS \
+inMacOS \
     && alias df='df -Phl' \
     || autoload -Uz df
 
@@ -155,7 +154,7 @@ autoload -Uz ddu
 # function basename() { echo ${(F)@:t} }
 # function dirname() { echo ${(F)@:h} }
 
-ifMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
+inMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
 
 autoload -Uz frotz
 autoload -Uz mkfunction
@@ -187,11 +186,11 @@ autoload -Uz splitFlac
 function wcat()  { cat $(which $*) }
 function wcd()   { cd $(which $*) }
 function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
-alias whence='whence -ac'
 
+alias whence='whence -ac'
+autoload -Uz whichjava
 autoload -Uz zed                  && alias fned='zed -f'
 autoload -Uz zrecompile
-
 
 
 # ======== Key Bindings
@@ -257,7 +256,6 @@ fi
 (( $#colored_connection )) && colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
 
 
-
 # ======== The Prompt
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
     zrecompile ~/etc/rc/git/git_zshrc.sh
@@ -282,7 +280,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 currentUser=${USER//pschaaf/}
 
 if (( $#currentUser || $#CONNECTION )); then # unless it's simply pschaaf@localhost
-    if ifRoot; then
+    if isRoot; then
         hostColor=$fg_bold[white]$bg[red]
     else
         case ${UNAME}:${HOSTNAME} in
@@ -365,7 +363,6 @@ unset _comp_files
 
 #    unalias  run-help 2>/dev/null && autoload -Uz run-help
 zmodload -i zsh/complist
-
 
 
 # ======== Debugging

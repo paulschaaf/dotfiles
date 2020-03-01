@@ -11,6 +11,7 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
+
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
 if [[ -n "$zprof" ]]; then
@@ -28,4 +29,4 @@ stty start ''   stop   ''
 [ -n "$inIntelliJ" ] && SHLVL=0
 
 zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
-ifCygwin && zrecompile ~/etc/rc/zshenv.cygwin
+inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
