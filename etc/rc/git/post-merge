@@ -1,4 +1,4 @@
 #!/bin/zsh
 
 cd ~
-zrecompile
+~/dotfiles/etc/zshfunctions/zrecompile
