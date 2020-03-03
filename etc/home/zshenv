@@ -92,7 +92,7 @@ if inMacOS; then
 
     export JAVA8_HOME=$JAVA_ROOT/java-8-jdk
     export JAVA11_HOME=$JAVA_ROOT/amazon-corretto-11.jdk/Contents/Home
-elif inLinux
+elsif inLinux
     export JAVA_ROOT=/usr/lib/jvm
 
     export JAVA8_HOME=$JAVA_ROOT/java-8-jdk
