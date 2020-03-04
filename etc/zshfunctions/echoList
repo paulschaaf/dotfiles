@@ -1,5 +1,7 @@
 #!/bin/zsh
 
+# shellcheck disable=SC2168 # "local" is only valid in functions
+
 local listName=$1; shift
 eval local contents=\$${listName}
 
@@ -42,7 +44,7 @@ done
 $ifDebug echo '=====' "listName=$listName"
 $ifDebug echo '=====' "contents=$contents"
 
-$ifZsh echo " ${listName} has type ${(Pt)listName}"
+echo " ${listName} has type ${(Pt)listName}"
 
 # let us know if it's also a function or alias
 local override=`type $1`

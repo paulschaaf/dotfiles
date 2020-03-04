@@ -357,7 +357,7 @@ if (( $#_comp_files )); then
     compinit -i -C
 else
     compinit -i
-    zrecompile ~/.zcompdump
+    { zrecompile ~/.zcompdump } &!
 fi
 unset _comp_files
 

@@ -1,35 +1,36 @@
 #!/bin/zsh
+# shellcheck disable=SC2168 # "local" only valid in functions
 
-switches=()
+local switches=()
 while [ -n "$*" ]; do
-    case $1 in
-        -*)
-            switches=($switches $1)
-            ;;
-        *)
-            break
-            ;;
-    esac
-    shift
+   case $1 in
+      -*)
+         switches=(${switches[@]} ${1})
+         ;;
+      *)
+         break
+         ;;
+   esac
+   shift
 done
 
 local files=(${@})
 if [[ $#files -eq 0 ]]; then
-    files=(~/.zshenv ~/.zlogin ~/.zshrc)
+   files=(~/.zshenv ~/.zlogin ~/.zshrc)
 fi
 
 for src in ${files}; do
-    if [[ ! -s ${src} ]]; then
-        echo ${0:t}: Can\'t open file ${src}
-        return 1
-    fi
-    local compiled=${src}.zwc
-    [[ ! -s ${compiled} || ${src} -nt ${compiled} ]] && {
-        zcompile ${switches} ${src}
-        if [[ "$src" =~ ".zshenv$" ||  "$src" =~ ".zshrc$" || "$src" =~ ".zlogin$" || "$src" =~ ".zprofile$" ]]; then
-            echo "Recompiled ${src}. \e[101mLog in again to use the new version.\e[0m"
-        else
-            echo Recompiled ${src}.
-        fi
-    } &! # run in the background
+   if [[ ! -s ${src} ]]; then
+      echo ${0:t}: Can\'t open file ${src}
+      return 1
+   fi
+   local compiled=${src}.zwc
+   if [[ ! -s ${compiled} || ${src} -nt ${compiled} ]]; then
+      zcompile ${switches} ${src}
+      if [[ "$src" =~ .zshenv$ || "$src" =~ .zshrc$ || "$src" =~ .zlogin$ || "$src" =~ .zprofile$ ]]; then
+         echo Recompiled ${src}. "\e[101mLog in again to use the new version.\e[0m"
+      else
+         echo Recompiled ${src}.
+      fi
+   fi
 done
