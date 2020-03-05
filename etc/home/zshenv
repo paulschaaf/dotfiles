@@ -108,7 +108,7 @@ PATH=${JAVA_HOME}/bin:${PATH}
 
 # ======== OS-Specific
 inCygwin && source ~/etc/rc/zshenv.cygwin
-inMingW32 && (
+if inMingW32; then
     # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
     # all slashes, replace semicolons with colons. We can't use cygpath.exe
     # for this because it collapses all references to $CYGROOT to /, which
@@ -118,7 +118,7 @@ inMingW32 && (
     alias cygpath=${CYGROOT}/bin/cygpath.exe
 
     fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
-)
+fi
 
 
 # ======== Guidewire

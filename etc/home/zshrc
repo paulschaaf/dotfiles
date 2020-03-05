@@ -319,9 +319,12 @@ PS2="(%{$fg_bold[magenta]%}%_%{$reset_color%}) %(!.#.$) "
 
 
 # ======== Guidewire
-# Bootstrap the huge nvm (Node version manager) function
-alias node="nvm install 10.13.0 && unalias node && node"
-alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
+if [[ -s ${NVM_DIR}/nvm.sh ]]; then
+    zrecompile ${NVM_DIR}/nvm.sh
+    # Bootstrap the huge nvm (Node version manager) function
+    alias node="nvm install 10.13.0 && unalias node && node"
+    alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
+fi
 
 
 # ======== Keychain
