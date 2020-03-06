@@ -68,11 +68,11 @@ export HISTSIZE=1000
 export SAVEHIST=1000
 
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESS_TERMCAP_mb=${fg_bold}[green]
-export LESS_TERMCAP_md=${fg_bold}[green]
+export LESS_TERMCAP_mb=${fg_bold[green]}
+export LESS_TERMCAP_md=${fg_bold[green]}
 export LESS_TERMCAP_me=${reset_color}
 export LESS_TERMCAP_se=${reset_color}
-export LESS_TERMCAP_so=${fg_bold}[yellow]
+export LESS_TERMCAP_so=${fg_bold[yellow]}
 export LESS_TERMCAP_ue=${reset_color}
 export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
 export LESSKEY=~/.less_${HOSTNAME}
@@ -95,7 +95,12 @@ alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
-inMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+if inMacOS; then
+    # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
+    atHome \
+        && alias fixterm="printf '\e[3;0;0;1t\e[8;142;100t'" \
+        || alias fixterm="printf '\e[3;0;0;1t\e[8;106;100t'"
+fi
 inCygwin && alias open=explorer
 inLinux && alias open=dolphin
 alias pd=popd
@@ -103,9 +108,6 @@ alias rm='rm -i'
 isRoot || alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
-inLinux && alias vpnc-connect='sudo vpnc-connect'
-inLinux && alias vpnc-disconnect='sudo vpnc-disconnect'
-inMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 
 # ========
@@ -245,13 +247,13 @@ bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 # ======== Remote sessions
 if (( $#SUDO_USER )); then
     export CONNECTION=sudo
-    colored_connection=${fg}[magenta]
+    colored_connection=${fg[magenta]}
 elif (( $#SSH_TTY )); then
     export CONNECTION=ssh
     colored_connection=${fg[black]/m/;48;5;226m}
 elif (( $#REMOTEHOST || $#REMOTEUSER )); then
     export CONNECTION=tlnt
-    colored_connection=${fg_bold}[red]
+    colored_connection=${fg_bold[red]}
 fi
 
 (( $#colored_connection )) && colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
@@ -283,23 +285,23 @@ currentUser=${USER//pschaaf/}
 
 if (( $#currentUser || $#CONNECTION )); then # unless it's simply pschaaf@localhost
     if isRoot; then
-        hostColor=${fg_bold}[white]${bg}[red]
+        hostColor=${fg_bold[white]}${bg[red]}
     else
         case ${UNAME}:${HOSTNAME} in
             CYGWIN*)
-                hostColor=${fg_bold}[white]${bg}[green]
+                hostColor=${fg_bold[white]}${bg[green]}
                 ;;
             Darwin*)
-                hostColor=${fg}[green]${bg}[black]
+                hostColor=${fg[green]}${bg[black]}
                 ;;
             Linux*)
-                hostColor=${fg}[green]${bg}[black]
+                hostColor=${fg[green]}${bg[black]}
                 ;;
             Windows*)
-                hostColor=${fg_bold}[white]${bg}[blue]
+                hostColor=${fg_bold[white]}${bg[blue]}
                 ;;
             *)
-                hostColor=${fg_bold}[white]${bg}[black]
+                hostColor=${fg_bold[white]}${bg[black]}
                 ;;
         esac
     fi

@@ -48,6 +48,10 @@ case ${UNAME} in
     ;;
 esac
 
+(ifconfig | grep -q 192) \
+    && alias atHome=true \
+    || alias atHome=false
+
 (( $UID )) && alias isRoot=false || alias isRoot=true
 
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
