@@ -12,21 +12,23 @@
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 
+# ========
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
-if [[ -n "$zprof" ]]; then
+if (( $#zprof )); then
     zmodload zsh/zprof
     echo Running zprof from ${(%):-%N}
     unset zprof
 fi
 
 
+# ========
 # ======== Terminal Settings
 export TERM=xterm-256color
-
 stty start ''   stop   ''
 
-[ -n "$inIntelliJ" ] && SHLVL=0
+(( $#inIntelliJ )) && SHLVL=0
 
 zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
 inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
+inMacOS && path=(~/bin ~/bin/quick-ssh ${path}) # fix the order after Mac's /etc/zprofile screws it up

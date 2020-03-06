@@ -45,7 +45,6 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
 fi
 
 ssh_socket=~/tmp/cc-fwd-socket
-#passIcon=/gw-dev/icons/`echo $GW_PRODUCT | sed 's/.*/\U\0/'`_favicon.ico
 passIcon=/gw-dev/icons/$(echo $GW_PRODUCT | sed 's/.*/\U\0/')_favicon.ico
 #failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns

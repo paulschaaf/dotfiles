@@ -12,6 +12,7 @@
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 
+# ========
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
 if (( $#zprof )); then
@@ -21,6 +22,7 @@ if (( $#zprof )); then
 fi
 
 
+# ========
 # ======== Default Settings
 umask 22
 export UNAME=${UNAME:=`uname`}
@@ -46,27 +48,26 @@ case ${UNAME} in
     ;;
 esac
 
-[[ $UID -eq 0 ]] \
-    && alias isRoot=true \
-    || alias isRoot=false
+(( $UID )) && alias isRoot=false || alias isRoot=true
 
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
 
 
+# ========
 # ======== Exported Variables
 export EDITOR=/usr/bin/emacs
 inMacOS && EDITOR=/usr/local/bin/emacs
 isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
-[[ $USER != pschaaf ]] && alias emacs='emacs -u pschaaf'
+
+[[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
 export EMAIL=paul.schaaf@gmail.com
 [[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
-export LC_ALL=en_US.UTF-8
 inLinux && export IDEA_ROOT=/opt
-export P4_HOME=/opt/p4v
-export P4CLIENT=pschaaf_satori_1124
-export SCREENDIR=${SCREENDIR:=${HOME}/tmp}
+export LC_ALL=en_US.UTF-8
+export SCREENDIR=${SCREENDIR:=~/tmp}
 
 
+# ========
 # ======== Paths
 # Keep only the first occurrence of duplicates
 typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH PATH path RUBYLIB
@@ -75,37 +76,33 @@ export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
 CLASSPATH=${CLASSPATH:=.}
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/lib:/usr/lib:${HOME}/lib
+if inMacOS; then
+    export JAVA_ROOT=/Library/Java/JavaVirtualMachines
+    export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
+    export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
+elif inLinux; then
+    export JAVA_ROOT=/usr/lib/jvm
+    export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
+    export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
+    export JAVA18_AMD64_HOME=${JAVA8_HOME}
+    export JAVA11_HOME=${JAVA_ROOT}/java-11-amazon-corretto
+fi
+
+export JAVA_HOME=${JAVA11_HOME}
+
+LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 path=(
-    ${HOME}/bin
-    ${path}
+    ~/bin
     ~/bin/quick-ssh
+    ${JAVA_HOME}/bin
+    ${path}
     /usr/X11R6/bin
     /opt/git-gw
 )
-RUBYLIB=${RUBYLIB}:${HOME}/src/ruby:${HOME}/bin
+RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
 
-# ======== Java
-if inMacOS; then
-    export JAVA_ROOT=/Library/Java/JavaVirtualMachines
-
-    export JAVA8_HOME=$JAVA_ROOT/java-8-jdk
-    export JAVA11_HOME=$JAVA_ROOT/amazon-corretto-11.jdk/Contents/Home
-else if inLinux
-    export JAVA_ROOT=/usr/lib/jvm
-
-    export JAVA8_HOME=$JAVA_ROOT/java-8-jdk
-    export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
-    export JAVA18_AMD64_HOME=${JAVA8_HOME}
-    export JAVA11_HOME=$JAVA_ROOT/java-11-amazon-corretto
-fi
-
-export JAVA_HOME=$JAVA11_HOME
-
-PATH=${JAVA_HOME}/bin:${PATH}
-
-
+# ========
 # ======== OS-Specific
 inCygwin && source ~/etc/rc/zshenv.cygwin
 if inMingW32; then
@@ -114,25 +111,28 @@ if inMingW32; then
     # for this because it collapses all references to $CYGROOT to /, which
     # doesn't work outside of Cygwin (since $CYGWIN won't be the root
     # directory)
-    CYGROOT=`echo $CYGROOT | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
     alias cygpath=${CYGROOT}/bin/cygpath.exe
 
     fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
 fi
 
 
+# ========
 # ======== Guidewire
 if [[ -f ~/dotfiles/secrets ]]; then
     source ~/dotfiles/secrets
 fi
-export ARTIFACTORY_USERNAME=$USER
-export TEAMCITY_USER=$USER
+export ARTIFACTORY_USERNAME=${USER}
+export P4_HOME=/opt/p4v
+export P4CLIENT=pschaaf_satori_1124
+export TEAMCITY_USER=${USER}
 
 
+# ========
 # ======== Debugging
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
-# against the left margin on a line by itself. Don't forget that any
-# edits are lost if this file is re-generated.
+# against the left margin on a line by itself.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC

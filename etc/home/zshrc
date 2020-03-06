@@ -11,6 +11,7 @@
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 
+# ========
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
 if (( $#zprof )); then
@@ -20,6 +21,7 @@ if (( $#zprof )); then
 fi
 
 
+# ========
 # ======== Shell Options
 unsetopt \
     beep \
@@ -54,39 +56,39 @@ setopt \
     share_history
 
 
+# ========
 # ======== Exported Variables
-export ESHELL=$SHELL
+export ESHELL=${SHELL}
 export FCEDIT=zed
-export FIGNORE=.class:.o:\~:.stackdump:dump.txt:nohup.out
-if (( ! EUID )); then
-  HISTFILE=~/.history_root
-else
-  HISTFILE=~/.history
-fi
+export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
+isRoot \
+    && export HISTFILE=~/.history_root \
+    || export HISTFILE=~/.history
+export GREP_OPTIONS='--extended-regexp --color'
 export HISTSIZE=1000
 export SAVEHIST=1000
-export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESS_TERMCAP_mb=$fg_bold[green]
-export LESS_TERMCAP_md=$fg_bold[green]
-export LESS_TERMCAP_me=$reset_color
-export LESS_TERMCAP_se=$reset_color
-export LESS_TERMCAP_so=$fg_bold[yellow]
-export LESS_TERMCAP_ue=$reset_color
-export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
 
-export LESSKEY=${HOME}/.less_${HOSTNAME}
+export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESS_TERMCAP_mb=${fg_bold}[green]
+export LESS_TERMCAP_md=${fg_bold}[green]
+export LESS_TERMCAP_me=${reset_color}
+export LESS_TERMCAP_se=${reset_color}
+export LESS_TERMCAP_so=${fg_bold}[yellow]
+export LESS_TERMCAP_ue=${reset_color}
+export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
+export LESSKEY=~/.less_${HOSTNAME}
+
 export MANPAGER=less
-export NVM_DIR=${HOME}/.nvm
+export NVM_DIR=~/.nvm
 export PAGER=less
 export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
-# export USE_COLOR=true
 
-# Any punctuation char in WORDCHARS is considered a part of the adjacent word.
-# The remaining punctuation chars are considered separate words, regardless of
-# what may be adjacent:  !"#&'()+,./:;<=>?@[]`{|}
+# Any punctuation char in WORDCHARS is considered a part of the adjacent word. The remaining punctuation chars are
+# considered separate words, regardless of what may be adjacent.
 export WORDCHARS='|*?-~\\$%^'
 
 
+# ========
 # ======== Aliases
 alias ..='pushd ..'
 alias ...="pushd ../.."
@@ -101,11 +103,12 @@ alias rm='rm -i'
 isRoot || alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
-alias vpnc-connect='sudo vpnc-connect'
-alias vpnc-disconnect='sudo vpnc-disconnect'
+inLinux && alias vpnc-connect='sudo vpnc-connect'
+inLinux && alias vpnc-disconnect='sudo vpnc-disconnect'
 inMacOS && alias work="printf '\e[3;0;0;1t\e[8;106;100t'"
 
 
+# ========
 # ======== ls Aliases and Functions
 export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
 export LS_FLAGS=-BCFbhH
@@ -126,17 +129,18 @@ alias llda='lsda -l'
 autoload -Uz lsf
 
 
+# ========
 # ======== Var and List Processing
 autoload -Uz echoList
 autoload -Uz echoVar
 alias classpath='echoList CLASSPATH'
-alias grep='grep --extended-regexp --color'
 alias fpath='echoList FPATH'
 alias libpath='echoList LD_LIBRARY_PATH'
 alias path='echoList PATH'
 autoload -Uz rubylib
 
 
+# ========
 # ======== Functions and Aliases
 autoload -Uz alert
 
@@ -193,6 +197,7 @@ autoload -Uz zed                  && alias fned='zed -f'
 autoload -Uz zrecompile
 
 
+# ========
 # ======== Key Bindings
 bindkey -e # Use Emacs key bindings
 
@@ -235,27 +240,24 @@ bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
 bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 
-#     if [[ -z "$CONNECTION" ]]; then
-#         #bindkey -r "\C-h" 	# remove binding
-#         #bindkey "\C-h\C-k" describe`-key-briefly	#
-#     fi
 
-
+# ========
 # ======== Remote sessions
 if (( $#SUDO_USER )); then
     export CONNECTION=sudo
-    colored_connection=$fg[magenta]
+    colored_connection=${fg}[magenta]
 elif (( $#SSH_TTY )); then
     export CONNECTION=ssh
     colored_connection=${fg[black]/m/;48;5;226m}
 elif (( $#REMOTEHOST || $#REMOTEUSER )); then
     export CONNECTION=tlnt
-    colored_connection=$fg_bold[red]
+    colored_connection=${fg_bold}[red]
 fi
 
 (( $#colored_connection )) && colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
 
 
+# ========
 # ======== The Prompt
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
     zrecompile ~/etc/rc/git/git_zshrc.sh
@@ -281,23 +283,23 @@ currentUser=${USER//pschaaf/}
 
 if (( $#currentUser || $#CONNECTION )); then # unless it's simply pschaaf@localhost
     if isRoot; then
-        hostColor=$fg_bold[white]$bg[red]
+        hostColor=${fg_bold}[white]${bg}[red]
     else
         case ${UNAME}:${HOSTNAME} in
             CYGWIN*)
-                hostColor=$fg_bold[white]$bg[green]
+                hostColor=${fg_bold}[white]${bg}[green]
                 ;;
             Darwin*)
-                hostColor=$fg[green]$bg[black]
+                hostColor=${fg}[green]${bg}[black]
                 ;;
             Linux*)
-                hostColor=$fg[green]$bg[black]
+                hostColor=${fg}[green]${bg}[black]
                 ;;
             Windows*)
-                hostColor=$fg_bold[white]$bg[blue]
+                hostColor=${fg_bold}[white]${bg}[blue]
                 ;;
             *)
-                hostColor=$fg_bold[white]$bg[black]
+                hostColor=${fg_bold}[white]${bg}[black]
                 ;;
         esac
     fi
@@ -318,6 +320,7 @@ PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}%{$reset_color%}
 PS2="(%{$fg_bold[magenta]%}%_%{$reset_color%}) %(!.#.$) "
 
 
+# ========
 # ======== Guidewire
 if [[ -s ${NVM_DIR}/nvm.sh ]]; then
     zrecompile ${NVM_DIR}/nvm.sh
@@ -327,15 +330,17 @@ if [[ -s ${NVM_DIR}/nvm.sh ]]; then
 fi
 
 
+# ========
 # ======== Keychain
 # Let's re-use ssh-agent and/or gpg-agent between logins
-# /usr/bin/keychain ${HOME}/.ssh/id_rsa ${HOME}/.ssh/id_dsa
-# source ${HOME}/.keychain/$HOSTNAME-sh
+# /usr/bin/keychain ~/.ssh/id_rsa ~/.ssh/id_dsa
+# source ~/.keychain/$HOSTNAME-sh
 #if [[ $UID -gt 0 ]]; then  # if I'm not root
 #    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
 #fi
 
 
+# ========
 # ======== Zsh Compinstall
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' file-sort name
@@ -348,7 +353,7 @@ zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':zftp:' titlebar true
 zstyle ':completion:*' verbose true
-zstyle  :compinstall filename "${HOME}/etc/rc/$HOST.zsh"
+zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
 
 # if the day of the year == the day the cache was last changed
 # Load and initialize the completion system ignoring insecure directories with a
@@ -368,10 +373,10 @@ unset _comp_files
 zmodload -i zsh/complist
 
 
+# ========
 # ======== Debugging
 # Move this heredoc around in the file to temporarily disable sections
 # of code. Make sure to keep the opening tag first, and the closing tag
-# against the left margin on a line by itself. Don't forget that any
-# edits are lost if this file is re-generated.
+# against the left margin on a line by itself.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC
