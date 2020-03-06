@@ -64,7 +64,6 @@ export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
 isRoot \
     && export HISTFILE=~/.history_root \
     || export HISTFILE=~/.history
-export GREP_OPTIONS='--extended-regexp --color'
 export HISTSIZE=1000
 export SAVEHIST=1000
 
@@ -95,6 +94,7 @@ alias ...="pushd ../.."
 alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
+alias grep='grep --extended-regexp --color'
 inMacOS && alias home="printf '\e[3;0;0;1t\e[8;142;100t'" # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 inCygwin && alias open=explorer
 inLinux && alias open=dolphin
