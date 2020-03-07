@@ -49,9 +49,11 @@ case ${UNAME} in
     ;;
 esac
 
-(/sbin/ifconfig | egrep -q ' 192.168.') \
-    && alias atHome=true \
-    || alias atHome=false
+if inMacOS; then
+    (/sbin/ifconfig | egrep -q ' 192.168.') \
+        && alias atHome=true \
+        || alias atHome=false
+fi
 
 (( $UID )) && alias isRoot=false || alias isRoot=true
 
