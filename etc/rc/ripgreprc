@@ -22,3 +22,4 @@ tti:include:xml
 tix:include:xml
 --type-add
 ttx:include:xml
+--color=always

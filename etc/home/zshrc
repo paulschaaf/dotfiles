@@ -58,9 +58,12 @@ setopt \
 
 # ========
 # ======== Exported Variables
+autoload -Uz colors && colors
+
 export ESHELL=${SHELL}
 export FCEDIT=zed
 export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
+
 isRoot \
     && export HISTFILE=~/.history_root \
     || export HISTFILE=~/.history
@@ -98,14 +101,13 @@ alias grep='grep --extended-regexp --color'
 if inMacOS; then
     # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
     atHome \
-        && alias fixterm="printf '\e[3;0;0;1t\e[8;142;100t'" \
-        || alias fixterm="printf '\e[3;0;0;1t\e[8;106;100t'"
+        && printf '\e[3;0;0;1t\e[8;142;100t' \
+        || printf '\e[3;0;0;1t\e[8;106;100t'
 fi
 inCygwin && alias open=explorer
 inLinux && alias open=dolphin
 alias pd=popd
 alias rm='rm -i'
-isRoot || alias root='sudo -u root ZDOTDIR=~pschaaf zsh -il'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
 
@@ -148,8 +150,6 @@ autoload -Uz alert
 
 inMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
 inLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
-
-autoload -Uz colors && colors
 
 inMacOS \
     && alias df='df -Phl' \
