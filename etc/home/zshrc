@@ -283,7 +283,7 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 
 currentUser=${USER//pschaaf/}
 
-if (( $#currentUser || $#CONNECTION )); then # unless it's simply pschaaf@localhost
+if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
     if isRoot; then
         hostColor=${fg_bold[white]}${bg[red]}
     else
