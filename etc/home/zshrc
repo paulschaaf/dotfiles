@@ -23,37 +23,51 @@ fi
 
 # ========
 # ======== Shell Options
-unsetopt \
-    beep \
-    clobber \
-    flow_control \
-    hup \
-    notify \
-    print_exit_value \
-    rm_star_silent
 
-setopt \
-    auto_list \
-    auto_menu \
-    auto_param_slash \
-    auto_pushd \
-    auto_remove_slash \
-    bang_hist \
-    correct \
-    extended_history \
-    function_argzero \
-    hash_cmds \
-    hash_dirs \
-    hist_find_no_dups \
-    hist_ignore_dups \
-    hist_ignore_space \
-    hist_no_functions \
-    hist_reduce_blanks \
-    ignore_eof \
-    inc_append_history \
-    prompt_subst \
-    pushd_silent \
-    share_history
+# Changing directories
+setopt auto_pushd                # Make cd push the old directory onto the directory stack
+setopt pushd_silent              # Do not print the directory stack after pushd or popd.
+
+# Completion
+setopt auto_list                 # Automatically list choices on an ambiguous completion.
+setopt auto_menu                 # Automatically use menu completion after the second consecutive request for completion, for example by pressing the tab key repeatedly
+setopt auto_param_slash          # If a parameter is completed whose content is the name of a directory, then add a trailing slash instead of a space.
+setopt auto_remove_slash         # When the last character resulting from a completion is a slash and the next character typed is a word delimiter, a slash, or a character that ends a command (such as a semicolon or an ampersand), remove the slash.
+
+# Expansion and Globbing
+
+# History
+setopt bang_hist                 # Perform textual history expansion, csh-style, treating the character ‘!’ specially.
+setopt extended_history          # Write the history file in the ":start:elapsed;command" format.
+setopt hist_find_no_dups         # Do not display a line previously found.
+setopt hist_ignore_all_dups      # Delete old recorded entry if new entry is a duplicate.
+setopt hist_ignore_dups          # Don't record an entry that was just recorded again.
+setopt hist_ignore_space         # Don't record an entry starting with a space.
+setopt hist_no_functions         # Remove function definitions from the history list.
+setopt hist_reduce_blanks        # Remove superfluous blanks before recording entry.
+setopt hist_save_no_dups         # Don't write duplicate entries in the history file.
+setopt hist_verify               # Don't execute immediately upon history expansion.
+setopt inc_append_history        # Write to the history file immediately, not when the shell exits.
+setopt share_history             # Share history between all sessions.
+
+# Initialisation
+
+
+unsetopt beep                    #
+unsetopt clobber                 #
+unsetopt flow_control            #
+unsetopt hup                     #
+unsetopt notify                  #
+unsetopt print_exit_value        #
+unsetopt rm_star_silent          #
+
+setopt correct                   #
+setopt function_argzero          #
+setopt hash_cmds                 #
+setopt hash_dirs                 #
+setopt ignore_eof                #
+setopt prompt_subst              #
+
 
 
 # ========
@@ -67,8 +81,8 @@ export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
 isRoot \
     && export HISTFILE=~/.history_root \
     || export HISTFILE=~/.history
-export HISTSIZE=1000
-export SAVEHIST=1000
+export HISTSIZE=3000
+export SAVEHIST=$HISTSIZE
 
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 export LESS_TERMCAP_mb=${fg_bold[green]}
