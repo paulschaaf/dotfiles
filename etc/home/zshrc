@@ -25,14 +25,17 @@ fi
 # ======== Shell Options
 
 # Changing directories
+setopt auto_cd                   # If a command can’t be executed as normal but is the name of a directory, cd to it.
 setopt auto_pushd                # Make cd push the old directory onto the directory stack
 setopt pushd_silent              # Do not print the directory stack after pushd or popd.
+setopt pushd_to_home             # Have pushd with no arguments act like ‘pushd $HOME’.
 
 # Completion
 setopt auto_list                 # Automatically list choices on an ambiguous completion.
 setopt auto_menu                 # Automatically use menu completion after the second consecutive request for completion, for example by pressing the tab key repeatedly
 setopt auto_param_slash          # If a parameter is completed whose content is the name of a directory, then add a trailing slash instead of a space.
 setopt auto_remove_slash         # When the last character resulting from a completion is a slash and the next character typed is a word delimiter, a slash, or a character that ends a command (such as a semicolon or an ampersand), remove the slash.
+setopt glob_complete             # When the current word has a glob pattern, cycle through matches rather than inserting all possibilities.
 
 # Expansion and Globbing
 
@@ -52,22 +55,34 @@ setopt share_history             # Share history between all sessions.
 
 # Initialisation
 
+# Input/Outut
+unsetopt clobber                 # Require ‘>!’ or ‘>|’ to truncate a file.
+setopt correct                   # Try to correct the spelling of commands.
+unsetopt flow_control            # Disable output flow control via start/stop characters.
+setopt hash_cmds                 # Note the location of each command the first time it is executed to avoid future path searches.
+setopt hash_dirs                 # Hash the directory containing a command, as well as all directories that occur earlier in the path.
+setopt ignore_eof                # Do not exit on end-of-file. Require the use of exit or logout instead.
+setopt interactive_comments      # Allow comments even in interactive shells.
+unsetopt print_exit_value        # Do not print the exit value of programs with non-zero exit status.
+unsetopt rm_star_silent          # Query the user before executing ‘rm *’ or ‘rm path/*’.
 
-unsetopt beep                    #
-unsetopt clobber                 #
-unsetopt flow_control            #
-unsetopt hup                     #
-unsetopt notify                  #
-unsetopt print_exit_value        #
-unsetopt rm_star_silent          #
+# Job Control
+unsetopt hup                     # Do not send the HUP signal to running jobs when the shell exits.
+unsetopt notify                  # Report the status of background jobs immediately, rather than waiting until the next prompt.
 
-setopt correct                   #
-setopt function_argzero          #
-setopt hash_cmds                 #
-setopt hash_dirs                 #
-setopt ignore_eof                #
-setopt prompt_subst              #
+# Prompting
+setopt prompt_subst              # Perform parameter expansion, command substitution and arithmetic expansion in prompts.
 
+# Scripts and Functions
+setopt eval_lineno               # Line numbers of expressions evaluated using the builtin eval are tracked separately of the enclosing environment.
+setopt function_argzero          # Set $0 temporarily to the name of the executing function/script.
+
+# Shell Emulation
+
+# Shell State
+
+# Zle
+unsetopt beep                    # Do not beep on error in ZLE.
 
 
 # ========
@@ -162,8 +177,10 @@ autoload -Uz rubylib
 # ======== Functions and Aliases
 autoload -Uz alert
 
-inMacOS && [[ -s /usr/local/etc/profile.d/autojump.sh ]] && source /usr/local/etc/profile.d/autojump.sh
-inLinux && [[ -s /etc/profile.d/autojump.sh ]] && source /etc/profile.d/autojump.sh
+inMacOS && autojump=/usr/local/etc/profile.d/autojump.sh
+inLinux && autojump=/etc/profile.d/autojump.sh
+[[ -s $autojump ]] && source $autojump
+unset autojump
 
 inMacOS \
     && alias df='df -Phl' \
@@ -189,9 +206,7 @@ function pcd() { cd "$@" && popd +1 2>/dev/null }
 
 # cd to the specified directory, or if it's a file, to the containing directory
 function pushd() {
-    if [[ -z "$1" ]]; then
-        builtin pushd
-    elif [[ -f "$1" ]]; then
+    if [[ -f "$1" ]]; then
         builtin pushd ${1:h}
     else
         builtin pushd ${1}
