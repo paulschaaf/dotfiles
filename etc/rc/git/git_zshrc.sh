@@ -117,7 +117,7 @@ updateGitVars () {
     if [ -z "$GIT_SUPER_STATUS" -o "$GIT_BRANCH" = ":" ]; then
         unset GIT_STATUS
     else
-        GIT_STATUS="$GIT_SUPER_STATUS  ${fg_bold[grey]}`git config branch.$GIT_BRANCH.description`
+        GIT_STATUS="$GIT_SUPER_STATUS  ${fg_bold[grey]}`git config branch.$GIT_BRANCH.description`${reset_color}
 "
     fi
     export GIT_REPO=`git config --get remote.origin.url | sed 's_.*/\(.*\)\.git_\1_g'`

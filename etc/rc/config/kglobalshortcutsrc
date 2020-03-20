@@ -3,6 +3,13 @@ _k_friendly_name=Activity Manager
 switch-to-activity-2ee8946c-326b-4526-9659-6ef7b3f48aec=none,none,Switch to activity "Default"
 switch-to-activity-5d798a73-4328-4547-8c97-91b359e2d7b0=none,none,Switch to activity "Default"
 
+[Clementine]
+_k_friendly_name=Clementine
+next_track=,none,Next track
+play_pause=,none,Play/Pause
+prev_track=,none,Previous track
+stop=,none,Stop
+
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
 Switch to Next Keyboard Layout=Ctrl+Alt+K,none,Switch to Next Keyboard Layout
@@ -316,7 +323,7 @@ _launch=,Meta+E,Dolphin
 
 [org.kde.spectacle.desktop]
 ActiveWindowScreenShot=Meta+Print,Meta+Print,Capture Active Window
-CurrentMonitorScreenShot=,,Capture Current Monitor
+CurrentMonitorScreenShot=,none,Capture Current Monitor
 FullScreenScreenShot=Shift+Print,Shift+Print,Capture Entire Desktop
 RectangularRegionScreenShot=none,Meta+Shift+Print,Capture Rectangular Region
 _k_friendly_name=Spectacle

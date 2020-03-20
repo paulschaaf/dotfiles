@@ -276,22 +276,22 @@ bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 # ======== Remote sessions
 if (( $#SUDO_USER )); then
     export CONNECTION=sudo
-    colored_connection=${fg[magenta]}
+    colored_connection=%F{magenta}
 elif (( $#SSH_TTY )); then
     export CONNECTION=ssh
-    colored_connection=${fg[black]/m/;48;5;226m}
+    colored_connection=%F{black}%K{226}
 elif (( $#REMOTEHOST || $#REMOTEUSER )); then
     export CONNECTION=tlnt
-    colored_connection=${fg_bold[red]}
+    colored_connection=%B%F{red}
 fi
 
-(( $#colored_connection )) && colored_connection=" %{$colored_connection%}${CONNECTION}%{$reset_color%}"
+(( $#colored_connection )) && colored_connection=' '$colored_connection${CONNECTION}%b%f%k
 
 
 # ========
 # ======== The Prompt
 if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
-    zrecompile ~/etc/rc/git/git_zshrc.sh
+    zrecompile -U ~/etc/rc/git/git_zshrc.sh
     source ~/etc/rc/git/git_zshrc.sh
 
     function git() {
@@ -301,7 +301,7 @@ if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
 fi
 
 function updateDirs() {
-    dirs=`dirs -p | awk 'NR == 2 {printf "[0;38;5;243m"}; {print}' ORS=' '`
+    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
 }
 (( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
 
@@ -314,23 +314,23 @@ currentUser=${USER//pschaaf/}
 
 if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
     if isRoot; then
-        hostColor=${fg_bold[white]}${bg[red]}
+        hostColor=%B%F{white}%K{red}
     else
         case ${UNAME}:${HOSTNAME} in
             CYGWIN*)
-                hostColor=${fg_bold[white]}${bg[green]}
+                hostColor=%B%F{white}%K{green}
                 ;;
             Darwin*)
-                hostColor=${fg[green]}${bg[black]}
+                hostColor=%F{green}%K{black}
                 ;;
             Linux*)
-                hostColor=${fg[green]}${bg[black]}
+                hostColor=%F{green}%K{black}
                 ;;
             Windows*)
-                hostColor=${fg_bold[white]}${bg[blue]}
+                hostColor=%B%F{white}%K{blue}
                 ;;
             *)
-                hostColor=${fg_bold[white]}${bg[black]}
+                hostColor=%B%F{white}%K{black}
                 ;;
         esac
     fi
@@ -338,24 +338,24 @@ if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply p
     # append the host machine, maybe preceeded by an @
     (( $#CONNECTION )) && currentUser=${currentUser}${currentUser:+@}'%m'
 
-    currentUser=" %{$hostColor%}${currentUser}%{$reset_color%}"
+    currentUser=' '$hostColor${currentUser}%b%f%k
     unset hostColor
 fi
 
-(( $#HOSTMESSAGE )) && HOSTMESSAGE=" $fg_bold[magenta]$bg[black]$HOSTMESSAGE%{$reset_color%}"
+(( $#HOSTMESSAGE )) && HOSTMESSAGE=" %B%F{magenta}%K{black}$HOSTMESSAGE%k%f%b"
 
-PS1="%{[4;38;5;235m%}\${(l.\${COLUMNS}.. .)}%{$reset_color%}
-%T${currentUser}${HOSTMESSAGE} %{$fg_bold[yellow]%}%62>\>>\$dirs%<<%{$reset_color%}
-\$GIT_STATUS%2(L.%{$fg_bold[cyan]%}%L_.)%{$fg_no_bold[cyan]%}%!%{$reset_color%}${colored_connection} \$GW_PROMPT%(!.#.$) "
+PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
+%T${currentUser}${HOSTMESSAGE} %F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
+\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(?..%B%K{red}-%?%k%b )%(!.#.$) "
 
-PS2="(%{$fg_bold[magenta]%}%_%{$reset_color%}) %(!.#.$) "
+PS2="(%F{magenta}%_%f) %(!.#.$) "
 
 
 # ========
 # ======== Guidewire
 if [[ -s ${NVM_DIR}/nvm.sh ]]; then
-    zrecompile ${NVM_DIR}/nvm.sh
-    # Bootstrap the huge nvm (Node version manager) function
+    zrecompile -U ${NVM_DIR}/nvm.sh
+    # Bootstrap the enormous nvm (Node version manager) function
     alias node="nvm install 10.13.0 && unalias node && node"
     alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
 fi
@@ -363,12 +363,10 @@ fi
 
 # ========
 # ======== Keychain
-# Let's re-use ssh-agent and/or gpg-agent between logins
-# /usr/bin/keychain ~/.ssh/id_rsa ~/.ssh/id_dsa
-# source ~/.keychain/$HOSTNAME-sh
-#if [[ $UID -gt 0 ]]; then  # if I'm not root
-#    eval `keychain --eval --agents ssh ~/.ssh/id_rsa`
-#fi
+# Start or connect to the existing ssh-agent and/or gpg-agent
+if inLinux && (( ! $#SSH_AGENT_PID )); then
+     isRoot || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
+fi
 
 
 # ========
@@ -386,7 +384,6 @@ zstyle ':zftp:' titlebar true
 zstyle ':completion:*' verbose true
 zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
 
-# if the day of the year == the day the cache was last changed
 # Load and initialize the completion system ignoring insecure directories with a
 # cache time of 20 hours, so it should almost always regenerate the first time a
 # shell is opened each day.
@@ -396,7 +393,7 @@ if (( $#_comp_files )); then
     compinit -i -C
 else
     compinit -i
-    { zrecompile ~/.zcompdump } &!
+    { zrecompile -U ~/.zcompdump } &!
 fi
 unset _comp_files
 
@@ -406,8 +403,7 @@ zmodload -i zsh/complist
 
 # ========
 # ======== Debugging
-# Move this heredoc around in the file to temporarily disable sections
-# of code. Make sure to keep the opening tag first, and the closing tag
-# against the left margin on a line by itself.
+# Move this heredoc around in the file to temporarily disable sections of code. Make sure to
+# keep the opening tag first, and the closing tag against the left margin on a line by itself.
 : <<DEBUG_NO_EXEC
 DEBUG_NO_EXEC

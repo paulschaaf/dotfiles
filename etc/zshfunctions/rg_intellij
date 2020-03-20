@@ -1,16 +1,15 @@
 #!/bin/zsh
 
 command rg --no-heading --column ${*} | sed -E "
-    # prepend PWD to all relative paths
+    # insert a space between the column number and the matching text
+    s_(.*[0-9]+\[0m):_\\1 _;
+
+    # prepend PWD to all relative paths (those without a leading /)
     s_^([^/])_${PWD}/\\1_;
 
     # replace all occurrences of /./ with /
     s_/\\./_/_;
 
-    ${GW_PLATFORM:+s_(:[0-9:]+)_ \\1_; # if in GW Studio add a space after the filename}
-
     # prepend file:// to each absolute path so it appears as a link
     s_^/_file:///_;
-
-    s_(:[0-9]+:[0-9]+):_\\1 _; # insert a space between the URL and the match
 "
