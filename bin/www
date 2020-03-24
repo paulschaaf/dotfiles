@@ -1,3 +1,7 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-open -a "Google Chrome" $@
+if inMacOS; then
+    open -a "Google Chrome" "$@"
+else
+    google-chrome-stable "$@"
+fi

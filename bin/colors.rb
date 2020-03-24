@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-LOOKUP = nil
+LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
 
 abort "ERROR: Color #{LOOKUP} is out of range. It must be between 0 and 255!" if LOOKUP and !(0..255).member? LOOKUP
 
@@ -76,7 +76,6 @@ if ARGV[0] == "--rainbows"
 
 STRING
 
-
 elsif ARGV[0] == "--24"
   # truecolor
   [BG].each { |ground|
@@ -84,7 +83,7 @@ elsif ARGV[0] == "--24"
       (0..23).each { |green|
         puts
         [redSet, redSet + 1].each {|red|
-          printf("%s%02i%s%02i#{CLR}", effect(101), red, effect(42), green)
+          printf("%s%02i%s%02i#{CLR}", effect(91), red, effect(92), green)
           (0..23).each { |blue|
             printf " \e[#{ground};2;#{red}0;#{green}0;#{blue}0m%02i", blue
           }
@@ -97,7 +96,7 @@ elsif ARGV[0] == "--24"
 
   [FG, BG].each { |ground|
     printf(ground == FG ? '  Foreground: ' : '  Background: ')
-    puts "echo $'\\e[#{ground};2;#{UNDERLINE}R#{CLR}0;#{UNDERLINE}G#{CLR}0;#{UNDERLINE}B#{CLR}0mSome Text'"
+    puts "echo $'\\e[#{ground};2;#{UNDERLINE}rr#{CLR}0;#{UNDERLINE}gg#{CLR}0;#{UNDERLINE}bb#{CLR}0mSome Text'"
   }
 
 elsif ARGV[0] == "--sort"
@@ -126,8 +125,6 @@ Usage: colors.rb [--24] [--sort] [number]
 STRING
 
 else
-  LOOKUP = ARGV[0] ? ARGV[0].to_i : nil
-
   section('EFFECTS', '(0..9, add 20 to unset effect)') {
     # print effect names
     effects = {0 => '-unset all-', 1 => 'Bold', 2 => '[Dim]', 3 => '[Italic]', 4 => 'Underline', 5 => 'Blink', 6 => '[Fast blink]', 7 => 'Inverse', 8 => '[Concealed]', 9 => '[Strikeout]'}

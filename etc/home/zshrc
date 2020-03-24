@@ -100,13 +100,18 @@ export HISTSIZE=3000
 export SAVEHIST=$HISTSIZE
 
 export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-export LESS_TERMCAP_mb=${fg_bold[green]}
-export LESS_TERMCAP_md=${fg_bold[green]}
-export LESS_TERMCAP_me=${reset_color}
-export LESS_TERMCAP_se=${reset_color}
-export LESS_TERMCAP_so=${fg_bold[yellow]}
-export LESS_TERMCAP_ue=${reset_color}
-export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # insert underline markup
+
+# LESS_TERMCAP_DEBUG=true man find        # opens manpage showing markup codes
+export LESS_TERMCAP_mb=${fg_bold[cyan]}   # start blink
+export LESS_TERMCAP_md=${fg_bold[green]}  # start bold
+export LESS_TERMCAP_me=${reset_color}     # end bold, blink & underline
+
+export LESS_TERMCAP_so=${fg_bold[yellow]} # start inverse video
+export LESS_TERMCAP_se=${reset_color}     # stop inverse video
+
+export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # start underline
+export LESS_TERMCAP_ue=${reset_color}     # end underline
+
 export LESSKEY=~/.less_${HOSTNAME}
 
 export MANPAGER=less
@@ -279,13 +284,13 @@ if (( $#SUDO_USER )); then
     colored_connection=%F{magenta}
 elif (( $#SSH_TTY )); then
     export CONNECTION=ssh
-    colored_connection=%F{black}%K{226}
+    colored_connection=%F{226}%S
 elif (( $#REMOTEHOST || $#REMOTEUSER )); then
     export CONNECTION=tlnt
     colored_connection=%B%F{red}
 fi
 
-(( $#colored_connection )) && colored_connection=' '$colored_connection${CONNECTION}%b%f%k
+(( $#colored_connection )) && colored_connection=' '$colored_connection${CONNECTION}%b%f%k%s
 
 
 # ========
