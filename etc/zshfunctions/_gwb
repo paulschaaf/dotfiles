@@ -45,4 +45,6 @@ _arguments "*: :((
   portOpen:'Open an SSH tunnel on port 8080 redirecting to 8090'
 
   stop:'Stop Gradle daemon'
+
+  studio:'Add --no-scan to skip publishing the build scan'
 ))"

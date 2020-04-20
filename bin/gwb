@@ -168,98 +168,102 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
-  cleanIdea)
-    taskFailIcon=$failIcon
-    ;;
-  dropDb)
-    if [ $GW_PL_NUM -lt 9 ]; then
-      task=dropdb
-    else
-      task=dropDb
-    fi
-    taskFailIcon=$failIcon
-    ;;
-  httpkill)
-    fullTask="pkill -f '$webserver'"
-    ;;
-  http)
-    spawn=true
-    fullTask=$webserver
-    ;;
-  idea)
-    if [ $GW_PL_NUM -lt 9 ]; then
-      fullTask=${fullTask/idea/gen-ide}
-    fi
-    ;;
-  killStudio)
-    fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
-    taskFailIcon=$failIcon
-    ;;
-  pgrep)
-    fullTask=$(grepProcStr ${jvmProcess})
-    ;;
-  pkill)
-    pgrep -af $jvmProcess
-    fullTask=$(killProcStr ${jvmProcess})
-    ;;
-  pcf*)
-    # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
-    if [[ $task =~ 'pcf=' ]]; then
-      pcfHost=${task##pcf=}
-      pcfHost=${pcfHost##http://}
-    else
-      pcfHost=localhost:$webserverPort
-    fi
-    echoVar pcfHost
+      cleanIdea)
+        taskFailIcon=$failIcon
+        ;;
+      dropDb)
+        if [ $GW_PL_NUM -lt 9 ]; then
+          task=dropdb
+        else
+          task=dropDb
+        fi
+        taskFailIcon=$failIcon
+        ;;
+      httpkill)
+        fullTask="pkill -f '$webserver'"
+        ;;
+      http)
+        spawn=true
+        fullTask=$webserver
+        ;;
+      idea)
+        if [ $GW_PL_NUM -lt 9 ]; then
+          fullTask=${fullTask/idea/gen-ide}
+        fi
+        ;;
+      ij)
+        spawn=true
+        fullTask="${IDEA_HOME}/bin/idea.sh"
+        ;;
+      killStudio)
+        fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
+        taskFailIcon=$failIcon
+        ;;
+      pgrep)
+        fullTask=$(grepProcStr ${jvmProcess})
+        ;;
+      pkill)
+        pgrep -af $jvmProcess
+        fullTask=$(killProcStr ${jvmProcess})
+        ;;
+      pcf*)
+        # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
+        if [[ $task =~ 'pcf=' ]]; then
+          pcfHost=${task##pcf=}
+          pcfHost=${pcfHost##http://}
+        else
+          pcfHost=localhost:$webserverPort
+        fi
+        echoVar pcfHost
 
-    if [ ${task} = "pcfs" ]; then
-      report='/tmp'
-    else
-      report=$(/bin/ls -t /tmp/*.html | head -n 1)
-    fi
-    echoVar report
+        if [ ${task} = "pcfs" ]; then
+          report='/tmp'
+        else
+          report=$(/bin/ls -t /tmp/*.html | head -n 1)
+        fi
+        echoVar report
 
-    fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ll $report && chromium $report"
-    ;;
-  portCheck)
-    fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
-    ;;
-  portClose)
-    fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
-    ;;
-  portOpen)
-    spawn=true
-    fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
-    ;;
-  server) # broken
-    fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
-    ;;
-  studio)
-    if [ $GW_PL_NUM -lt 9 ]; then
-      spawn=true
-    fi
-    unset inScreen
-    taskFailIcon=$failIcon
-    ;;
-  studioClean)
-    if [ $GW_PL_NUM -lt 9 ]; then
-      rm -rf app-cc/cc-studio-run/db
-    fi
-    ;;
-  tasks)
-    $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
-    exit
-    ;;
-  testFail)
-    fullTask='time && sleep 1 && ls *someNonexistentFile%%'
-    ;;
-  testPass)
-    fullTask='time && sleep 1s'
-    ;;
-  *)
-    taskPassIcon=$passIcon
-    taskFailIcon=$failIcon
-    ;;
+        fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ll $report && chromium $report"
+        ;;
+      portCheck)
+        fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
+        ;;
+      portClose)
+        fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
+        ;;
+      portOpen)
+        spawn=true
+        fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
+        ;;
+      server) # broken
+        fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
+        ;;
+      studio)
+        if [ $GW_PL_NUM -lt 9 ]; then
+          spawn=true
+        fi
+        unset inScreen
+        taskFailIcon=$failIcon
+        ;;
+      studioClean)
+        if [ $GW_PL_NUM -lt 9 ]; then
+          rm -rf app-cc/cc-studio-run/db
+        fi
+        ;;
+      tasks)
+        $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
+        exit
+        ;;
+      testFail)
+        fullTask='time && sleep 1 && ls *someNonexistentFile%%'
+        ;;
+      testPass)
+        fullTask='time && sleep 1s'
+        ;;
+      *)
+        taskPassIcon=$passIcon
+        taskFailIcon=$failIcon
+        ;;
   esac
   shift
 

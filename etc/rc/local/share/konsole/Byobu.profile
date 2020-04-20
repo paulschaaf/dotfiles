@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=xos4 Terminus,6,-1,5,50,0,0,0,0,0,Regular
+Font=xos4 Terminus,6,-1,5,50,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8
@@ -27,4 +27,4 @@ KeyBindings=paul
 
 [Scrolling]
 HistoryMode=1
-ScrollBarPosition=2
+ScrollBarPosition=1

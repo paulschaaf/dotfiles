@@ -99,7 +99,7 @@ isRoot \
 export HISTSIZE=3000
 export SAVEHIST=$HISTSIZE
 
-export LESS=' --RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
+export LESS='--RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 
 # LESS_TERMCAP_DEBUG=true man find        # opens manpage showing markup codes
 export LESS_TERMCAP_mb=${fg_bold[cyan]}   # start blink
@@ -112,12 +112,12 @@ export LESS_TERMCAP_se=${reset_color}     # stop inverse video
 export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # start underline
 export LESS_TERMCAP_ue=${reset_color}     # end underline
 
-export LESSKEY=~/.less_${HOSTNAME}
+export LESSKEY=~pschaaf/.less_${HOSTNAME}
 
 export MANPAGER=less
 export NVM_DIR=~/.nvm
 export PAGER=less
-export RIPGREP_CONFIG_PATH=~/etc/rc/ripgreprc
+export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
 
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word. The remaining punctuation chars are
 # considered separate words, regardless of what may be adjacent.
@@ -220,6 +220,8 @@ function pushd() {
 
 function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 
+# shrink PDF: gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.6 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
+
 autoload -Uz splitMp3
 autoload -Uz splitFlac
 
@@ -229,7 +231,7 @@ function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 
 alias whence='whence -ac'
 autoload -Uz whichjava
-autoload -Uz zed                  && alias fned='zed -f'
+autoload -Uz zed && alias fned='zed -f'
 autoload -Uz zrecompile
 
 
@@ -242,11 +244,19 @@ bindkey "\033[18~"   copy-region-as-kill   # F7
 bindkey "\033[19~"   yank                  # F8
 bindkey "\033[20~"   history-incremental-search-backward # F9
 
-bindkey "\033[1;5D"  backward-word         # ctrl_left
-bindkey "\033[1;5C"  forward-word          # ctrl_right
+if (( $#inIntelliJ )); then
+    bindkey "\033[5D"    backward-word         # ctrl_left
+    bindkey "\033[5C"    forward-word          # ctrl_right
 
-bindkey "\033[1~"    beginning-of-line     # home
-bindkey "\033[4~"    end-of-line           # end
+    bindkey "\033[H"     beginning-of-line     # home
+    bindkey "\033[F"     end-of-line           # end
+else
+    bindkey "\033[1;5D"  backward-word         # ctrl_left
+    bindkey "\033[1;5C"  forward-word          # ctrl_right
+
+    bindkey "\033[1~"    beginning-of-line     # home
+    bindkey "\033[4~"    end-of-line           # end
+fi
 
 bindkey "\M-C\M-5"   up-case-word
 bindkey "\M-C\M-,"   down-case-word
@@ -269,6 +279,7 @@ case ${TERM} in
     *)
         ;;
 esac
+
 
 # Macro Keys
 
@@ -301,7 +312,9 @@ if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
 
     function git() {
         command git $*
+        local exitVal=$?
         echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
+        return $exitVal
     }
 fi
 
@@ -350,8 +363,8 @@ fi
 (( $#HOSTMESSAGE )) && HOSTMESSAGE=" %B%F{magenta}%K{black}$HOSTMESSAGE%k%f%b"
 
 PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
-%T${currentUser}${HOSTMESSAGE} %F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(?..%B%K{red}-%?%k%b )%(!.#.$) "
+%(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} %F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
+\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
 
 PS2="(%F{magenta}%_%f) %(!.#.$) "
 

@@ -104,30 +104,36 @@ case ${GW_PLATFORM} in
     9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
-        export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
-        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+        export IDEA_HOME=/opt/idea15
+        export JAVA_HOME='/usr/lib/jvm/java-8-jdk'
+        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
+        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
         ;;
     10|granite)
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
-        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        export IDEA_HOME=/opt/idea2019IU
+        export JAVA_HOME='/usr/lib/jvm/java-11-amazon-corretto'
+        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
+        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
 
         # for <= 10.0.1
         if [[ "$1" = "old" ]]; then
             announce 'Using older config for this platform version'
-            export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
-            export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+            IDEA_HOME=/opt/idea2017
+            JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+            ifMacOS IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
+            ifMacOS JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
             shift
         fi
         ;;
     50|halite)
         export GW_PL_NUM=50
         export GW_PLATFORM=halite
-        export IDEA_HOME=/opt/idea_halite/
+        export IDEA_HOME=/opt/idea2019U/
         export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
-        inMacOS && export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
-        inMacOS && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
+        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
     *)
         unsetGWVars
@@ -153,7 +159,15 @@ if [[ -z "${IDEA_JDK}" ]]; then
     fi
 fi
 
-typeset -p IDEA_HOME IDEA_JDK JAVA_HOME  GW_PL_NUM GW_PLATFORM
+for dirVar in IDEA_HOME IDEA_JDK JAVA_HOME; do
+    eval "dir=\$${dirVar}"
+    if [[ ! -d ${dir} ]]; then
+        echo -n "\033[97;101m"
+    fi
+    echo `typeset -p ${dirVar}`"\033[0m"
+done
+
+typeset -p GW_PL_NUM GW_PLATFORM
 
 if [[ ${GW_PL_NUM} -lt 9 ]]; then
     export _XX=${GW_PRODUCT}
