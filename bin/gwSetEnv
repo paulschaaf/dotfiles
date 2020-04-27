@@ -92,19 +92,20 @@ case ${GW_PLATFORM} in
         scriptExtension=.sh
         ;;
     8|emerald)
+        export GW_PL_NUM=8
+        export GW_PLATFORM=emerald
+        export IDEA_HOME=/opt/idea_emerald
+        export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
+        export JAVA_HOME=/usr/lib/jvm/java-7-jdk
         export AARDVARK_HOME=/depot/aardvark/alpha
         export ANT_HOME=/depot/ant/apache-ant-1.8.2
         export M2_HOME=/depot/maven/apache-maven-3.0.4
-        export GW_PL_NUM=8
-        export GW_PLATFORM=emerald
-        export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
-        export JAVA_HOME=/usr/lib/jvm/java-7-jdk
         scriptExtension=.sh
         ;;
     9|ferrite)
         export GW_PL_NUM=9
         export GW_PLATFORM=ferrite
-        export IDEA_HOME=/opt/idea15
+        export IDEA_HOME=/opt/idea_ferrite
         export JAVA_HOME='/usr/lib/jvm/java-8-jdk'
         inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
         inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
@@ -120,7 +121,7 @@ case ${GW_PLATFORM} in
         # for <= 10.0.1
         if [[ "$1" = "old" ]]; then
             announce 'Using older config for this platform version'
-            IDEA_HOME=/opt/idea2017
+            IDEA_HOME=/opt/idea-IU-173.4674.33
             JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
             ifMacOS IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
             ifMacOS JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
@@ -130,7 +131,7 @@ case ${GW_PLATFORM} in
     50|halite)
         export GW_PL_NUM=50
         export GW_PLATFORM=halite
-        export IDEA_HOME=/opt/idea2019U/
+        export IDEA_HOME=/opt/idea_halite
         export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
         inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
         inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
