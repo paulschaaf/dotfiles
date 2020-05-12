@@ -19,7 +19,6 @@ if (( $#zprof )); then
     zmodload zsh/zprof
     echo Running zprof from ${(%):-%N}
     unset zprof
-
 fi
 
 
@@ -62,6 +61,7 @@ fi
 
 # ========
 # ======== Exported Variables
+export BROWSER=google-chrome-stable
 export EDITOR=/usr/bin/emacs
 inMacOS && EDITOR=/usr/local/bin/emacs
 isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
@@ -78,7 +78,7 @@ export SCREENDIR=${SCREENDIR:=~/tmp}
 # ======== Paths
 # Keep only the first occurrence of duplicates
 typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH PATH path RUBYLIB
-export CDPATH CLASSPATH FPATH LD_LIBRARY_PATH PATH RUBYLIB
+export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH PATH      RUBYLIB
 
 CLASSPATH=${CLASSPATH:=.}
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
@@ -87,7 +87,7 @@ if inMacOS; then
     export JAVA_ROOT=/Library/Java/JavaVirtualMachines
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
-elif inLinux; then
+else
     export JAVA_ROOT=/usr/lib/jvm
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk

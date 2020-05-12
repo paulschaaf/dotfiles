@@ -1,0 +1,14 @@
+#!/bin/zsh
+
+local lsd_flags=${LS_FLAGS/F/}
+[[ ${UNAME} = "Linux" ]] && local color=--color
+
+if [[ $# -eq 0 ]]; then
+    command ls $lsd_flags -ld $color */(D)
+else
+    for dir in ${*}; do
+        echo
+        ls -d $dir
+        command ls ${LS_FLAGS/F/} -ld $color ${dir}/*/(D)
+    done
+fi

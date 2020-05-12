@@ -8,6 +8,6 @@ echo $ java -version
 java -version
 echo
 
-echo $ typeset -p JAVA_HOME IDEA_HOME IDEA_JDK
-typeset -p JAVA_HOME IDEA_HOME IDEA_JDK
+echo $ typeset -p JAVA_ROOT JAVA_HOME IDEA_HOME IDEA_JDK
+typeset -p JAVA_ROOT JAVA_HOME IDEA_HOME IDEA_JDK
 echo

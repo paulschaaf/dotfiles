@@ -13,7 +13,7 @@ stop=Media Stop,none,Stop
 [KDE Keyboard Layout Switcher]
 Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
 Switch to Next Keyboard Layout=Ctrl+Alt+K,none,Switch to Next Keyboard Layout
-_k_friendly_name=KDE Daemon
+_k_friendly_name=System Settings
 
 [amarok]
 _k_friendly_name=Amarok
@@ -55,7 +55,7 @@ _k_friendly_name=KDE Daemon
 display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
-_k_friendly_name=System Settings
+_k_friendly_name=KDE Daemon
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=Search,none,Search
 {e45f7ad3-d5de-4039-b152-27ffd1e622ff}=Ctrl+Alt+T,none,Launch Konsole
 
@@ -94,10 +94,10 @@ Invert Screen Colors=none,none,Invert Screen Colors
 Kill Window=Ctrl+Alt+Esc,Ctrl+Alt+Esc,Kill Window
 MoveMouseToCenter=Meta+F6,Meta+F6,Move Mouse to Center
 MoveMouseToFocus=Meta+F5,Meta+F5,Move Mouse to Focus
-MoveZoomDown=none,none,Move Zoomed Area Downwards
-MoveZoomLeft=none,none,Move Zoomed Area to Left
-MoveZoomRight=none,none,Move Zoomed Area to Right
-MoveZoomUp=none,none,Move Zoomed Area Upwards
+MoveZoomDown=none,Meta+Ctrl+Down,Move Down
+MoveZoomLeft=none,Meta+Ctrl+Left,Move Left
+MoveZoomRight=none,Meta+Ctrl+Right,Move Right
+MoveZoomUp=none,Meta+Ctrl+Up,Move Up
 Remove Window From Group=none,none,Remove Window From Group
 Setup Window Shortcut=none,none,Setup Window Shortcut
 Show Desktop=none,Meta+D,Show Desktop
@@ -145,6 +145,8 @@ Switch to Screen 6=none,none,Switch to Screen 6
 Switch to Screen 7=none,none,Switch to Screen 7
 Toggle Night Color=none,none,Toggle Night Color
 Toggle Window Raise/Lower=none,none,Toggle Window Raise/Lower
+ToggleCurrentThumbnail=Meta+Ctrl+T,Meta+Ctrl+T,Toggle Thumbnail for Current Window
+TrackMouse=none,none,Track mouse
 Walk Through Desktop List=none,none,Walk Through Desktop List
 Walk Through Desktop List (Reverse)=none,none,Walk Through Desktop List (Reverse)
 Walk Through Desktops=none,none,Walk Through Desktops
@@ -357,7 +359,6 @@ activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
 activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
-activate widget 164=none,none,Activate Application Menu Widget
 activate widget 165=none,none,Activate Application Menu Widget
 activate widget 18=Alt+F1,none,Activate Application Menu Widget
 activate widget 19=,none,Activate Application Menu Widget
@@ -371,8 +372,8 @@ cycleNextAction=none,none,Next History Item
 cyclePrevAction=none,none,Previous History Item
 edit_clipboard=none,none,Edit Contents...
 manage activities=Meta+Q,Meta+Q,Activities...
-next activity=Meta+Tab,none,Walk through activities
-previous activity=Meta+Shift+Tab,none,Walk through activities (Reverse)
+next activity=Meta+Tab,Meta+Tab,Walk through activities
+previous activity=Meta+Shift+Tab,Meta+Shift+Tab,Walk through activities (Reverse)
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
 show dashboard=none,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...

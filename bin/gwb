@@ -120,7 +120,7 @@ runTask() {
   SECONDS=0
   if [ -z $_dry_run ]; then
     if [ -n "$spawn" ]; then
-      eval ${task} &
+      eval nohup ${task} &
     else
       # make sure we source the gwb script instead of just running it
       # if it's a Java cmd, display each option indented on a separate line
@@ -179,6 +179,10 @@ while [ -n "$*" ]; do
         fi
         taskFailIcon=$failIcon
         ;;
+      h2)
+        spawn=true
+        fullTask="java -jar ./app-cc/cc-cmdline/build/admin/lib/h2-*.jar"
+        ;;
       httpkill)
         fullTask="pkill -f '$webserver'"
         ;;
@@ -223,7 +227,7 @@ while [ -n "$*" ]; do
         fi
         echoVar report
 
-        fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ll $report && chromium $report"
+        fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
         ;;
       portCheck)
         fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"

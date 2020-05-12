@@ -1,0 +1,15 @@
+#!/usr/bin/zsh
+
+if [[ "${1}" = "-h" || "${1}" = "--help" || "${1}" = "" ]]; then
+  echo Usage: ${0:t} '<text>'
+
+  echo Creates an image file containing the supplied text.
+  return
+fi
+
+local txt=$1
+
+local name=${txt// /_}
+local file=`mktemp ~/tmp/${name}_XXX.png`
+convert -size 1400x231 xc:white -pointsize 240 -fill gray -annotate +0+178 ${txt} ${file}
+echo Created ${file}

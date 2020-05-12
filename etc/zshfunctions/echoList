@@ -3,7 +3,8 @@
 # shellcheck disable=SC2168 # "local" is only valid in functions
 
 local listName=$1; shift
-eval local contents=\$${listName}
+local contents=${(P)listName}
+# eval local contents=\$${listName}
 
 local ifDebug=:
 local show_type=''
@@ -86,7 +87,7 @@ END {
             system(show_type matches)
         }
     }
-}' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} -Hl" override=$override rm_row="${rm_row:-999}" show_type=${show_type}
+}' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} ${LS_COLOR:+\${LS_COLOR\} }-Hl" override=$override rm_row="${rm_row:-999}" show_type=${show_type}
 
 if [[ -n $rm_row ]]; then
     contents=`echo ${contents} | awk 'NR != RM_ROW {print}' RM_ROW=$rm_row RS=${RS} ORS=${RS}`

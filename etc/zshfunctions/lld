@@ -1,4 +1,4 @@
 #!/bin/zsh
 
-dir=${1:-.}
-ls -ld ${dir}/*/
+local dir=${1:-.}
+ls $LS_COLOR -ld ${dir}/*/

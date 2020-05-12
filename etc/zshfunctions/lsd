@@ -1,4 +1,6 @@
 #!/bin/zsh
 
-dir=${1}${1:+/}
-command ls ${LS_FLAGS/F/} -d ${dir}*/
+local dir=${1}${1:+/}
+local lsd_flags=${LS_FLAGS/F/}
+
+command ls ${lsd_flags} $LS_COLOR -d ${dir}*/

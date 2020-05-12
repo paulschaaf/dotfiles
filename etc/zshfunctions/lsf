@@ -2,5 +2,5 @@
 
 local x
 for x in ${*:-*}; do
-    echo `file -N -- $x`:`ls -d -- $x` | sed 's/^[^:]*: //'
+    echo `file -N -- $x`:`ls $LS_COLOR -d -- $x` | sed 's/^[^:]*: //'
 done | column -t -s ':'

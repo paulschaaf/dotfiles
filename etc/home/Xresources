@@ -1,5 +1,5 @@
 ! -*- compile-command: (concat "xrdb -override " buffer-file-name) -*-
-! -*- compile-command: (concat "xrdb -load /etc/X11/xdm/Xresources; xrdb -merge " buffer-file-name)
+! -*- compile-command: "xrdb -override ~/.Xresources" -*-
 ; comment-start: "! " -*-
 
 ! geometry: WxH[+-]posX[+-]posY
@@ -106,3 +106,10 @@ xscreen*iconImage: /home/pschaaf/etc/icons/Gnu\ Screen.png
 ! -*-clean-medium-r-*-*-*-*-*-*-*-*-iso10646-*
 ! -*-courier-medium-r-*-*-*-*-*-*-*-70-iso10646-*
 
+!
+! x48 Calculator Emulator
+X48.smallLabelFont: fixed
+X48.mediumLabelFont: fixed
+X48.largeLabelFont: fixed
+X48.connectionFont: fixed
+X48.title: HP 48GX Calculator
