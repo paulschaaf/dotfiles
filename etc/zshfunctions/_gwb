@@ -23,6 +23,7 @@ _arguments "*: :((
   genTypeInfo
   genWsiLocal
   genWsdl
+  h2
   idea
   killStudio
   packageCustomerDist

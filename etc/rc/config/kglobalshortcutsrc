@@ -319,6 +319,10 @@ playpausemedia=,Media Play,Play/Pause media playback
 previousmedia=,Media Previous,Media playback previous
 stopmedia=,Media Stop,Stop media playback
 
+[medianxllauncher.desktop]
+_k_friendly_name=Median XL Launcher
+_launch=none,none,Launch Median XL Launcher
+
 [org.kde.dolphin.desktop]
 _k_friendly_name=Dolphin
 _launch=,Meta+E,Dolphin

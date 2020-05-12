@@ -1,15 +1,92 @@
 #!/usr/bin/zsh
 
-if [[ "${1}" = "-h" || "${1}" = "--help" || "${1}" = "" ]]; then
-  echo Usage: ${0:t} '<text>'
+local bg
+local fg=gray
+local pointsize=240
+local height=231
+local width=1400
+local h_offset=25
+local v_offset=178
 
-  echo Creates an image file containing the supplied text.
-  return
+function usage() {
+  echo "Usage: ${0:t} [OPTION...] TEXT
+  Creates an image filename containing the supplied text.
+  -bg=COLOR   Set the background color (defaults to be transparent)
+  -fg=COLOR   Set the foreground color (defaults to '${fg}')
+  -width=NUM  Set the width of the text box (defaults to ${width})
+  --debug     Trace the execution
+  --dry_run   Show the resulting command but do not execute
+  -h, --help  Show this screen
+
+  All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
+  the switch '-font=fixed' will be passed through as '-font fixed'.
+
+  For a list of color names see https://imagemagick.org/script/color.php#color_names
+"
+}
+
+if (( ! $#1 )); then
+  usage
+  exit
+fi
+local dry_run bgName txt
+local switches=()
+
+while [[ -n "$*" ]]; do
+  local switch=${1%%=*}
+  local arg=${1#*=}
+  case ${switch} in
+    --debug)
+      set -x
+      ;;
+    -h|--help)
+      usage
+      exit
+      ;;
+    -bg)
+      bg=${arg}
+      bgName=${bg}
+      ;;
+    --dry_run)
+      dry_run='echo '
+      ;;
+    -fg)
+      fg=${arg}
+      ;;
+    -width)
+      width=${arg}
+      ;;
+    -*)
+      switches+=${1}
+      ;;
+    *)
+      txt=$1
+      shift
+      break
+      ;;
+  esac
+  shift
+done
+
+if (( ! $#txt )); then
+  echo Error: missing text!
+  usage
+  exit 1
+elif (( $#* )); then
+  echo "Error: extra arguments after the text '${txt}': '${*}'!"
+  usage
+  exit 1
 fi
 
-local txt=$1
+# if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
+if (( ! $#bg )); then
+  bgName=transparent
+  [[ ${fg} = "white" ]] && bg=black || bg=white
+  switches+=(-transparent ${bg})
+fi
 
 local name=${txt// /_}
-local file=`mktemp ~/tmp/${name}_XXX.png`
-convert -size 1400x231 xc:white -pointsize 240 -fill gray -annotate +0+178 ${txt} ${file}
-echo Created ${file}
+local filename=~/tmp/${name}_${fg}_on_${bgName}_XXX.png
+(( $#dry_run )) || filename=`mktemp ${filename}`
+eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
+(( $#dry_run )) || echo Created ${filename}
