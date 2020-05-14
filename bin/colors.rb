@@ -15,6 +15,7 @@ BLINK = effect 5
 CLR = effect 0
 INVERSE = effect 7
 UNDERLINE = effect 4
+#noinspection RubyConstantNamingConvention
 FG, BG = 38, 48
 
 def fg(c)

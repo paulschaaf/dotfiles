@@ -1,10 +1,10 @@
 #!/usr/bin/zsh
 
-local bg
 local fg=gray
+local width=1400
+
 local pointsize=240
 local height=231
-local width=1400
 local h_offset=25
 local v_offset=178
 
@@ -29,7 +29,8 @@ if (( ! $#1 )); then
   usage
   exit
 fi
-local dry_run bgName txt
+
+local bd dry_run bgName txt
 local switches=()
 
 while [[ -n "$*" ]]; do
@@ -86,7 +87,7 @@ if (( ! $#bg )); then
 fi
 
 local name=${txt// /_}
-local filename=~/tmp/${name}_${fg}_on_${bgName}_XXX.png
+local filename=banner_${name}_${fg}_on_${bgName}_XXX.png
 (( $#dry_run )) || filename=`mktemp ${filename}`
 eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
 (( $#dry_run )) || echo Created ${filename}

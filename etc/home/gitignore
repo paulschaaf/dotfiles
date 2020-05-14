@@ -18,6 +18,7 @@
 **/.npnrc
 **/.ssh-agent
 **/androidPrivateKey.ppk
+**/banner_*_on_*.png
 **/hs_err_pid*.log
 **/id_dsa
 **/id_rsa
