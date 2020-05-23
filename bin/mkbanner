@@ -87,7 +87,7 @@ if (( ! $#bg )); then
 fi
 
 local name=${txt// /_}
-local filename=banner_${name}_${fg}_on_${bgName}_XXX.png
+local filename=banner_${name}_${fg}_on_${bgName}_${width}w_XXX.png
 (( $#dry_run )) || filename=`mktemp ${filename}`
 eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
 (( $#dry_run )) || echo Created ${filename}

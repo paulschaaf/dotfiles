@@ -1,5 +1,7 @@
 #!/bin/bash
 # -*- eval: (progn (highlight-regexp "\\bheader[1-9]+\\b" 'hi-green-b) (highlight-regexp "\\bh1\\b.*" 'header1) (highlight-regexp "\\bh2\\b.*" 'header2) ) -*-
+# capture packages:
+# pacman -Qqen >| pkglist.txt && pacman -Qqem >| pkglist_aur.txt
 cd $HOME
 backup=~/backup
 shell=/bin/zsh
@@ -19,14 +21,15 @@ libraries=(
 # these get installed first, in the order defined
 ordered_packages=(
     mlocate
-    ripgrep               # quicker grep
-    google-chrome         # the best browser
-    git                   # version control
-    tmux                  # terminal multiplexer
-    byobu                 # tmux/screen enhancements
-    cairo-dock            # Mac-like icon dock
-    cairo-dock-plug-ins   # Mac-like icon dock
-    nvm                   # nodejs version manager
+    ripgrep                # quicker grep
+    google-chrome          # the best browser
+    git                    # version control
+    intellij-idea-ultimate # ide
+    tmux                   # terminal multiplexer
+    byobu                  # tmux/screen enhancements
+#    cairo-dock             # Mac-like icon dock
+#    cairo-dock-plug-ins    # Mac-like icon dock
+#    nvm                    # nodejs version manager
 )
 
 # These are installed after the ordered_packages. Keep them sorted for convenience
@@ -34,6 +37,7 @@ unordered_packages=(
     ascii                 # tree of ascii codes
 #    atom
     bcompare
+    bcompare-kde5
 #    davfs2                # mount box.com into filesystem
 #    devede                # make video DVDs
     dolphin-plugins       # git integration into KDE file manager
@@ -46,15 +50,15 @@ unordered_packages=(
     keychain              # ssh key organizer
     lsof
 #    lynx                  # command line browser
-    manjaro-i3-solarized-settings
+#    manjaro-i3-solarized-settings
 #    mp3fs                 # MP3 virtualf ilesystem
     nerd-fonts-fira-code  # programming font with ligatures
     nmap
-    nodejs
-    npm
+#    nodejs
+#    npm
     oracle~jdk7           # Java 1.7
     oracle~jdk8           # Java 1.8
-    sqlops                # MS SQL Server admin tool
+#    sqlops                # MS SQL Server admin tool
     tree
     units                 # unit conversions
     vlc                   # video player
@@ -74,7 +78,7 @@ applications=(
 #    virtualbox            # VM manager
 #    virtualbox-ext-oracle
 #    virtualbox-guest-iso
-    visual-studio-code
+#    visual-studio-code
 )
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses

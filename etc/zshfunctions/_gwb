@@ -13,6 +13,7 @@
 _arguments "*: :((
   clean
   cleanIdea
+  cleanStudio
   codegen
   compile
   dropDb
@@ -21,31 +22,23 @@ _arguments "*: :((
   genPcfXsd
   genSystemData
   genTypeInfo
-  genWsiLocal
   genWsdl
+  genWsiLocal
   h2
+  'http: Start a simple http server in the resources directory.'
+  'httpkill: Kill the simple http server in the resources directory.'
   idea
+  ij
   killStudio
   packageCustomerDist
-  studio
-  studioClean
+  'pcf: Browse the most recently changed file named /tmp/*.html'
+  'pgrep: Is the server process running?'
+  'pkill: Kill the server process'
+  'portCheck: Is the SSH tunnel open?'
+  'portClose: Stop the SSH tunnel on port 8080'
+  'portOpen: Open an SSH tunnel on port 8080 redirecting to 8090'
+  'runSuite: Compile then run the specified suite'
+  'stop: Stop Gradle daemon'
+  'studio: Add --no-scan to skip publishing the build scan'
   tasks
-))"
-
-_arguments "*: :((
-  http:'Start a simple http server in the resources directory.'
-  httpkill:'Kill the aforementioned http server.'
-
-  pcf:'Browse the most recently changed file named /tmp/*.html'
-
-  pgrep:'Is the server process running?'
-  pkill:'Kill the server process'
-
-  portCheck:'Is the SSH tunnel open?'
-  portClose:'Stop the SSH tunnel on port 8080'
-  portOpen:'Open an SSH tunnel on port 8080 redirecting to 8090'
-
-  stop:'Stop Gradle daemon'
-
-  studio:'Add --no-scan to skip publishing the build scan'
 ))"

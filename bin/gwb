@@ -123,8 +123,10 @@ runTask() {
       eval nohup ${task} &
     else
       # make sure we source the gwb script instead of just running it
+      task=${task/.\/gwb/source gwb}
+      [ -n "$debug" ] && echo actual task is ${task}
       # if it's a Java cmd, display each option indented on a separate line
-      eval ${task/.\/gwb/source ./gwb} | sed '/java / { s/ -/\n   -/g
+      eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
       # keep the exit code from the first command in the chain (i.e. not the sed)
       exitCode=$pipestatus[1]
@@ -170,6 +172,14 @@ while [ -n "$*" ]; do
   case $task in
       cleanIdea)
         taskFailIcon=$failIcon
+        ;;
+      cleanStudio)
+        if [ $GW_PL_NUM -lt 9 ]; then
+          rm -rf app-cc/cc-studio-run/db
+        fi
+        ;;
+      compile)
+        fullTask='gwb compile -DincludeGtest=true'
         ;;
       dropDb)
         if [ $GW_PL_NUM -lt 9 ]; then
@@ -239,6 +249,13 @@ while [ -n "$*" ]; do
         spawn=true
         fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
         ;;
+#      runSuite)
+#        if (( ! $#* )); then
+#          echo "No suite specified!"
+#        fi
+#        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
+#        shift
+#        ;;
       server) # broken
         fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
         ;;
@@ -248,11 +265,6 @@ while [ -n "$*" ]; do
         fi
         unset inScreen
         taskFailIcon=$failIcon
-        ;;
-      studioClean)
-        if [ $GW_PL_NUM -lt 9 ]; then
-          rm -rf app-cc/cc-studio-run/db
-        fi
         ;;
       tasks)
         $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output

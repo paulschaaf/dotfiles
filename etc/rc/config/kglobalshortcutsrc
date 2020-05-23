@@ -386,3 +386,11 @@ stop current activity=Meta+S,Meta+S,Stop Current Activity
 switch to next activity=none,none,Switch to Next Activity
 switch to previous activity=none,none,Switch to Previous Activity
 toggle do not disturb=none,none,Toggle do not disturb
+
+[policytool-jdk-dcevm8.desktop]
+_k_friendly_name=Java 8 Policy Settings-2
+_launch=none,none,Launch Java 8 Policy Settings-2
+
+[qt v4l2 camera test bench.desktop]
+_k_friendly_name=Qt V4L2 Camera Test Bench
+_launch=none,none,Launch Qt V4L2 Camera Test Bench
