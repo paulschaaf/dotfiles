@@ -205,7 +205,6 @@ autoload -Uz ddu
 inMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
 
 autoload -Uz frotz
-alias gpm=/usr/local/bin/gpm
 autoload -Uz mkfunction
 
 if (( $#inIntelliJ )); then

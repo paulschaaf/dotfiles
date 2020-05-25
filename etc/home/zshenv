@@ -101,6 +101,7 @@ LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 path=(
     ~/bin
     ~/bin/quick-ssh
+    /opt/gpm-0.24.8/bin
     ${JAVA_HOME}/bin
     ${path}
     /usr/X11R6/bin

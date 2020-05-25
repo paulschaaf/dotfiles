@@ -16,7 +16,7 @@ RUBYLIB=$(HOME)/lib/ruby:$(HOME)/bin
 TO_PATH=tr ' ' ':' | sed 's!\(^\|:\)${HOME}!\1~!g'
 TO_PATH_THEN_ECHO_AS_LIST=${TO_PATH} | tr ':' '\n' | cat -n
 
-HOME_LINKS=XWinrc Xresources acoc.conf dtprofile enscriptrc irbrc ispell_english lftp lynxrc ncftp netrc plan pluckerrc ssh surfraw.conf toprc vimrc.more xemacs xinitrc work.sig
+HOME_LINKS=XWinrc enscriptrc irbrc ssh xinitrc
 
 COMPUTE_SRC_NAME=sed 's:^${HOME}/\.\{0,1\}::; s:/.*/\(${LOGNAME}[-_.]\)\{0,1\}:/:; s:^:${PWD}/:'
 
