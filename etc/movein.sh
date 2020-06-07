@@ -1,11 +1,11 @@
-#!/bin/bash
+#!/usr/bin/zsh
 # -*- eval: (progn (highlight-regexp "\\bheader[1-9]+\\b" 'hi-green-b) (highlight-regexp "\\bh1\\b.*" 'header1) (highlight-regexp "\\bh2\\b.*" 'header2) ) -*-
 # capture packages:
 # pacman -Qqen >| pkglist.txt && pacman -Qqem >| pkglist_aur.txt
 cd $HOME
 backup=~/backup
 shell=/bin/zsh
-
+set -x
 if [ "$host" = "copernicus" ]; then
     yaourt -S broadcom-wl
 fi
@@ -159,10 +159,10 @@ function ln-all() {
 }
 
 ## ====================================================
-mkdir $backup
+[[ -d $backup ]] || mkdir $backup
 
-h1 SYSTEM SETUP
-h2 Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
+#h1 SYSTEM SETUP
+#h2 Remove ttys beyond CTRL-ALT-F1 and CTRL-ALT-F2
 file=/etc/systemd/logind.conf
 if grep -q '^#NAutoVTs=6$' $file; then
     backup $file
@@ -171,28 +171,28 @@ else
     echo Already done!
 fi
 
-h1 PACKAGE INSTALLATION
-install-all libraries
-install-all ordered_packages
-install-all unordered_packages
-install-all applications
+#h1 PACKAGE INSTALLATION
+#install-all libraries
+#install-all ordered_packages
+#install-all unordered_packages
+#install-all applications
 
-h1 USER SETUP
+#h1 USER SETUP
 #for repo in ${git_repos[@]}; do
 #    h1 Downloading Git Repository: $repo
 #    git clone $repo
 #done
 
-if grep --quiet $USER:$shell /etc/passwd; then
-    h2 Default shell already set to ${shell##*/}
-else
-    h1 Changing default shell to ${shell##*/}
-    sudo chsh --shell $shell $USER
-fi
+#if grep --quiet $USER:$shell /etc/passwd; then
+#    h2 Default shell already set to ${shell##*/}
+#else
+#    h1 Changing default shell to ${shell##*/}
+#    sudo chsh --shell $shell $USER
+#fi
 
 
-h1 Setup Symlinks to RC files
-ln-all ~/etc/home/*[^~]
+#h1 Setup Symlinks to RC files
+ln-all ~/dotfiles/etc/home/*[^~]
 
 #h1 Setup Symlinks to ssh files
 #[ -d .ssh ] || mkdir .ssh
@@ -219,6 +219,6 @@ fi
 h1 Other packages
 rehash
 h2 npm yarn
-sudo npm install -g yarn
+# sudo npm install -g yarn
 
 setScreenTitle

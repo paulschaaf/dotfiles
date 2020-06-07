@@ -1,5 +1,7 @@
 #!/bin/bash
 dry_run=''
+sourceRoot=`dirname ${0}`
+
 while [ -n "$*" ]; do
    echo arg=\'$1\'
    case $1 in
@@ -24,49 +26,48 @@ while [ -n "$*" ]; do
    shift
 done
 
-cd $1
-destRoot=`pwd`
-if [ ! -d $destRoot ]; then
-    echo Destination directory ${destRoot//$HOME/\~} does not exist!
-    exit 1
-fi
-
-cd ${0%/*}
-sourceRoot=`pwd`
+cd ${HOME}
+destRoot=${HOME}
+#if [ ! -d $destRoot ]; then
+#    echo Destination directory ${destRoot//$HOME/\~} does not exist!
+#    exit 1
+#fi
+#
+#cd ${0%/*}
 
 echoSection() {
     echo '
 --'$*
 }
-
-subdirs=`find $sourceRoot -mindepth 1 -maxdepth 1 -type d ! -name '.*' -printf '%f\n' | sort`
-for subdir in $subdirs; do
+set -x
+subdirs=`find ${sourceRoot} -mindepth 1 -maxdepth 1 -type d ! -name '.*' -printf '%p\n' | sort`
+for subdir in ${subdirs}; do
     echo "
 ---------------
-INSTALLING: $subdir"
-    sourceSubdir=${sourceRoot}/${subdir}
-    destSubdir=${destRoot}/${subdir}
-    if [ -d ${destSubdir} ]; then
-        echo The directory ${destSubdir} already exists!
-        echoSection 'You may want to make the following existing subdirectories writable:'
-        find ${destSubdir} -type d -exec echo chmod u+w {} +
-
-        # echoSection 'You may want to delete all symlinks'
-        # $find ${destSubdir} -type l -exec echo rm -f {} +
-        exit
-    fi
-    echoSection 'Creating new subdirectories and symlinking to contents'
-    ${dry_run}cp ${force}--recursive --symbolic-link ${sourceSubdir} ${destRoot} 2>&1 | grep -v '.* are the same file'
-
-#    find -type d -exec '[ -f "{}/Makefile" ] && make --directory "{}"' \;
-    if [ -f ${destSubdir}/Makefile ]; then
-        echoSection 'Running Makefile'
-        make --directory ${destSubdir}
-     fi
-
-    echoSection 'Making all subdirectories read-only'
-    find ${destSubdir} -type d -exec ${dry_run}chmod a-w {} +
-
-    echoSection 'Report any differences'
-    ${dry_run}diff --brief --recursive ${sourceSubdir} ${destSubdir} | sed 's_^HOME_~_'
+INSTALLING: ~${subdir#${HOME}}"
+    ${dry_run}ln -fs ${subdir} .
+#    sourceSubdir=${sourceRoot}/${subdir}
+#    destSubdir=./${subdir}
+#    if [ -d ${destSubdir} ]; then
+#        echo The directory ${destSubdir} already exists!
+#        echoSection 'You may want to make the following existing subdirectories writable:'
+#        find ${destSubdir} -type d -exec echo chmod u+w {} +
+#
+#        # echoSection 'You may want to delete all symlinks'
+#        # $find ${destSubdir} -type l -exec echo rm -f {} +
+#    fi
+#    echoSection 'Creating new subdirectories and symlinking to contents'
+#    ${dry_run}cp ${force}--recursive --symbolic-link ${sourceSubdir} . 2>&1 | grep -v '.* are the same file'
+#
+##    find -type d -exec '[ -f "{}/Makefile" ] && make --directory "{}"' \;
+#    if [ -f ${destSubdir}/Makefile ]; then
+#        echoSection 'Running Makefile'
+#        make --directory ${destSubdir}
+#     fi
+#
+#    echoSection 'Making all subdirectories read-only'
+#    find ${destSubdir} -type d -exec ${dry_run}chmod a-w {} +
+#
+#    echoSection 'Report any differences'
+#    ${dry_run}diff --brief --recursive ${sourceSubdir} ${destSubdir} | sed 's_^HOME_~_'
 done
