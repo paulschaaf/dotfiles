@@ -4,7 +4,7 @@
     <option name="links">
       <list>
         <IssueNavigationLink>
-          <option name="issueRegexp" value=".*\b(?i)((ab|apollo|bc|cc|clm|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+)\b.*" />
+          <option name="issueRegexp" value=".*\b(?i)((ab|apollo|bc|cc|clm|cm|cstp|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+)\b.*" />
           <option name="linkRegexp" value="https://jira.guidewire.com/browse/$1" />
         </IssueNavigationLink>
         <IssueNavigationLink>

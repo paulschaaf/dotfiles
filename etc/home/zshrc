@@ -159,6 +159,16 @@ alias yay="command yay --color=auto"
 
 
 # ========
+# ======== Global Aliases - works anywhere on a line
+alias -g ...='../..'
+
+
+# ========
+# ======== Suffix Aliases - type filename<return> to open the file
+alias -s txt=kate
+
+
+# ========
 # ======== ls Aliases and Functions
 alias ls="ls ${LS_FLAGS} ${LS_COLOR}"
 alias la='ls -A'
@@ -215,6 +225,50 @@ if (( $#inIntelliJ )); then
     autoload -Uz rg_intellij
     alias rg=rg_intellij
 fi
+
+function joinPhotos() {
+  local nums=(1 2 3 4 5 6 7 8 9 10)
+  for i in $nums; do
+    local front=Front0000$i.jpg
+    local back=Back${front#Front}
+    local joined="joined_$i.jpg"
+    if [[ -f ${front} ]]; then
+      if [[ -f ${back} ]]; then
+        convert ${front} ${back} +append ${joined}
+        echo Created ${joined}
+      else
+        echo "....... ${joined}: can't find ${back}"
+      fi
+    else
+      echo "....... "${joined}: "can't find ${front}"
+    fi
+  done
+}
+
+#function parse_options() {
+#  # declare the vars with defaults
+#  local o_port=(-p "default port")
+#  local o_root=(-r "default root")
+#  local o_log=(-d "default log")
+#  local o_help=()
+#
+#  # populate the vars
+#  zparseopts -K -- p:=o_port r:=o_root l:=o_log h=o_help
+#  if [[ $? != 0 || "$o_help" != "" ]]; then
+#    echo Usage: $(basename "$0") "[-p PORT] [-r DIRECTORY]"
+#    exit 1
+#  fi
+#
+#  # extract the args
+#  local port=$o_port[2]
+#  local root=$o_root[2]
+#  local log=$o_log[2]
+#
+#  [[ $root[1] != '/' ]] && root="$PWD/$root"
+#  typeset -p port root log help
+#}
+## now use the function:
+#parse_options -p 1024
 
 # Change to the specified dir & remove starting place from dir stack
 function pcd() { cd "$@" && popd +1 2>/dev/null }
@@ -434,8 +488,41 @@ zmodload -i zsh/complist
 
 
 # ========
-# ======== Debugging
-# Move this heredoc around in the file to temporarily disable sections of code. Make sure to
-# keep the opening tag first, and the closing tag against the left margin on a line by itself.
-: <<DEBUG_NO_EXEC
-DEBUG_NO_EXEC
+# ======== Tricks and Tips
+
+## brace expansion - example
+#  $ X=(A B C)
+#  $ Y=(+ -)
+#  $ print -r -- $^X.$^Y
+#  A.+ A.- B.+ B.- C.+ C.-
+#
+## Lists every executable in PATH
+#  $ print -l ${^path}/*(-*N)
+#
+## recursive chmod
+#  $ chmod 700 **/(.) # Only files
+#  $ chmod 700 **/(/) # Only directories
+#
+## List files beginning at `foo23' upwards (foo23, foo24, foo25, ..)
+#  $ ls -l foo<23->
+#
+## List files in the current directory are not writable by the owner
+#  $ print -l ~/*(ND.^w)
+#
+#  $ autoload -U age
+## files modified today
+#  $ print *(e:age today now:)
+## files modified since 5 pm
+#  $ print *(e-age 17:00 now-)
+## ... since 5 o'clock yesterda
+#  $ print *(e-age yesterday,17:00 now-)
+## ... from last Christmas before today
+#  $ print *(e-age 2006/12/25 today-)
+## ... before yesterday
+#  $ print *(e-age 1970/01/01 yesterday-)
+## all files modified between the start of those dates
+#  $ print *(e:age 2006/10/04 2006/10/09:)
+## all files modified on that date
+#  $ print *(e:age 2006/10/04:)
+## Supply times.
+#  $ print *(e-age 2006/10/04:10:15 2006/10/04:10:45-)

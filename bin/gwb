@@ -82,7 +82,7 @@ log_section() {
   printf "  \e[0;1;97;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
 
   # turn off bold and show the task description
-  printf "\e[0;97;${_color}m%-${COLUMNS}s\n\e[0m" ' '$_taskDesc
+  printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" ' '$_taskDesc
 }
 
 grepProcStr() {
@@ -133,7 +133,7 @@ runTask() {
     fi
   fi
   # tries to display the elapsed seconds as something like 0:00.00. Doesn't work on MacOS.
-  #    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+  elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
   if [ $exitCode -eq 0 ]; then
     log_section 42 "DONE $elapsedTime" $taskSummary
@@ -175,11 +175,13 @@ while [ -n "$*" ]; do
         ;;
       cleanStudio)
         if [ $GW_PL_NUM -lt 9 ]; then
-          rm -rf app-cc/cc-studio-run/db
+          fullTask="rm -rf app-cc/cc-studio-run/db"
+        else
+          fullTask=": this task only works on platform versions less than 9.; exit 1"
         fi
         ;;
       compile)
-        fullTask='gwb compile -DincludeGtest=true'
+        fullTask='./gwb compile -DincludeGtest=true'
         ;;
       dropDb)
         if [ $GW_PL_NUM -lt 9 ]; then
@@ -270,10 +272,10 @@ while [ -n "$*" ]; do
         $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
         exit
         ;;
-      testFail)
+      testFail|testfail)
         fullTask='time && sleep 1 && ls *someNonexistentFile%%'
         ;;
-      testPass)
+      testPass|testpass)
         fullTask='time && sleep 1s'
         ;;
       *)

@@ -211,9 +211,15 @@ STRING
   section('APPLICATION') {
     puts '  Begin your text with "\e[<effect>;<foreground>;<background>m"', ''
 
-    {'91' => 'Bright red foreground (short 8-color notation)',
+    {
+     '1;93' => 'Bold light yellow foreground (short 8-color notation)',
+       '93' => '       Light yellow foreground (short 8-color notation)',
+     '2;93' => 'Dim  light yellow foreground (short 8-color notation)',
+     '1;33' => 'Bold dark  yellow foreground (short 8-color notation)',
+       '33' => '       dark  yellow foreground (short 8-color notation)',
+     '2;33' => 'Dim  dark  yellow foreground (short 8-color notation)',
      "#{FG};5;94;#{BG};5;33" => 'Brown foreground, light blue background',
-     "1;4;#{FG};5;11" => 'Bold underlined, gold foreground',
+     "1;4;#{FG};5;57" => 'Bold underlined, purple foreground',
     }.each { |code, desc|
       print '  echo $\'\e[' + code + 'm'
       printColorString code, desc
