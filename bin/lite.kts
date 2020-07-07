@@ -2,8 +2,6 @@
 
 import kotlin.system.exitProcess
 
-var debug=false
-
 val AllEffects = mapOf(
         "-clear"     to 0,
         "-bold"      to 1,
@@ -25,11 +23,6 @@ val AllColors = mapOf(
 
 val defaultArgs = arrayOf("-fg", "-bold", "-yellow")
 
-fun escape(str: String) = if (debug) "\\e[${str}m" else "${27.toChar()}[${str}m"
-
-fun highlightWith(codes: String): (MatchResult) -> String =
-        { result: MatchResult -> "${escape(codes)}${result.groupValues.first()}${escape("0")}" }
-
 fun showUsage(errorMessage: String? = null) {
     if (errorMessage != null) println("Error: $errorMessage")
     println("""
@@ -40,7 +33,6 @@ combining the colors causes a conflict, the last one wins. Regex's may overlap a
 in the order specified. The arguments default to "${defaultArgs.joinToString(" ")}".
 
   -bg    The subsequent colors apply to the character background.
-  -debug Show debugging information
   -fg    The subsequent colors apply to the character foreground.
   -h     Show this help screen.
  
@@ -64,33 +56,27 @@ Report bugs to <paul.schaaf@gmail.com>.
 }
 
 var color = 0
+val esc = 27.toChar()
 val effects = mutableListOf<Int>()
 var ground = 0
 val matchers = mutableListOf<(String) -> String>()
 
-for (arg in defaultArgs.plus(args)) when {
-    arg == "-debug"             -> debug = true
-    arg == "-bg"                -> ground = 10
-    arg == "-fg"                -> ground = 0
-    arg == "-h"                 -> showUsage()
-    AllEffects.containsKey(arg) -> effects.add(AllEffects[arg]!!)
-    AllColors.containsKey(arg)  -> color = AllColors[arg]!!
-    else                        -> {
-        val regex = Regex(arg)
-        val codes = effects.plus(color + ground).joinToString(";")
-        matchers.add { line -> regex.replace(line, highlightWith(codes)) }
+defaultArgs.plus(args).forEach { arg ->
+    when {
+        arg == "-bg"                -> ground = 10
+        arg == "-fg"                -> ground = 0
+        arg == "-h"                 -> showUsage()
+        AllEffects.containsKey(arg) -> effects.add(AllEffects[arg]!!)
+        AllColors.containsKey(arg)  -> color = AllColors[arg]!!
+        else                        -> {
+            val regex = Regex(arg)
+            val codes = effects.plus(color + ground).joinToString(";", "$esc[", "m")
+            matchers.add { str -> regex.replace(str) { result -> "${codes}${result.groupValues.first()}$esc[0m" } }
+        }
     }
 }
-if (matchers.isEmpty()) showUsage("No regexes were specified!")
 
-if (debug) {
-    println("color: $color")
-    println("effects: $effects")
-    println("ground: $ground")
-}
-
-for (line in generateSequence { readLine() }) {
-    val newLine = matchers.foldRight(line, { matcher, acc -> matcher(acc) })
-    print(newLine)
-    println()
+generateSequence { readLine() }.forEach { line ->
+    matchers.foldRight(line, { matcher, str -> matcher(str) })
+            .apply(::println)
 }
