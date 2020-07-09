@@ -58,6 +58,17 @@ Report bugs to <paul.schaaf@gmail.com>.
 var color = 0
 val esc = 27.toChar()
 val effects = mutableListOf<Int>()
+
+fun Iterable<Any>.ansi() = this.joinToString(";").ansi()
+fun Any.ansi() = "$esc[${this}m"
+
+fun highlight(result : MatchResult): String {
+    val ansiCodes = effects.plus(color + ground).ansi()
+    return "${ansiCodes}${result.groupValues.first()}$clear"
+}
+
+val clear = 0.ansi()
+
 var ground = 0
 val matchers = mutableListOf<(String) -> String>()
 
@@ -70,13 +81,20 @@ defaultArgs.plus(args).forEach { arg ->
         AllColors.containsKey(arg)  -> color = AllColors[arg]!!
         else                        -> {
             val regex = Regex(arg)
-            val codes = effects.plus(color + ground).joinToString(";", "$esc[", "m")
-            matchers.add { str -> regex.replace(str) { result -> "${codes}${result.groupValues.first()}$esc[0m" } }
+            val ansiCodes = effects.plus(color + ground).ansi()
+//            matchers.add { str -> regex.replace(str, ::highlight) }
+            matchers.add { str -> regex.replace(str) { result -> "${ansiCodes}${result.groupValues.first()}$esc[0m" } }
         }
     }
 }
 
-generateSequence { readLine() }.forEach { line ->
-    matchers.foldRight(line, { matcher, str -> matcher(str) })
-            .apply(::println)
-}
+generateSequence { readLine() }
+        .fold("", { acc: String, line: String ->
+            matchers.foldRight(line, { matcher, str -> matcher(str) })
+                    .apply(::println)
+        })
+
+//generateSequence { readLine() }.forEach { line ->
+//    matchers.foldRight(line, { matcher, str -> matcher(str) })
+//            .apply(::println)
+//}
