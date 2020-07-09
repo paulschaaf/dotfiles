@@ -83,7 +83,7 @@ defaultArgs.plus(args).forEach { arg ->
             val regex = Regex(arg)
             val ansiCodes = effects.plus(color + ground).ansi()
 //            matchers.add { str -> regex.replace(str, ::highlight) }
-            matchers.add { str -> regex.replace(str) { result -> "${ansiCodes}${result.groupValues.first()}$esc[0m" } }
+            matchers.add { regex.replace(it) { result -> "${ansiCodes}${result.groupValues.first()}$esc[0m" } }
         }
     }
 }
