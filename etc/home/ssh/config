@@ -21,8 +21,8 @@ Host copernicus_home
    ForwardAgent yes
    ForwardX11 yes
 
-Host pschaaf-mbp15.local
-  UseKeychain yes
+#Host pschaaf-mbp15.local
+#  UseKeychain yes
 
 # =========================================================================
 # ======= Guidewire Machines
