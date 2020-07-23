@@ -1,9 +1,9 @@
 [ActivityManager]
-_k_friendly_name=Plasma
+_k_friendly_name=Activity Manager
 switch-to-activity-2ee8946c-326b-4526-9659-6ef7b3f48aec=none,none,Switch to activity "Default"
 switch-to-activity-34dae46b-335d-40f2-bd8b-ee0171c0d940=none,none,Switch to activity "Gaming"
 switch-to-activity-5d798a73-4328-4547-8c97-91b359e2d7b0=none,none,Switch to activity "Default"
-switch-to-activity-d2b375bc-1e26-4e15-a9b7-27a428fefc36=none,none,Switch to activity "Default"
+switch-to-activity-d2b375bc-1e26-4e15-a9b7-27a428fefc36=none,none,Switch to activity "Work"
 
 [Clementine]
 _k_friendly_name=Clementine
@@ -91,7 +91,7 @@ Lock Session=Meta+L\t\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session
 Log Out=Ctrl+Alt+Del,none,Log Out
 Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
 Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
-_k_friendly_name=ksmserver
+_k_friendly_name=Session Management
 
 [kwin]
 Activate Window Demanding Attention=Ctrl+Alt+A,Ctrl+Alt+A,Activate Window Demanding Attention
@@ -359,6 +359,7 @@ Decrease Screen Brightness=Monitor Brightness Down,Monitor Brightness Down,Decre
 Hibernate=Hibernate,Hibernate,Hibernate
 Increase Keyboard Brightness=Keyboard Brightness Up,Keyboard Brightness Up,Increase Keyboard Brightness
 Increase Screen Brightness=Monitor Brightness Up,Monitor Brightness Up,Increase Screen Brightness
+PowerDown=Power Down,Power Down,Power Down
 PowerOff=Power Off,Power Off,Power Off
 Sleep=Sleep,Sleep,Suspend
 Toggle Keyboard Backlight=Keyboard Light On/Off,Keyboard Light On/Off,Toggle Keyboard Backlight
@@ -366,7 +367,7 @@ Turn Off Screen=none,none,Turn Off Screen
 _k_friendly_name=Power Management
 
 [plasmashell]
-_k_friendly_name=Activity switching
+_k_friendly_name=Plasma
 activate task manager entry 1=,Meta+1,Activate Task Manager Entry 1
 activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
 activate task manager entry 2=,Meta+2,Activate Task Manager Entry 2
@@ -377,6 +378,8 @@ activate task manager entry 6=Meta+6,Meta+6,Activate Task Manager Entry 6
 activate task manager entry 7=Meta+7,Meta+7,Activate Task Manager Entry 7
 activate task manager entry 8=Meta+8,Meta+8,Activate Task Manager Entry 8
 activate task manager entry 9=Meta+9,Meta+9,Activate Task Manager Entry 9
+activate widget 159=none,none,Activate Application Menu Widget
+activate widget 160=none,none,Activate Icons-only Task Manager Widget
 activate widget 165=none,none,Activate Application Menu Widget
 activate widget 18=Alt+F1,none,Activate Application Menu Widget
 activate widget 19=,none,Activate Application Menu Widget
@@ -408,6 +411,10 @@ _launch=none,none,Launch Java 8 Policy Settings-2
 [qt v4l2 camera test bench.desktop]
 _k_friendly_name=Qt V4L2 Camera Test Bench
 _launch=none,none,Launch Qt V4L2 Camera Test Bench
+
+[systemsettings.desktop]
+_k_friendly_name=System Settings
+_launch=Tools,Tools,System Settings
 
 [yakuake]
 _k_friendly_name=Yakuake
