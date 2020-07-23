@@ -6,7 +6,6 @@
 # ======= Global Override - Presides over subsequent settings
 
 Host *
-  UseKeychain yes
   AddKeysToAgent yes
   IdentityFile ~/.ssh/id_dsa
   IdentityFile ~/.ssh/id_rsa
@@ -22,6 +21,8 @@ Host copernicus_home
    ForwardAgent yes
    ForwardX11 yes
 
+Host pschaaf-mbp15.local
+  UseKeychain yes
 
 # =========================================================================
 # ======= Guidewire Machines
