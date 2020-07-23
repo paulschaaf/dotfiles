@@ -129,7 +129,7 @@ fi
 # ========
 # ======== Guidewire
 # shellcheck disable=SC1090
-[[ -f ~/dotfiles/secrets ]] && source ~/dotfiles/secrets
+[[ -f ~/dotfiles/secrets.txt ]] && source ~/dotfiles/secrets.txt
 
 export ARTIFACTORY_USERNAME=${USER}
 export P4_HOME=/opt/p4v
@@ -137,6 +137,6 @@ export P4CLIENT=pschaaf_satori_1124
 export TEAMCITY_USER=${USER}
 
 # Claim Automation
-export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-dev/
+export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
 export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}

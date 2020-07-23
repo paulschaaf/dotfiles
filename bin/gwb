@@ -133,7 +133,9 @@ runTask() {
     fi
   fi
   # tries to display the elapsed seconds as something like 0:00.00. Doesn't work on MacOS.
-  elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+  if [[ ${UNAME} != "Darwin" ]]; then
+    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+  fi
 
   if [ $exitCode -eq 0 ]; then
     log_section 42 "DONE $elapsedTime" $taskSummary

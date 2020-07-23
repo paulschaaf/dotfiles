@@ -452,6 +452,8 @@ fi
 # Start or connect to the existing ssh-agent and/or gpg-agent
 if inLinux && (( ! $#SSH_AGENT_PID )); then
      isRoot || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
+elif inMacOS; then
+     ssh-add -A
 fi
 
 

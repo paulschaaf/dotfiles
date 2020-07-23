@@ -6,6 +6,10 @@
 # ======= Global Override - Presides over subsequent settings
 
 Host *
+  UseKeychain yes
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/id_dsa
+  IdentityFile ~/.ssh/id_rsa
 
 # =========================================================================
 # ======= Home Machines
