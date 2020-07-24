@@ -454,6 +454,7 @@ if inLinux && (( ! $#SSH_AGENT_PID )); then
      isRoot || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
 elif inMacOS; then
      ssh-add -A
+     alias ssh='command ssh -o UseKeychain=yes'
 fi
 
 
@@ -528,3 +529,6 @@ zmodload -i zsh/complist
 #  $ print *(e:age 2006/10/04:)
 ## Supply times.
 #  $ print *(e-age 2006/10/04:10:15 2006/10/04:10:45-)
+
+# load atmos
+for file in /Users/pschaaf/.atmos/dotfiles.d/*; do . $file; done

@@ -21,37 +21,8 @@ Host copernicus_home
    ForwardAgent yes
    ForwardX11 yes
 
-#Host pschaaf-mbp15.local
-#  UseKeychain yes
-
 # =========================================================================
 # ======= Guidewire Machines
-
-Host superior
-   ForwardAgent yes
-   ForwardX11 yes
-
-Host ftp ftp.guidewire.com
-   ForwardAgent yes
-   ForwardX11 yes
-   ServerAliveInterval 20
-
-Host instructor
-   ForwardAgent yes
-   ForwardX11 yes
-
-Host isis
-   ForwardAgent yes
-   ForwardX11 yes
-   HostName 192.168.1.199
-
-Host menominee
-   ForwardAgent yes
-   ForwardX11 yes
-
-Host service01
-   ForwardAgent yes
-   ForwardX11 yes
 
 
 # =========================================================================
