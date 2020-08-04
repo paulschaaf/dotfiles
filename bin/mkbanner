@@ -1,21 +1,22 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 
-local fg=gray
-local width=1400
+fg=gray
+width=1400
 
-local pointsize=240
-local height=231
-local h_offset=25
-local v_offset=178
+pointsize=240
+height=231
+h_offset=25
+v_offset=178
 
 function usage() {
-  echo "Usage: ${0:t} [OPTION...] TEXT
+   echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
   -bg=COLOR   Set the background color (defaults to be transparent)
   -fg=COLOR   Set the foreground color (defaults to '${fg}')
   -width=NUM  Set the width of the text box (defaults to ${width})
   --debug     Trace the execution
   --dry_run   Show the resulting command but do not execute
+  --force     Overwrite the existing file, if any
   -h, --help  Show this screen
 
   All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
@@ -25,69 +26,78 @@ function usage() {
 "
 }
 
-if (( ! $#1 )); then
-  usage
-  exit
+if ((!$#1)); then
+   usage
+   exit
 fi
 
-local bd dry_run bgName txt
-local switches=()
+switches=()
 
 while [[ -n "$*" ]]; do
-  local switch=${1%%=*}
-  local arg=${1#*=}
-  case ${switch} in
-    --debug)
-      set -x
-      ;;
-    -h|--help)
-      usage
-      exit
-      ;;
-    -bg)
-      bg=${arg}
-      bgName=${bg}
-      ;;
-    --dry_run)
-      dry_run='echo '
-      ;;
-    -fg)
-      fg=${arg}
-      ;;
-    -width)
-      width=${arg}
-      ;;
-    -*)
-      switches+=${1}
-      ;;
-    *)
-      txt=$1
-      shift
-      break
-      ;;
-  esac
-  shift
+   switch=${1%%=*}
+   arg=${1#*=}
+   case ${switch} in
+      --debug)
+         set -x
+         ;;
+      -h | --help)
+         usage
+         exit
+         ;;
+      -bg)
+         bg=${arg}
+         bgName=${bg}
+         ;;
+      --dry_run | --dry-run)
+         dry_run='echo '
+         ;;
+      -fg)
+         fg=${arg}
+         ;;
+      --force)
+         force=true
+         ;;
+      --width)
+         width=${arg}
+         ;;
+      -*)
+         switches+=(${1})
+         ;;
+      *)
+         txt=$1
+         shift
+         break
+         ;;
+   esac
+   shift
 done
 
-if (( ! $#txt )); then
-  echo Error: missing text!
-  usage
-  exit 1
-elif (( $#* )); then
-  echo "Error: extra arguments after the text '${txt}': '${*}'!"
-  usage
-  exit 1
+if ((!$#txt)); then
+   echo Error: missing text!
+   usage
+   exit 1
+elif ((${#*})); then
+   echo "Error: extra arguments after the text '${txt}': '${*}'!"
+   usage
+   exit 1
 fi
 
 # if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
-if (( ! $#bg )); then
-  bgName=transparent
-  [[ ${fg} = "white" ]] && bg=black || bg=white
-  switches+=(-transparent ${bg})
+if ((!$#bg)); then
+   bgName=transparent
+   [[ ${fg} == "white" ]] && bg=black || bg=white
+   switches+=(-transparent ${bg})
 fi
 
-local name=${txt// /_}
-local filename=banner_${name}_${fg}_on_${bgName}_${width}w_XXX.png
-(( $#dry_run )) || filename=`mktemp ${filename}`
+name=${txt// /_}
+filename=banner_${name}_${fg}_on_${bgName}_${width}w_.png
+#(( $#dry_run )) || filename=`mktemp ${filename}`
+
+(($#force)) && rm -f ${filename}
+if [[ -e ${filename} ]]; then
+   echo Can only overwrite existing file if --force is specified
+   exit 1
+fi
 eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
-(( $#dry_run )) || echo Created ${filename}
+
+(($#dry_run)) || echo Created ${filename}
