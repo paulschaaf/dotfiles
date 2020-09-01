@@ -1,4 +1,4 @@
-HOSTS=copernicus satori satori_home evander d-cc-core d-cc-merge d-cc-stable e-cc-core e-cc-merge e-cc-stable
+HOSTS=copernicus PSCHAAF-MBP15.guidewire.com
 
 .PHONY:	all clean allowUserWrite cleanLinks disallowAllWrites
 

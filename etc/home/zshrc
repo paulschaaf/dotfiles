@@ -10,7 +10,6 @@
 # ...
 # 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-
 # ========
 # ======== Profiling
 #echo Sourcing ${(%):-%N}
@@ -357,7 +356,7 @@ esac
 bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
 bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
-
+inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-Clementine-Play-or-Pause\n'
 
 # ========
 # ======== Remote sessions
@@ -534,4 +533,6 @@ zmodload -i zsh/complist
 #  $ print *(e-age 2006/10/04:10:15 2006/10/04:10:45-)
 
 # load atmos
-for file in /Users/pschaaf/.atmos/dotfiles.d/*; do . $file; done
+for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
+   source $file
+done

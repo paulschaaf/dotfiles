@@ -107,6 +107,9 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
+
+inMacOS && path=( ~/bin/macos ${path} )
+
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
 
@@ -140,3 +143,4 @@ export TEAMCITY_USER=${USER}
 export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
 export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
+echo beta $path

@@ -44,6 +44,7 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
   echo Running in ${PWD}
 fi
 
+dbbackup=h2database
 ssh_socket=~/tmp/cc-fwd-socket
 passIcon=/gw-dev/icons/$(echo $GW_PRODUCT | sed 's/.*/\U\0/')_favicon.ico
 #failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
@@ -172,6 +173,9 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
+      backupDb)
+         fullTask="7za a ${dbbackup} $GW_DB_DIR"
+         ;;
       cleanIdea)
         taskFailIcon=$failIcon
         ;;
@@ -260,6 +264,12 @@ while [ -n "$*" ]; do
 #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
 #        shift
 #        ;;
+      restoreDb)
+         fullTask="7za x -aoa -o${GW_DB_DIR}/.. ${dbbackup}.7z"
+         ;;
+      rmDb)
+         fullTask="rm -f ${GW_DB_DIR}/*"
+         ;;
       server) # broken
         fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
         ;;

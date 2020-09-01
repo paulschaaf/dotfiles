@@ -11,6 +11,7 @@
 # _describe 'values' options
 
 _arguments "*: :((
+  backupDb
   clean
   cleanIdea
   cleanStudio
@@ -37,6 +38,8 @@ _arguments "*: :((
   'portCheck: Is the SSH tunnel open?'
   'portClose: Stop the SSH tunnel on port 8080'
   'portOpen: Open an SSH tunnel on port 8080 redirecting to 8090'
+  restoreDb
+  rmDb
   'runSuite: Compile then run the specified suite'
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
