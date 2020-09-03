@@ -1,0 +1,51 @@
+#!/bin/zsh
+
+unset debug
+command=(/usr/local/bin/rg)
+
+args=($@)
+alias popArg='args=(${args[@]:1})'
+
+function addGlob() {
+   for pattern in "${@}"; do
+      command+=(--glob "'$pattern'")
+   done
+}
+echo running pschaaf rg
+#set -x
+while (($#args)); do
+   (($#debug)) && echo -n '\n=== ' && typeset args
+   firstArg=${args[1]}
+   popArg
+
+   (($#debug)) && typeset firstArg
+   case ${firstArg} in
+      --debug)
+         debug=true
+         ;;
+      --ignore-datamodel)
+         args=(--ignore-entities --ignore-typelists $args)
+         ;;
+      --ignore-localizations)
+         addGlob "!**/display_*.properties"
+         ;;
+      --ignore-entities)
+         addGlob "!**/*.eti" "!**/*.eix" "!**/*.etx"
+         ;;
+      --ignore-pcfs)
+         addGlob "!**/*.pcf"
+         ;;
+      --ignore-test)
+         addGlob "!test/*" "!cc-test/*" "!**/*.ttx"
+         ;;
+      --ignore-typelists)
+         addGlob "!**/*.tti" "!**/*.tix" "!**/*.ttx"
+         ;;
+      *)
+         command+=($firstArg)
+         ;;
+   esac
+done
+
+(($#debug)) && echo "${command[@]}" && echo
+"${command[@]}"

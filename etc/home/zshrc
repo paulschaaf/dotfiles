@@ -145,11 +145,13 @@ if inMacOS; then
         && printf '\e[3;0;0;1t\e[8;142;100t' \
         || printf '\e[3;0;0;1t\e[8;106;100t'
 fi
-#inLinux && alias hpcalc='x48 -smallFont fixed -mediumFont fixed -largeFont fixed -connFont fixed -title "HP 48GX"'
+inLinux && alias hpcalc=x48
 inCygwin && alias open=explorer
 if inLinux; then
   alias open=dolphin
-  function dolphin() { command dolphin ${*:-.} }
+  function dolphin() {
+     command dolphin ${*:-.}
+  }
 fi
 alias pd=popd
 alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
@@ -183,7 +185,6 @@ autoload -Uz lld
 autoload -Uz llda
 alias llda='lsda -l'
 autoload -Uz lsf
-
 
 # ========
 # ======== Var and List Processing

@@ -5,6 +5,8 @@
 --glob
 !build/*
 --glob
+!generated_classes/*
+--glob
 !**/*.snap
 --type-add
 gosu:*.gs

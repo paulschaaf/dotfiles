@@ -199,7 +199,7 @@ while [ -n "$*" ]; do
         ;;
       h2)
         spawn=true
-        fullTask="java -jar ./app-cc/cc-cmdline/build/admin/lib/h2-*.jar"
+        fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
         ;;
       httpkill)
         fullTask="pkill -f '$webserver'"
