@@ -63,6 +63,7 @@ fi
 # ======== Exported Variables
 export BROWSER=google-chrome-stable
 inMacOS && export BROWSER=open
+inMacOS && export DISPLAY=:0
 export EDITOR=/usr/bin/emacs
 inMacOS && EDITOR=/usr/local/bin/emacs
 isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'

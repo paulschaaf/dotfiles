@@ -266,7 +266,7 @@ trace Determined the GW product
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
 export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
 export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
-typeset -p GW_PORT GW_PORT_DEBUG GW_TITLE
+typeset -p GW_PORT GW_PROMPT GW_PORT_DEBUG GW_TITLE
 
 
 #

@@ -32,3 +32,5 @@
 [filesystem "Amazon.com Inc.|11.0.3|/dev/disk1s5"]
 	timestampResolution = 11000 nanoseconds
 	minRacyThreshold = 0 nanoseconds
+[diff]
+	renameLimit = 32768

@@ -11,9 +11,9 @@ v_offset=178
 function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
-  -bg=COLOR   Set the background color (defaults to be transparent)
-  -fg=COLOR   Set the foreground color (defaults to '${fg}')
-  -width=NUM  Set the width of the text box (defaults to ${width})
+  --bg=COLOR   Set the background color (defaults to be transparent)
+  --fg=COLOR   Set the foreground color (defaults to '${fg}')
+  --width=NUM  Set the width of the text box (defaults to ${width})
   --debug     Trace the execution
   --dry_run   Show the resulting command but do not execute
   --force     Overwrite the existing file, if any
@@ -44,14 +44,14 @@ while [[ -n "$*" ]]; do
          usage
          exit
          ;;
-      -bg)
+      --bg)
          bg=${arg}
          bgName=${bg}
          ;;
       --dry_run | --dry-run)
          dry_run='echo '
          ;;
-      -fg)
+      --fg)
          fg=${arg}
          ;;
       --force)

@@ -17,7 +17,7 @@ Host copernicus
    ForwardAgent yes
    ForwardX11 yes
 
-Host copernicus_home
+Host PSCHAAF-MBP15
    ForwardAgent yes
    ForwardX11 yes
 

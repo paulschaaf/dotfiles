@@ -130,7 +130,7 @@ runTask() {
       eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
       # keep the exit code from the first command in the chain (i.e. not the sed)
-      exitCode=$pipestatus[1]
+      exitCode=${pipestatus[1]}
     fi
   fi
   # tries to display the elapsed seconds as something like 0:00.00. Doesn't work on MacOS.
@@ -174,7 +174,8 @@ while [ -n "$*" ]; do
   taskPassIcon=
   case $task in
       backupDb)
-         fullTask="7za a ${dbbackup} $GW_DB_DIR"
+         dbName=`date "+${dbbackup}_%H:%M:%S"`
+         fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
          ;;
       cleanIdea)
         taskFailIcon=$failIcon
@@ -257,6 +258,11 @@ while [ -n "$*" ]; do
         spawn=true
         fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
         ;;
+      restoreDb)
+         fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
+          shift
+          #${dbbackup}.7z"
+         ;;
 #      runSuite)
 #        if (( ! $#* )); then
 #          echo "No suite specified!"
@@ -264,9 +270,6 @@ while [ -n "$*" ]; do
 #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
 #        shift
 #        ;;
-      restoreDb)
-         fullTask="7za x -aoa -o${GW_DB_DIR}/.. ${dbbackup}.7z"
-         ;;
       rmDb)
          fullTask="rm -f ${GW_DB_DIR}/*"
          ;;

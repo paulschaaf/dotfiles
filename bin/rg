@@ -1,7 +1,8 @@
 #!/bin/zsh
 
-unset debug
-command=(/usr/local/bin/rg)
+unset debug help
+binary=/usr/local/bin/rg
+command=()
 
 args=($@)
 alias popArg='args=(${args[@]:1})'
@@ -11,7 +12,7 @@ function addGlob() {
       command+=(--glob "'$pattern'")
    done
 }
-echo running pschaaf rg
+
 #set -x
 while (($#args)); do
    (($#debug)) && echo -n '\n=== ' && typeset args
@@ -21,13 +22,18 @@ while (($#args)); do
    (($#debug)) && typeset firstArg
    case ${firstArg} in
       --debug)
+         # shellcheck disable=SC2034
          debug=true
+         ;;
+      -h|--help)
+         help=true
+         command+=($firstArg)
          ;;
       --ignore-datamodel)
          args=(--ignore-entities --ignore-typelists $args)
          ;;
       --ignore-localizations)
-         addGlob "!**/display_*.properties"
+         addGlob "!**/display*.properties"
          ;;
       --ignore-entities)
          addGlob "!**/*.eti" "!**/*.eix" "!**/*.etx"
@@ -35,11 +41,14 @@ while (($#args)); do
       --ignore-pcfs)
          addGlob "!**/*.pcf"
          ;;
-      --ignore-test)
-         addGlob "!test/*" "!cc-test/*" "!**/*.ttx"
+      --ignore-tests)
+         addGlob "!test/*" "!cc-test/*"
          ;;
       --ignore-typelists)
          addGlob "!**/*.tti" "!**/*.tix" "!**/*.ttx"
+         ;;
+      --ignore-ui)
+         args=(--ignore-localizations --ignore-pcfs)
          ;;
       *)
          command+=($firstArg)
@@ -48,4 +57,17 @@ while (($#args)); do
 done
 
 (($#debug)) && echo "${command[@]}" && echo
-"${command[@]}"
+(($#command)) && $binary "${command[@]}"
+
+if (($#help)); then
+   echo '\nGUIDEWIRE MACRO IGNORE FLAGS:               WILL IGNORE'
+   echo '     --ignore-localizations                 display*.properties'
+   echo '     --ignore-entities                      *.eti, *.eix, *.etx'
+   echo '     --ignore-pcfs                          *.pcf'
+   echo '     --ignore-tests                         test/*, cc-test'
+   echo '     --ignore-typelists                     *.tti, *.tix, *.ttx'
+
+   echo '\nEXPANSION OPERATORS                         EXPANDS TO'
+   echo '     --ignore-datamodel                     --ignore-entities --ignore-typelists'
+   echo '     --ignore-ui                            --ignore-localizations --ignore-pcfs'
+fi
