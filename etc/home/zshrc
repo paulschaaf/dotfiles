@@ -139,12 +139,6 @@ alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
-if inMacOS; then
-    # move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-    atHome \
-        && printf '\e[3;0;0;1t\e[8;142;100t' \
-        || printf '\e[3;0;0;1t\e[8;106;100t'
-fi
 inLinux && alias hpcalc=x48
 inCygwin && alias open=explorer
 if inLinux; then
@@ -185,6 +179,7 @@ autoload -Uz lld
 autoload -Uz llda
 alias llda='lsda -l'
 autoload -Uz lsf
+
 
 # ========
 # ======== Var and List Processing
@@ -360,6 +355,7 @@ bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 inMacOS && bindkey -s "\033[27~" ' ~/bin/macos/hpcalc\n'
 inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-Clementine-Play-or-Pause\n'
 
+
 # ========
 # ======== Remote sessions
 if (( $#SUDO_USER )); then
@@ -481,11 +477,13 @@ zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
 # cache time of 20 hours, so it should almost always regenerate the first time a
 # shell is opened each day.
 autoload -Uz compinit
+# shellcheck disable=SC1036
 _comp_files=(${ZDOTDIR:-$HOME}/.zcompdump(Nm-20))
 if (( $#_comp_files )); then
     compinit -i -C
 else
     compinit -i
+    # shellcheck disable=SC1073
     { zrecompile -U ~/.zcompdump } &!
 fi
 unset _comp_files
