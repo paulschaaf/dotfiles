@@ -1,6 +1,7 @@
 #!/usr/bin/env zsh
 
-fg=gray
+# gray66 is too light, gray50 is too dark
+fg=gray60
 width=1400
 
 pointsize=240

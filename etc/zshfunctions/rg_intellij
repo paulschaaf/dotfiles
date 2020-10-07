@@ -1,15 +1,15 @@
 #!/bin/zsh
 
 command rg --no-heading --column ${*} | sed -E "
-    # insert a space between the column number and the matching text
-    s_(.*[0-9]+\[0m):_\\1 _;
+   # insert a space between the column number and the matching text
+   s_(.*[0-9]+\[0m):_\\1 _;
 
-    # prepend PWD to all relative paths (those without a leading /)
-    s_^([^/])_${PWD}/\\1_;
+   # prepend PWD to all relative paths (those without a leading /)
+   s*^([^/])*${PWD}/\\1*;
 
-    # replace all occurrences of /./ with /
-    s_/\\./_/_;
+   # replace all occurrences of /./ with /
+   s_/\\./_/_;
 
-    # prepend file:// to each absolute path so it appears as a link
-    s_^/_file:///_;
+   # prepend file:// to each absolute path so it appears as a link
+   s_^/_file:///_;
 "

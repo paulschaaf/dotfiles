@@ -8,8 +8,11 @@
 [user]
 	name = Paul Schaaf
 	email = paul.schaaf@gmail.com
+[diff]
+    tool = araxis
 [merge]
-	tool = bc
+    tool = araxis
+#	tool = bc
 [push]
 	default = current
 [mergetool "bc3"]
@@ -17,7 +20,9 @@
 [credential]
 	helper = keychain
 [alias]
-	squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
+    ad = difftool --tool=araxis --dir-diff
+    ads = difftool --tool=araxis --dir-diff --staged
+    squash = "!f(){ git reset --soft HEAD~${1} && git commit --edit -m\"$(git log --format=%B --reverse HEAD..HEAD@{1})\"; };f"
 	co = checkout
 	issue = "!f(){ echo ${GIT_BRANCH##*/} | sed \"s~_.*~~\"; };f"
 	# https://ses4j.github.io/2020/04/01/git-alias-recent-branches/

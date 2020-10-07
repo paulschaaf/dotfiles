@@ -110,8 +110,6 @@ path=(
     /opt/git-gw
 )
 
-inMacOS && path=( ~/bin/macos ${path} )
-
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
 
