@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 unset debug help
-binary=/usr/local/bin/rg
+binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 command=()
 
 args=($@)
