@@ -11,13 +11,14 @@
 !/etc/home/emacs.d/init.el
 !/etc/home/emacs.d/Makefile
 
-!/etc/ssh/*.pub
-!/etc/ssh/authorized_keys
-!/etc/ssh/config
-!/etc/ssh/config.default
-!/etc/ssh/environment
-!/etc/ssh/known_hosts
-!/etc/ssh/ssh-open
-!/etc/ssh/sshd_config
+!/etc/home/ssh/*.pub
+!/etc/home/ssh/authorized_keys
+!/etc/home/ssh/config
+!/etc/home/ssh/config.default
+!/etc/home/ssh/environment
+!/etc/home/ssh/known_hosts
+!/etc/home/ssh/ssh-open
+!/etc/home/ssh/sshd_config
 
 /secrets
+/secrets.txt
