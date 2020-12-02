@@ -2,7 +2,7 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Noto Mono,6,-1,5,50,0,0,0,0,0
+Font=Noto Mono,10,-1,5,50,0,0,0,0,0
 
 [Encoding Options]
 DefaultEncoding=UTF-8

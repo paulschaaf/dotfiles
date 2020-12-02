@@ -62,8 +62,9 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
-{45303711-4e70-4f70-9138-4fe5beefe44b}=ScrollLock,none,Open HP Calculator
+{45303711-4e70-4f70-9138-4fe5beefe44b}=Launch (1),none,Open HP Calculator
 {71c429b8-9e5b-4772-9b7a-58d7225b0a16}=Ctrl+Alt+T,none,Launch Konsole
+{aa8f0f41-d256-4a98-b38a-26f3fa261a32}=Ctrl+Shift+Esc,none,Process Manager
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=,none,Search
 
 [kmix]
