@@ -20,6 +20,7 @@ libraries=(
 # these get installed first, in the order defined
 ordered_packages=(
    mlocate
+   meta-group-base-devel   # all base devel tools
    ripgrep                 # quicker grep
    google-chrome           # the best browser
    git                     # version control
@@ -77,6 +78,7 @@ applications=(
    #    virtualbox-ext-oracle
    #    virtualbox-guest-iso
    #    visual-studio-code
+   xeyes                  # simple way to test X display
 )
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
