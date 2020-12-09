@@ -133,7 +133,7 @@ case ${GW_PLATFORM} in
     50|halite)
         export GW_PL_NUM=50
         export GW_PLATFORM=halite
-        export GW_DB_DIR=/tmp/guidewire/granite
+        export GW_DB_DIR=/tmp/guidewire
         export IDEA_HOME=/opt/idea_halite
         export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
         inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'

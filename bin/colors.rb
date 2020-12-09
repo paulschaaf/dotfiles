@@ -13,6 +13,7 @@ end
 
 BLINK = effect 5
 CLR = effect 0
+DEFAULT_BACKGROUND = 16
 INVERSE = effect 7
 UNDERLINE = effect 4
 #noinspection RubyConstantNamingConvention
@@ -26,7 +27,13 @@ def bg(c)
   effect "#{BG};5;#{c}"
 end
 
-BLACKBACKGROUND = CLR + bg(16)
+if ARGV[0] == "--background"
+  DEFAULT_BACKGROUND = ARGV[1]
+  ARGV.shift(2)
+end
+
+
+RESETBACKGROUND = CLR + bg(DEFAULT_BACKGROUND)
 
 def printColorString(code, text = code, pad = PAD)
   open, close = '', ''
@@ -36,14 +43,14 @@ def printColorString(code, text = code, pad = PAD)
     pad += 2
   elsif text == LOOKUP # if this is the color the user asked about
     pad -= 1 # back up one
-    open = "#{BLINK}>#{BLACKBACKGROUND}" # and insert a blinking carat instead of the space
+    open = "#{BLINK}>#{RESETBACKGROUND}" # and insert a blinking carat instead of the space
   end
   text = sprintf "%#{pad}s", text
-  print open, effect(code), text, BLACKBACKGROUND, close
+  print open, effect(code), text, RESETBACKGROUND, close
 end
 
 def section(header, subHeader = '')
-  puts "#{BLACKBACKGROUND}"
+  puts "#{RESETBACKGROUND}"
   printColorString 4, header
   printColorString 0, " #{subHeader}\n"
   yield
@@ -60,7 +67,7 @@ if ARGV[0] == "--rainbows"
   btr = fg(214)
   red = fg(196)
   lBl = fg(81)
-  blk = "#{BLACKBACKGROUND}"
+  blk = "#{RESETBACKGROUND}"
   link = "https://tinyurl.com/RadioheadInRainbows"
 
   print <<STRING
@@ -160,7 +167,7 @@ STRING
 
   section('256-COLOR PALETTE', '(0..255)') {
     [FG, BG].each { |ground|
-      print("\n  #{UNDERLINE}Page #{ground}: #{ground == FG ? 'Fore' : 'Back'}grounds#{BLACKBACKGROUND}\n\n")
+      print("\n  #{UNDERLINE}Page #{ground}: #{ground == FG ? 'Fore' : 'Back'}grounds#{RESETBACKGROUND}\n\n")
       [0, 8].each { |page|
         print '  '
         (0..7).each { |col|
