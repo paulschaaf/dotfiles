@@ -298,6 +298,7 @@ function wfile() { file $(which ${@}) 2>/dev/null || echo \'${@}\' not found }
 
 alias whence='whence -ac'
 autoload -Uz whichjava
+alias yay='yay --answerclean None --answerdiff None --answeredit None'
 autoload -Uz zed && alias fned='zed -f'
 autoload -Uz zrecompile
 
