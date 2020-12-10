@@ -400,6 +400,31 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 
 currentUser=${USER//pschaaf/}
 
+echo 403
+typeset hostIcon
+set -x
+case ${UNAME}:${HOSTNAME} in
+   CYGWIN*)
+       hostIcon="\U1FA9F"
+       ;;
+   Darwin*)
+       hostIcon="\UF8FF"
+       ;;
+   Linux*)
+#       hxxxostIcon="🐧\U1F427"
+       hostIcon=🐧X
+       ;;
+   Windows*)
+       hostIcon="\U1FA9F"
+       ;;
+   *)
+       hostIcon="\U2047"
+       ;;
+esac
+set +x
+echo 423
+typeset hostIcon
+
 if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
     if isRoot; then
         hostColor=%B%F{white}%K{red}
@@ -434,7 +459,7 @@ fi
 
 PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
 %(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} %F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
+\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT${hostIcon}%(!.#.$) "
 
 PS2="(%F{magenta}%_%f) > "
 
