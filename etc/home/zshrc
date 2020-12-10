@@ -132,6 +132,7 @@ export WORDCHARS='|*?-~\\$%^'
 
 inMacOS && path=( ~/bin/macos /Applications/Araxis\ Merge.app/Contents/Utilities ${path} )
 
+
 # ========
 # ======== Aliases
 alias ..='pushd ..'
@@ -400,30 +401,25 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 
 currentUser=${USER//pschaaf/}
 
-echo 403
-typeset hostIcon
-set -x
 case ${UNAME}:${HOSTNAME} in
-   CYGWIN*)
-       hostIcon="\U1FA9F"
+   CYGWIN*|Windows)
+#       HOST_ICON=`echo "\U1FA9F "`
+       HOST_ICON="🪟 "
        ;;
    Darwin*)
-       hostIcon="\UF8FF"
+#       HOST_ICON=`echo "\UF8FF "`
+       HOST_ICON=" "
        ;;
    Linux*)
-#       hxxxostIcon="🐧\U1F427"
-       hostIcon=🐧X
-       ;;
-   Windows*)
-       hostIcon="\U1FA9F"
+#       HOST_ICON=`echo "\U1F427 "`
+       HOST_ICON="🐧 "
        ;;
    *)
-       hostIcon="\U2047"
+#       HOST_ICON=`echo "\U2047" `
+       HOST_ICON="⁇ "
        ;;
 esac
-set +x
-echo 423
-typeset hostIcon
+export HOST_ICON
 
 if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
     if isRoot; then
@@ -459,7 +455,7 @@ fi
 
 PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
 %(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} %F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT${hostIcon}%(!.#.$) "
+\$GIT_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT${HOST_ICON}%(!.#.$) "
 
 PS2="(%F{magenta}%_%f) > "
 
