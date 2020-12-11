@@ -144,6 +144,7 @@ if inLinux; then
      command dolphin ${*:-.}
   }
 fi
+alias macbook=pschaaf-mbp15
 alias pd=popd
 alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
 alias rm='rm -i'
