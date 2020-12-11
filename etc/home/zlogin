@@ -38,4 +38,11 @@ if [[ inMacOS && ! inIntelliJ ]]; then
    atHome \
         && printf '\e[3;0;0;1t\e[8;142;100t' \
         || printf '\e[3;0;0;1t\e[8;106;100t'
+    # in MacOS every shell is a login shell, so only show this for remote connections
+    (( $#CONNECTION )) && which screenfetch 2>&1 > /dev/null && screenfetch
+else
+    which screenfetch 2>&1 > /dev/null && screenfetch
 fi
+
+# (( $#CONNECTION )) && echo "\n          \e[1;4mWelcome to `uname -mnrs`\e[0m\n"
+# which screenfetch 2>&1 > /dev/null && screenfetch
