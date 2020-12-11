@@ -29,7 +29,7 @@ _arguments "*: :((
   genTypeInfo
   genWsdl
   genWsiLocal
-  h2
+  'h2: Open the H2 console'
   'http: Start a simple http server in the resources directory.'
   'httpkill: Kill the simple http server in the resources directory.'
   idea

@@ -201,6 +201,7 @@ while [ -n "$*" ]; do
       h2)
         spawn=true
         fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
+        echo "There's no username or password. Make sure the connection string is correct!"
         ;;
       httpkill)
         fullTask="pkill -f '$webserver'"
