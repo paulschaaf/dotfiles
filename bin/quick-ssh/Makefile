@@ -1,4 +1,4 @@
-HOSTS=copernicus PSCHAAF-MBP15.guidewire.com
+HOSTS=copernicus pschaaf-mbp15
 
 .PHONY:	all clean allowUserWrite cleanLinks disallowAllWrites
 
