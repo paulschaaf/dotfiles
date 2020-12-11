@@ -29,7 +29,7 @@ inMacOS && path=(~/bin ~/bin/quick-ssh ${path}) # fix the order after Mac's /etc
 if (( $#inIntelliJ )); then
     SHLVL=0
 else
-    if [[ inMacOS ]]; then
+    if inMacOS; then
         # in MacOS every shell is a login shell, so only show this for remote connections
         (( $#CONNECTION )) && neofetch 2> /dev/null
 
