@@ -14,13 +14,7 @@
 
 # ========
 # ======== Profiling
-#echo Sourcing ${(%):-%N}
-if (( $#zprof )); then
-    zmodload zsh/zprof
-    echo Running zprof from ${(%):-%N}
-    unset zprof
-fi
-
+source ~pschaaf/bin/profile.zsh
 
 # ========
 # ======== Default Settings
@@ -143,3 +137,5 @@ export TEAMCITY_USER=${USER}
 export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
 export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
+
+set +x

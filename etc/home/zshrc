@@ -12,12 +12,7 @@
 
 # ========
 # ======== Profiling
-#echo Sourcing ${(%):-%N}
-if (( $#zprof )); then
-    zmodload zsh/zprof
-    echo Running zprof from ${(%):-%N}
-    unset zprof
-fi
+source ~pschaaf/bin/profile.zsh
 
 
 # ========
@@ -521,6 +516,8 @@ for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
 done
 
 
+set +x
+
 # ========
 # ======== Tricks and Tips
 
@@ -570,3 +567,4 @@ done
 
 ## Supply times.
 #  $ print *(e-age 2006/10/04:10:15 2006/10/04:10:45-)
+
