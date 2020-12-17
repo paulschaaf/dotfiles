@@ -145,6 +145,7 @@ if inLinux; then
   }
 fi
 alias macbook=pschaaf-mbp15
+alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
 alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
 alias rm='rm -i'

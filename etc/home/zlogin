@@ -31,14 +31,14 @@ if (( $#inIntelliJ )); then
 else
     if inMacOS; then
         # in MacOS every shell is a login shell, so only show this for remote connections
-        (( $#CONNECTION )) && neofetch 2> /dev/null
+        (( $#CONNECTION )) && neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
 
         # echo move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
         atHome \
             && printf '\e[3;0;0;1t\e[8;142;100t' \
             || printf '\e[3;0;0;1t\e[8;106;100t'
     else
-        neofetch 2> /dev/null
+        neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
     fi
 fi
 
