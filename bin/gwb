@@ -52,7 +52,7 @@ failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertS
 resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 webserverPort=$((GW_PORT_DEBUG + 1))
 webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
-jvmProcess="$JAVA_HOME/bin/java .*-Dgw.port=${GW_PORT_DEBUG}"
+jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 
 # Printing and Grep Functions
 echoVar() {
@@ -201,7 +201,7 @@ while [ -n "$*" ]; do
       h2)
         spawn=true
         fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
-        echo "There's no username or password. Make sure the connection string is correct!"
+        echo; echo "There's no username or password. Make sure the connection string is correct!"
         ;;
       httpkill)
         fullTask="pkill -f '$webserver'"
@@ -272,7 +272,7 @@ while [ -n "$*" ]; do
 #        shift
 #        ;;
       rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/*"
+         fullTask="rm -fv ${GW_DB_DIR}/*; echo ---; ls -BCFbhHGl ${GW_DB_DIR}"
          ;;
       server) # broken
         fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
