@@ -41,6 +41,19 @@ stop=none,none,Stop
 stop_after_current=Meta+Shift+V,Meta+Shift+V,Stop after current Track
 toggleMainWindow=none,none,Toggle Main Window
 
+[azuredatastudio.desktop]
+_k_friendly_name=Azure Data Studio
+_launch=none,none,Launch Azure Data Studio
+new-empty-window=,,New Empty Window
+
+[gitkraken.desktop]
+_k_friendly_name=GitKraken
+_launch=none,none,Launch GitKraken
+
+[intellij idea 2020 community.desktop]
+_k_friendly_name=IntelliJ IDEA 2020 Community
+_launch=none,none,Launch IntelliJ IDEA 2020 Community
+
 [jetbrains-idea-ce.desktop]
 _k_friendly_name=IntelliJ IDEA Community Edition
 _launch=none,none,Launch IntelliJ IDEA Community Edition
@@ -325,6 +338,10 @@ show view settings=,Meta+A,Cycle Through Dock/Panel Settings Windows
 show-barcode=none,none,Show Barcode...
 show-on-mouse-pos=none,none,Open Klipper at Mouse Position
 
+[links.desktop]
+_k_friendly_name=Links
+_launch=none,none,Launch Links
+
 [mediacontrol]
 _k_friendly_name=Media Controller
 mediavolumedown=none,none,Media volume down
@@ -368,7 +385,7 @@ Turn Off Screen=none,none,Turn Off Screen
 _k_friendly_name=Power Management
 
 [plasmashell]
-_k_friendly_name=Latte Dock
+_k_friendly_name=Plasma
 activate task manager entry 1=,Meta+1,Activate Task Manager Entry 1
 activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
 activate task manager entry 2=,Meta+2,Activate Task Manager Entry 2
@@ -412,6 +429,10 @@ _launch=none,none,Launch Java 8 Policy Settings-2
 [qt v4l2 camera test bench.desktop]
 _k_friendly_name=Qt V4L2 Camera Test Bench
 _launch=none,none,Launch Qt V4L2 Camera Test Bench
+
+[slack.desktop]
+_k_friendly_name=Slack
+_launch=none,none,Launch Slack
 
 [systemsettings.desktop]
 _k_friendly_name=System Settings
