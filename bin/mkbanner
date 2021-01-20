@@ -99,6 +99,8 @@ if [[ -e ${filename} ]]; then
    echo Can only overwrite existing file if --force is specified
    exit 1
 fi
+echo ${0:t} --bg=${bg} --fg=${fg} --width=${width} --height=${height} ${filename}
 eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
 
 (($#dry_run)) || echo Created ${filename}
+open ${filename}
