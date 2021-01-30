@@ -70,11 +70,11 @@ fun highlight(string: String, colors: List<Int>): String = "${colors.ansi()}${st
 fun highlighter(regex: Regex, colors: List<Int>): (String) -> String =
         { regex.replace(it) { matchResult -> highlight(matchResult.groupValues.first(), colors) } }
 
+val transformers = mutableListOf<(String) -> String>()
+
 var color = 0
 var ground = 0
 val effects = mutableListOf<Int>()
-
-val transformers = mutableListOf<(String) -> String>()
 
 defaultArgs
         .plus(args)
@@ -84,9 +84,9 @@ defaultArgs
                 it == "-fg"                -> ground = 0
                 it == "-h"                 -> showUsage()
                 it == "--help"             -> showUsage()
-                AllEffects.containsKey(it) -> effects.add(AllEffects[it]!!)
+                AllEffects.containsKey(it) -> effects += AllEffects[it]!!
                 AllColors.containsKey(it)  -> color = AllColors[it]!!
-                else                       -> transformers.add(highlighter(Regex(it), effects.plus(ground + color)))
+                else                       -> transformers += highlighter(Regex(it), effects.plus(ground + color))
             }
         }
 
