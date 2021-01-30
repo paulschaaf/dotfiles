@@ -157,6 +157,7 @@ runTask() {
 
 #${_dry_run} konsoleprofile colors=$GW_PRODUCT\;icon=${passIcon}\;tabTitle=$GW_TITLE
 
+# Process arguments
 while [ -n "$*" ]; do
   task=$1
 
