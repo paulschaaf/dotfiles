@@ -153,7 +153,7 @@ STRING
 
   section('8-COLOR PALETTE', '(30..37, 40..47, 90..97, 100..107)') {
     [0, 10].each { |ground|
-      {0 => 'Dim', 60 => 'Bright'}.each { |intensity, intensityName|
+      {0 => 'Reg', 60 => 'Bright'}.each { |intensity, intensityName|
         printf '  %-7s ', intensityName
         (30..37).each { |cell|
           color = ground + intensity + cell
