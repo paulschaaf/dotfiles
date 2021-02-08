@@ -48,12 +48,12 @@ in the order specified. The default highlighting is "${defaultArgs.joinToString(
        ${AllEffects.keys.joinToString(", ")}
 
 Example:
-  /bin/ls /etc | egrep 'su|sh|rc' | lite.kts '^su.*' -red sh -green rc
+  /bin/ls /etc | egrep 'su|sh|rc' | lite.kts '^su.*' -red sh -green do
   
-  List the files in /etc using the following colors:
+  List some of the files in /etc using the following colors:
      -the default highlighting:     any line that begins with 'su'
      -red bold:                     the letters 'sh'
-     -green background:             the letters 'rc'
+     -green background:             the letters 'do'
   
 Report bugs to <paul.schaaf@gmail.com>.
 """)
