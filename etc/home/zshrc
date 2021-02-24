@@ -125,9 +125,6 @@ export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
 # considered separate words, regardless of what may be adjacent.
 export WORDCHARS='|*?-~\\$%^'
 
-inMacOS && path=( ~/bin/macos /Applications/Araxis\ Merge.app/Contents/Utilities ${path} )
-typeset -p PATH
-
 
 # ========
 # ======== Aliases

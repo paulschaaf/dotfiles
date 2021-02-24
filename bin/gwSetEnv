@@ -4,28 +4,6 @@
 # FUNCTIONS
 #
 
-alias inCygwin=false
-alias inMacOS=false
-alias inLinux=false
-alias inMingW32=false
-case ${UNAME} in
-    CYGWIN)
-        alias inCygwin=true
-        ;;
-    Darwin)
-        alias inMacOS=true
-        ;;
-    Linux)
-        alias inLinux=true
-        ;;
-    MINGW32_NT*)
-        alias inMingW32=true
-        ;;
-    *)
-    ;;
-esac
-
-
 if [[ "$1" = "--trace" || "$1" = "--debug" ]]; then
     shift
     function trace () {

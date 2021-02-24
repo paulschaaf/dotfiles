@@ -198,7 +198,7 @@ ln -fs /usr/bin/false ~/bin/inCygwin
 ln -fs /usr/bin/true  ~/bin/win/inCygwin
 
 ln -fs /usr/bin/false ~/bin/inMacOS
-ln -fs /usr/bin/true  ~/bin/macOS/inMacOS
+ln -fs /usr/bin/true  ~/bin/macos/inMacOS
 
 ln -fs /usr/bin/false ~/bin/inLinux
 ln -fs /usr/bin/true  ~/bin/linux/inLinux

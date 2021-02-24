@@ -77,6 +77,19 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
+case ${UNAME} in
+  CYGWIN)
+      path=( ~/bin/win ${path} )
+      ;;
+  Darwin)
+      path=( ~/bin/macos ${path} )
+      ;;
+  Linux)
+      path=( ~/bin/linux ${path} )
+      ;;
+  *)
+  ;;
+esac
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
@@ -84,17 +97,17 @@ RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 # ========
 # ======== OS-Specific
 inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
-if inMingW32; then
-    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
-    # all slashes, replace semicolons with colons. We can't use cygpath.exe
-    # for this because it collapses all references to $CYGROOT to /, which
-    # doesn't work outside of Cygwin (since $CYGWIN won't be the root
-    # directory)
-    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
-    alias cygpath=${CYGROOT}/bin/cygpath.exe
-
-    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
-fi
+#if inMingW32; then
+#    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
+#    # all slashes, replace semicolons with colons. We can't use cygpath.exe
+#    # for this because it collapses all references to $CYGROOT to /, which
+#    # doesn't work outside of Cygwin (since $CYGWIN won't be the root
+#    # directory)
+#    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+#    alias cygpath=${CYGROOT}/bin/cygpath.exe
+#
+#    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
+#fi
 
 
 # ========
