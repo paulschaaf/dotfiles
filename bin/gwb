@@ -95,11 +95,9 @@ killProcStr() {
 }
 
 notify() {
-  if [[ "$UNAME" == "Linux" ]]; then
-    notify-send -c idea -t 5000 -i $successIcon $1
-  else
-    terminal-notifier -title idea -activate com.apple.Terminal -message $*
-  fi
+  inLinux && notify-send -c idea -t 5000 ${successIcon:+-i} $successIcon $1
+  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
+  set +x
 }
 
 # Run the Actual Task
@@ -140,14 +138,10 @@ runTask() {
 
   if [ $exitCode -eq 0 ]; then
     log_section 42 "DONE $elapsedTime" $taskSummary
-    if [ $successIcon ]; then
-      notify "Completed $GW_TITLE:'$taskSummary'" $whichJava
-    fi
+    notify "Completed $GW_TITLE:'$taskSummary'" $whichJava
   else
     log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
-    if [ $failIcon ]; then
-      notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava -appIcon "$failIcon"
-    fi
+      notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava ${failIcon:+-appIcon} "$failIcon"
   fi
 
   setGnuScreenTitle

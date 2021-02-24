@@ -28,32 +28,30 @@ export UNAME=${UNAME:=`uname`}
 
 
 # ========
-# ======== Exported Variables
-export BROWSER=google-chrome-stable
-inMacOS && export BROWSER=open
-inMacOS && export DISPLAY=:0
-export EDITOR=/usr/bin/emacs
-inMacOS && EDITOR=/usr/local/bin/emacs
-isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
-
-[[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
-export EMAIL=paul.schaaf@gmail.com
-[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
-inLinux && export IDEA_ROOT=/opt
-export LC_ALL=en_US.UTF-8
-export SCREENDIR=${SCREENDIR:=~/tmp}
-
-
-# ========
 # ======== Paths
 # Keep only the first occurrence of duplicates
 typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH PATH path RUBYLIB
 export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH PATH      RUBYLIB
 
+case ${UNAME} in
+  CYGWIN)
+      osOverrides=~/bin/win
+      ;;
+  Darwin)
+      osOverrides=~/bin/macos
+      ;;
+  Linux)
+      osOverrides=~/bin/linux
+      ;;
+  *)
+  ;;
+esac
+
+
 CLASSPATH=${CLASSPATH:=.}
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
-if inMacOS; then
+if [ "${osOverrides##*/}" = "macos" ]; then
     export JAVA_ROOT=/Library/Java/JavaVirtualMachines
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
@@ -69,6 +67,7 @@ export JAVA_HOME=${JAVA11_HOME}
 
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 path=(
+    ${osOverrides}
     ~/bin
     ~/bin/quick-ssh
     /opt/gpm-0.24.8/bin
@@ -77,21 +76,25 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
-case ${UNAME} in
-  CYGWIN)
-      path=( ~/bin/win ${path} )
-      ;;
-  Darwin)
-      path=( ~/bin/macos ${path} )
-      ;;
-  Linux)
-      path=( ~/bin/linux ${path} )
-      ;;
-  *)
-  ;;
-esac
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
+
+
+# ========
+# ======== Exported Variables
+export BROWSER=google-chrome-stable
+inMacOS && export BROWSER=open
+inMacOS && export DISPLAY=:0
+export EDITOR=/usr/bin/emacs
+inMacOS && EDITOR=/usr/local/bin/emacs
+#isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
+
+[[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
+export EMAIL=paul.schaaf@gmail.com
+[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
+inLinux && export IDEA_ROOT=/opt
+export LC_ALL=en_US.UTF-8
+export SCREENDIR=${SCREENDIR:=~/tmp}
 
 
 # ========

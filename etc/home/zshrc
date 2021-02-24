@@ -14,6 +14,7 @@
 # ======== Profiling
 source ~pschaaf/bin/profile.zsh
 
+inMacOS && path=(~/bin/macos ~/bin ~/bin/quick-ssh ${path}) # fix the order after Mac's /etc/zprofile screws it up
 
 # ========
 # ======== Shell Options
