@@ -9,6 +9,7 @@ if [ "$host" = "copernicus" ]; then
    yaourt  -S broadcom-wl
 fi
 
+
 ## LIBRARIES AND PACKAGES ===========================================
 libraries=(
    #    libimage-exiftool-perl # edit EXIF data in image
@@ -83,11 +84,6 @@ applications=(
 
 # Use URL query-style syntax: e.g. double-quote any phrases and replace the spaces with plusses
 manually_install=(
-)
-
-git_repos=(
-   git@github.com:paulschaaf/dotfiles.git
-   git@github.com:paulschaaf/launch-url-from-string.git
 )
 
 ## FUNCTIONS ===========================================
@@ -178,17 +174,34 @@ function ln-all() {
 #    echo Already done!
 #fi
 
-#h1 PACKAGE INSTALLATION
+h1 PACKAGE INSTALLATION
 #install-all libraries
 install-all $ordered_packages
 install-all $unordered_packages
 install-all $applications
 
-#h1 USER SETUP
-#for repo in ${git_repos[@]}; do
-#    h1 Downloading Git Repository: $repo
-#    git clone $repo
-#done
+h1 USER SETUP
+
+git_repos=(
+   git@github.com:paulschaaf/dotfiles.git
+   git@github.com:paulschaaf/launch-url-from-string.git
+)
+for repo in ${git_repos[@]}; do
+    h1 Downloading Git Repository: $repo
+    git clone $repo
+done
+PATH=~/bin;${PATH}
+rehash
+mkdir ~/bin/macos ~/bin/linux ~/bin/win 2>/dev/null
+
+ln -fs /usr/bin/false ~/bin/inCygwin
+ln -fs /usr/bin/true  ~/bin/win/inCygwin
+
+ln -fs /usr/bin/false ~/bin/inMacOS
+ln -fs /usr/bin/true  ~/bin/macOS/inMacOS
+
+ln -fs /usr/bin/false ~/bin/inLinux
+ln -fs /usr/bin/true  ~/bin/linux/inLinux
 
 #if grep --quiet $USER:$shell /etc/passwd; then
 #    h2 Default shell already set to ${shell##*/}

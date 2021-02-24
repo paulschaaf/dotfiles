@@ -2,19 +2,18 @@
 
 # gray66 is too light, gray50 is too dark
 fg=gray60
-width=1400
-
 pointsize=240
 height=231
 h_offset=25
 v_offset=178
+char_width=117
 
 function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
   --bg=COLOR   Set the background color (defaults to be transparent)
   --fg=COLOR   Set the foreground color (defaults to '${fg}')
-  --width=NUM  Set the width of the text box (defaults to ${width})
+  --width=NUM  Set the width of the text box
   --debug     Trace the execution
   --dry_run   Show the resulting command but do not execute
   --force     Overwrite the existing file, if any
@@ -33,33 +32,33 @@ if ((!$#1)); then
 fi
 
 switches=()
-
+alias dry_run=false
+alias force=false
 while [[ -n "$*" ]]; do
-   switch=${1%%=*}
-   arg=${1#*=}
+   switch=${1%%=*}; value=${1#*=}
    case ${switch} in
       --debug)
          set -x
          ;;
-      -h | --help)
+      --dry_run|--dry-run)
+         alias dry_run=true
+         ;;
+      -h|--help)
          usage
          exit
          ;;
       --bg)
-         bg=${arg}
+         bg=${value}
          bgName=${bg}
          ;;
-      --dry_run | --dry-run)
-         dry_run='echo '
-         ;;
       --fg)
-         fg=${arg}
+         fg=${value}
          ;;
       --force)
-         force=true
+         alias force=true
          ;;
       --width)
-         width=${arg}
+         width=${value}
          ;;
       -*)
          switches+=(${1})
@@ -83,6 +82,8 @@ elif ((${#*})); then
    exit 1
 fi
 
+((!$#width)) && width=$((${char_width}*${#txt}))
+
 # if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
 if ((!$#bg)); then
    bgName=transparent
@@ -90,17 +91,17 @@ if ((!$#bg)); then
    switches+=(-transparent ${bg})
 fi
 
-name=${txt// /_}
-filename=banner_${name}_${fg}_on_${bgName}_${width}w_.png
+filename=banner_${txt// /_}_${fg}_on_${bgName}_${width}w_.png
 #(( $#dry_run )) || filename=`mktemp ${filename}`
 
-(($#force)) && rm -f ${filename}
+force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then
    echo Can only overwrite existing file if --force is specified
-   exit 1
+   dry_run || exit 1
 fi
-echo ${0:t} --bg=${bg} --fg=${fg} --width=${width} --height=${height} ${filename}
-eval ${dry_run}convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} \"${txt}\" ${filename}
 
-(($#dry_run)) || echo Created ${filename}
-open ${filename}
+echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
+dry_run || convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
+
+dry_run || echo Created ${filename}
+dry_run || open ${filename}

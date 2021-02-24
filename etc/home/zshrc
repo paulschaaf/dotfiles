@@ -126,6 +126,7 @@ export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
 export WORDCHARS='|*?-~\\$%^'
 
 inMacOS && path=( ~/bin/macos /Applications/Araxis\ Merge.app/Contents/Utilities ${path} )
+typeset -p PATH
 
 
 # ========

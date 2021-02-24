@@ -24,7 +24,6 @@ stty start ''   stop   ''
 
 zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
 inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
-inMacOS && path=(~/bin ~/bin/quick-ssh ${path}) # fix the order after Mac's /etc/zprofile screws it up
 
 if (( $#inIntelliJ )); then
     SHLVL=0
@@ -34,9 +33,7 @@ else
         (( $#CONNECTION )) && neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
 
         # echo move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-        atHome \
-            && printf '\e[3;0;0;1t\e[8;142;100t' \
-            || printf '\e[3;0;0;1t\e[8;106;100t'
+        printf '\e[3;0;0;1t\e[8;142;100t'
     else
         neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
     fi
@@ -44,3 +41,4 @@ fi
 
 set +x
 unset trace
+typeset -p PATH

@@ -25,6 +25,7 @@
 **/id_rsa
 **/nohup.out
 
+gw.env
 **/.idea
 **/.metadata
 **/.ssh
@@ -32,3 +33,4 @@
 **/generated
 **/generated_classes
 **/ssh
+

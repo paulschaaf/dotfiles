@@ -18,7 +18,7 @@
 [mergetool "bc3"]
 	trustExitCode = true
 [credential]
-	helper = keychain
+	helper = osxkeychain
 [alias]
     ad = difftool --tool=araxis --dir-diff
     ads = difftool --tool=araxis --dir-diff --staged
@@ -40,3 +40,8 @@
 	minRacyThreshold = 0 nanoseconds
 [diff]
 	renameLimit = 32768
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f

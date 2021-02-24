@@ -1,4 +1,7 @@
 /bin/quick-ssh/*
+/bin/**/inCygwin
+/bin/**/inMacOS
+/bin/**/inLinux
 !/bin/quick-ssh/Makefile
 !/bin/quick-ssh/ssh-to
 !/bin/quick-ssh/make-ssh-config-for
@@ -22,3 +25,4 @@
 
 /secrets
 /secrets.txt
+

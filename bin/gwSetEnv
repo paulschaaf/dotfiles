@@ -166,6 +166,8 @@ case ${GW_PLATFORM} in
         ;;
 esac
 
+[[ -f ./gw.env ]] && cat gw.env && source gw.env
+
 # exit if not a Guidewire installation
 if [[ -z "$GW_PLATFORM" ]]; then
     trace Could not determine the platform version!
@@ -184,16 +186,16 @@ if [[ -z "${IDEA_JDK}" ]]; then
     else
         export IDEA_JDK=${JAVA_HOME}
     fi
-    ${IDEA_JDK}/bin/java -version
+    ${IDEA_JDK}/bin/java -version 2>&1 | sed 's/^/: /; s/[)(]//g'
 fi
-${JAVA_HOME}/bin/java -version
+${JAVA_HOME}/bin/java -version 2>&1 | sed 's/^/: /g; s/[)(]//g'
 
 for dirVar in GW_DB_DIR IDEA_HOME IDEA_JDK JAVA_HOME; do
     eval "dir=\$${dirVar}"
     if [[ ! -d ${dir} ]]; then
-        echo -n "\033[97;101m"
+        echo -n "\033[97;101m"`typeset -p ${dirVar}`"\033[0m"
     fi
-    echo `typeset -p ${dirVar}`"\033[0m"
+    typeset -p ${dirVar}
 done
 
 typeset -p GW_PL_NUM GW_PLATFORM
