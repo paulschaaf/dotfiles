@@ -76,6 +76,7 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
+unset osOverrides
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
