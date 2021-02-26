@@ -27,6 +27,7 @@ for src in ${files}; do
    local compiled=${src}.zwc
    if [[ ! -s ${compiled} || ${src} -nt ${compiled} ]]; then
       zcompile ${=switches} ${src}
-      echo Recompiled ${src}.
+      [ -L ${src} ] && src=`readlink ${src}`
+      echo "Recompiled ${src}"
    fi
 done
