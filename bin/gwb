@@ -225,6 +225,10 @@ while [ -n "$*" ]; do
         pgrep -af $jvmProcess
         fullTask=$(killProcStr ${jvmProcess})
         ;;
+      pkill8080)
+        pgrep -af ${jvmProcess/90/80}
+        fullTask=$(killProcStr ${jvmProcess/90/80})
+        ;;
       pcf*)
         # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
         if [[ $task =~ 'pcf=' ]]; then
