@@ -116,7 +116,7 @@ case ${GW_PLATFORM} in
         export GW_PL_NUM=10
         export GW_PLATFORM=granite
         export IDEA_HOME=/opt/idea2019IU
-        export JAVA_HOME='/usr/lib/jvm/java-11-amazon-corretto'
+        export JAVA_HOME='/usr/lib/jvm/java-11-openjdk'
         inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
         inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
 
@@ -135,7 +135,7 @@ case ${GW_PLATFORM} in
         export GW_PLATFORM=halite
         export GW_DB_DIR=/tmp/guidewire
         export IDEA_HOME=/opt/idea_halite
-        export JAVA_HOME=/usr/lib/jvm/java-11-amazon-corretto/
+        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
         inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
         inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
@@ -171,9 +171,10 @@ ${JAVA_HOME}/bin/java -version 2>&1 | sed 's/^/: /g; s/[)(]//g'
 for dirVar in GW_DB_DIR IDEA_HOME IDEA_JDK JAVA_HOME; do
     eval "dir=\$${dirVar}"
     if [[ ! -d ${dir} ]]; then
-        echo -n "\033[97;101m"`typeset -p ${dirVar}`"\033[0m"
+      echo -n "\033[97;101m"`typeset -p ${dirVar}`"\033[0m\n"
+    else
+      typeset -p ${dirVar}
     fi
-    typeset -p ${dirVar}
 done
 
 typeset -p GW_PL_NUM GW_PLATFORM

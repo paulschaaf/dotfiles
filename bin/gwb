@@ -16,6 +16,9 @@ while [ -n "$*" ]; do
   --nice)
     nice='nice '
     ;;
+  --no-scan)
+    no_scan=true
+    ;;
   --*)
     echo Unknown option $1
     return 1
@@ -164,7 +167,6 @@ while [ -n "$*" ]; do
     task=${task%Loud}
   fi
 
-  fullTask="$GW_START_SCRIPT $task"
   taskFailIcon=
   taskPassIcon=
   case $task in
@@ -263,6 +265,9 @@ while [ -n "$*" ]; do
           shift
           #${dbbackup}.7z"
          ;;
+      rmDb)
+         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite; echo ---DONE---; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+         ;;
 #      runSuite)
 #        if (( ! $#* )); then
 #          echo "No suite specified!"
@@ -270,9 +275,6 @@ while [ -n "$*" ]; do
 #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
 #        shift
 #        ;;
-      rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite/*; echo ---DONE---; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
-         ;;
       server) # broken
         fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
         ;;
@@ -282,6 +284,8 @@ while [ -n "$*" ]; do
         fi
         unset inScreen
         taskFailIcon=$failIcon
+        inLinux && no_scan=true
+        task="${no_scan:+--no-scan }${task}"
         ;;
       tasks)
         $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
@@ -308,6 +312,8 @@ while [ -n "$*" ]; do
     taskPassIcon=$passIcon
     taskFailIcon=$failIcon
   fi
+
+  fullTask=${fullTask:-${GW_START_SCRIPT} ${task}}
 
   # grab any arguments
   while [[ "$1" =~ "-.*" ]]; do

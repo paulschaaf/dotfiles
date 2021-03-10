@@ -60,7 +60,7 @@ else
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
     export JAVA18_AMD64_HOME=${JAVA8_HOME}
-    export JAVA11_HOME=${JAVA_ROOT}/java-11-amazon-corretto
+    export JAVA11_HOME=${JAVA_ROOT}/java-11-openjdk
 fi
 
 export JAVA_HOME=${JAVA11_HOME}
