@@ -167,6 +167,7 @@ while [ -n "$*" ]; do
     task=${task%Loud}
   fi
 
+  fullTask="$GW_START_SCRIPT $task"
   taskFailIcon=
   taskPassIcon=
   case $task in
@@ -266,7 +267,7 @@ while [ -n "$*" ]; do
           #${dbbackup}.7z"
          ;;
       rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite; echo ---DONE---; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite/*; rmdir ${GW_DB_DIR}/granite; echo ---DONE---; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
          ;;
 #      runSuite)
 #        if (( ! $#* )); then
@@ -312,8 +313,6 @@ while [ -n "$*" ]; do
     taskPassIcon=$passIcon
     taskFailIcon=$failIcon
   fi
-
-  fullTask=${fullTask:-${GW_START_SCRIPT} ${task}}
 
   # grab any arguments
   while [[ "$1" =~ "-.*" ]]; do

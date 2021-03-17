@@ -136,7 +136,8 @@ case ${GW_PLATFORM} in
         export GW_DB_DIR=/tmp/guidewire
         export IDEA_HOME=/opt/idea_halite
         export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
-        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
+#        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
+        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
         inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         ;;
     *)
