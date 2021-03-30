@@ -20,9 +20,13 @@ source ~pschaaf/bin/profile.zsh
 # ========
 # ======== Default Settings
 umask 22
-export UNAME=${UNAME:=`uname`}
+export UNAME=${UNAME:=$(uname)}
 
-(( $UID )) && alias isRoot=false || alias isRoot=true
+if ((UID)); then
+   alias isRoot=false
+else
+   alias isRoot=true
+fi
 
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
 
@@ -35,23 +39,22 @@ export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH PATH      RUBYLIB
 
 case ${UNAME} in
   CYGWIN)
-      osOverrides=~/bin/win
+      osOverrideDir=~/bin/win
       ;;
   Darwin)
-      osOverrides=~/bin/macos
+      osOverrideDir=~/bin/macos
       ;;
   Linux)
-      osOverrides=~/bin/linux
+      osOverrideDir=~/bin/linux
       ;;
   *)
   ;;
 esac
 
-
 CLASSPATH=${CLASSPATH:=.}
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
-if [ "${osOverrides##*/}" = "macos" ]; then
+if [ "${osOverrideDir##*/}" = "macos" ]; then
     export JAVA_ROOT=/Library/Java/JavaVirtualMachines
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
@@ -62,21 +65,20 @@ else
     export JAVA18_AMD64_HOME=${JAVA8_HOME}
     export JAVA11_HOME=${JAVA_ROOT}/java-11-openjdk
 fi
-
 export JAVA_HOME=${JAVA11_HOME}
 
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
+
 path=(
-    ${osOverrides}
+    ${osOverrideDir}
     ~/bin
     ~/bin/quick-ssh
-    /opt/gpm-0.24.8/bin
     ${JAVA_HOME}/bin
     ${path}
     /usr/X11R6/bin
     /opt/git-gw
 )
-unset osOverrides
+unset osOverrideDir
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
@@ -88,14 +90,14 @@ inMacOS && export BROWSER=open
 inMacOS && export DISPLAY=:0
 export EDITOR=/usr/bin/emacs
 inMacOS && EDITOR=/usr/local/bin/emacs
-#isRoot && EDITOR=${EDITOR}' -u pschaaf -nw'
 
 [[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
 export EMAIL=paul.schaaf@gmail.com
-[[ "${TERMINAL_EMULATOR}" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
+[[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
 inLinux && export IDEA_ROOT=/opt
+
+# set all `locale` variables
 export LC_ALL=en_US.UTF-8
-export SCREENDIR=${SCREENDIR:=~/tmp}
 
 
 # ========
@@ -116,7 +118,7 @@ inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
 
 # ========
 # ======== Guidewire
-# shellcheck disable=SC1090
+# shellcheck source=~
 [[ -f ~/dotfiles/secrets.txt ]] && source ~/dotfiles/secrets.txt
 
 export ARTIFACTORY_USERNAME=${USER}

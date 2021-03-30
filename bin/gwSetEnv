@@ -1,67 +1,87 @@
 #!/bin/zsh
+# shellcheck disable=SC2155
 
 #
 # FUNCTIONS
 #
 
-if [[ "$1" = "--trace" || "$1" = "--debug" ]]; then
-    shift
-    function trace () {
-        echo "[36m# $*[0m"
-    }
+if [[ "$1" == "--trace" || "$1" == "--debug" ]]; then
+  shift
+  function trace() {
+    echo "[45m# $*[0m"
+  }
+  alias TRACE=true
 else
-    function trace () {
-        :
-    }
+  function trace() {
+    :
+  }
+  alias TRACE=false
 fi
 
-[[ "$1" = "--debug" ]] && set -x
+[[ "$1" == "--debug" ]] && set -x
 
-function unsetGWVars () {
-    trace "We've just moved outside of any GW install, so unset every var named GW_*:"
-    for var in `env | grep ^'GW_' | cut -d '=' -f 1`; do
-        unset -v $var
-        trace "   ... $var"
-    done
+function unsetGWVars() {
+  trace "We've just moved outside of any GW install, so unset every var named GW_*:"
+  for var in $(env | grep ^'GW_' | cut -d '=' -f 1); do
+    unset -v "$var"
+    trace "   ... $var"
+  done
 }
 
-function announce () {
-    printf "\e[93m${*}\e[0m\n"
+function announce() {
+  printf "\e[93m%s\e[0m\n" "${@}"
 }
 
+function lsPathVar() {
+  #  set -x
+  for dirName in "${@}"; do
+    eval dir=\$$dirName
+    # shellcheck disable=SC2154
+    if (($#dir == 0)); then
+      trace "\$${dirName} is undefined"
+    elif [[ -d "${dir}" ]]; then
+      printf "\033[36m%s\033[0m\n" "$(typeset -p ${dirName})"
+    elif [[ -f ${dir} ]]; then
+      printf "\033[32m%s\033[0m\n" "$(typeset -p ${dirName})"
+    else
+      printf "\033[97;101m%s\033[0m\n" "$(typeset -p ${dirName})"
+      #      typeset -p ${dirName}
+    fi
+  done
+  #  set +x
+}
 
 #
 # DETERMINE THE PLATFORM
 #
 
-trace \$1=$1
+trace \$1="$1"
 case "$1" in
-    ''|*[!0-9]*)
-        trace \$1 is empty, or contains non-digits
-        export GW_PLATFORM=`echo $PWD | sed -En '
-            # check if the path explicitly names the platform version
-            s/.*(carbon|diamond|emerald|ferrite|granite|halite).*/\1/
+  '' | *[!0-9]*)
+    trace \$1 is empty, or contains non-digits
+    export GW_PLATFORM=$(echo "$PWD" | sed -En '
+              # check if the path explicitly names the platform version
+              s/.*(carbon|diamond|emerald|ferrite|granite|halite).*/\1/
 
-            # otherwise extract the version number from the install directory name
-            s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(5[0-9]|[1-9]|10).*/\2/
+              # otherwise extract the version number from the install directory name
+              s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(5[0-9]|[1-9]|10).*/\2/
 
-            t print
+              t print
 
-            # if no substitutions were made--we could not determine the version--exit now with the empty string
-            #T
+              # if no substitutions were made--we could not determine the version--exit now with the empty string
+              #T
 
-            # otherwise print what we found
-            :print
-            p'`
-        ;;
-    *)
-        trace \$1 contains only digits
-        export GW_PLATFORM=$1
-        shift
-        ;;
+              # otherwise print what we found
+              :print
+              p')
+    ;;
+  *)
+    trace \$1 contains only digits
+    export GW_PLATFORM=$1
+    shift
+    ;;
 esac
-trace Initial guess for platform is \'$GW_PLATFORM\'
-
+trace Initial guess for platform is \'"$GW_PLATFORM"\'
 
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
@@ -69,211 +89,201 @@ trace Initial guess for platform is \'$GW_PLATFORM\'
 
 # Clear these out
 unset IDEA_HOME IDEA_JDK JAVA_HOME
-export GW_LIB_DIR=./lib
+unset GW_LIB_DIR
 
 case ${GW_PLATFORM} in
-    6|carbon)
-        export AARDVARK_HOME=/depot/aardvark/alpha
-#        # export M2_HOME=/depot/maven/apache-maven-2.2.1
-#        # export M2_HOME=/depot/maven/apache-maven-3.0.3
-        export ANT_HOME=/depot/ant/apache-ant-1.7.1
-        export GW_PL_NUM=6
-        export GW_PLATFORM=carbon
-        export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-        export JAVA_HOME=${JAVA16_HOME}
-#        scriptExtension=.sh
-        ;;
-    7|diamond)
-        export AARDVARK_HOME=/depot/aardvark/alpha
-        export ANT_HOME=/depot/ant/apache-ant-1.7.1
-        export M2_HOME=/depot/maven/apache-maven-2.2.1
+  6 | carbon)
+    export AARDVARK_HOME=/depot/aardvark/alpha
+    #        # export M2_HOME=/depot/maven/apache-maven-2.2.1
+    #        # export M2_HOME=/depot/maven/apache-maven-3.0.3
+    export ANT_HOME=/depot/ant/apache-ant-1.7.1
+    export GW_PL_NUM=6
+    export GW_PLATFORM=carbon
+    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
+    export JAVA_HOME=${JAVA16_HOME}
+    #        scriptExtension=.sh
+    ;;
+  7 | diamond)
+    export AARDVARK_HOME=/depot/aardvark/alpha
+    export ANT_HOME=/depot/ant/apache-ant-1.7.1
+    export M2_HOME=/depot/maven/apache-maven-2.2.1
 
-        export GW_PL_NUM=7
-        export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-        export JAVA_HOME=${JAVA16_HOME}
-        scriptExtension=.sh
-        ;;
-    8|emerald)
-        export GW_PL_NUM=8
-        export GW_PLATFORM=emerald
-        export IDEA_HOME=/opt/idea_emerald
-        export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
-        export JAVA_HOME=/usr/lib/jvm/java-7-jdk
-        export AARDVARK_HOME=/depot/aardvark/alpha
-        export ANT_HOME=/depot/ant/apache-ant-1.8.2
-        export M2_HOME=/depot/maven/apache-maven-3.0.4
-        scriptExtension=.sh
-        ;;
-    9|ferrite)
-        export GW_PL_NUM=9
-        export GW_PLATFORM=ferrite
-        export IDEA_HOME=/opt/idea_ferrite
-        export JAVA_HOME='/usr/lib/jvm/java-8-jdk'
-        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
-        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-        ;;
-    10|granite)
-        export GW_PL_NUM=10
-        export GW_PLATFORM=granite
-        export IDEA_HOME=/opt/idea2019IU
-        export JAVA_HOME='/usr/lib/jvm/java-11-openjdk'
-        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents'
-        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_PL_NUM=7
+    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
+    export JAVA_HOME=${JAVA16_HOME}
+    scriptExtension=.sh
+    ;;
+  8 | emerald)
+    export GW_PL_NUM=8
+    export GW_PLATFORM=emerald
+    export IDEA_HOME=/opt/idea_emerald
+    export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
+    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
+    export AARDVARK_HOME=/depot/aardvark/alpha
+    export ANT_HOME=/depot/ant/apache-ant-1.8.2
+    export M2_HOME=/depot/maven/apache-maven-3.0.4
+    scriptExtension=.sh
+    ;;
+  9 | ferrite)
+    export GW_PL_NUM=9
+    export GW_PLATFORM=ferrite
+    inMacOS &&
+      export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents' ||
+      export IDEA_HOME=/opt/idea_ferrite
+    inMacOS &&
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
+      export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    ;;
+  10 | granite)
+    export GW_PL_NUM=10
+    export GW_PLATFORM=granite
+    inMacOS &&
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2019 CE.app/Contents' ||
+      export IDEA_HOME=/opt/idea2019IU
+    inMacOS &&
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
+      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 
-        # for <= 10.0.1
-        if [[ "$1" = "old" ]]; then
-            announce 'Using older config for this platform version'
-            IDEA_HOME=/opt/idea-IU-173.4674.33
-            JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-            ifMacOS IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
-            ifMacOS JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-            shift
-        fi
-        ;;
-    50|halite)
-        export GW_PL_NUM=50
-        export GW_PLATFORM=halite
-        export GW_DB_DIR=/tmp/guidewire
-        export IDEA_HOME=/opt/idea_halite
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
-#        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.3.app/Contents'
-        inMacOS && IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
-        inMacOS && JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-        ;;
-    *)
-        unsetGWVars
-        ;;
+    # for <= 10.0.1
+    if [[ "$1" == "old" ]]; then
+      announce 'Using older config for this platform version'
+      ifMacOS &&
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' ||
+        export IDEA_HOME=/opt/idea-IU-173.4674.33
+      ifMacOS &&
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
+        export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+      shift
+    fi
+    ;;
+  50 | halite)
+    export GW_PL_NUM=50
+    export GW_PLATFORM=halite
+    export GW_DB_DIR=/tmp/guidewire
+    inMacOS &&
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents' ||
+      export IDEA_HOME=/opt/idea_halite
+    inMacOS &&
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
+      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
+    ;;
+  *)
+    unsetGWVars
+    ;;
 esac
 
 [[ -f ./gw.env ]] && cat gw.env && source gw.env
 
 # exit if not a Guidewire installation
 if [[ -z "$GW_PLATFORM" ]]; then
-    trace Could not determine the platform version!
-    return 1 2>/dev/null || exit
+  trace Could not determine the platform version!
+  return 1 2>/dev/null || exit
 fi
 
-trace GW_PLATFORM=$GW_PLATFORM
+trace Resolved: GW_PLATFORM=$GW_PLATFORM
 
 # If these are empty, default them
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 export GW_DB_DIR=${GW_DB_DIR:-/tmp/guidewire/$GW_PLATFORM}
 
 if [[ -z "${IDEA_JDK}" ]]; then
-    if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
-        export IDEA_JDK=${JAVA_HOME}_nodcevm
-    else
-        export IDEA_JDK=${JAVA_HOME}
-    fi
-    ${IDEA_JDK}/bin/java -version 2>&1 | sed 's/^/: /; s/[)(]//g'
+  if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
+    export IDEA_JDK=${JAVA_HOME}_nodcevm
+  else
+    export IDEA_JDK=${JAVA_HOME}
+  fi
+  ${IDEA_JDK}/bin/java -version 2>&1 | sed 's/^/: /; s/[)(]//g'
 fi
 ${JAVA_HOME}/bin/java -version 2>&1 | sed 's/^/: /g; s/[)(]//g'
 
-for dirVar in GW_DB_DIR IDEA_HOME IDEA_JDK JAVA_HOME; do
-    eval "dir=\$${dirVar}"
-    if [[ ! -d ${dir} ]]; then
-      echo -n "\033[97;101m"`typeset -p ${dirVar}`"\033[0m\n"
-    else
-      typeset -p ${dirVar}
-    fi
-done
-
-typeset -p GW_PL_NUM GW_PLATFORM
-
-if [[ ${GW_PL_NUM} -lt 9 ]]; then
-    export _XX=${GW_PRODUCT}
-    typeset -p _XX
-    GW_START_DIR=${GW_ROOT}/bin
-    GW_START_SCRIPT=./all
-    GW_LIB_DIR=../lib
-    typeset -p GW_START_DIR GW_START_SCRIPT
-fi
-typeset -p GW_LIB_DIR
-
+lsPathVar IDEA_HOME IDEA_JDK JAVA_HOME
+# it doesn't matter if GW_DB_DIR doesn't exist yet so we just typeset it
+typeset -p GW_DB_DIR GW_PL_NUM GW_PLATFORM
 
 #
 # DETERMINE INSTALLATION ROOT
 #
 
-export GW_ROOT=`echo ${PWD//${HOME}/'~'} | sed -E "\
+# shellcheck disable=SC2006
+# shellcheck disable=SC2086
+export GW_ROOT=$(echo ${PWD//${HOME}/~} | sed -E "\
     # strip trailing directories (and exit on first success) ...
     # ... from git path
-    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\\$_\1_
+    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\$_\1_
     t
 
     # ... from Perforce path
-    s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\\$_\1_
+    s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\$_\1_
     t
 
     # ... after the one containing the product code+version
-    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\\$_\1_
+    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\$_\1_
     t
 
     # ... after the one that begins with the product name
-    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\\$_\1_
+    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\$_\1_
     t
 
     # delete pattern space so that empty string is returned
-    d"`
-typeset -p GW_ROOT
-
+    d")
+lsPathVar GW_ROOT
 
 #
 # DETERMINE THE PRODUCT
 #
 
-export GW_PRODUCT=`echo ${GW_ROOT} | sed -nE 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\1_p'`
+export GW_PRODUCT=$(echo "${GW_ROOT}" | sed -nE 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\1_p')
 typeset -p GW_PRODUCT
 
 case ${GW_PRODUCT} in
-    ab|contactmanager)
-        export GW_PRODUCT=ab
-        export GW_PORT=8280
-        export GW_COLOR='[30;106m' # bright white text on aqua
-        ;;
-    bc|billingcenter)
-        export GW_PRODUCT=bc
-        export GW_PORT=8380
-        export GW_COLOR='[105m' # bright white text on magenta
-        ;;
-    pc|policycenter)
-        export GW_PRODUCT=pc
-        export GW_PORT=8480
-        export GW_COLOR='[30;103m' # black text on tan/yellow
-        ;;
-    pl|platform)
-        export GW_PRODUCT=pl
-        export GW_PORT=8480
-        export GW_COLOR='[30;107m' # bright black text on gray
-        ;;
-    gw)
-        export GW_PRODUCT=gw
-        export GW_COLOR='[30;107m' # bright black text on gray
-        ;;
-    cc|claimcenter|*)
-        export GW_PRODUCT=cc
-        export GW_PORT=8080
-        export GW_COLOR='[97;104m' # bright white text on blue
-        ;;
-#    *)
-#        unset GW_PRODUCT GW_TITLE GW_PROMPT
-#        export GW_COLOR='[5;101m' # blinking bright white on red
-#        ;;
+  ab | contactmanager)
+    export GW_PRODUCT=ab
+    export GW_PORT=8280
+    export GW_COLOR='[30;106m' # bright white text on aqua
+    ;;
+  bc | billingcenter)
+    export GW_PRODUCT=bc
+    export GW_PORT=8380
+    export GW_COLOR='[105m' # bright white text on magenta
+    ;;
+  pc | policycenter)
+    export GW_PRODUCT=pc
+    export GW_PORT=8480
+    export GW_COLOR='[30;103m' # black text on tan/yellow
+    ;;
+  pl | platform)
+    export GW_PRODUCT=pl
+    export GW_PORT=8480
+    export GW_COLOR='[30;107m' # bright black text on gray
+    ;;
+  gw)
+    export GW_PRODUCT=gw
+    export GW_COLOR='[30;107m' # bright black text on gray
+    ;;
+  cc | claimcenter)
+    export GW_PRODUCT=cc
+    export GW_PORT=8080
+    export GW_COLOR='[97;104m' # bright white text on blue
+    ;;
+  *)
+    unset GW_PRODUCT GW_TITLE GW_PROMPT
+    export GW_COLOR='[5;101m' # blinking bright white on red
+    ;;
 esac
 
 # exit if we can't determine the Guidewire product
 if [ -z "${GW_PRODUCT}" ]; then
-    trace Could not determine the Guidewire product
-    unsetGWVars
-    return 1 2>/dev/null || exit
+  trace Could not determine the Guidewire product
+  unsetGWVars
+  return 1 2>/dev/null || exit
 fi
 trace Determined the GW product
 
+# shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
 export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
 export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
 typeset -p GW_PORT GW_PROMPT GW_PORT_DEBUG GW_TITLE
-
 
 #
 # DETERMINE THE STARTUP SCRIPT
@@ -284,42 +294,53 @@ export GW_START_DIR=$GW_ROOT
 
 GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
 
-typeset -p GW_START_DIR GW_START_SCRIPT
-
+if [[ ${GW_PL_NUM} -lt 9 ]]; then
+  export _XX=${GW_PRODUCT}
+  typeset -p _XX
+  GW_START_DIR=${GW_ROOT}/bin
+  GW_START_SCRIPT=./all
+  GW_LIB_DIR=../lib
+fi
+lsPathVar GW_LIB_DIR GW_START_DIR GW_START_SCRIPT
 
 #
 # Fix PATH and CLASSPATH
 #
 
 function replaceInList() {
-    local listName=$1; shift
-    eval local list=\$$listName
-    local regex=$1; shift
-    local newVal=$1; shift
-    local newList=`echo :${list// /\\ } | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~"`
-    export ${listName}=$newList
+  local listName=$1
+  shift
+  # shellcheck disable=SC2086
+  eval local list=\$$listName
+  local regex=$1
+  shift
+  local newVal=$1
+  shift
+  # shellcheck disable=SC2154
+  local newList=$(echo :"${list// /\\ }" | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~")
+  export "${listName}"="$newList"
 }
 
-replaceInList PATH      'idea[0-9]*'      ${IDEA_HOME}/bin
-replaceInList PATH      'java-[0-9]+-jdk' ${JAVA_HOME}/bin
+replaceInList PATH 'idea[0-9]*' ${IDEA_HOME}/bin
+replaceInList PATH 'java-[0-9]+-jdk' ${JAVA_HOME}/bin
 replaceInList CLASSPATH 'java-[0-9]+-jdk' ${JAVA_HOME}/lib/\*
 
-if [[ ${GW_PL_NUM} -lt 9 ]]; then
-    replaceInList PATH      'ant'      $ANT_HOME/bin
-    replaceInList CLASSPATH 'ant'      $ANT_HOME/lib/\*
+if [[ "$GW_PL_NUM" -lt 9 ]]; then
+  replaceInList PATH 'ant' $ANT_HOME/bin
+  replaceInList CLASSPATH 'ant' $ANT_HOME/lib/\*
 
-    replaceInList PATH      'aardvark' $AARDVARK_HOME/bin
-    replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
+  replaceInList PATH 'aardvark' $AARDVARK_HOME/bin
+  replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
 
-    replaceInList PATH      'maven'    ${M2_HOME}/bin
-    replaceInList CLASSPATH 'maven'    ${M2_HOME}/lib/\*
+  replaceInList PATH 'maven' ${M2_HOME}/bin
+  replaceInList CLASSPATH 'maven' ${M2_HOME}/lib/\*
 fi
 
-if [ -d ${GW_START_DIR}/${GW_LIB_DIR} ]; then
-    CLASSPATH+=:${GW_LIB_DIR}/\*
+if (($#GW_LIB_DIR > 0)) && [ -d "$GW_START_DIR"/"$GW_LIB_DIR" ]; then
+  CLASSPATH+=:"$GW_LIB_DIR"/\*
 fi
 
 # Remove any empty or duplicate members
-CLASSPATH=`echo -n $CLASSPATH | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}'`
+CLASSPATH=$(echo -n "$CLASSPATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}')
 
 typeset -p PATH CLASSPATH

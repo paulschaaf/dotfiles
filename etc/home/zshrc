@@ -359,16 +359,16 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-Clementine-Play-or-Pau
 # ======== Remote sessions
 if (( $#SUDO_USER )); then
     export CONNECTION=sudo
-    colored_connection=%F{magenta}
+    colored_connection="%F{magenta}"
 elif (( $#SSH_TTY )); then
     export CONNECTION=ssh
-    colored_connection=%F{226}%S
+    colored_connection="%F{226}%S"
 elif (( $#REMOTEHOST || $#REMOTEUSER )); then
     export CONNECTION=tlnt
-    colored_connection=%B%F{red}
+    colored_connection="%B%F{red}"
 fi
 
-(( $#colored_connection )) && colored_connection=' '$colored_connection${CONNECTION}%b%f%k%s
+(( $#colored_connection )) && colored_connection=' '${colored_connection}${CONNECTION}%b%f%k%s
 
 
 # ========
