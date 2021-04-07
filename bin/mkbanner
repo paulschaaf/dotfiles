@@ -101,7 +101,16 @@ if [[ -e ${filename} ]]; then
 fi
 
 echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
-dry_run || convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
+if ! dry_run; then
+   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
 
-dry_run || echo Created ${filename}
-dry_run || open ${filename}
+   echo Created ${filename}
+   open ${filename}
+
+   echo -n 'Keep this file? (y,N) '
+   read -q keep; echo
+   if [ "$keep" = 'n' ] || [ "$keep" = 'N' ]; then
+      rm -f ${filename}
+      echo Deleted ${filename}
+   fi
+fi

@@ -1,4 +1,0 @@
-#!/bin/zsh
-
-# insert a space between the column number and the matching text
-command rg --no-heading --column "${@}" | sed -E "s_(.*[0-9]+\[0m):_\\1 _;" | toFileUrl

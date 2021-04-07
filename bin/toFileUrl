@@ -1,12 +1,15 @@
 #!/usr/bin/env zsh
 
-sed "
+sed -E "
+   # ignore any line that begins with number:number:
+   /^[0-9]+:[0-9]+:/b
+
    # prepend PWD to all relative paths (those without a leading /)
    /[^/]/ { s&^&${PWD}/&; }
 
    # replace all occurrences of /./ with /
-   s_/\\./_/_;
+   s_/\\./_/_
 
    # prepend file:// to each absolute path so it appears as a link
-   s_^/_file:///_;
+   s_^/_file:///_
 "

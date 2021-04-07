@@ -1,36 +1,55 @@
 #!/bin/zsh
 
-unset debug help
+export debug
 binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 command=()
 
-args=($@)
-alias popArg='args=(${args[@]:1})'
+(($#inIntelliJ)) && command+=(--column)
+
+function help() {
+   $binary --help
+   echo
+   echo 'GUIDEWIRE MACRO IGNORE FLAGS:               WILL IGNORE'
+   echo '     --ignore-localizations                 display*.properties'
+   echo '     --ignore-entities                      *.eti, *.eix, *.etx'
+   echo '     --ignore-pcfs                          *.pcf'
+   echo '     --ignore-tests                         /test/, /cc-test/, etc.'
+   echo '     --ignore-typelists                     *.tti, *.tix, *.ttx'
+
+   echo
+   echo 'EXPANSION OPERATORS                         EXPANDS TO'
+   echo '     --ignore-datamodel                     --ignore-entities --ignore-typelists'
+   echo '     --ignore-ui                            --ignore-localizations --ignore-pcfs'
+   exit
+}
 
 function addGlob() {
+   # shellcheck disable=SC2034
    for pattern in "${@}"; do
-      command+=(--glob "'$pattern'")
+      command+=(--glob ${(qq)pattern})
    done
 }
 
-#set -x
+args=($@)
 while (($#args)); do
-   (($#debug)) && echo -n '\n=== ' && typeset args
+   #   (($#debug)) && echo -n '\n=== ' && typeset args
    firstArg=${args[1]}
-   popArg
+   args=(${args[@]:1}) # pop the argument
 
-   (($#debug)) && typeset firstArg
+   #   (($#debug)) && typeset firstArg
    case ${firstArg} in
       --debug)
-         # shellcheck disable=SC2034
          debug=true
          ;;
+      --heading)
+         command+=(--heading --color=never)
+         ;;
       -h|--help)
-         help=true
-         command+=($firstArg)
+         help
          ;;
       --ignore-datamodel)
-         args=(--ignore-entities --ignore-typelists $args)
+         # append this meta-expansion
+         args=(--ignore-entities --ignore-typelists ${args[*]})
          ;;
       --ignore-localizations)
          addGlob "!**/display*.properties"
@@ -42,32 +61,31 @@ while (($#args)); do
          addGlob "!**/*.pcf"
          ;;
       --ignore-tests)
-         addGlob "!test/*" "!cc-test/*"
+         addGlob "!**/test/*" "!**/gtest/*" "!**/cc-test/*" "!**/cc-test-*" "!**/cc-behavior-test*" "!**/cc-predenali-test*" "!**/cc-rest-test*"
          ;;
       --ignore-typelists)
          addGlob "!**/*.tti" "!**/*.tix" "!**/*.ttx"
          ;;
       --ignore-ui)
-         args=(--ignore-localizations --ignore-pcfs)
+         # append this meta-expansion
+         args=(--ignore-localizations --ignore-pcfs ${args[*]})
          ;;
       *)
-         command+=($firstArg)
+         command+=(${(qq)firstArg})
          ;;
    esac
 done
 
-(($#debug)) && echo "${command[@]}" && echo
-(($#command)) && $binary "${command[@]}"
+if (($#command)); then
+   echo ${binary} ${command[*]}; echo
 
-if (($#help)); then
-   echo '\nGUIDEWIRE MACRO IGNORE FLAGS:               WILL IGNORE'
-   echo '     --ignore-localizations                 display*.properties'
-   echo '     --ignore-entities                      *.eti, *.eix, *.etx'
-   echo '     --ignore-pcfs                          *.pcf'
-   echo '     --ignore-tests                         test/*, cc-test'
-   echo '     --ignore-typelists                     *.tti, *.tix, *.ttx'
+   if (($#inIntelliJ)); then
+      (($#debug)) && set -x
+      # insert a space between the column number and the matching text
+      eval ${binary} ${command[*]} | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
+   else
+      (($#debug)) && set -x
+      eval ${binary} ${command[*]}
+   fi
 
-   echo '\nEXPANSION OPERATORS                         EXPANDS TO'
-   echo '     --ignore-datamodel                     --ignore-entities --ignore-typelists'
-   echo '     --ignore-ui                            --ignore-localizations --ignore-pcfs'
 fi

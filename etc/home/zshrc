@@ -217,11 +217,6 @@ inMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command fi
 autoload -Uz frotz
 autoload -Uz mkfunction
 
-if (( $#inIntelliJ )); then
-    autoload -Uz rg_intellij
-    alias rg=rg_intellij
-fi
-
 function joinPhotos() {
   local nums=(1 2 3 4 5 6 7 8 9 10)
   for i in $nums; do
