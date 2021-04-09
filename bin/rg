@@ -1,34 +1,45 @@
 #!/bin/zsh
+# list all file extensions:
+#   find * -type f -printf '%f\n' | sed -n '/\./ { s/^.*\.//g; p; }' | sort -u | tee extensions
 
-export debug
+export debug expanded
 binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
-command=()
-
-(($#inIntelliJ)) && command+=(--column)
 
 function help() {
    $binary --help
    echo
-   echo 'GUIDEWIRE MACRO IGNORE FLAGS:               WILL IGNORE'
-   echo '     --ignore-localizations                 display*.properties'
-   echo '     --ignore-entities                      *.eti, *.eix, *.etx'
-   echo '     --ignore-pcfs                          *.pcf'
-   echo '     --ignore-tests                         /test/, /cc-test/, etc.'
-   echo '     --ignore-typelists                     *.tti, *.tix, *.ttx'
+   echo 'GUIDEWIRE MACRO IGNORE FLAGS:                 WILL IGNORE'
+   echo '     --ignore-test-dirs                       /test/, /gtest/, /apitestbench/, /testharness/, etc.'
 
    echo
-   echo 'EXPANSION OPERATORS                         EXPANDS TO'
-   echo '     --ignore-datamodel                     --ignore-entities --ignore-typelists'
-   echo '     --ignore-ui                            --ignore-localizations --ignore-pcfs'
+   echo 'FILE TYPES (use with --type= or --type-not=)  INCLUDES TYPES'
+   echo '     datamodel:                               entity, typelist'
+   echo '     entity:                                  eti, eix, etx'
+   echo '     localization:                            display*.properties'
+   echo '     typelist:                                tti, tix, ttx'
+   echo '     ui:                                      localization, pcf'
+   echo '     gosu:                                    gs, gsenhancement'
+   echo '     gosurules:                               gosuruleset, gosurule'
+   echo '                                              plugin'
    exit
 }
 
-function addGlob() {
+command=()
+function addSwitches() {
    # shellcheck disable=SC2034
-   for pattern in "${@}"; do
-      command+=(--glob ${(qq)pattern})
+   for switch in "${@}"; do
+      command+=("${switch}")
    done
 }
+
+function addGlobs() {
+   # shellcheck disable=SC2034
+   for pattern in "${@}"; do
+      addSwitches --glob "${(qq)pattern}"
+   done
+}
+
+(($#inIntelliJ)) && addSwitches --color=always
 
 args=($@)
 while (($#args)); do
@@ -42,50 +53,34 @@ while (($#args)); do
          debug=true
          ;;
       --heading)
-         command+=(--heading --color=never)
+         addSwitches --heading --color=never
+         expanded=true
          ;;
       -h|--help)
          help
          ;;
-      --ignore-datamodel)
-         # append this meta-expansion
-         args=(--ignore-entities --ignore-typelists ${args[*]})
+      --ignore-test-dirs)
+         addGlobs '!**/*-test*/'     '!**/apitestbench*/'  '!**/gtest/'   '!**/pcftest/' \
+                  '!**/servertest/'  '!**/smoketests/'     '!**/test-*/'  '!**/test/'    \
+                  '!**/testdata/'    '!**/testharness/'    '!**/tests/'   '!**/testsupport/'
+         expanded=true
          ;;
-      --ignore-localizations)
-         addGlob "!**/display*.properties"
-         ;;
-      --ignore-entities)
-         addGlob "!**/*.eti" "!**/*.eix" "!**/*.etx"
-         ;;
-      --ignore-pcfs)
-         addGlob "!**/*.pcf"
-         ;;
-      --ignore-tests)
-         addGlob "!**/test/*" "!**/gtest/*" "!**/cc-test/*" "!**/cc-test-*" "!**/cc-behavior-test*" "!**/cc-predenali-test*" "!**/cc-rest-test*"
-         ;;
-      --ignore-typelists)
-         addGlob "!**/*.tti" "!**/*.tix" "!**/*.ttx"
-         ;;
-      --ignore-ui)
-         # append this meta-expansion
-         args=(--ignore-localizations --ignore-pcfs ${args[*]})
+      -*)
+         # don't enquote switches
+         addSwitches "${firstArg}"
          ;;
       *)
-         command+=(${(qq)firstArg})
+         addSwitches "${(qq)firstArg}"
          ;;
    esac
 done
 
-if (($#command)); then
-   echo ${binary} ${command[*]}; echo
-
-   if (($#inIntelliJ)); then
-      (($#debug)) && set -x
-      # insert a space between the column number and the matching text
-      eval ${binary} ${command[*]} | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
-   else
-      (($#debug)) && set -x
-      eval ${binary} ${command[*]}
-   fi
-
+(($#expanded)) && printf "Expanded to => %s %s\n"  "${binary}" "${command[*]}"
+if (($#inIntelliJ)); then
+   (($#debug)) && set -x
+   # insert a space between the column number and the matching text
+   eval ${binary} ${command[*]} | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
+else
+   (($#debug)) && set -x
+   eval ${binary} ${command[*]}
 fi

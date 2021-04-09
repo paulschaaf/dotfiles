@@ -39,13 +39,13 @@ export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH PATH      RUBYLIB
 
 case ${UNAME} in
   CYGWIN)
-      osOverrideDir=~/bin/win
+      osOverrides=(~/bin/win)
       ;;
   Darwin)
-      osOverrideDir=~/bin/macos
+      osOverrides=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin)
       ;;
   Linux)
-      osOverrideDir=~/bin/linux
+      osOverrides=(~/bin/linux)
       ;;
   *)
   ;;
@@ -54,7 +54,7 @@ esac
 CLASSPATH=${CLASSPATH:=.}
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
-if [ "${osOverrideDir##*/}" = "macos" ]; then
+if [ "${osOverrides##*/}" = "macos" ]; then
     export JAVA_ROOT=/Library/Java/JavaVirtualMachines
     export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
     export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
@@ -70,7 +70,7 @@ export JAVA_HOME=${JAVA11_HOME}
 LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 
 path=(
-    ${osOverrideDir}
+    ${osOverrides[@]}
     ~/bin
     ~/bin/quick-ssh
     ${JAVA_HOME}/bin
@@ -78,7 +78,7 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
-unset osOverrideDir
+unset osOverrides
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
