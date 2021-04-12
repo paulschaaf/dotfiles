@@ -12,15 +12,21 @@ function help() {
    echo '     --ignore-test-dirs                       /test/, /gtest/, /apitestbench/, /testharness/, etc.'
 
    echo
+   echo 'EXTENSION TYPES (use with --type= or --type-not=)'
+   echo '     eti, eix, etx, gr, grs, gs, gsx, pcf, tix, tti, ttx'
+   echo
    echo 'FILE TYPES (use with --type= or --type-not=)  INCLUDES TYPES'
    echo '     datamodel:                               entity, typelist'
+   echo '     displayprops:                            display*.properties'
    echo '     entity:                                  eti, eix, etx'
-   echo '     localization:                            display*.properties'
+   echo '     gosu:                                    gs, gsx'
+   echo '     gosurules:                               gr, grs'
+   echo '     plugin:                                  *.gwp'
+   echo '     src:                                     gosu, java'
+   echo '     typeinfo:                                *.gti'
    echo '     typelist:                                tti, tix, ttx'
-   echo '     ui:                                      localization, pcf'
-   echo '     gosu:                                    gs, gsenhancement'
-   echo '     gosurules:                               gosuruleset, gosurule'
-   echo '                                              plugin'
+   echo '     ui:                                      displayprops, pcf'
+   echo
    exit
 }
 

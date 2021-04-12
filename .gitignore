@@ -14,6 +14,7 @@
 !/etc/home/emacs.d/init.el
 !/etc/home/emacs.d/Makefile
 
+ssh/
 !/etc/home/ssh/*.pub
 !/etc/home/ssh/authorized_keys
 !/etc/home/ssh/config
@@ -23,6 +24,4 @@
 !/etc/home/ssh/ssh-open
 !/etc/home/ssh/sshd_config
 
-/secrets
 /secrets.txt
-

@@ -1,5 +1,4 @@
 --column
---glob=!*.gti
 --glob=!*.snap
 --glob=!**/build/
 --glob=!**/generated/
@@ -11,23 +10,25 @@
 --type-add=etx:*.etx
 --type-add=entity:include:eti,eix,etx
 
---type-add=tti:*.tti
 --type-add=tix:*.tix
+--type-add=tti:*.tti
 --type-add=ttx:*.ttx
 --type-add=typelist:include:tti,tix,ttx
 
 --type-add=datamodel:include:entity,typelist
 
---type-add=localization:display*.properties
+--type-add=displayprops:display*.properties
 --type-add=pcf:*.pcf
---type-add=ui:include:localization,pcf
+--type-add=ui:include:displayprops,pcf
 
 --type-add=gs:*.gs
---type-add=gsenhancement:*.gsx
---type-add=gosu:include:gs,gsenhancement
+--type-add=gsx:*.gsx
+--type-add=gosu:include:gs,gsx
 
---type-add=gosuruleset:*.grs
---type-add=gosurule:*.gr
---type-add=gosurules:include:gosuruleset,gosurule
+--type-add=grs:*.grs
+--type-add=gr:*.gr
+--type-add=gosurules:include:gr,grs
 
 --type-add=plugin:*.gwp
+--type-add=src:gosu,java
+--type-add=typeinfo:*.gti
