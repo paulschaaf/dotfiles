@@ -267,7 +267,7 @@ while [ -n "$*" ]; do
           #${dbbackup}.7z"
          ;;
       rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite/*; rmdir ${GW_DB_DIR}/granite; echo ---DONE---; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite/*; rmdir ${GW_DB_DIR}/granite; printf '\n---DONE---\n'; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
          ;;
 #      runSuite)
 #        if (( ! $#* )); then

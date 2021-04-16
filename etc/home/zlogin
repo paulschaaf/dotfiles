@@ -6,14 +6,15 @@
 # environment at all.
 #
 # 1) All:         /etc/zshenv,       $ZDOTDIR/.zshenv
-# 2) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
-# 3) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
+# 2) Login:       /etc/zprofile,     $ZDOTDIR/.zprofile
+# 3) Interactive: /etc/zshrc,        $ZDOTDIR/.zshrc
+# 4) Login:       /etc/zlogin,       $ZDOTDIR/.zlogin
 # ...
-# 4) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
-
+# 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
 # ========
 # ======== Profiling
+( (($#debug)) || (($#trace)) ) && echo "\e[42m# ===== Sourcing ${(%):-%N}\e[0m"
 source ~pschaaf/bin/profile.zsh
 
 
@@ -40,4 +41,4 @@ else
 fi
 
 set +x
-unset trace
+unset debug trace

@@ -6,31 +6,42 @@ export debug expanded
 binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 
 function help() {
-   $binary --help
-   echo
-   echo 'GUIDEWIRE MACRO IGNORE FLAGS:                 WILL IGNORE'
-   echo '     --ignore-test-dirs                       /test/, /gtest/, /apitestbench/, /testharness/, etc.'
+   cat <<HEREDOC
+GUIDEWIRE MACRO IGNORE FLAGS:           WILL IGNORE
+     --ignore-test-dirs                 /test/, /gtest/, /apitestbench/, /testharness/, etc.
+     --ignore-bizrules                  /bizrules/*.xml
+     --ignore-perf-dirs                 /perf/, /ccperf/, /perf-*/, etc.
 
-   echo
-   echo 'EXTENSION TYPES (use with --type= or --type-not=)'
-   echo '     eti, eix, etx, gr, grs, gs, gsx, pcf, tix, tti, ttx'
-   echo
-   echo 'FILE TYPES (use with --type= or --type-not=)  INCLUDES TYPES'
-   echo '     datamodel:                               entity, typelist'
-   echo '     displayprops:                            display*.properties'
-   echo '     entity:                                  eti, eix, etx'
-   echo '     gosu:                                    gs, gsx'
-   echo '     gosurules:                               gr, grs'
-   echo '     plugin:                                  *.gwp'
-   echo '     src:                                     gosu, java'
-   echo '     typeinfo:                                *.gti'
-   echo '     typelist:                                tti, tix, ttx'
-   echo '     ui:                                      displayprops, pcf'
-   echo
+
+EXTENSION TYPES (use with --type= or --type-not=)
+     eix, eti, etx, feature, gr, grs, gs, gsx, gwrules, pcf, tix, tti, ttx, wsdl, xsd
+
+PATTERN TYPES                           PATTERN
+     builder:                           *Builder*
+     displaykey:                        display*.properties
+     dktranslations:                    display_*.properties
+     gosutest:                          *Test.gs
+     javatest:                          *Test.java
+     plugin:                            *.gwp
+     tktranslations:                    typelist*.properties
+
+COMPOSITE TYPES                         INCLUDES TYPES
+     datamodel:                         entity, typelist
+     entity:                            eti, eix, etx
+     gosu:                              gs, gsx
+     gosurules:                         gr, grs
+     src:                               gosu, java
+     test:                              feature, gosutest, javatest
+     translations:                      dktranslations, tktranslations
+     typelist:                          tti, tix, ttx
+     ui:                                displaykey, pcf, tktranslations, locale
+
+HEREDOC
    exit
 }
 
 command=()
+
 function addSwitches() {
    # shellcheck disable=SC2034
    for switch in "${@}"; do
@@ -43,11 +54,21 @@ function addGlobs() {
    for pattern in "${@}"; do
       addSwitches --glob "${(qq)pattern}"
    done
+   expanded=true
 }
 
-(($#inIntelliJ)) && addSwitches --color=always
+function typeNot() {
+   # shellcheck disable=SC2034
+   for pattern in "${@}"; do
+      addSwitches --type-not "${pattern}"
+   done
+   expanded=true
+}
 
 args=($@)
+typeNot translations xsd xsl
+(($#inIntelliJ)) && addSwitches --color=always
+
 while (($#args)); do
    #   (($#debug)) && echo -n '\n=== ' && typeset args
    firstArg=${args[1]}
@@ -63,13 +84,20 @@ while (($#args)); do
          expanded=true
          ;;
       -h|--help)
+         $binary --help
          help
          ;;
+      --ignore-bizrules)
+         addGlobs '!**/bizrules/*.xml'
+         ;;
       --ignore-test-dirs)
-         addGlobs '!**/*-test*/'     '!**/apitestbench*/'  '!**/gtest/'   '!**/pcftest/' \
-                  '!**/servertest/'  '!**/smoketests/'     '!**/test-*/'  '!**/test/'    \
-                  '!**/testdata/'    '!**/testharness/'    '!**/tests/'   '!**/testsupport/'
-         expanded=true
+         addGlobs '!**/*-test*/'     '!**/apitestbench*/'  '!**/gtest/'     '!**/pcftest/' \
+                  '!**/servertest/'  '!**/smoketests/'     '!**/test-*/'    '!**/test/'    \
+                  '!**/testdata/'    '!**/testharness/'    '!**/tests/'     '!**/testsupport/'
+         ;;
+      --type-list)
+         ${binary} --type-list
+         exit
          ;;
       -*)
          # don't enquote switches
@@ -85,7 +113,7 @@ done
 if (($#inIntelliJ)); then
    (($#debug)) && set -x
    # insert a space between the column number and the matching text
-   eval ${binary} ${command[*]} | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
+   eval "${binary} ${command[*]}" | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
 else
    (($#debug)) && set -x
    eval ${binary} ${command[*]}
