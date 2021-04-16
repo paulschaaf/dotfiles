@@ -1,23 +1,18 @@
 --column
 --smart-case
+
 --glob=!apidiffs.txt
 --glob=!*.gti
---glob=!order.txt
 --glob=!*.snap
 --glob=!**/build/
 --glob=!**/generated/
 --glob=!**/generated_classes/
 --glob=!**/node_modules/
 
---glob=!**/*-perf*/
---glob=!**/*perf/
---glob=!**/*perfapi/
+--glob=!app-??/*perf*/
+--glob=!perf*
+--glob=!perf-build/
 --glob=!**/*performance*/
---glob=!**/perf-*/
---glob=!**/perfaction/
---glob=!**/perfdownload*/
---glob=!**/perfutil*/
---glob=!**/wsiperf*/
 
 --glob=!*_de[._]*
 --glob=!*_es[._]*
@@ -56,12 +51,13 @@
 --type-add=gosutest:*Test.gs
 --type-add=javatest:*Test.java
 --type-add=plugin:*.gwp
+--type-add=ruleorder:order.txt
 --type-add=tktranslations:typelist_*.properties
 
 # INCLUDE TYPES
 --type-add=entity:include:eti,eix,etx
 --type-add=gosu:include:gs,gsx
---type-add=gosurules:include:gr,grs
+--type-add=gosurules:include:gr,grs,ruleorder
 --type-add=src:include:gosu,java
 --type-add=test:include:feature,gosutest,javatest
 --type-add=translations:include:dktranslations,tktranslations

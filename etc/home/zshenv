@@ -16,8 +16,13 @@
 # ========
 # ======== Profiling
 ( (($#debug)) || (($#trace)) ) && echo "\e[42m# ===== Sourcing ${(%):-%N}\e[0m"
+(( $#trace )) && set -x || set +x
 
-source ~pschaaf/bin/profile.zsh
+# if $zprof is set run the profiler
+if (( $#zprof )); then
+    zmodload zsh/zprof
+    echo Running zprof from ${(%):-%N}
+fi
 
 
 # ========
@@ -36,45 +41,46 @@ fi
 
 # ========
 # ======== Paths
-# Keep only the first occurrence of duplicates
-os_override_path=()
-typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH os_override_path PATH path RUBYLIB
-export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH      RUBYLIB
-
 export JAVA_ROOT=/usr/lib/jvm
 export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
 export JAVA18_AMD64_HOME=${JAVA8_HOME}
 export JAVA11_HOME=${JAVA_ROOT}/java-11-openjdk
+CLASSPATH=${CLASSPATH:=.}
+
+if [ "${UNAME}" = "Darwin" ]; then
+   export JAVA_ROOT=/Library/Java/JavaVirtualMachines
+   export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
+fi
+export JAVA_HOME=${JAVA11_HOME}
+export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
+
+# Keep only the first occurrence of duplicates
+export os_override_path=(~/bin ~/bin/quick-ssh ${JAVA_HOME}/bin)
+
+typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH os_override_path PATH path RUBYLIB
+export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH      RUBYLIB
+
+fpath=(~pschaaf/etc/zshfunctions ${fpath})
+
+#LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 
 case ${UNAME} in
   CYGWIN)
-      os_override_path=(~/bin/win)
+      os_override_path=(~/bin/win ${os_override_path[@]})
       ;;
   Darwin)
-      os_override_path=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin)
-      export JAVA_ROOT=/Library/Java/JavaVirtualMachines
-      export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
+      os_override_path=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin ${os_override_path[@]})
       ;;
   Linux)
-      os_override_path=(~/bin/linux)
+      os_override_path=(~/bin/linux ${os_override_path[@]})
       ;;
   *)
   ;;
 esac
-export JAVA_HOME=${JAVA11_HOME}
-export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
-
-CLASSPATH=${CLASSPATH:=.}
-fpath=(~pschaaf/etc/zshfunctions ${fpath})
-
-LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 
 path=(
     ${os_override_path[@]}
-    ~/bin
-    ~/bin/quick-ssh
-    ${JAVA_HOME}/bin
-    ${path}
+    ${path[@]}
     /usr/X11R6/bin
     /opt/git-gw
 )
@@ -129,5 +135,3 @@ export TEAMCITY_USER=${USER}
 export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
 export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
-
-set +x

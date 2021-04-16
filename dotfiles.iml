@@ -13,6 +13,7 @@
       <sourceFolder url="file://$MODULE_DIR$/etc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/venv" />
       <excludePattern pattern="*.zwc" />
     </content>
     <orderEntry type="inheritedJdk" />

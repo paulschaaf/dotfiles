@@ -15,7 +15,7 @@
 # ========
 # ======== Profiling
 ( (($#debug)) || (($#trace)) ) && echo "\e[42m# ===== Sourcing ${(%):-%N}\e[0m"
-source ~pschaaf/bin/profile.zsh
+(( $#trace )) && set -x || set +x
 
 
 # ========
@@ -42,3 +42,4 @@ fi
 
 set +x
 unset debug trace
+(($#zprof)) && unset zprof && zprof

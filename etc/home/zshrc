@@ -14,10 +14,10 @@
 # ========
 # ======== Profiling
 ( (($#debug)) || (($#trace)) ) && echo "\e[42m# ===== Sourcing ${(%):-%N}\e[0m"
-source ~pschaaf/bin/profile.zsh
+(( $#trace )) && set -x || set +x
 
-inMacOS && path=(${os_override_path[@]} ${path}) # fix the order after Mac's /etc/zprofile screws it up
-
+inMacOS && path=(${os_override_path[@]} ${path[@]}) # fix the order after Mac's /etc/zprofile screws it up
+unset os_override_path
 
 # ========
 # ======== Shell Options
@@ -515,7 +515,6 @@ for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
 done
 
 
-set +x
 
 # ========
 # ======== Tricks and Tips

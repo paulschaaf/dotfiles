@@ -8,9 +8,8 @@ binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 function help() {
    cat <<HEREDOC
 GUIDEWIRE MACRO IGNORE FLAGS:           WILL IGNORE
-     --ignore-test-dirs                 /test/, /gtest/, /apitestbench/, /testharness/, etc.
      --ignore-bizrules                  /bizrules/*.xml
-     --ignore-perf-dirs                 /perf/, /ccperf/, /perf-*/, etc.
+     --ignore-test-dirs                 /test/, /gtest/, /apitestbench/, /testharness/, etc.
 
 
 EXTENSION TYPES (use with --type= or --type-not=)
@@ -23,13 +22,14 @@ PATTERN TYPES                           PATTERN
      gosutest:                          *Test.gs
      javatest:                          *Test.java
      plugin:                            *.gwp
+     ruleorder:                         order.txt
      tktranslations:                    typelist*.properties
 
 COMPOSITE TYPES                         INCLUDES TYPES
      datamodel:                         entity, typelist
      entity:                            eti, eix, etx
      gosu:                              gs, gsx
-     gosurules:                         gr, grs
+     gosurules:                         gr, grs, ruleorder
      src:                               gosu, java
      test:                              feature, gosutest, javatest
      translations:                      dktranslations, tktranslations
@@ -109,7 +109,7 @@ while (($#args)); do
    esac
 done
 
-(($#expanded)) && printf "Expanded to => %s %s\n"  "${binary}" "${command[*]}"
+(($#expanded)) && printf "\e[90mExpanded to => %s %s\n"  "${binary}" "${command[*]}\e[0m"
 if (($#inIntelliJ)); then
    (($#debug)) && set -x
    # insert a space between the column number and the matching text
