@@ -27,6 +27,7 @@
 --glob=!*_zh[._]*
 
 # EXTENSION TYPES
+--type-add=bpmn:*.bpmn
 --type-add=eix:*.eix
 --type-add=eti:*.eti
 --type-add=etx:*.etx
@@ -35,6 +36,7 @@
 --type-add=grs:*.grs
 --type-add=gs:*.gs
 --type-add=gsx:*.gsx
+--type-add=gwp:*.gwp
 --type-add=gwrules:*.gwrules
 --type-add=pcf:*.pcf
 --type-add=tix:*.tix
@@ -47,12 +49,9 @@
 # PATTERN TYPES
 --type-add=builder:*Builder*
 --type-add=displaykey:display*.properties
---type-add=dktranslations:display_*.properties
 --type-add=gosutest:*Test.gs
 --type-add=javatest:*Test.java
---type-add=plugin:*.gwp
 --type-add=ruleorder:order.txt
---type-add=tktranslations:typelist_*.properties
 
 # INCLUDE TYPES
 --type-add=entity:include:eti,eix,etx
@@ -60,8 +59,7 @@
 --type-add=gosurules:include:gr,grs,ruleorder
 --type-add=src:include:gosu,java
 --type-add=test:include:feature,gosutest,javatest
---type-add=translations:include:dktranslations,tktranslations
 --type-add=typelist:include:tti,tix,ttx
---type-add=ui:include:displaykey,pcf,tktranslations
+--type-add=ui:include:displaykey,pcf
 
 --type-add=datamodel:include:entity,typelist

@@ -5,36 +5,44 @@
 export debug expanded
 binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 
-function help() {
-   cat <<HEREDOC
-GUIDEWIRE MACRO IGNORE FLAGS:           WILL IGNORE
-     --ignore-bizrules                  /bizrules/*.xml
-     --ignore-test-dirs                 /test/, /gtest/, /apitestbench/, /testharness/, etc.
+ignore_bizrules=('!**/bizrules/*.xml')
+ignore_test_dirs=(
+   '!**/*-test*/'
+   '!**/apitestbench*/'
+   '!**/gtest/'
+   '!**/pcftest/'
+   '!**/servertest/'
+   '!**/smoketests/'
+   '!**/test-*/'
+   '!**/test/'
+   '!**/testdata/'
+   '!**/testharness/'
+   '!**/tests/'
+   '!**/testsupport/'
+)
 
+function help() {
+   local extensions patterns includes
+   extensions=$(sed -En 's/^--type-add=([^:]*):\*\..*$/\1, 	/p' $RIPGREP_CONFIG_PATH | sort | fmt -w $((COLUMNS)))
+   patterns=$(sed -En "s/^--type-add=([^:]*):(([^*]|.[^.])[^:]*)$/   \1 		\2/p" $RIPGREP_CONFIG_PATH | sort)
+   includes=$(sed -En "s/^--type-add=([^:]*):include:(.*)$/   \1   		\2/p" $RIPGREP_CONFIG_PATH | sort)
+   ignore_test_dirs_string=$(echo "'${(j:', ':)ignore_test_dirs}'" | fmt -w $((COLUMNS/2)) | column -t | sed 's/^/			/')
+   ignore_test_dirs_string=$(echo "'${(j:', ':)ignore_test_dirs}'" | fmt -w $((COLUMNS*3/4)) | column -t | sed 's/^/		/')
+
+   cat <<HEREDOC
+GUIDEWIRE MACROS:       WILL IGNORE
+   --ignore-bizrules    '${(j:', ':)ignore_bizrules}'
+   --ignore-test-dirs
+${ignore_test_dirs_string}
 
 EXTENSION TYPES (use with --type= or --type-not=)
-     eix, eti, etx, feature, gr, grs, gs, gsx, gwrules, pcf, tix, tti, ttx, wsdl, xsd
+   ${extensions%,}
 
-PATTERN TYPES                           PATTERN
-     builder:                           *Builder*
-     displaykey:                        display*.properties
-     dktranslations:                    display_*.properties
-     gosutest:                          *Test.gs
-     javatest:                          *Test.java
-     plugin:                            *.gwp
-     ruleorder:                         order.txt
-     tktranslations:                    typelist*.properties
+PATTERN TYPES           PATTERN
+${patterns}
 
-COMPOSITE TYPES                         INCLUDES TYPES
-     datamodel:                         entity, typelist
-     entity:                            eti, eix, etx
-     gosu:                              gs, gsx
-     gosurules:                         gr, grs, ruleorder
-     src:                               gosu, java
-     test:                              feature, gosutest, javatest
-     translations:                      dktranslations, tktranslations
-     typelist:                          tti, tix, ttx
-     ui:                                displaykey, pcf, tktranslations, locale
+INCLUDE TYPES           INCLUDES
+${includes//,/, }
 
 HEREDOC
    exit
@@ -66,7 +74,6 @@ function typeNot() {
 }
 
 args=($@)
-typeNot translations xsd xsl
 (($#inIntelliJ)) && addSwitches --color=always
 
 while (($#args)); do
@@ -88,12 +95,10 @@ while (($#args)); do
          help
          ;;
       --ignore-bizrules)
-         addGlobs '!**/bizrules/*.xml'
+         addGlobs "${ignore_bizrules[@]}"
          ;;
       --ignore-test-dirs)
-         addGlobs '!**/*-test*/'     '!**/apitestbench*/'  '!**/gtest/'     '!**/pcftest/' \
-                  '!**/servertest/'  '!**/smoketests/'     '!**/test-*/'    '!**/test/'    \
-                  '!**/testdata/'    '!**/testharness/'    '!**/tests/'     '!**/testsupport/'
+         addGlobs "${ignore_test_dirs[@]}"
          ;;
       --type-list)
          ${binary} --type-list
