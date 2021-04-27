@@ -1,4 +1,3 @@
-!/venv/*
 /bin/quick-ssh/*
 /bin/**/inCygwin
 /bin/**/inMacOS
@@ -26,3 +25,5 @@ ssh/
 !/etc/home/ssh/sshd_config
 
 /secrets.txt
+
+/venv/*
