@@ -1,3 +1,4 @@
+--colors=match:fg:255,255,0
 --column
 --smart-case
 
@@ -46,11 +47,13 @@
 --type-add=xsd:*.xsd
 --type-add=xsl:*.xsl
 
+--type-add=foo:**/test/**/*
+
 # PATTERN TYPES
 --type-add=builder:*Builder*
---type-add=displaykey:display*.properties
---type-add=gosutest:*Test.gs
---type-add=javatest:*Test.java
+--type-add=displaykey:display*.propertiess
+--type-add=gosutest:*Test*.gs
+--type-add=javatest:*Test*.java
 --type-add=ruleorder:order.txt
 
 # INCLUDE TYPES
