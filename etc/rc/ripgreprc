@@ -1,4 +1,5 @@
 --colors=match:fg:255,255,0
+--colors=line:none
 --column
 --smart-case
 
@@ -39,6 +40,9 @@
 --type-add=gsx:*.gsx
 --type-add=gwp:*.gwp
 --type-add=gwrules:*.gwrules
+--type-add=javasrc:*.java
+--type-add=jsp:*.jsp
+--type-add=jspx:*.jspx
 --type-add=pcf:*.pcf
 --type-add=tix:*.tix
 --type-add=tti:*.tti
@@ -47,11 +51,9 @@
 --type-add=xsd:*.xsd
 --type-add=xsl:*.xsl
 
---type-add=foo:**/test/**/*
-
 # PATTERN TYPES
 --type-add=builder:*Builder*
---type-add=displaykey:display*.propertiess
+--type-add=displaykey:display*.properties
 --type-add=gosutest:*Test*.gs
 --type-add=javatest:*Test*.java
 --type-add=ruleorder:order.txt
@@ -60,6 +62,8 @@
 --type-add=entity:include:eti,eix,etx
 --type-add=gosu:include:gs,gsx
 --type-add=gosurules:include:gr,grs,ruleorder
+--type-clear=java
+--type-add=java:include:javasrc,jsp,jspx
 --type-add=src:include:gosu,java
 --type-add=test:include:feature,gosutest,javatest
 --type-add=typelist:include:tti,tix,ttx

@@ -24,6 +24,8 @@ ssh/
 !/etc/home/ssh/ssh-open
 !/etc/home/ssh/sshd_config
 
-/secrets.txt
+out/
+
+/secrets.sh
 
 /venv/*

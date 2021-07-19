@@ -5,7 +5,7 @@
 export debug expanded
 binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 
-ignore_bizrules=('!**/bizrules/*.xml')
+bizrules=('**/bizrules/*.xml')
 test_dirs=(
    '**/*-test*/'
    '**/apitestbench*/'
@@ -22,20 +22,25 @@ test_dirs=(
 )
 
 function help() {
-   local config extensions patterns includes
-   config=$(sed -En 's/^--type-add=//p' $RIPGREP_CONFIG_PATH | sort)
+   local type_adds extensions patterns includes
+   type_adds=$(sed -En 's/^--type-add=//p' $RIPGREP_CONFIG_PATH | sort)
 
    # summarize matching entries on one line, wrapping if necessary
-   extensions=$(echo "$config" | sed -En 's/^([^:]*):\*\..*$/\1, 	/p' | fmt -w $((COLUMNS)))
+   extensions=$(echo "$type_adds" | sed -En 's/^([^:]*):\*\..*$/\1, 	/p' | fmt -w $((COLUMNS)))
 
    # split matching lines into two columns
-   patterns=$(echo "$config" | sed -En "s/^([^:]*):(([^*]|.[^.])[^:]*)$/   \1 		\2/p")
-   includes=$(echo "$config" | sed -En "s/^([^:]*):include:(.*)$/   \1   		\2/p")
+   patterns=$(echo "$type_adds" | sed -En "s/^([^:]*):(([^*]|.[^.])[^:]*)$/   \1 		\2/p")
+   includes=$(echo "$type_adds" | sed -En "s/^([^:]*):include:(.*)$/   \1   		\2/p")
 
    cat <<HEREDOC
-GUIDEWIRE MACROS:       WILL IGNORE
-   --ignore-bizrules    '${(j:', ':)ignore_bizrules}'
-   --test-dirs, ignore-test-dirs
+   --inIntelliJ     Mostly for testing
+   --notIntelliJ
+
+GUIDEWIRE MACROS:       INCLUDES
+   --bizrules, no-bizrules
+       '${(j:', ':)bizrules}'
+
+   --test-dirs, no-test-dirs
     	'${(j:', ':)test_dirs}'
 
 EXTENSION TYPES (use with --type= or --type-not=)
@@ -92,11 +97,20 @@ while (($#@)); do
          $binary --help
          help
          ;;
-      --ignore-bizrules)
-         addGlobs "${ignore_bizrules[@]}"
+      --bizrules)
+         addGlobs "${bizrules[@]}"
          ;;
-      --ignore-test-dirs)
+      --no-bizrules)
+         addGlobs --negate "${bizrules[@]}"
+         ;;
+      --no-test-dirs)
          addGlobs --negate "${test_dirs[@]}"
+         ;;
+      --inIntelliJ)
+         inIntelliJ=true
+         ;;
+      --notIntelliJ)
+         unset inIntelliJ
          ;;
       --test-dirs)
          addGlobs "${test_dirs[@]}"
@@ -122,8 +136,8 @@ if (($#dry_run)); then
    exit
 elif (($#inIntelliJ)); then
    (($#debug)) && set -x
-   # insert a space between the column number and the matching text
-   eval "${binary} ${command[*]}" | sed -E 's_(:.[[]0m[0-9]+.[[]0m:)_\1 _' | toFileUrl
+   # turn dash-number-dash into colon-number-colon, put a space after the last coordinate colon
+   eval "${binary} ${command[*]}" | sed -E 's/-(.\[0m([0-9]+).\[0m)-/:\1:/; s_(^.*:.\[0m([0-9]+).\[0m):_\1 _' | toFileUrl
 else
    (($#debug)) && set -x
    eval ${binary} ${command[*]}

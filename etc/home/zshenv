@@ -123,8 +123,8 @@ inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
 
 # ========
 # ======== Guidewire
-# shellcheck source=~
-[[ -f ~/dotfiles/secrets.txt ]] && source ~/dotfiles/secrets.txt
+# shellcheck source=~ # shellcheck cannot follow non-constant source
+[[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
 
 export ARTIFACTORY_USERNAME=${USER}
 export P4_HOME=/opt/p4v
