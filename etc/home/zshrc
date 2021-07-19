@@ -351,7 +351,7 @@ bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
 bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 inMacOS && bindkey -s "\033[27~" ' ~/bin/macos/hpcalc\n'
-inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-Clementine-Play-or-Pause\n'
+inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 
 
 # ========

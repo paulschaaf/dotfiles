@@ -1,3 +1,0 @@
-#!/bin/zsh
-
-ssh -o UseKeychain=yes copernicus playerctl play-pause

@@ -8,7 +8,7 @@ switch-to-activity-d2b375bc-1e26-4e15-a9b7-27a428fefc36=none,none,Switch to acti
 [Clementine]
 _k_friendly_name=Clementine
 next_track=,none,Next track
-play_pause=Ctrl+Alt+Shift+Space,none,Play/Pause
+play_pause=,none,Play/Pause
 prev_track=,none,Previous track
 stop=,none,Stop
 
@@ -16,30 +16,6 @@ stop=,none,Stop
 Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
 Switch to Next Keyboard Layout=none,none,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
-
-[amarok]
-_k_friendly_name=Amarok
-decreaseVolume=,Meta+-,Decrease Volume
-increaseVolume=Meta++,Meta++,Increase Volume
-loveTrack=,Meta+L,Last.fm: Love Current Track
-mute=Meta+M,Meta+M,Mute Volume
-next=none,none,Next Track
-play_pause=Meta+Space,none,Play/Pause
-playlist_add=Meta+A,Meta+A,Add Media...
-prev=none,none,Previous Track
-rate1=none,Meta+1,Rate Current Track: 1
-rate2=none,Meta+2,Rate Current Track: 2
-rate3=none,Meta+3,Rate Current Track: 3
-rate4=none,Meta+4,Rate Current Track: 4
-rate5=none,Meta+5,Rate Current Track: 5
-replay=none,none,Restart current track
-seek_backward_medium=Meta+Shift+-,Meta+Shift+-,Seek Backward by 10.00 seconds seconds
-seek_forward_medium=Meta+Shift++,Meta+Shift++,Seek Forward by 10.00 seconds seconds
-showNotificationPopup=Meta+O,Meta+O,Show Notification Popup
-skipTrack=none,Meta+S,Last.fm: Skip Current Track
-stop=none,none,Stop
-stop_after_current=Meta+Shift+V,Meta+Shift+V,Stop after current Track
-toggleMainWindow=none,none,Toggle Main Window
 
 [azuredatastudio.desktop]
 _k_friendly_name=Azure Data Studio
@@ -86,7 +62,7 @@ decrease_microphone_volume=Microphone Volume Down,Microphone Volume Down,Decreas
 decrease_volume=Volume Down,Volume Down,Decrease Volume
 increase_microphone_volume=Microphone Volume Up,Microphone Volume Up,Increase Microphone Volume
 increase_volume=Volume Up,Volume Up,Increase Volume
-mic_mute=Microphone Mute,Microphone Mute,Mute Microphone
+mic_mute=Microphone Mute,Microphone Mute\tMeta+Volume Mute,Mute Microphone
 mute=Volume Mute,Volume Mute,Mute
 
 [konversation]
@@ -94,17 +70,12 @@ _k_friendly_name=Konversation
 next_active_tab=none,none,Next Active Tab
 toggle_mainwindow_visibility=none,none,Show/Hide Konversation
 
-[krunner.desktop]
-RunClipboard=Alt+Shift+F2,Alt+Shift+F2,Run command on clipboard contents
-_k_friendly_name=KRunner
-_launch=Alt+Space\tAlt+F2\tSearch,Alt+Space\tAlt+F2\tSearch,KRunner
-
 [ksmserver]
-Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,Ctrl+Alt+Shift+PgDown,Halt Without Confirmation
+Halt Without Confirmation=Ctrl+Alt+Shift+PgDown,none,Halt Without Confirmation
 Lock Session=Meta+L\t\tScreensaver,Meta+L\tCtrl+Alt+L\tScreensaver,Lock Session
 Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Log Out
-Log Out Without Confirmation=Ctrl+Alt+Shift+Del,Ctrl+Alt+Shift+Del,Log Out Without Confirmation
-Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,Ctrl+Alt+Shift+PgUp,Reboot Without Confirmation
+Log Out Without Confirmation=Ctrl+Alt+Shift+Del,none,Log Out Without Confirmation
+Reboot Without Confirmation=Ctrl+Alt+Shift+PgUp,none,Reboot Without Confirmation
 _k_friendly_name=Session Management
 
 [kwin]
@@ -349,7 +320,7 @@ mediavolumeup=none,none,Media volume up
 nextmedia=Media Next,Media Next,Media playback next
 pausemedia=Media Pause,Media Pause,Pause media playback
 playmedia=none,none,Play media playback
-playpausemedia=Media Play\tPause,Media Play,Play/Pause media playback
+playpausemedia=\tPause\tMedia Play,Media Play,Play/Pause media playback
 previousmedia=Media Previous,Media Previous,Media playback previous
 stopmedia=Media Stop,Media Stop,Stop media playback
 
@@ -360,6 +331,11 @@ _launch=none,none,Launch Median XL Launcher
 [org.kde.dolphin.desktop]
 _k_friendly_name=Dolphin
 _launch=Meta+E,Meta+E,Dolphin
+
+[org.kde.krunner.desktop]
+RunClipboard=Alt+Shift+F2,Alt+Shift+F2,Run command on clipboard contents
+_k_friendly_name=KRunner
+_launch=Alt+Space\tAlt+F2\tSearch,none,KRunner
 
 [org.kde.plasma.emojier.desktop]
 _k_friendly_name=Emoji Selector
@@ -387,7 +363,7 @@ Turn Off Screen=none,none,Turn Off Screen
 _k_friendly_name=Power Management
 
 [plasmashell]
-_k_friendly_name=Plasma
+_k_friendly_name=Activity switching
 activate task manager entry 1=,Meta+1,Activate Task Manager Entry 1
 activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
 activate task manager entry 2=,Meta+2,Activate Task Manager Entry 2
@@ -418,7 +394,7 @@ previous activity=Meta+Shift+Tab,Meta+Shift+Tab,Walk through activities (Reverse
 repeat_action=Ctrl+Alt+R,Ctrl+Alt+R,Manually Invoke Action on Current Clipboard
 show dashboard=none,Ctrl+F12,Show Desktop
 show-barcode=none,none,Show Barcode...
-show-on-mouse-pos=none,none,Open Klipper at Mouse Position
+show-on-mouse-pos=none,Meta+V,Open Klipper at Mouse Position
 stop current activity=Meta+S,Meta+S,Stop Current Activity
 switch to next activity=none,none,Switch to Next Activity
 switch to previous activity=none,none,Switch to Previous Activity
@@ -435,6 +411,10 @@ _launch=none,none,Launch Qt V4L2 Camera Test Bench
 [slack.desktop]
 _k_friendly_name=Slack
 _launch=none,none,Launch Slack
+
+[strawberry]
+_k_friendly_name=strawberry
+play_pause=Ctrl+Alt+Shift+Space,none,Play/Pause
 
 [systemsettings.desktop]
 _k_friendly_name=System Settings

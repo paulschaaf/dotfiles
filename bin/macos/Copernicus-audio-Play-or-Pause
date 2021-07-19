@@ -1,0 +1,17 @@
+#!/bin/zsh
+
+opt=
+inMacOS && opt='-o UseKeychain=yes'
+SEP=🡺
+
+FMT="{{playerName}} [{{emoji(status)}} @ {{duration(position)}}/{{duration(mpris:length)}}] :: {{xesam:genre}} ${SEP} {{xesam:artist}} ${SEP} {{year}} ${SEP} {{xesam:album}} ${SEP} {{xesam:trackNumber}}) {{xesam:title}}"
+
+CMD="playerctl play-pause && playerctl metadata --format ${(q)FMT}"
+
+if [ "$1" = "-d" ]; then
+   echo $CMD
+   typeset CMD
+fi
+
+
+ssh ${opt} copernicus ${CMD}
