@@ -44,6 +44,7 @@
 --type-add=jsp:*.jsp
 --type-add=jspx:*.jspx
 --type-add=pcf:*.pcf
+--type-add=properties:*.properties
 --type-add=tix:*.tix
 --type-add=tti:*.tti
 --type-add=ttx:*.ttx
