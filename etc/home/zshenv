@@ -126,12 +126,25 @@ inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
 # shellcheck source=~ # shellcheck cannot follow non-constant source
 [[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
 
-export ARTIFACTORY_USERNAME=${USER}
 export P4_HOME=/opt/p4v
 export P4CLIENT=pschaaf_satori_1124
 export TEAMCITY_USER=${USER}
 
+# Artifactory
+export ARTIFACTORY_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
+export ARTIFACTORY_USERNAME=${USER}
+
 # Claim Automation
-export CIS_ARTIFACT_REPO_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
-export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
+export CIS_ARTIFACT_REPO_USERNAME=${USER}
+export CIS_ARTIFACT_REPO_URL=${ARTIFACTORY_URL}
+
+# Claims Cloud Policy Integration
+export APPLICATION_AUTH_ENABLED=true
+export CCA_CLIENT_ID=0oawm2i4e3HRIpPKO0h7
+export DEPLOYMENT_ID_GRN=grn:v1:claimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
+export IG_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
+export IG_ARTIFACT_REPO_USERNAME=${USER}
+export IG_ARTIFACT_REPO_URL=${ARTIFACTORY_URL}
+export KETI_AUTH_SERVER_URL=https://guidewire-hub.oktapreview.com/oauth2/ausj9ftnbxOqfGU4U0h7
+export TENANT_ID=futurest
