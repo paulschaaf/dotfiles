@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+echo '# to restore from backup without deleting new files'
+echo 'nice rsync --recursive --safe-links --perms --times --owner --verbose --update --dry-run /run/media/pschaaf/Seagate\ 1TB/Music/ ~/Music'

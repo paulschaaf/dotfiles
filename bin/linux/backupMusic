@@ -1,0 +1,4 @@
+#!/usr/bin/zsh
+
+echo '# to take/update a backup'
+echo 'nice rsync --recursive --safe-links --perms --times --owner --verbose --update --delete --dry-run ~/Music/ /run/media/pschaaf/Seagate\ 1TB/Music'
