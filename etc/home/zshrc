@@ -403,7 +403,7 @@ case ${UNAME}:${HOSTNAME} in
        ;;
    Darwin*)
 #       HOST_ICON=`echo "\UF8FF "`
-       HOST_ICON=" "
+       HOST_ICON="🍎 "
        ;;
    Linux*)
 #       HOST_ICON=`echo "\U1F427 "`

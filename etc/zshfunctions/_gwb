@@ -34,7 +34,9 @@ _arguments "*: :((
   'httpkill: Kill the simple http server in the resources directory.'
   idea
   ij
+  killPort
   killStudio
+  lsDb
   packageCustomerDist
   'pcf: Browse the most recently changed file named /tmp/*.html'
   'pgrep: Is the server process running?'

@@ -19,6 +19,9 @@ while [ -n "$*" ]; do
   --no-scan)
     no_scan=true
     ;;
+  --trace)
+     set -x
+     ;;
   --*)
     echo Unknown option $1
     return 1
@@ -37,7 +40,7 @@ source $HOME/bin/gwSetEnv
 # echo GW_PLATFORM=${GW_PLATFORM}
 
 if [ -z "$GW_PL_NUM" ]; then
-  echo Could not determine Guidewire platform version! >&2
+  printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
   return 1
 fi
 
@@ -217,6 +220,10 @@ while [ -n "$*" ]; do
         spawn=true
         fullTask="${IDEA_HOME}/bin/idea.sh"
         ;;
+      killPort)
+        export port=$2; shift
+        fullTask="/bin/kill -9 $(lsof -i tcp:${port} -t) 2> /dev/null && echo Killed || echo Port ${port} is not in use"
+        ;;
       killStudio)
         fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
         taskFailIcon=$failIcon
@@ -266,8 +273,11 @@ while [ -n "$*" ]; do
           shift
           #${dbbackup}.7z"
          ;;
+      lsDb)
+         fullTask="ls ${GW_DB_DIR}/*"
+         ;;
       rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/* ${GW_DB_DIR}/granite/*; rmdir ${GW_DB_DIR}/granite; printf '\n---DONE---\n'; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+         fullTask="rm -fv ${GW_DB_DIR}/*; rmdir ${GW_DB_DIR}; printf '\n---DONE---\n'; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
          ;;
 #      runSuite)
 #        if (( ! $#* )); then

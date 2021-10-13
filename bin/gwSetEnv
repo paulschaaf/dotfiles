@@ -159,8 +159,9 @@ case ${GW_PLATFORM} in
   50 | halite)
     export GW_PL_NUM=50
     export GW_PLATFORM=halite
-    export GW_DB_DIR=/tmp/guidewire
+    export GW_DB_DIR=/tmp/guidewire/granite
     inMacOS &&
+#      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
       export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents' ||
       export IDEA_HOME=/opt/idea_halite
     inMacOS &&
@@ -192,7 +193,6 @@ if [[ -z "${IDEA_JDK}" ]]; then
   else
     export IDEA_JDK=${JAVA_HOME}
   fi
-  ${IDEA_JDK}/bin/java -version 2>&1 | sed 's/^/: /; s/[)(]//g'
 fi
 ${JAVA_HOME}/bin/java -version 2>&1 | sed 's/^/: /g; s/[)(]//g'
 
@@ -233,9 +233,8 @@ lsPathVar GW_ROOT
 #
 
 export GW_PRODUCT=$(echo "${GW_ROOT}" | sed -nE 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\1_p')
-typeset -p GW_PRODUCT
 
-case ${GW_PRODUCT} in
+case ${GW_PRODUCT:l} in
   ab | contactmanager)
     export GW_PRODUCT=ab
     export GW_PORT=8280
@@ -266,18 +265,15 @@ case ${GW_PRODUCT} in
     export GW_COLOR='[97;104m' # bright white text on blue
     ;;
   *)
-    unset GW_PRODUCT GW_TITLE GW_PROMPT
-    export GW_COLOR='[5;101m' # blinking bright white on red
+    # exit if we can't determine the Guidewire product
+    trace Could not determine the Guidewire product
+    unsetGWVars
+    return 1 2>/dev/null || exit
     ;;
 esac
 
-# exit if we can't determine the Guidewire product
-if [ -z "${GW_PRODUCT}" ]; then
-  trace Could not determine the Guidewire product
-  unsetGWVars
-  return 1 2>/dev/null || exit
-fi
 trace Determined the GW product
+typeset -p GW_PRODUCT
 
 # shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
