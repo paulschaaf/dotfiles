@@ -471,10 +471,9 @@ fi
 if inLinux && (( ! $#SSH_AGENT_PID )); then
      isRoot || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
 elif inMacOS; then
-     ssh-add -A
+     ssh-add -T ~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
      alias ssh='command ssh -o UseKeychain=yes'
 fi
-
 
 # ========
 # ======== Zsh Compinstall

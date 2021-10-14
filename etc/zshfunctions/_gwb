@@ -22,6 +22,7 @@ _arguments "*: :((
   codegen
   compile
   dropDb
+  'fixgwb: remove the erroneous spaces from the OOB product gwb script'
   genDataDictionary
   genPcfDictionary
   genPcfXsd

@@ -161,7 +161,7 @@ case ${GW_PLATFORM} in
     export GW_PLATFORM=halite
     export GW_DB_DIR=/tmp/guidewire/granite
     inMacOS &&
-#      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
       export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents' ||
       export IDEA_HOME=/opt/idea_halite
     inMacOS &&
@@ -247,7 +247,7 @@ case ${GW_PRODUCT:l} in
     ;;
   pc | policycenter)
     export GW_PRODUCT=pc
-    export GW_PORT=8480
+    export GW_PORT=8180
     export GW_COLOR='[30;103m' # black text on tan/yellow
     ;;
   pl | platform)

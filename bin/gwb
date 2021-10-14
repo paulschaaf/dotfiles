@@ -199,6 +199,10 @@ while [ -n "$*" ]; do
         fi
         taskFailIcon=$failIcon
         ;;
+      fixgwb)
+        # remove the erroneous spaces from the OOB product gwb script
+        perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb
+        ;;
       h2)
         spawn=true
         fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
@@ -221,8 +225,9 @@ while [ -n "$*" ]; do
         fullTask="${IDEA_HOME}/bin/idea.sh"
         ;;
       killPort)
-        export port=$2; shift
-        fullTask="/bin/kill -9 $(lsof -i tcp:${port} -t) 2> /dev/null && echo Killed || echo Port ${port} is not in use"
+        export port=${2:=$GW_PORT}; shift
+        export process=`lsof -i tcp:${port} -t`
+        fullTask="[ -n ${process} ] && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
         ;;
       killStudio)
         fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")

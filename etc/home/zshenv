@@ -128,7 +128,8 @@ inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
 
 export P4_HOME=/opt/p4v
 export P4CLIENT=pschaaf_satori_1124
-export TEAMCITY_USER=${USER}
+#export TEAMCITY_USER=${USER}
+#export TEAMCITY_BUILD_PROPERTIES_FILE=~/Box\ Sync/Guidewire/teamcity_build.properties
 
 # Artifactory
 export ARTIFACTORY_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
