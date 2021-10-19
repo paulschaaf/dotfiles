@@ -19,6 +19,9 @@ while [ -n "$*" ]; do
   --no-scan)
     no_scan=true
     ;;
+  --old)
+    old=true;
+    ;;
   --trace)
      set -x
      ;;
@@ -35,7 +38,7 @@ done
 
 # Set up environment
 #eval `$HOME/bin/gwSetEnv | sed 's/ -x / /g'`
-source $HOME/bin/gwSetEnv
+source $HOME/bin/gwSetEnv ${old:+old}
 # echo GW_PL_NUM=${GW_PL_NUM}
 # echo GW_PLATFORM=${GW_PLATFORM}
 

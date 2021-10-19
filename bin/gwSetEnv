@@ -162,11 +162,14 @@ case ${GW_PLATFORM} in
     export GW_DB_DIR=/tmp/guidewire/granite
     inMacOS &&
       export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents' ||
       export IDEA_HOME=/opt/idea_halite
     inMacOS &&
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
       export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
+
+    if [[ "$1" == "old" ]]; then
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    fi
     ;;
   *)
     unsetGWVars

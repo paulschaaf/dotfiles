@@ -38,7 +38,7 @@ _arguments "*: :((
   killPort
   killStudio
   lsDb
-  packageCustomerDist
+  'packageCustomerDist: Generate a customer build zip of this code'
   'pcf: Browse the most recently changed file named /tmp/*.html'
   'pgrep: Is the server process running?'
   'pkill: Kill the server process on 8090'
