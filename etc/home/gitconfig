@@ -7,7 +7,7 @@
 	autocrlf = input
 [user]
 	name = Paul Schaaf
-	email = paul.schaaf@gmail.com
+	email = pschaaf@guidewire.com
 [diff]
     tool = araxis
 [merge]
