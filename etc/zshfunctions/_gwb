@@ -16,8 +16,8 @@ _arguments "*: :((
   --dry-run
   --nice
   backupDb
-  clean
-  cleanIdea
+  'clean: Deletes the build directory'
+  'cleanIdea: Deletes the Studio project'
   cleanStudio
   codegen
   compile
@@ -26,14 +26,14 @@ _arguments "*: :((
   genDataDictionary
   genPcfDictionary
   genPcfXsd
-  genSystemData
+  'genSystemData: Compiled from system_data.xml'
   genTypeInfo
   genWsdl
   genWsiLocal
   'h2: Open the H2 console'
   'http: Start a simple http server in the resources directory.'
   'httpkill: Kill the simple http server in the resources directory.'
-  idea
+  'idea: Generate Studio project'
   ij
   killPort
   killStudio
