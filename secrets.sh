@@ -1,1 +1,0 @@
-/Users/pschaaf/Box Sync/Guidewire/secrets.txt

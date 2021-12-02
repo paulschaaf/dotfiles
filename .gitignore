@@ -26,6 +26,7 @@ ssh/
 
 out/
 
-/secrets.sh
+known_hosts
+secrets.sh
 
 /venv/*
