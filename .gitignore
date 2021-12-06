@@ -20,13 +20,11 @@ ssh/
 !/etc/home/ssh/config
 !/etc/home/ssh/config.default
 !/etc/home/ssh/environment
-!/etc/home/ssh/known_hosts
 !/etc/home/ssh/ssh-open
 !/etc/home/ssh/sshd_config
 
 out/
 
-known_hosts
 secrets.sh
 
 /venv/*
