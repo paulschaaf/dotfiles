@@ -8,6 +8,7 @@ binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
 bizrules=('**/bizrules/*.xml')
 test_dirs=(
    '**/*-test*/'
+   '**/*-gunit-*/'
    '**/apitestbench*/'
    '**/gtest/'
    '**/pcftest/'

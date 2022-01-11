@@ -1,5 +1,9 @@
 #!/bin/zsh
 
+run_color=${run_color:-'48;5;21'}
+pass_color=${pass_color:-'48;5;34'}
+fail_color=${fail_color:-'48;5;196'}
+
 # Command-line Switches
 while [ -n "$*" ]; do
   case $1 in
@@ -37,10 +41,7 @@ while [ -n "$*" ]; do
 done
 
 # Set up environment
-#eval `$HOME/bin/gwSetEnv | sed 's/ -x / /g'`
 source $HOME/bin/gwSetEnv ${old:+old}
-# echo GW_PL_NUM=${GW_PL_NUM}
-# echo GW_PLATFORM=${GW_PLATFORM}
 
 if [ -z "$GW_PL_NUM" ]; then
   printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
@@ -122,7 +123,7 @@ runTask() {
   #    echo; typeset -p taskSummary
   setGnuScreenTitle ${taskSummary#./gwb }
 
-  log_section 44 'START' ${taskSummary}
+  log_section ${run_color} 'START' ${taskSummary}
 
   exitCode=0
   SECONDS=0
@@ -146,10 +147,10 @@ runTask() {
   fi
 
   if [ $exitCode -eq 0 ]; then
-    log_section 42 "DONE $elapsedTime" $taskSummary
+    log_section ${pass_color} "DONE $elapsedTime" $taskSummary
     notify "Completed $GW_TITLE:'$taskSummary'" $whichJava
   else
-    log_section '48;5;196' "FAIL exit($exitCode) $elapsedTime" $taskSummary
+    log_section ${fail_color} "FAIL exit($exitCode) $elapsedTime" $taskSummary
       notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava ${failIcon:+-appIcon} "$failIcon"
   fi
 

@@ -89,7 +89,7 @@ trace Initial guess for platform is \'"$GW_PLATFORM"\'
 
 # Clear these out
 unset IDEA_HOME IDEA_JDK JAVA_HOME
-unset GW_LIB_DIR
+unset GW_DB_DIR GW_LIB_DIR
 
 case ${GW_PLATFORM} in
   6 | carbon)
@@ -159,7 +159,6 @@ case ${GW_PLATFORM} in
   50 | halite)
     export GW_PL_NUM=50
     export GW_PLATFORM=halite
-    export GW_DB_DIR=/tmp/guidewire/granite
     inMacOS &&
       export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
       export IDEA_HOME=/opt/idea_halite
@@ -168,6 +167,7 @@ case ${GW_PLATFORM} in
       export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
 
     if [[ "$1" == "old" ]]; then
+      export GW_DB_DIR=/tmp/guidewire/granite
       export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
     fi
     ;;

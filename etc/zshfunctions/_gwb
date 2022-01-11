@@ -27,7 +27,7 @@ _arguments "*: :((
   genPcfDictionary
   genPcfXsd
   'genSystemData: Compiled from system_data.xml'
-  genTypeInfo
+  'genTypeInfo: Generate .gti files'
   genWsdl
   genWsiLocal
   'h2: Open the H2 console'
