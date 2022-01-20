@@ -77,9 +77,10 @@ if [ "$@" ]; then
     # echo check @
     dir="`cygpath -au "${@}"`"
 
-    # If this is a file, focus on parent and select it
-    if [ -f "${dir}" ]; then
-        eval `find "${dir}" -printf 'dir="%h"; select="%p"'`
+    # If this is a file and not a shortcut, focus on parent and select it
+    if [ -f "${dir}" ] && [ ! `readshortcut ${dir} 2>/dev/null2 &1>2` ]; then
+       # set dir and select variables
+       eval `find "${dir}" -printf 'dir="%h"; select="%p"'`
     fi
 
     # echo check dir
