@@ -138,7 +138,7 @@ case ${GW_PLATFORM} in
     export GW_PL_NUM=10
     export GW_PLATFORM=granite
     inMacOS &&
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents' ||
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
       export IDEA_HOME=/opt/idea2019IU
     inMacOS &&
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||

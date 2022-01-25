@@ -134,8 +134,8 @@ export WORDCHARS='|*?-~\\$%^'
 
 # ========
 # ======== Aliases
-alias ..='pushd ..'
-alias ...="pushd ../.."
+#alias ..='pushd ..' # doesn't work on MaoOS terminal
+#alias ...="pushd ../.."
 alias cd=pushd
 alias cores='inxi -C'
 alias du='du -h'
