@@ -269,6 +269,10 @@ function joinPhotos() {
 # Change to the specified dir & remove starting place from dir stack
 function pcd() { cd "$@" && popd +1 2>/dev/null }
 
+function pidport() {
+   lsof -i tcp:$1
+}
+
 # cd to the specified directory, or if it's a file, to the containing directory
 function pushd() {
     if [[ -f "$1" ]]; then
@@ -566,3 +570,5 @@ done
 ## Supply times.
 #  $ print *(e-age 2006/10/04:10:15 2006/10/04:10:45-)
 
+## MacOS kill listener on port 8081
+# /bin/kill -9 $(lsof -i tcp:8081 -t) 2> /dev/null && print -P "%K{42}Killed%k" || print -P "%K{20}Not found%k"
