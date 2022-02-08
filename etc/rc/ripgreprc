@@ -6,15 +6,16 @@
 --glob=!apidiffs.txt
 --glob=!*.gti
 --glob=!*.snap
---glob=!**/build/
---glob=!**/generated/
---glob=!**/generated_classes/
---glob=!**/node_modules/
+--glob=!**/build/*
+--glob=!**/classes/*
+--glob=!**/generated/*
+--glob=!**/generated_classes/*
+--glob=!**/node_modules/*
 
---glob=!app-??/*perf*/
+--glob=!app-??/*perf*/*
 --glob=!perf*
---glob=!perf-build/
---glob=!**/*performance*/
+--glob=!perf-build/*
+--glob=!**/*performance*/*
 
 --glob=!*_de[._]*
 --glob=!*_es[._]*
@@ -37,6 +38,7 @@
 --type-add=gr:*.gr
 --type-add=grs:*.grs
 --type-add=gs:*.gs
+--type-add=gst:*.gst
 --type-add=gsx:*.gsx
 --type-add=gwp:*.gwp
 --type-add=gwrules:*.gwrules

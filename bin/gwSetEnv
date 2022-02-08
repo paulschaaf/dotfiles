@@ -83,6 +83,9 @@ case "$1" in
 esac
 trace Initial guess for platform is \'"$GW_PLATFORM"\'
 
+# compute platform from studio jar version num
+# ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
+
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
 #

@@ -286,7 +286,7 @@ while [ -n "$*" ]; do
          fullTask="ls ${GW_DB_DIR}/*"
          ;;
       rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/*; rmdir ${GW_DB_DIR}; printf '\n---DONE---\n'; tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+         fullTask="rm -fv ${GW_DB_DIR}/* && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
          ;;
 #      runSuite)
 #        if (( ! $#* )); then
