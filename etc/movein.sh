@@ -53,6 +53,7 @@ unordered_packages=(
    #    lynx                  # command line browser
    #    manjaro-i3-solarized-settings
    #    mp3fs                 # MP3 virtualf ilesystem
+   neofetch               # command line system info
    nerd-fonts-fira-code   # programming font with ligatures
    nmap
    #    nodejs

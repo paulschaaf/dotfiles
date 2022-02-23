@@ -34,7 +34,7 @@ else
         (( $#CONNECTION )) && neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
 
         # unless root, move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
-        ((UID)) && printf '\e[3;0;0;1t\e[8;142;100t'
+#         ((UID)) && printf '\e[3;0;0;1t\e[8;142;100t'
     else
         neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
     fi
