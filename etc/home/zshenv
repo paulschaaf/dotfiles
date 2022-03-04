@@ -69,7 +69,7 @@ case ${UNAME} in
       os_override_path=(~/bin/win ${os_override_path[@]} )
       ;;
   Darwin)
-      os_override_path=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin ${os_override_path[@]})
+      os_override_path=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin ~/homebrew/bin ${os_override_path[@]})
       ;;
   Linux)
       os_override_path=(~/bin/linux ${os_override_path[@]})

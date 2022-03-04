@@ -1,4 +1,4 @@
-#!/usr/bin/zsh
+#!/usr/bin/env zsh
 # -*- eval: (progn (highlight-regexp "\\bheader[1-9]+\\b" 'hi-green-b) (highlight-regexp "\\bh1\\b.*" 'header1) (highlight-regexp "\\bh2\\b.*" 'header2) ) -*-
 # capture packages:
 # pacman -Qqen >| pkglist.txt && pacman -Qqem >| pkglist_aur.txt
@@ -18,6 +18,13 @@ libraries=(
    #    libncurses
    #    libncurses-dev
    #    libevent
+)
+
+forMacOS=(
+   xcode-select --install
+   mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+
+
 )
 
 # these get installed first, in the order defined
@@ -188,7 +195,7 @@ done
 #fi
 
 h1 PACKAGE INSTALLATION
-#install-all libraries
+install-all libraries
 install-all $ordered_packages
 install-all $unordered_packages
 install-all $applications
@@ -199,10 +206,10 @@ git_repos=(
    git@github.com:paulschaaf/dotfiles.git
    git@github.com:paulschaaf/launch-url-from-string.git
 )
-for repo in ${git_repos[@]}; do
-   h1 Downloading Git Repository: $repo
-   git clone $repo
-done
+#for repo in ${git_repos[@]}; do
+#   h1 Downloading Git Repository: $repo
+#   git clone $repo
+#done
 PATH=~/bin:${PATH}
 rehash
 mkdir ~/bin/macos ~/bin/linux ~/bin/win 2>/dev/null

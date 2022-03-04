@@ -51,7 +51,7 @@ setopt hist_verify               # Don't execute immediately upon history expans
 setopt inc_append_history        # Write to the history file immediately, not when the shell exits.
 setopt share_history             # Share history between all sessions.
 
-# Initialisation
+# Initialization
 
 # Input/Outut
 unsetopt clobber                 # Require ‘>!’ or ‘>|’ to truncate a file.
@@ -91,9 +91,12 @@ export ESHELL=${SHELL}
 export FCEDIT=zed
 export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
 
-isRoot \
-    && export HISTFILE=~/.history_root \
-    || export HISTFILE=~/.history
+if ((UID)); then
+   export HISTFILE=~/.history
+else
+   export HISTFILE=~/.history_root
+fi
+
 export HISTSIZE=3000
 export SAVEHIST=$HISTSIZE
 
@@ -421,9 +424,7 @@ esac
 export HOST_ICON
 
 if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
-    if isRoot; then
-        hostColor=%B%F{white}%K{red}
-    else
+    if ((UID)); then
         case ${UNAME}:${HOSTNAME} in
             CYGWIN*)
                 hostColor=%B%F{white}%K{green}
@@ -441,6 +442,8 @@ if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply p
                 hostColor=%B%F{white}%K{black}
                 ;;
         esac
+    else
+       hostColor=%B%F{white}%K{red}
     fi
 
     # append the host machine, maybe preceeded by an @
