@@ -23,8 +23,13 @@ libraries=(
 forMacOS=(
    xcode-select --install
    mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
-
-
+   git
+   git-lfs
+   coreutils
+   findutils
+   ripgrep
+   ascii
+   inxi
 )
 
 # these get installed first, in the order defined
