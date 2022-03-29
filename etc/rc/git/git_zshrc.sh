@@ -7,6 +7,11 @@
 export __GIT_PROMPT_DIR=${0:A:h}
 
 export GIT_PROMPT_EXECUTABLE=${GIT_PROMPT_EXECUTABLE:-"python"}
+if [ ! -e  "${GIT_PROMPT_EXECUTABLE}" ]; then
+   echo GIT_PROMPT_EXECUTABLE ${GIT_PROMPT_EXECUTABLE} not found!
+   return 1
+fi
+
 export GIT_BRANCH
 
 # Allow for functions in the prompt.

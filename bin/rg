@@ -3,7 +3,12 @@
 #   find * -type f -printf '%f\n' | grep -v '~$' | sed -n '/\./ { s/^.*\.//g; p; }' | sort -u | tee extensions
 
 export debug expanded
-binary=$([ -f /usr/local/bin/rg ] && echo /usr/local/bin/rg || echo /usr/bin/rg)
+binary=$(if [ -f /usr/local/bin/rg ]; then \
+      echo /usr/local/bin/rg; \
+   elif [ -f ~/homebrew/bin/rg ]; then \
+      echo ~/homebrew/bin/rg; \
+   else echo /usr/bin/rg; \
+   fi)
 
 bizrules=('**/bizrules/*.xml')
 test_dirs=(

@@ -174,7 +174,7 @@ alias -s txt=kate
 
 # ========
 # ======== ls Aliases and Functions
-alias ls="ls ${LS_FLAGS} ${LS_COLOR}"
+alias ls="/bin/ls ${LS_FLAGS} ${LS_COLOR}"
 alias la='ls -A'
 alias ll='ls -l'
 alias lla='ls -Al'

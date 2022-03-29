@@ -9,6 +9,7 @@ generated/
 generated_classes/
 ssh/
 tmp/
+/pgdata/
 
 #*#
 $*

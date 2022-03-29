@@ -52,4 +52,5 @@ _arguments "*: :((
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
   tasks
+  wipeApd
 ))"

@@ -10,9 +10,10 @@
 	email = pschaaf@guidewire.com
 [diff]
     tool = araxis
+    too = bc
 [merge]
-    tool = araxis
-#	tool = bc
+#    tool = araxis
+	tool = bc
 [push]
 	default = current
 [mergetool "bc3"]

@@ -69,7 +69,7 @@ case ${UNAME} in
       os_override_path=(~/bin/win ${os_override_path[@]} )
       ;;
   Darwin)
-      os_override_path=(~/bin/macos /usr/local/opt/findutils/libexec/gnubin ~/homebrew/bin ${os_override_path[@]})
+      os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~/homebrew/bin)
       ;;
   Linux)
       os_override_path=(~/bin/linux ${os_override_path[@]})
@@ -94,7 +94,7 @@ export BROWSER=google-chrome-stable
 inMacOS && export BROWSER=open
 inMacOS && export DISPLAY=:0
 export EDITOR=/usr/bin/emacs
-inMacOS && EDITOR=/usr/local/bin/emacs
+inMacOS && EDITOR=/usr/bin/vim
 
 [[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
 export EMAIL=paul.schaaf@gmail.com
@@ -145,3 +145,25 @@ export IG_ARTIFACT_REPO_USERNAME=${USER}
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
 export TENANT_ID=futurest
 export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
+
+# Artifactory
+# https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
+
+# InsuranceCore
+export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev
+export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-release
+export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/mavencentral-mvn-remote
+export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoredependencies-mvn-release
+export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-dev
+export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-release
+
+# GradlePlugins
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-dev
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-prod
+export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-thirdparty
+export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/plugins-gradle-remote
+export GRADLE_DISTRIBUTION_REPOSITORY_URL=https://artifactory.guidewire.com/gradledistributions-generic-remote
+
+# Dependency credentials (must not include "@guidewire.com")
+export DEPENDENCY_REPOSITORY_USERNAME=${USER}
+export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
