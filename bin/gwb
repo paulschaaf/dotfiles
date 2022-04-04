@@ -105,25 +105,28 @@ killProcStr() {
 }
 
 notify() {
-  inLinux && notify-send -c idea -t 5000 ${successIcon:+-i} $successIcon $1
-  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
-  set +x
+   title="$1"; shift
+   inLinux && notify-send -c ${title} -t 5000 ${successIcon:+-i} $successIcon "${*}"
+#  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
+   inMacOS && notify-send "${*}" ${title}
+   set +x
 }
 
 # Run the Actual Task
 runTask() {
-  local task=${nice}$1
-  local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
-  local successIcon=$2
-  local failIcon=$3
-  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
+  local userTask=$1
+  local task=${nice}$2
+  local taskSummary='$ '${task% | sed*} # remove any 'sed' commands from the display
+  local successIcon=$3
+  local failIcon=$4
+#  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
 
   [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
   #    echo; typeset -p taskSummary
   setGnuScreenTitle ${taskSummary#./gwb }
 
-  log_section ${run_color} 'START' ${taskSummary}
+  log_section ${run_color} "START '$userTask'" ${taskSummary}
 
   exitCode=0
   SECONDS=0
@@ -141,17 +144,18 @@ runTask() {
       exitCode=${pipestatus[1]}
     fi
   fi
-  # tries to display the elapsed seconds as something like 0:00.00. Doesn't work on MacOS.
-  if [[ ${UNAME} != "Darwin" ]]; then
-    elapsedTime=`date -u -d @${SECONDS} +"in %T"`
-  fi
+  # tries to display the elapsed seconds as something like 0:00.00.
+ elapsedTime=`date -u -d @${SECONDS} +"in %T"`
 
   if [ $exitCode -eq 0 ]; then
-    log_section ${pass_color} "DONE $elapsedTime" $taskSummary
-    notify "Completed $GW_TITLE:'$taskSummary'" $whichJava
+    log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
+    notify "Completed $GW_TITLE: $userTask" ${taskSummary}
   else
-    log_section ${fail_color} "FAIL exit($exitCode) $elapsedTime" $taskSummary
-      notify "Failed $GW_TITLE:'$taskSummary' (exit code $exitCode)" $whichJava ${failIcon:+-appIcon} "$failIcon"
+    if [ $exitCode -gt 1 ]; then
+       exitStr="---with exit code $exitCode"
+    fi
+    log_section ${fail_color} "FAIL '$userTask' $elapsedTime$exitStr" $taskSummary
+    notify "Failed($exitCode) $GW_TITLE: $userTask" ${taskSummary} ${failIcon:+-appIcon} "$failIcon"
   fi
 
   setGnuScreenTitle
@@ -312,10 +316,11 @@ while [ -n "$*" ]; do
         exit
         ;;
       testFail|testfail)
-        fullTask='time && sleep 1 && ls *someNonexistentFile%%'
+        fullTask="time && sleep 1 && exit ${2:-1}"
+        shift
         ;;
       testPass|testpass)
-        fullTask='time && sleep 1s'
+        fullTask='time && sleep 1s && echo "done"'
         ;;
       wipeApd)
          fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
@@ -342,5 +347,5 @@ while [ -n "$*" ]; do
     shift
   done
 
-  runTask ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
+  runTask ${task} ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
 done
