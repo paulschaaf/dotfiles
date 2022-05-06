@@ -10,6 +10,7 @@
     </JetCodeStyleSettings>
     <Shell_Script>
       <option name="SWITCH_CASES_INDENTED" value="true" />
+      <option name="KEEP_COLUMN_ALIGNMENT_PADDING" value="true" />
     </Shell_Script>
     <codeStyleSettings language="JAVA">
       <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
@@ -24,12 +25,6 @@
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="4" />
         <option name="TAB_SIZE" value="2" />
-      </indentOptions>
-    </codeStyleSettings>
-    <codeStyleSettings language="Shell Script">
-      <indentOptions>
-        <option name="INDENT_SIZE" value="3" />
-        <option name="TAB_SIZE" value="3" />
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="XML">

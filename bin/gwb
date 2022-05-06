@@ -7,35 +7,35 @@ fail_color=${fail_color:-'48;5;196'}
 # Command-line Switches
 while [ -n "$*" ]; do
   case $1 in
-  --delay)
-    shift
-    delay=$1
-    ;;
-  --debug)
-    debug=true
-    ;;
-  --dry-run)
-    _dry_run='echo '
-    ;;
-  --nice)
-    nice='nice '
-    ;;
-  --no-scan)
-    no_scan=true
-    ;;
-  --old)
-    old=true;
-    ;;
-  --trace)
-     set -x
-     ;;
-  --*)
-    echo Unknown option $1
-    return 1
-    ;;
-  *)
-    break
-    ;;
+    --delay)
+      shift
+      delay=$1
+      ;;
+    --debug)
+      debug=true
+      ;;
+    --dry-run)
+      _dry_run='echo '
+      ;;
+    --nice)
+      nice='nice '
+      ;;
+    --no-scan)
+      no_scan=true
+      ;;
+    --old)
+      old=true
+      ;;
+    --trace)
+      set -x
+      ;;
+    --*)
+      echo Unknown option $1
+      return 1
+      ;;
+    *)
+      break
+      ;;
   esac
   shift
 done
@@ -105,11 +105,12 @@ killProcStr() {
 }
 
 notify() {
-   title="$1"; shift
-   inLinux && notify-send -c ${title} -t 5000 ${successIcon:+-i} $successIcon "${*}"
-#  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
-   inMacOS && notify-send "${*}" ${title}
-   set +x
+  title="$1"
+  shift
+  inLinux && notify-send -c ${title} -t 5000 ${successIcon:+-i} $successIcon "${*}"
+  #  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
+  inMacOS && notify-send "${*}" ${title}
+  set +x
 }
 
 # Run the Actual Task
@@ -119,7 +120,7 @@ runTask() {
   local taskSummary='$ '${task% | sed*} # remove any 'sed' commands from the display
   local successIcon=$3
   local failIcon=$4
-#  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
+  #  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
 
   [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
 
@@ -145,14 +146,14 @@ runTask() {
     fi
   fi
   # tries to display the elapsed seconds as something like 0:00.00.
- elapsedTime=`date -u -d @${SECONDS} +"in %T"`
+  elapsedTime=$(date -u -d @${SECONDS} +"in %T")
 
   if [ $exitCode -eq 0 ]; then
     log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
     notify "Completed $GW_TITLE: $userTask" ${taskSummary}
   else
     if [ $exitCode -gt 1 ]; then
-       exitStr="---with exit code $exitCode"
+      exitStr="---with exit code $exitCode"
     fi
     log_section ${fail_color} "FAIL '$userTask' $elapsedTime$exitStr" $taskSummary
     notify "Failed($exitCode) $GW_TITLE: $userTask" ${taskSummary} ${failIcon:+-appIcon} "$failIcon"
@@ -182,153 +183,155 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
-      backupDb)
-         dbName=`date "+${dbbackup}_%H:%M:%S"`
-         fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
-         ;;
-      cleanIdea)
-        taskFailIcon=$failIcon
-        ;;
-      cleanStudio)
-        if [ $GW_PL_NUM -lt 9 ]; then
-          fullTask="rm -rf app-cc/cc-studio-run/db"
-        else
-          fullTask=": this task only works on platform versions less than 9.; exit 1"
-        fi
-        ;;
-      compile)
-        fullTask='./gwb compile -DincludeGtest=true'
-        ;;
-      dropDb)
-        if [ $GW_PL_NUM -lt 9 ]; then
-          task=dropdb
-        else
-          task=dropDb
-        fi
-        taskFailIcon=$failIcon
-        ;;
-      fixgwb)
-        # remove the erroneous spaces from the function defs in the OOB product gwb script
-        fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
-        ;;
-      h2)
-        spawn=true
-        fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
-        echo; echo "There's no username or password. Make sure the connection string is correct!"
-        ;;
-      httpkill)
-        fullTask="pkill -f '$webserver'"
-        ;;
-      http)
-        spawn=true
-        fullTask=$webserver
-        ;;
-      idea)
-        if [ $GW_PL_NUM -lt 9 ]; then
-          fullTask=${fullTask/idea/gen-ide}
-        fi
-        ;;
-      ij)
-        spawn=true
-        fullTask="${IDEA_HOME}/bin/idea.sh"
-        ;;
-      killPort)
-        export port=${2:=$GW_PORT}; shift
-        export process=`lsof -i tcp:${port} -t`
-        fullTask="[ -n ${process} ] && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
-        ;;
-      killStudio)
-        fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
-        taskFailIcon=$failIcon
-        ;;
-      pgrep)
-        fullTask=$(grepProcStr ${jvmProcess})
-        ;;
-      pkill)
-        pgrep -af $jvmProcess
-        fullTask=$(killProcStr ${jvmProcess})
-        ;;
-      pkill8080)
-        pgrep -af ${jvmProcess/90/80}
-        fullTask=$(killProcStr ${jvmProcess/90/80})
-        ;;
-      pcf*)
-        # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
-        if [[ $task =~ 'pcf=' ]]; then
-          pcfHost=${task##pcf=}
-          pcfHost=${pcfHost##http://}
-        else
-          pcfHost=localhost:$webserverPort
-        fi
-        echoVar pcfHost
+    backupDb)
+      dbName=$(date "+${dbbackup}_%H:%M:%S")
+      fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
+      ;;
+    cleanIdea)
+      taskFailIcon=$failIcon
+      ;;
+    cleanStudio)
+      if [ $GW_PL_NUM -lt 9 ]; then
+        fullTask="rm -rf app-cc/cc-studio-run/db"
+      else
+        fullTask=": this task only works on platform versions less than 9.; exit 1"
+      fi
+      ;;
+    compile)
+      fullTask='./gwb compile -DincludeGtest=true'
+      ;;
+    dropDb)
+      if [ $GW_PL_NUM -lt 9 ]; then
+        task=dropdb
+      else
+        task=dropDb
+      fi
+      taskFailIcon=$failIcon
+      ;;
+    fixgwb)
+      # remove the erroneous spaces from the function defs in the OOB product gwb script
+      fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
+      ;;
+    h2)
+      spawn=true
+      fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
+      echo
+      echo "There's no username or password. Make sure the connection string is correct!"
+      ;;
+    httpkill)
+      fullTask="pkill -f '$webserver'"
+      ;;
+    http)
+      spawn=true
+      fullTask=$webserver
+      ;;
+    idea)
+      if [ $GW_PL_NUM -lt 9 ]; then
+        fullTask=${fullTask/idea/gen-ide}
+      fi
+      ;;
+    ij)
+      spawn=true
+      fullTask="${IDEA_HOME}/bin/idea.sh"
+      ;;
+    killPort)
+      export port=${2:=$GW_PORT}
+      shift
+      export process=$(lsof -i tcp:${port} -t)
+      fullTask="[ -n ${process} ] && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
+      ;;
+    killStudio)
+      fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
+      taskFailIcon=$failIcon
+      ;;
+    pgrep)
+      fullTask=$(grepProcStr ${jvmProcess})
+      ;;
+    pkill)
+      pgrep -af $jvmProcess
+      fullTask=$(killProcStr ${jvmProcess})
+      ;;
+    pkill8080)
+      pgrep -af ${jvmProcess/90/80}
+      fullTask=$(killProcStr ${jvmProcess/90/80})
+      ;;
+    pcf*)
+      # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
+      if [[ $task =~ 'pcf=' ]]; then
+        pcfHost=${task##pcf=}
+        pcfHost=${pcfHost##http://}
+      else
+        pcfHost=localhost:$webserverPort
+      fi
+      echoVar pcfHost
 
-        if [ ${task} = "pcfs" ]; then
-          report='/tmp'
-        else
-          report=$(/bin/ls -t /tmp/*.html | head -n 1)
-        fi
-        echoVar report
+      if [ ${task} = "pcfs" ]; then
+        report='/tmp'
+      else
+        report=$(/bin/ls -t /tmp/*.html | head -n 1)
+      fi
+      echoVar report
 
-        fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
-        ;;
-      portCheck)
-        fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
-        ;;
-      portClose)
-        fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
-        ;;
-      portOpen)
+      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
+      ;;
+    portCheck)
+      fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
+      ;;
+    portClose)
+      fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
+      ;;
+    portOpen)
+      spawn=true
+      fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
+      ;;
+    restoreDb)
+      fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
+      shift
+      #${dbbackup}.7z"
+      ;;
+    lsDb)
+      fullTask="ls ${GW_DB_DIR}/*"
+      ;;
+    rmDb)
+      fullTask="rm -fv ${GW_DB_DIR}/* && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+      ;;
+      #      runSuite)
+      #        if (( ! $#* )); then
+      #          echo "No suite specified!"
+      #        fi
+      #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
+      #        shift
+      #        ;;
+    server) # broken
+      fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
+      ;;
+    studio)
+      if [ $GW_PL_NUM -lt 9 ]; then
         spawn=true
-        fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
-        ;;
-      restoreDb)
-         fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
-          shift
-          #${dbbackup}.7z"
-         ;;
-      lsDb)
-         fullTask="ls ${GW_DB_DIR}/*"
-         ;;
-      rmDb)
-         fullTask="rm -fv ${GW_DB_DIR}/* && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
-         ;;
-#      runSuite)
-#        if (( ! $#* )); then
-#          echo "No suite specified!"
-#        fi
-#        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
-#        shift
-#        ;;
-      server) # broken
-        fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
-        ;;
-      studio)
-        if [ $GW_PL_NUM -lt 9 ]; then
-          spawn=true
-        fi
-        unset inScreen
-        taskFailIcon=$failIcon
-        inLinux && no_scan=true
-        task="${no_scan:+--no-scan }${task}"
-        ;;
-      tasks)
-        $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
-        exit
-        ;;
-      testFail|testfail)
-        fullTask="time && sleep 1 && exit ${2:-1}"
-        shift
-        ;;
-      testPass|testpass)
-        fullTask='time && sleep 1s && echo "done"'
-        ;;
-      wipeApd)
-         fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
-         ;;
-      *)
-        taskPassIcon=$passIcon
-        taskFailIcon=$failIcon
-        ;;
+      fi
+      unset inScreen
+      taskFailIcon=$failIcon
+      inLinux && no_scan=true
+      task="${no_scan:+--no-scan }${task}"
+      ;;
+    tasks)
+      $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
+      exit
+      ;;
+    testFail | testfail)
+      fullTask="time && sleep 1 && exit ${2:-1}"
+      shift
+      ;;
+    testPass | testpass)
+      fullTask='time && sleep 1s && echo "done"'
+      ;;
+    wipeApd)
+      fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
+      ;;
+    *)
+      taskPassIcon=$passIcon
+      taskFailIcon=$failIcon
+      ;;
   esac
   shift
 
