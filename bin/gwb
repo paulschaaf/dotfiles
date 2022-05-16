@@ -55,14 +55,14 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
 fi
 
 dbbackup=h2database
-ssh_socket=~/tmp/cc-fwd-socket
-passIcon=/gw-dev/icons/$(echo $GW_PRODUCT | sed 's/.*/\U\0/')_favicon.ico
 #failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
-resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
-webserverPort=$((GW_PORT_DEBUG + 1))
-webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
+passIcon=/gw-dev/icons/$(echo $GW_PRODUCT | sed 's/.*/\U\0/')_favicon.ico
+resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
+ssh_socket=~/tmp/cc-fwd-socket
+webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
+webserverPort=$((GW_PORT_DEBUG + 1))
 
 # Printing and Grep Functions
 echoVar() {
@@ -150,7 +150,11 @@ runTask() {
 
   if [ $exitCode -eq 0 ]; then
     log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
-    notify "Completed $GW_TITLE: $userTask" ${taskSummary}
+    if [ -z "$noNotifySuccess" ]; then
+      notify "Completed $GW_TITLE: $userTask" ${taskSummary}
+    else
+      unset noNotifySuccess
+    fi
   else
     if [ $exitCode -gt 1 ]; then
       exitStr="---with exit code $exitCode"
@@ -218,12 +222,13 @@ while [ -n "$*" ]; do
       echo
       echo "There's no username or password. Make sure the connection string is correct!"
       ;;
-    httpkill)
-      fullTask="pkill -f '$webserver'"
-      ;;
     http)
       spawn=true
+      noNotifySuccess=true
       fullTask=$webserver
+      ;;
+    httpkill)
+      fullTask="pkill -f '$webserver'"
       ;;
     idea)
       if [ $GW_PL_NUM -lt 9 ]; then
@@ -272,6 +277,7 @@ while [ -n "$*" ]; do
       fi
       echoVar report
 
+      noNotifySuccess=true
       fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
     portCheck)
@@ -290,6 +296,7 @@ while [ -n "$*" ]; do
       #${dbbackup}.7z"
       ;;
     lsDb)
+      noNotifySuccess=true
       fullTask="ls ${GW_DB_DIR}/*"
       ;;
     rmDb)
@@ -315,6 +322,7 @@ while [ -n "$*" ]; do
       task="${no_scan:+--no-scan }${task}"
       ;;
     tasks)
+      noNotifySuccess=true
       $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
       exit
       ;;
@@ -326,7 +334,18 @@ while [ -n "$*" ]; do
       fullTask='time && sleep 1s && echo "done"'
       ;;
     wipeApd)
-      fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
+      if read -q "n?Really delete all APD content? [yN] "; then
+        fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
+      else
+        shift
+        echo "APD content not deleted."
+        echo '$#='$#
+        if (( $# )) && read -q "n?Continue execution? [yN] "; then
+          continue
+        fi
+        echo "Aborting; ignored remaining arguments: '${(Q)*}'"
+        return
+      fi
       ;;
     *)
       taskPassIcon=$passIcon

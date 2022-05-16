@@ -78,7 +78,7 @@ if [ "$@" ]; then
     dir="`cygpath -au "${@}"`"
 
     # If this is a file and not a shortcut, focus on parent and select it
-    if [ -f "${dir}" ] && [ ! `readshortcut ${dir} 2>/dev/null2 &1>2` ]; then
+    if [ -f "${dir}" ] && [ ! `readshortcut ${dir} 2>/dev/null 1>&2` ]; then
        # set dir and select variables
        eval `find "${dir}" -printf 'dir="%h"; select="%p"'`
     fi
