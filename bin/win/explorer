@@ -3,6 +3,7 @@
 dry_run=''
 select=''
 select_full=''
+trace=:
 
 show_usage () {
     cat <<EOF
@@ -20,6 +21,8 @@ show_usage () {
 
    --root             Explore from here - Make the target dir the root of the
                       directory tree for this window. This implies -e.
+
+   --trace            Trace the execution
 
    --select=x         Pre-select item x in the target dir.
 EOF
@@ -50,6 +53,9 @@ for x in ${@}; do
         --root)
             args="/e,${args:+$args,}/root"
             ;;
+        --trace)
+            trace="echo '-----'"
+            ;;
         --)
             shift
             break
@@ -69,42 +75,49 @@ for x in ${@}; do
     esac
     shift
 done
+if [[ "$trace" != ":" ]]; then
+  set -x
+fi
 
-# expand the path
+$trace expand the path
 # echo "\$@='${@}'"
-# set -x
 if [ "$@" ]; then
-    # echo check @
+    $trace check @
     dir="`cygpath -au "${@}"`"
 
-    # If this is a file and not a shortcut, focus on parent and select it
-    if [ -f "${dir}" ] && [ ! `readshortcut ${dir} 2>/dev/null 1>&2` ]; then
-       # set dir and select variables
+    $trace if this is a shortcut, convert it to the referenced file
+    if [ `readshortcut ${dir} 2>/dev/null` ]; then
+      dir=`readshortcut ${dir}`
+    fi
+
+    $trace If this is a file and not a shortcut, focus on parent and select it
+    if [ -f "${dir}" ] && [ ! `readshortcut ${dir} 2>/dev/null` ]; then
+       $trace set dir and select variables
        eval `find "${dir}" -printf 'dir="%h"; select="%p"'`
     fi
 
-    # echo check dir
+    $trace check dir
     dir=`cygpath -aw "${dir}"`
-    # echo dir is ${dir}
+    $trace dir is ${dir}
 fi
 
 if [ -n "$select" ]; then
-    # echo check select
+    $trace check select
     select=`cygpath -aw "${select}"`
-    # echo select is $select
+    $trace select is $select
 fi
 
 #dir=`cygpath -aw "${dir:-.}" | sed 's/cygwin\\\\home/Users/g'`
 
 args=${args//,\/e/}     # strip duplicate /e's
-# echo args=${args}
+$trace args=${args}
 
 # if [ -n "$select_full" ]; then
 #     args=${args}/select,${dir}
 # el
 if [ -n "$select" ]; then
     args=${args}/select,${select}
-    # echo "selecting '"$select"'"
+    $trace "selecting '"$select"'"
 else
     args=$args${args:+,}${dir:-.}
 fi
