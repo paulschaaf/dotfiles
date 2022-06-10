@@ -3,6 +3,7 @@
 run_color=${run_color:-'48;5;21'}
 pass_color=${pass_color:-'48;5;34'}
 fail_color=${fail_color:-'48;5;196'}
+warn_color=${warn_color:-'48;5;228'}
 
 # Command-line Switches
 while [ -n "$*" ]; do
@@ -194,6 +195,11 @@ while [ -n "$*" ]; do
     cleanIdea)
       taskFailIcon=$failIcon
       ;;
+    cleanNuke)
+      if read -q "n?Really nuke everything? [yN] "; then
+        fullTask='./gwb clean -dxf'
+      fi
+      ;;
     cleanStudio)
       if [ $GW_PL_NUM -lt 9 ]; then
         fullTask="rm -rf app-cc/cc-studio-run/db"
@@ -309,9 +315,6 @@ while [ -n "$*" ]; do
       #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
       #        shift
       #        ;;
-    server) # broken
-      fullTask="java -agentlib:jdwp=transport=dt_socket,address=127.0.0.1:35455,suspend=y,server=n -server -ea -Djava.awt.headless=true -Dgw.port=8080 -Xmx4g -Dgw.server.mode=dev -Dgwdebug=true -Dgw.webapp.dir=idea/webapp -Dgw.classpath.jar=true -Dgw.plugins.gclasses.dir=idea-gclasses -DgosuInit.supportDiscretePackages=true -Dsmoketest.properties=false,false,false -javaagent:/opt/idea-IU-173.4674.33/plugins/Groovy/lib/agent/gragent.jar -javaagent:/opt/idea-IU-173.4674.33/lib/rt/debugger-agent.jar=/tmp/capture.props -Dfile.encoding=UTF-8 -classpath /tmp/classpath.jar com.guidewire.commons.jetty.GWServerJettyServerMain"
-      ;;
     studio)
       if [ $GW_PL_NUM -lt 9 ]; then
         spawn=true
@@ -334,17 +337,26 @@ while [ -n "$*" ]; do
       fullTask='time && sleep 1s && echo "done"'
       ;;
     wipeApd)
-      if read -q "n?Really delete all APD content? [yN] "; then
-        fullTask='rm -rf app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc}'
+      echo
+      potentialTask='rm -rfv app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc,src} app-cc/cc-test-apd/{build,generated,generated_classes}'
+      if [[ $# -eq 1 ]]; then # is this the final argument?
+        fullTask=$potentialTask
       else
-        shift
-        echo "APD content not deleted."
-        echo '$#='$#
-        if (( $# )) && read -q "n?Continue execution? [yN] "; then
-          continue
+        echo $potentialTask
+        if read -q "yn?[30;${warn_color}mReally delete all APD content using the above command? [yN][0m "; then
+          fullTask=$potentialTask
+        else
+          echo "\nAPD content not deleted."
+          if (( $# )); then
+            if read -q "n?[30;${warn_color}mContinue execution? [yN][0m "; then
+              shift
+              continue
+            fi
+            message="Ignored remaining arguments: [1m${*}[0m"
+          fi
+          log_section ${fail_color} "ABORTING Execution" ${message:=No remaining arguments}
+          return
         fi
-        echo "Aborting; ignored remaining arguments: '${(Q)*}'"
-        return
       fi
       ;;
     *)

@@ -128,7 +128,11 @@ inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
 
 #export P4CLIENT=pschaaf_satori_1124
 
+# APD for CC
+export GW_APD_GenerateSmokeTests=true
+
 # Artifactory
+# https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
 export ARTIFACTORY_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
 export ARTIFACTORY_USERNAME=${USER}
 
@@ -145,9 +149,6 @@ export IG_ARTIFACT_REPO_USERNAME=${USER}
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
 export TENANT_ID=futurest
 export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
-
-# Artifactory
-# https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
 
 # InsuranceCore
 export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev

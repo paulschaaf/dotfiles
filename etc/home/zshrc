@@ -448,17 +448,17 @@ zstyle ':vcs_info:*+set-message:*' hooks home-path
 #  hook_com[unstaged]=$gitunstaged
 #}
 
-if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
-    zrecompile -U ~/etc/rc/git/git_zshrc.sh
-    source ~/etc/rc/git/git_zshrc.sh
-
-    function git() {
-        command git $*
-        local exitVal=$?
-        echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
-        return $exitVal
-    }
-fi
+#if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
+#    zrecompile -U ~/etc/rc/git/git_zshrc.sh
+#    source ~/etc/rc/git/git_zshrc.sh
+#
+#    function git() {
+#        command git $*
+#        local exitVal=$?
+#        echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
+#        return $exitVal
+#    }
+#fi
 
 function updateDirs() {
     dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`

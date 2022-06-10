@@ -51,6 +51,6 @@ _arguments "*: :((
 #  'runSuite: Compile then run the specified suite'
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
-  tasks
+  'tasks: List the tasks understood by the GW ./gwb'
   wipeApd
 ))"
