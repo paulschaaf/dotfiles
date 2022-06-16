@@ -338,7 +338,7 @@ while [ -n "$*" ]; do
       ;;
     wipeApd)
       echo
-      potentialTask='rm -rfv app-cc/cc-apd-genlob-content/{build,generated,generated_classes,config,gsrc,src} app-cc/cc-test-apd/{build,generated,generated_classes}'
+      potentialTask='rm -rfv app-cc/cc-apd-genlob-content/{config,gsrc,src} app-cc/{cc-apd-genlob-content,cc-test-apd}/{build,generated,generated_classes}'
       if [[ $# -eq 1 ]]; then # is this the final argument?
         fullTask=$potentialTask
       else
