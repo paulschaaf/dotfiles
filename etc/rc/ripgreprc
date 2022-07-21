@@ -60,6 +60,7 @@
 --type-add=gosutest:*Test*.gs
 --type-add=javatest:*Test*.java
 --type-add=ruleorder:order.txt
+--type-add=typelistprops:typelist.properties
 
 # INCLUDE TYPES
 --type-add=entity:include:eti,eix,etx
@@ -69,7 +70,7 @@
 --type-add=java:include:javasrc,jsp,jspx
 --type-add=src:include:gosu,java
 --type-add=test:include:feature,gosutest,javatest
---type-add=typelist:include:tti,tix,ttx
+--type-add=typelist:include:tti,tix,ttx,typelistprops
 --type-add=ui:include:displaykey,pcf
 
 --type-add=datamodel:include:entity,typelist

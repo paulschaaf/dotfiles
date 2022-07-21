@@ -12,9 +12,6 @@ while [ -n "$*" ]; do
       shift
       delay=$1
       ;;
-    --debug)
-      debug=true
-      ;;
     --dry-run)
       _dry_run='echo '
       ;;
@@ -29,6 +26,9 @@ while [ -n "$*" ]; do
       ;;
     --trace)
       set -x
+      ;;
+    --wc)
+      outputFilter=wc
       ;;
     --*)
       echo Unknown option $1
@@ -55,6 +55,21 @@ if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
   echo Running in ${PWD}
 fi
 
+apd_dirs=(
+  app-cc/cc-apd-genlob-content/build
+  app-cc/cc-apd-genlob-content/config
+  app-cc/cc-apd-genlob-content/generated
+  app-cc/cc-apd-genlob-content/generated_classes
+  app-cc/cc-apd-genlob-content/gsrc
+  app-cc/cc-apd-genlob-content/gtest/gw/smoketest/apd
+  app-cc/cc-apd-genlob-content/src
+  app-cc/cc-test-apd/build
+  app-cc/cc-test-apd/config
+  app-cc/cc-test-apd/generated
+  app-cc/cc-test-apd/generated_classes
+  app-cc/cc-test-apd/gsrc
+  app-cc/cc-test-apd/gtest/gw
+)
 dbbackup=h2database
 #failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
@@ -62,8 +77,9 @@ jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_PRODUCT | sed 's/.*/\U\0/')_favicon.ico
 resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 ssh_socket=~/tmp/cc-fwd-socket
-webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 webserverPort=$((GW_PORT_DEBUG + 1))
+
+webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 
 # Printing and Grep Functions
 echoVar() {
@@ -255,6 +271,9 @@ while [ -n "$*" ]; do
       fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
       taskFailIcon=$failIcon
       ;;
+    lsApd)
+      fullTask="find ${apd_dirs} -type f 2>/dev/null | xargs ls ${LS_FLAGS} -l --color"
+      ;;
     pgrep)
       fullTask=$(grepProcStr ${jvmProcess})
       ;;
@@ -338,7 +357,7 @@ while [ -n "$*" ]; do
       ;;
     wipeApd)
       echo
-      potentialTask='rm -rfv app-cc/cc-apd-genlob-content/{config,gsrc,src} app-cc/{cc-apd-genlob-content,cc-test-apd}/{build,generated,generated_classes}'
+      potentialTask="rm -rfv ${apd_dirs}"
       if [[ $# -eq 1 ]]; then # is this the final argument?
         fullTask=$potentialTask
       else
@@ -381,5 +400,6 @@ while [ -n "$*" ]; do
     shift
   done
 
+  fullTask="${fullTask}${outputFilter:+ | }${outputFilter}"
   runTask ${task} ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
 done

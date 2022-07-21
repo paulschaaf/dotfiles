@@ -5,7 +5,7 @@ sed -E "
    /^ |^--|^[0-9]+:[0-9]+:/b
 
    # prepend PWD to all relative paths (those without a leading /)
-   /[^/]/ { s&^&${PWD}/&; }
+   /^[^/]/ { s&^&${PWD}/&; }
 
    # replace all occurrences of /./ with /
    s_/\\./_/_

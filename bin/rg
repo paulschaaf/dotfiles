@@ -23,6 +23,7 @@ test_dirs=(
    '**/test/'
    '**/testdata/'
    '**/testharness/'
+   '**/testResources/'
    '**/tests/'
    '**/testsupport/'
 )
