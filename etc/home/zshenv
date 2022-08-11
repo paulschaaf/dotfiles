@@ -26,6 +26,13 @@ fi
 
 
 # ========
+# ======== Recompile if necessary
+autoload -Uz zrecompile
+zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
+inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
+
+
+# ========
 # ======== Default Settings
 umask 22
 export UNAME=${UNAME:=$(uname)}

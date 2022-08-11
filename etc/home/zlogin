@@ -23,9 +23,6 @@
 export TERM=xterm-256color
 stty start ''   stop   ''
 
-zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
-inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
-
 if (( $#inIntelliJ )); then
     SHLVL=0
 else
@@ -42,4 +39,7 @@ fi
 
 set +x
 unset debug trace
-(($#zprof)) && unset zprof && zprof
+if (($#zprof)); then
+    unset zprof
+    zprof
+fi

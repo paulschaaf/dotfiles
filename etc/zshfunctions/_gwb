@@ -42,6 +42,7 @@ _arguments "*: :((
   'packageCustomerDist: Generate a customer build zip of this code'
   'pcf: Browse the most recently changed file named /tmp/*.html'
   'pgrep: Is the server process running?'
+  'pgrepStudio: Is studio running?'
   'pkill: Kill the server process on 8090'
   'pkill8080: Kill the server process on 8080'
   'portCheck: Is the SSH tunnel open?'

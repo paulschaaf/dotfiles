@@ -238,6 +238,10 @@ while [ -n "$*" ]; do
       # remove the erroneous spaces from the function defs in the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
+    pgrepStudio)
+      fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD}")
+      taskFailIcon=$failIcon
+      ;;
     h2)
       spawn=true
       fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
@@ -277,14 +281,14 @@ while [ -n "$*" ]; do
     pgrep)
       fullTask=$(grepProcStr ${jvmProcess})
       ;;
-    pkill)
-      pgrep -af $jvmProcess
-      fullTask=$(killProcStr ${jvmProcess})
-      ;;
-    pkill8080)
-      pgrep -af ${jvmProcess/90/80}
-      fullTask=$(killProcStr ${jvmProcess/90/80})
-      ;;
+#    pkill)
+#      pgrep -af $jvmProcess
+#      fullTask=$(killProcStr ${jvmProcess})
+#      ;;
+#    pkill8080)
+#      pgrep -af ${jvmProcess/90/80}
+#      fullTask=$(killProcStr ${jvmProcess/90/80})
+#      ;;
     pcf*)
       # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
       if [[ $task =~ 'pcf=' ]]; then

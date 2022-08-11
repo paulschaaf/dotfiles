@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name             Guidewire Application Login
 // @namespace        tag:paul.schaaf@gmail.com,2009-03-07
-// @version          4.0
+// @version          5.0
 // @description      Adds quick-login links to the login screen. If the hostname is "localhost" or "127.*" then each
 //    link will go to a (reasonably) unique IP address in the loopback range (127.x.x.x). Because the browser session
 //    cookies are filed under the hostname or IP address (whichever you use in the URL), this will allow you to have
@@ -12,15 +12,18 @@
 // @match            http*://*/ContactManager.do
 // @match            http*://*/*/ContactManager.do
 // @copyright 2009+  P.G. Schaaf
-// @require          file:///home/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
+// @require          https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.2/babel.js
+// @require          https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.16.0/polyfill.js
 // @require          file:///home/pschaaf/src/javascript/greasemonkey/debugging.js
-// @ downloadURL     file:///C:/Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo_user.js
-// @ updateURL       file:///C:/Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo_user.js
+// @require          file:///Users/pschaaf/src/javascript/greasemonkey/debugging.js
+// @require          file:///Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
+// @downloadURL      file:///Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
+// @updateURL        file:///Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
 // ==/UserScript==
 
 var debugLevel = 0;
 
-function eachKeyAndValue(hash, kvFunction) {
+var eachKeyAndValue = (hash, kvFunction) => {
   for (var key in hash) {
     if (hash.hasOwnProperty(key)) kvFunction(key, hash[key]);
   }
@@ -28,7 +31,7 @@ function eachKeyAndValue(hash, kvFunction) {
 
 // == Style Sheet ==================================================
 var css =
-    '.pgs             { gw margin-left: auto; margin-right: auto; text-align: left; } ' +
+    '.pgs             { gw margin-left: auto; margin-right: auto; text-align: left; padding: 4px; } ' +
     '.rotate          { -webkit-transform: rotate(270deg); -ms-transform: rotate(270deg); -moz-transform: rotate(270deg); -o-transform: rotate(270deg); width: 20px; } ' +
     'tr#favorite      { border-bottom: thin solid black; } ' +
     '.linkGroupCell   { border-right: thin solid black; font-size: large; } ' +
@@ -36,7 +39,7 @@ var css =
     '#favorite        { font-weight: bold; } ' +
     'tr.pgs           { border-bottom: thin dotted lightgray; background-color: white; } ' +
     'tr.pgs:nth-child(odd) { background-color: LightYellow; } ' +
-    'table.pgs        { empty-cells: show; border-collapse: collapse; } ' +
+    'table.pgs        { empty-cells: show; border-collapse: collapse; border-spacing: 30px; } ' +
     '.wrapperCell     { border: 1px solid black; padding: 0px; } ' +
     '.wrapperTable    { margin-left: auto; margin-right: auto; } ' +
     '.userLogin       { font-weight: bold; border-right: thin solid black; } ' +
@@ -47,28 +50,31 @@ if (debugLevel > 0) {
 }
 
 document.old_createElement = document.createElement;
-document.createElement = function (tagName) {
+document.createElement = tagName => {
   var element = document.old_createElement(tagName);
   element.className = 'pgs';
   return element;
 };
 
 var debugInfo = new DebugInfoHeader(debugLevel);
-debugInfo.insert = function (info) {
-  document.getElementById('Login-table').insertAdjacentElement("beforebegin", info);
-};
+debugInfo.insert = info => document.getElementById('Login-table').insertAdjacentElement("beforebegin", info);
 
 // ===========================================================
 function GWClaimCenter() {
   this.specialEntryPoints = [
-    'InternalTools'
-    //            , 'CentipedeCacheInfo'
-    //            , 'DatabaseStatistics'
-    //            , 'DatabaseTableInfo'
-    //            , 'DatabaseDistributionInfo'
-    //            , 'InfoPages'
-    //            , 'Profiler'
+    'InternalTools',
+    // 'CentipedeCacheInfo',
+    // 'DatabaseStatistics',
+    // 'DatabaseTableInfo',
+    // 'DatabaseDistributionInfo',
+    'InfoPages',
+    // 'Profiler',
   ];
+
+  var autoClaimants1 = ['Allen Robertson', 'Bill Kinman', 'Karen Egertson', 'Ray Newton', 'Robert Farley'];
+  var autoClaimants2 = ['Brittany Turner', 'Larry Gamney', 'Lisa Shiu', 'Mark Henderson'];
+  var propClaimants  = ['Paladin Financial', 'Western Farmers'];
+  var wcClaimants    = ['Wright Construction'];
 
   this.claims = {
     'Allen Robertson': '235-53-365871',
@@ -86,29 +92,21 @@ function GWClaimCenter() {
     'Wright Construction': '312-36-368870'
   };
   this.users = {
-    su: [],
-    aapplegate: ['Allen Robertson', 'Bill Kinman', 'Karen Egertson', 'Ray Newton', 'Robert Farley'], // AUTO
-    bbaker: ['Brittany Turner', 'Larry Gamney', 'Lisa Shiu', 'Mark Henderson'], // AUTO
-    cclark: [], // AUTO clerical user
-    ccraft: [], // AUTO
+    su:         autoClaimants1,
 
-    gickes: ['Wright Construction'], // WC
-    //        kwinslow:   [], // AUTO
-    rbarnes: ['Paladin Financial', 'Western Farmer\'s'] // PROP
+    ssmith:     autoClaimants1.concat(autoClaimants2).sort(), // supervisor
+    mmaples:    autoClaimants1.concat(autoClaimants2).sort(), // supervisor
+    aapplegate: autoClaimants1,
+    bbaker:     autoClaimants2,
+    cclark:     autoClaimants1,
+    ccraft:     autoClaimants2,
+
+    wmotley:    wcClaimants, // supervisor
+    gickes:     wcClaimants,
+
+    carkle:     propClaimants, // supervisor
+    rbarnes:    propClaimants,
   };
-
-  // now the supervisors
-  this.users['charcle'] = this.users['rbarnes'];
-
-  this.users['ssmith'] = []
-      .concat(this.users['aapplegate'])
-      .concat(this.users['bbaker'])
-      .concat(this.users['cclark'])
-      .concat(this.users['ccraft'])
-      .sort();
-
-  this.users['mmaples'] = this.users['ssmith'];
-  this.users['wmotley'] = this.users['gickes'];
 
   // do all of this last
   this.userClaims = {};
@@ -116,13 +114,13 @@ function GWClaimCenter() {
   this.highestClaimCount = 0;
 
   var self = this;
-  eachKeyAndValue(this.users, function (username, insuredNames) {
+  eachKeyAndValue(this.users, (username, insuredNames) => {
     self.usernames.push(username);
     var claimNumbers = [];
 
     self.highestClaimCount = Math.max(insuredNames.length, self.highestClaimCount);
 
-    insuredNames.forEach(function (insured) {
+    insuredNames.forEach(insured => {
       claimNumbers.push([insured, self.claims[insured]]);
     });
 
@@ -132,7 +130,7 @@ function GWClaimCenter() {
 
 var cc = new GWClaimCenter();
 
-var appCode = document.location.pathname.match(/ab|bc|cc|pc|px/),
+var appCode     = document.location.pathname.match(/ab|bc|cc|pc|px/),
     isLocalHost = document.location.hostname.match(/^(127\.0\.0\.1|localhost)$/) !== null;
 
 if (!appCode) {
@@ -165,7 +163,7 @@ function GWServer() {
   this.openLinkInNewTab = false;
 }
 
-GWServer.prototype.hostnameForUser = function (user) {
+GWServer.prototype.hostnameForUser = user => {
   // Create a unique hostname for each user beginning with "127.0.0.", with the last part being an encoding of the
   // first two characters of the login username. This should give good enough uniqueness for our sample user names.
   var host = document.location.hostname;
@@ -175,17 +173,13 @@ GWServer.prototype.hostnameForUser = function (user) {
   return host;
 };
 
-GWServer.prototype.hostForUser = function (user) {
-  return document.location.protocol + '//'
+GWServer.prototype.hostForUser = user => document.location.protocol + '//'
       + this.hostnameForUser(user)
       + ':' + document.location.port;
-};
 
-GWServer.prototype.pathnameForUser = function (user) {
-  return this.isLocalHost
+GWServer.prototype.pathnameForUser = user => this.isLocalHost
       ? this.hostForUser(user)
-      : '';   // use default relative pathname
-};
+      : ''; // use default relative pathname
 
 GWServer.prototype.appUrlForUser = function (user) {
   return this.pathnameForUser(user) + this.app + '/';
@@ -239,7 +233,7 @@ GWServer.prototype.appendSpecialCellsToRow = function (user, row) {
   console.log('specialEntryPoints = ' + cc.specialEntryPoints);
 
   var self = this;
-  cc.specialEntryPoints.forEach(function (entryPoint) {
+  cc.specialEntryPoints.forEach(entryPoint => {
     var link = self.newLinkForUser(user, entryPoint, entryPoint);
     var cell = self.appendNewCellToRow(row, link);
     cell.id = 'favorite';
@@ -253,9 +247,7 @@ GWServer.prototype.newLinkRowForUser = function (user) {
   var mainLoginCell = this.appendNewCellToRow(row, this.newLinkForUser(user, 'Login'));
   mainLoginCell.className = 'userLogin';
 
-  if (user === 'su') this.appendSpecialCellsToRow(user, row);
-
-  cc.userClaims[user].forEach(function (insuredAndClaimNumber) {
+  cc.userClaims[user].forEach(insuredAndClaimNumber => {
     var insured = insuredAndClaimNumber[0];
     var link = self.newLinkForUser(
         user,
@@ -270,6 +262,8 @@ GWServer.prototype.newLinkRowForUser = function (user) {
     }
   });
 
+  if (user === 'su') this.appendSpecialCellsToRow(user, row);
+
   // fill out the rest of the row
   var fillerCell = document.createElement('td');
   fillerCell.colSpan = cc.highestClaimCount - row.childElementCount + 1;
@@ -278,7 +272,7 @@ GWServer.prototype.newLinkRowForUser = function (user) {
   return row;
 };
 
-GWServer.prototype.appendNewLabelCellToRow = function (row) {
+GWServer.prototype.appendNewLabelCellToRow = row => {
   var label = document.createElement('p');
   label.className = 'rotate';
   label.innerHTML = this.openLinkInNewTab ? 'New&nbsp;Tab' : 'Same&nbsp;Tab';
@@ -288,7 +282,7 @@ GWServer.prototype.appendNewLabelCellToRow = function (row) {
   return labelCell;
 };
 
-GWServer.prototype.addLinkGroupLabelToTable = function (users, table) {
+GWServer.prototype.addLinkGroupLabelToTable = (users, table) => {
   var labelRow = document.createElement('tr');
   labelRow.className = 'linkGroup';
   table.appendChild(labelRow);
@@ -300,7 +294,7 @@ GWServer.prototype.addLinkGroupLabelToTable = function (users, table) {
 GWServer.prototype.addLoginLinkRowsForUsersToTable = function (users, table) {
   if (this.isLocalHost) this.addLinkGroupLabelToTable(users, table);
   var self = this;
-  users.forEach(function (user) {
+  users.forEach(user => {
     var row = self.newLinkRowForUser(user);
     table.appendChild(row);
   });
@@ -351,10 +345,11 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
       return;
     }
 
-    var baseLoginFields = document.getElementById('Login-LoginScreen-LoginDV-0')  // cc10
-        || document.getElementById('Login-LoginScreen-LoginDV-1')  // cc10
+    var baseLoginFields = document.getElementById('Login-LoginScreen-5') // cc50
+        || document.getElementById('Login-LoginScreen-LoginDV-0') // cc10
+        || document.getElementById('Login-LoginScreen-LoginDV-1') // cc10
         || document.getElementById('Login-table') // cc9
-        || document.getElementById('Login');      // cc8
+        || document.getElementById('Login'); // cc8
 
     if (baseLoginFields == null) {
       console.log(triggerName + ': Skipping links because this is not the login screen');
@@ -382,9 +377,7 @@ document.addLinksIfLoginScreen = function (triggerName, server) {
 
 document.gw_server = new GWServer();
 
-window.setTimeout(function () {
-  document.addLinksIfLoginScreen('setTimeout', document.gw_server);
-});
+window.setTimeout(() => document.addLinksIfLoginScreen('setTimeout', document.gw_server));
 
 console.log('Checking whether to enable the Login links.');
 

@@ -36,7 +36,7 @@ setopt auto_remove_slash         # When the last character resulting from a comp
 setopt glob_complete             # When the current word has a glob pattern, cycle through matches rather than inserting all possibilities.
 
 # Expansion and Globbing
-
+setopt extendedglob              # treat #, ~, and ^ as part of patterns for filename generation
 # History
 setopt bang_hist                 # Perform textual history expansion, csh-style, treating the character ‘!’ specially.
 setopt extended_history          # Write the history file in the ":start:elapsed;command" format.
@@ -116,11 +116,66 @@ export LESS_TERMCAP_ue=${reset_color}     # end underline
 export LESSKEY=~pschaaf/.less_${HOSTNAME}
 
 # di=38;5;105
-inMacOS \
-   && export LSCOLORS="gxfxcxdxbxegedabagacad" \
-   || export LS_COLORS='no=00:fi=00:di=01;34:ln=01;36:pi=40;33:so=01;35:bd=40;33;01:cd=40;33;01:or=01;37;41:mi=01;37;41:ex=01;32:*.btm=01;32:*.tar=01;31:*.tgz=01;31:*.tbz2=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lha=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.bz=01;31:*.tz=01;31:*.rpm=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.xbm=01;35:*.xpm=01;35:*.png=01;35:*.tif=01;35:*.tiff=01;35'
+inMacOS export LSCOLORS="gxfxcxdxbxegedabagacad"
 
-export LS_FLAGS=-BCFbhH
+#lsColors=(
+#  'bd=40;33;01'  # block devices
+#  'cd=40;33;01'  # character devices
+#  'di=01;34'     # directories
+#  'ex=01;32'     # executable files
+#  'fi=00'        # regular files
+#  'ln=01;36'     # symlinks
+#  'mi=01;37;41'
+#  'no=00'
+#  'or=01;37;41'  # symlinks with no target
+#  'pi=40;33'     # named pipes
+#  'so=01;35'     # sockets
+#
+#  '*.arc=01;31'
+#  '*.arj=01;31'
+#  '*.bmp=01;35'
+#  '*.btm=01;32'
+#  '*.bz2=01;31'
+#  '*.bz=01;31'
+#  '*.gif=01;35'
+#  '*.gz=01;31'
+#  '*.jpeg=01;35'
+#  '*.jpg=01;35'
+#  '*.lha=01;31'
+#  '*.lzh=01;31'
+#  '*.png=01;35'
+#  '*.rpm=01;31'
+#  '*.tar=01;31'
+#  '*.taz=01;31'
+#  '*.tbz2=01;3'
+#  '*.tgz=01;31'
+#  '*.tif=01;35'
+#  '*.tiff=01;35'
+#  '*.tz=01;31'
+#  '*.xbm=01;35'
+#  '*.xpm=01;35'
+#  '*.z=01;31'
+#  '*.Z=01;31'
+#  '*.zip=01;31'
+#)
+## crunch it into a single colon-delimited String for zsh
+#export LS_COLORS=${(j_:_)lsColors}; unset lsColors
+
+# set LS_COLORS
+src=~/etc/rc/dircolors
+dest=~/.dircolors
+if [[ ! -s ${dest}.zwc || ${dest}.zwc -ot ${src} ]]; then
+  # generate then compile the command script
+  dircolors ${src} >| ${dest}
+  zcompile ${dest}
+  # but only keep the compiled version
+  rm -f ${dest}
+  echo Recompiled ${dest}
+fi
+source ${dest}
+unset src dest
+
+export LS_FLAGS=-BbCFHh
 inMacOS \
    && export LS_FLAGS="${LS_FLAGS}G" \
    || export LS_COLOR=--color
@@ -304,7 +359,6 @@ alias whence='whence -ac'
 autoload -Uz whichjava
 alias yay='yay --answerclean None --answerdiff None --answeredit None'
 autoload -Uz zed && alias fned='zed -f'
-autoload -Uz zrecompile
 
 
 # ========
@@ -358,7 +412,7 @@ esac
 
 bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
-bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
+#bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 inMacOS && bindkey -s "\033[27~" ' ~/bin/macos/hpcalc\n'
 inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 
@@ -382,27 +436,11 @@ fi
 # ========
 # ======== The Prompt
 autoload -Uz add-zsh-hook vcs_info
-function git_status() {
-  vcs_info
-  if [ -n "$vcs_info_msg_0_" ]; then
-    export VCS_STATUS="${vcs_info_msg_0_}
-"
-  else
-    unset VCS_STATUS
-  fi
-}
-add-zsh-hook precmd git_status
+add-zsh-hook precmd vcs_info
+#precmd_vcs_info() { vcs_info }
+#precmd_functions+=( precmd_vcs_info )
 
 zstyle ':vcs_info:*' enable git
-#precmd() {
-#  vcs_info
-#  if [ -n "$vcs_info_msg_0_" ]; then
-#    export VCS_STATUS="$vcs_info_msg_0_
-#"
-#  else
-#    unset VCS_STATUS
-#  fi
-#}
 
 # ref: https://timothybasanov.com/2016/04/23/zsh-prompt-and-vcs_info.html
 zstyle ':vcs_info:*' check-for-changes true
@@ -523,19 +561,19 @@ fi
 
 PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
 %(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} ${HOST_ICON}%F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-\$GIT_STATUS\$VCS_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
-
+%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
+RPROMPT=\$vcs_info_msg_0_
 PS2="(%F{magenta}%_%f) > "
 
 
 # ========
 # ======== Guidewire
-if [[ -s ${NVM_DIR}/nvm.sh ]]; then
-    zrecompile -U ${NVM_DIR}/nvm.sh
-    # Bootstrap the enormous nvm (Node version manager) function
-    alias node="nvm install 10.13.0 && unalias node && node"
-    alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
-fi
+#if [[ -s ${NVM_DIR}/nvm.sh ]]; then
+#    zrecompile -U ${NVM_DIR}/nvm.sh
+#    # Bootstrap the enormous nvm (Node version manager) function
+#    alias node="nvm install 10.13.0 && unalias node && node"
+#    alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
+#fi
 
 
 # ========
