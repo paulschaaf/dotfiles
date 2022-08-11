@@ -612,10 +612,9 @@ if (( $#_comp_files )); then
 else
     compinit -i
     # shellcheck disable=SC1073
-    { zrecompile -U ~/.zcompdump } &!
+    { zrecompile ~/.zcompdump } &!
 fi
 unset _comp_files
-
 #    unalias  run-help 2>/dev/null && autoload -Uz run-help
 zmodload -i zsh/complist
 
@@ -624,7 +623,6 @@ zmodload -i zsh/complist
 for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
    source $file
 done
-
 
 
 # ========

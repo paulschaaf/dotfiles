@@ -179,7 +179,19 @@ case ${GW_PLATFORM} in
     ;;
 esac
 
-[[ -f ./gw.env ]] && cat gw.env && source gw.env
+# requires extended globbing
+#for env in `echo (../)#gw.env(:a)`; do
+for env in {../..,..,.}/gw.env; do
+  if [[ -f ${env} ]]; then
+    echo Sourcing ${env}
+    cat ${env}
+    # shellcheck disable=SC1090
+    source ${env}
+  fi
+done
+
+#[[ -f ~/.gw.env ]] && cat ~/.gw.env && source ~/.gw.env
+#[[ -f ./gw.env ]] && cat gw.env && source gw.env
 
 # exit if not a Guidewire installation
 if [[ -z "$GW_PLATFORM" ]]; then

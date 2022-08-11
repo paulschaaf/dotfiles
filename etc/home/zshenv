@@ -29,7 +29,7 @@ fi
 # ======== Recompile if necessary
 autoload -Uz zrecompile
 zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
-inCygwin && zrecompile ~/etc/rc/zshenv.cygwin
+[[ `uname` = 'Cygwin' ]] && zrecompile ~/etc/rc/zshenv.cygwin
 
 
 # ========
