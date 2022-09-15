@@ -37,6 +37,7 @@ ordered_packages=(
    mlocate
    meta-group-base-devel   # all base devel tools
    ripgrep                 # quicker grep
+   ripgrep-all             # grep binary documents
    google-chrome           # the best browser
    git                     # version control
    intellij-idea-ultimate  # ide
@@ -51,14 +52,17 @@ ordered_packages=(
 unordered_packages=(
    ascii                  # tree of ascii codes
    #    atom
+   bat                    # a better cat
    bcompare
    bcompare-kde5
+   broot                  # directory tree with paging
    #    davfs2                # mount box.com into filesystem
    #    devede                # make video DVDs
    dolphin-plugins        # git integration into KDE file manager
    emacs                  # the king of editors
    enscript               # convert txt to ps, html, rtf, etc.
-   inxi                   # system info tool
+   fzf                    # fuzzy-search autocompletion
+   glances                # process info
    jdk-dcevm              # Java Dynamic Code Evolution VM
    keychain               # ssh key organizer
    lsof
@@ -74,6 +78,7 @@ unordered_packages=(
    #    oracle~jdk8            # Java 1.8
    ruby-irb               # Ruby REPL
    #    sqlops                # MS SQL Server admin tool
+   trash-cli              # rm replacement uses trashcan
    tree
    units                  # unit conversions
    vlc                    # video player
@@ -81,7 +86,6 @@ unordered_packages=(
 )
 
 applications=(
-   #    amarok                # music
    calibre                # e-book manager
    #    filezilla              # file transfers
    #    freecad
@@ -89,6 +93,7 @@ applications=(
    #    gitkraken
    masterpdfeditor4
    #    slack-desktop          # IM client
+   strawberry             # music player
    #    sweethome3d            # architectural modelling
    #    virtualbox            # VM manager
    #    virtualbox-ext-oracle

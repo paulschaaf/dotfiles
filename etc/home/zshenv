@@ -67,6 +67,7 @@ export os_override_path=(~/bin ~/bin/quick-ssh ${JAVA_HOME}/bin)
 typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH os_override_path PATH path RUBYLIB
 export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH      RUBYLIB
 
+inMacOS && fpath=(~pschaaf/homebrew/share/zsh/site-functions ${fpath})
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
 #LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib

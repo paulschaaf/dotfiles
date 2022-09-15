@@ -82,6 +82,8 @@ setopt function_argzero          # Set $0 temporarily to the name of the executi
 # Zle
 unsetopt beep                    # Do not beep on error in ZLE.
 
+# set default bindings before any tweaks made by `autoload`, `source`, etc.
+bindkey -e # Use Emacs key bindings
 
 # ========
 # ======== Exported Variables
@@ -175,11 +177,6 @@ fi
 source ${dest}
 unset src dest
 
-export LS_FLAGS=-BbCFHh
-inMacOS \
-   && export LS_FLAGS="${LS_FLAGS}G" \
-   || export LS_COLOR=--color
-
 export MANPAGER=less
 export NVM_DIR=~/.nvm
 export PAGER=less
@@ -210,7 +207,8 @@ alias macbook=pschaaf-mbp15
 alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
 alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
-alias rm='rm -i'
+#alias rm='rm -i'
+alias rm=trash
 alias root='dirs -c && pcd'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
@@ -229,11 +227,16 @@ alias -s txt=kate
 
 # ========
 # ======== ls Aliases and Functions
-alias ls="/bin/ls ${LS_FLAGS} ${LS_COLOR}"
+export LS_FLAGS=-BbCFHh
+
+inMacOS && _ls=/usr/local/bin/ls || _ls=/bin/ls
+alias ls="${_ls} ${LS_FLAGS} --color"
+unset _ls
+
 alias la='ls -A'
 alias ll='ls -l'
-alias lla='ls -Al'
-alias llt='ls -lrt'
+alias lla='ll -A'
+alias llt='ll -rt'
 alias lr='ls -R'
 autoload -Uz lsd
 autoload -Uz lld
@@ -258,13 +261,15 @@ autoload -Uz rubylib
 autoload -Uz alert
 
 function browse() {
-    ${BROWSER} $@
+  ${BROWSER} $@
 }
 
 inMacOS && autojump=/usr/local/etc/profile.d/autojump.sh
 inLinux && autojump=/etc/profile.d/autojump.sh
 [[ -s $autojump ]] && source $autojump
 unset autojump
+
+source /Users/pschaaf/.config/broot/launcher/bash/br
 
 inMacOS \
     && alias df='df -Phl' \
@@ -278,6 +283,7 @@ autoload -Uz ddu
 inMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
 
 autoload -Uz frotz
+
 autoload -Uz mkfunction
 
 function joinPhotos() {
@@ -346,8 +352,6 @@ function root() {
 
 function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 
-# shrink PDF: gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.6 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
-
 autoload -Uz splitMp3
 autoload -Uz splitFlac
 
@@ -363,7 +367,7 @@ autoload -Uz zed && alias fned='zed -f'
 
 # ========
 # ======== Key Bindings
-bindkey -e # Use Emacs key bindings
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 bindkey "\033[17~"   kill-whole-line       # F6
 bindkey "\033[18~"   copy-region-as-kill   # F7
@@ -436,22 +440,25 @@ fi
 # ========
 # ======== The Prompt
 autoload -Uz add-zsh-hook vcs_info
-add-zsh-hook precmd vcs_info
-#precmd_vcs_info() { vcs_info }
-#precmd_functions+=( precmd_vcs_info )
+function git_status() {
+  vcs_info
+    export VCS_STATUS="${vcs_info_msg_0_}${vcs_info_msg_0_:+
+}"
+}
+add-zsh-hook precmd git_status
 
 zstyle ':vcs_info:*' enable git
 
 # ref: https://timothybasanov.com/2016/04/23/zsh-prompt-and-vcs_info.html
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:*' stagedstr '%{%F{green}%B%}S%{%b%f%}'
-zstyle ':vcs_info:*' unstagedstr '%{%F{red}%B%}U%{%b%f%}'
+zstyle ':vcs_info:git*' check-for-changes true
+zstyle ':vcs_info:git*' stagedstr '%{%F{green}%B%}S%{%b%f%}'
+zstyle ':vcs_info:git*' unstagedstr '%{%F{red}%B%}U%{%b%f%}'
 #-zstyle ':vcs_info:*' formats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{green}%}(%25>…>%b%<<)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
 #-zstyle ':vcs_info:git*' formats "%{$fg[green]%}%b%a%m%u%c%{$reset_color%} "
 zstyle ':vcs_info:git*' formats "(%b m:%m %u c:%c)"
 #-zstyle ':vcs_info:*' actionformats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{red}%}(%a|%m)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
 zstyle ':vcs_info:git*' actionformats "(%b|a:%a m:%m %u c:%c)"
-zstyle ':vcs_info:*' nvcsformats '%{%F{cyan}%}%~%{%f%}'
+#zstyle ':vcs_info:*' nvcsformats ''
 zstyle ':vcs_info:git:*' patch-format '%10>…>%p%<< (%n applied)'
 zstyle ':vcs_info:*+set-message:*' hooks home-path
 #function +vi-home-path() {
@@ -561,8 +568,8 @@ fi
 
 PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
 %(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} ${HOST_ICON}%F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
-RPROMPT=\$vcs_info_msg_0_
+\$VCS_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
+#RPROMPT=\$vcs_info_msg_0_
 PS2="(%F{magenta}%_%f) > "
 
 
@@ -627,6 +634,8 @@ done
 
 # ========
 # ======== Tricks and Tips
+
+# shrink PDF: gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.6 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
 
 ## brace expansion - example
 #  $ X=(A B C)

@@ -40,9 +40,9 @@ function lsPathVar() {
     if (($#dir == 0)); then
       trace "\$${dirName} is undefined"
     elif [[ -d "${dir}" ]]; then
-      printf "\033[36m%s\033[0m\n" "$(typeset -p ${dirName})"
+      printf "\033[96m%s\033[0m\n" "$(typeset -p ${dirName})"
     elif [[ -f ${dir} ]]; then
-      printf "\033[32m%s\033[0m\n" "$(typeset -p ${dirName})"
+      printf "\033[92m%s\033[0m\n" "$(typeset -p ${dirName})"
     else
       printf "\033[97;101m%s\033[0m\n" "$(typeset -p ${dirName})"
       #      typeset -p ${dirName}
