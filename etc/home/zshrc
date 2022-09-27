@@ -189,10 +189,11 @@ export WORDCHARS='|*?-~\\$%^'
 
 # ========
 # ======== Aliases
+alias 8080="open http://localhost:8080/cc"
+alias 8090="open http://localhost:8090/cc"
 #alias ..='pushd ..' # doesn't work on MaoOS terminal
 #alias ...="pushd ../.."
 alias cd=pushd
-alias cores='inxi -C'
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
 inLinux && alias hpcalc=x48
@@ -606,6 +607,8 @@ zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %
 zstyle ':completion:*' squeeze-slashes true
 zstyle ':zftp:' titlebar true
 zstyle ':completion:*' verbose true
+zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
+zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
 zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
 
 # Load and initialize the completion system ignoring insecure directories with a
