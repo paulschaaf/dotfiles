@@ -23,7 +23,7 @@ _arguments "*: :((
   compile
   dropDb
   'fixgwb: remove the erroneous spaces from the OOB product gwb script'
-  genDataDictionary
+  'genDataDictionary: in the relative path build/XX/dictionary'
   genPcfDictionary
   genPcfXsd
   'genSystemData: Compiled from system_data.xml'
