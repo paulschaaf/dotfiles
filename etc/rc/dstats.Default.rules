@@ -34,7 +34,7 @@ show "(Greater|Super) (Healing|Mana) Potion" gold
 show "^Key$"
 hide "^(Crude|Cracked|Low Quality)"
 hide "Quiver" normal magic
-hide "^(Light|Minor) (Healing|Mana) Potion"
+hide "^(Light |Minor )?(Healing|Mana) Potion"
 show 1 2 rare
 show 3 4 superior magic rare
 

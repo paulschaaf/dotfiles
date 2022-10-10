@@ -270,7 +270,7 @@ inLinux && autojump=/etc/profile.d/autojump.sh
 [[ -s $autojump ]] && source $autojump
 unset autojump
 
-source /Users/pschaaf/.config/broot/launcher/bash/br
+inMacOS && source /Users/pschaaf/.config/broot/launcher/bash/br
 
 inMacOS \
     && alias df='df -Phl' \

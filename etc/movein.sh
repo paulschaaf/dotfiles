@@ -8,7 +8,7 @@ export PATH
 backup=~/backup
 shell=/bin/zsh
 if [ "$host" = "copernicus" ]; then
-   yaourt -S broadcom-wl
+   yay -S broadcom-wl
 fi
 
 
@@ -30,6 +30,10 @@ forMacOS=(
    ripgrep
    ascii
    inxi
+)
+
+forArch=(
+   yay # wrapper for pacman
 )
 
 # these get installed first, in the order defined
@@ -58,7 +62,6 @@ unordered_packages=(
    broot                  # directory tree with paging
    #    davfs2                # mount box.com into filesystem
    #    devede                # make video DVDs
-   dolphin-plugins        # git integration into KDE file manager
    emacs                  # the king of editors
    enscript               # convert txt to ps, html, rtf, etc.
    fzf                    # fuzzy-search autocompletion
@@ -69,7 +72,7 @@ unordered_packages=(
    #    lynx                  # command line browser
    #    manjaro-i3-solarized-settings
    #    mp3fs                 # MP3 virtualf ilesystem
-   neofetch               # command line system info
+#   neofetch               # command line system info
    nerd-fonts-fira-code   # programming font with ligatures
    nmap
    #    nodejs
