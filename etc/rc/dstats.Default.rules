@@ -41,7 +41,6 @@ show 3 4 superior magic rare
 #hide 1 2 3 4 low normal superior magic rare
 hide 1 2 low normal superior magic
 #hide "^(Ring|Amulet)$" magic
-hide "(Amethyst|Diamond|Ruby|Sapphire|Skull|Topaz)$"
 #hide "^(Amber|Amethyst|Bloodstone|Diamond|Emerald|Onyx|Rainbow Stone|Ruby|Sapphire|Skull|Topaz|Turquoise)$"
 #hide "^Flawless"
 #hide "^(El|Eld|Tir|Nef|Eth|Ith|Tal|Ral|Ort|Thul|Amn|Sol|Shael|Dol|Hel|Io|Lum|Ko|Fal|Lem|Pul|Um|Mal|Ist|Gul|Vex|Ohm|Lo|Sur|Ber|Jah|Cham|Zod) Rune$"
