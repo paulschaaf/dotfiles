@@ -48,7 +48,7 @@ in the order specified. The default highlighting is "${defaultArgs.joinToString(
        ${AllEffects.keys.joinToString(", ")}
 
 Example:
-  /bin/ls /etc | egrep 'su|sh|rc' | lite.kts '^su.*' -red sh -green do
+  /bin/ls /etc | grep -E 'su|sh|rc' | lite.kts '^su.*' -red sh -green do
   
   List some of the files in /etc using the following colors:
      -the default highlighting:     any line that begins with 'su'
@@ -92,6 +92,6 @@ defaultArgs
 
 generateSequence(::readLine).forEach { line ->
     transformers
-            .fold(line, { str, transform -> transform(str) })
-            .apply(::println)
+        .fold(line) { str, transform -> transform(str) }
+        .apply(::println)
 }

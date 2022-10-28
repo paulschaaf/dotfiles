@@ -1,5 +1,6 @@
 ! -*- compile-command: (concat "xrdb -override " buffer-file-name) -*-
 ! -*- compile-command: "xrdb -override ~/.Xresources" -*-
+! -*- compile-command: "xrdb -merge ~/.Xresources" -*-
 ; comment-start: "! " -*-
 
 ! geometry: WxH[+-]posX[+-]posY
@@ -113,3 +114,4 @@ X48.mediumLabelFont: fixed
 X48.largeLabelFont: fixed
 X48.connectionFont: fixed
 X48.title: HP 48GX
+X48.geometry: +1969+0506

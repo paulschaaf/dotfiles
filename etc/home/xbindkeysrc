@@ -65,6 +65,12 @@
 #"rxvt"
 #  Control + b:2 + Release
 
+"xte 'mouseclick 4'"
+  XK_Page_Up
+
+"xte 'mouseclick 5'"
+  XK_Page_Down
+
 ##################################
 # End of xbindkeys configuration #
 ##################################
