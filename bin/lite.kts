@@ -80,13 +80,12 @@ defaultArgs
         .plus(args)
         .forEach {
             when {
-                it == "-bg"                -> ground = 10
-                it == "-fg"                -> ground = 0
-                it == "-h"                 -> showUsage()
-                it == "--help"             -> showUsage()
-                AllEffects.containsKey(it) -> effects += AllEffects[it]!!
-                AllColors.containsKey(it)  -> color = AllColors[it]!!
-                else                       -> transformers += highlighter(Regex(it), effects.plus(ground + color))
+                it == "-bg"                    -> ground = 10
+                it == "-fg"                    -> ground = 0
+                (it == "-h" || it == "--help") -> showUsage()
+                AllEffects.containsKey(it)     -> effects += AllEffects[it]!!
+                AllColors.containsKey(it)      -> color = AllColors[it]!!
+                else                           -> transformers += highlighter(Regex(it), effects.plus(ground + color))
             }
         }
 

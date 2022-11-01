@@ -13,6 +13,17 @@ fi
 
 
 ## LIBRARIES AND PACKAGES ===========================================
+intelliJPlugins-(
+   ?AceJump      # https://plugins.jetbrains.com/plugin/7086-acejump
+   ?CodeGlance   # https://plugins.jetbrains.com/plugin/7275-codeglance
+   GitToolBox
+   Grep Console
+   IntelliJ Plugins
+   Launch URL From String
+   Rainbow Brackets
+   String Manipulation
+)
+
 libraries=(
    #    libimage-exiftool-perl # edit EXIF data in image
    #    libncurses
