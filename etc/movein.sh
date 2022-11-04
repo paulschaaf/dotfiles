@@ -18,7 +18,6 @@ intelliJPlugins-(
    ?CodeGlance   # https://plugins.jetbrains.com/plugin/7275-codeglance
    GitToolBox
    Grep Console
-   IntelliJ Plugins
    Launch URL From String
    Rainbow Brackets
    String Manipulation
