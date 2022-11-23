@@ -228,10 +228,10 @@ alias -s txt=kate
 
 # ========
 # ======== ls Aliases and Functions
-export LS_FLAGS=-BbCFHh
+export LS_FLAGS='-BbCFHh --color'
 
 inMacOS && _ls=/usr/local/bin/ls || _ls=/bin/ls
-alias ls="${_ls} ${LS_FLAGS} --color"
+alias ls="${_ls} ${LS_FLAGS}"
 unset _ls
 
 alias la='ls -A'

@@ -13,14 +13,14 @@ fi
 
 
 ## LIBRARIES AND PACKAGES ===========================================
-intelliJPlugins-(
-   ?AceJump      # https://plugins.jetbrains.com/plugin/7086-acejump
-   ?CodeGlance   # https://plugins.jetbrains.com/plugin/7275-codeglance
-   GitToolBox
-   Grep Console
-   Launch URL From String
-   Rainbow Brackets
-   String Manipulation
+intelliJPlugins=(
+   AceJump                       # https://plugins.jetbrains.com/plugin/7086-acejump
+   ?CodeGlance                   # https://plugins.jetbrains.com/plugin/7275-codeglance
+   GitToolBox                    # https://plugins.jetbrains.com/plugin/7499-gittoolbox
+   Grep Console                  # https://plugins.jetbrains.com/plugin/7125-grep-console
+   Launch URL From String        # https://plugins.jetbrains.com/plugin/10857-launch-url-from-string
+   ProjectTree Color Highlighter # https://plugins.jetbrains.com/plugin/13951-projecttree-color-highlighter
+   String Manipulation           # https://plugins.jetbrains.com/plugin/2162-string-manipulation
 )
 
 libraries=(
@@ -32,7 +32,7 @@ libraries=(
 
 forMacOS=(
    xcode-select --install
-   mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew
+   "mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew"
    git
    git-lfs
    coreutils
@@ -72,6 +72,7 @@ unordered_packages=(
    broot                  # directory tree with paging
    #    davfs2                # mount box.com into filesystem
    #    devede                # make video DVDs
+   dust                   # disk usage
    emacs                  # the king of editors
    enscript               # convert txt to ps, html, rtf, etc.
    fzf                    # fuzzy-search autocompletion
@@ -91,6 +92,7 @@ unordered_packages=(
    #    oracle~jdk8            # Java 1.8
    ruby-irb               # Ruby REPL
    #    sqlops                # MS SQL Server admin tool
+   tealdeer               # quick man page examples
    trash-cli              # rm replacement uses trashcan
    tree
    units                  # unit conversions

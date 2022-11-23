@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 
 sed -E "
-   # ignore any line that begins with a space, two dashes, or number:number:
-   /^ |^--|^[0-9]+:[0-9]+:/b
+   # ignore any line that begins with a space, two dashes, number:number:, or file://
+   /^ |^--|^[0-9]+:[0-9]+:|file:\/\//b
 
    # prepend PWD to all relative paths (those without a leading /)
    /^[^/]/ { s&^&${PWD}/&; }

@@ -143,9 +143,11 @@ if (($#dry_run)); then
    exit
 elif (($#inIntelliJ)); then
    (($#debug)) && set -x
-   # turn dash-number-dash into colon-number-colon, put a space after the last coordinate colon --- why not use --field-context-separator and --field-match-separator
-#   eval "${binary} ${command[*]}" | sed -E 's/-(.\[0m([0-9]+).\[0m)-/:\1:/; s_(^.*:.\[0m([0-9]+).\[0m):_\1 _' | toFileUrl
-   eval "${binary} ${command[*]}" | toFileUrl
+   # use a separator extremely unlikely to match legit text (and wouldn't match again on a second run)
+   fieldSeparator=`date '+%s!!!'`
+   # put a space after the last coordinate colon
+   eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" | toFileUrl
+#   eval "${binary} ${command[*]}" | toFileUrl
 else
    (($#debug)) && set -x
    eval ${binary} ${command[*]}
