@@ -26,16 +26,10 @@ fi
 
 
 # ========
-# ======== Recompile if necessary
-autoload -Uz zrecompile
-zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
-[[ `uname` = 'Cygwin' ]] && zrecompile ~/etc/rc/zshenv.cygwin
-
-
-# ========
 # ======== Default Settings
 umask 22
 export UNAME=${UNAME:=$(uname)}
+UNAME=${UNAME//_*/}
 
 if ((UID)); then
    alias isRoot=false
@@ -44,6 +38,12 @@ else
 fi
 
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
+
+
+# ========
+# ======== Recompile if necessary
+autoload -Uz zrecompile
+zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
 
 
 # ========
@@ -70,8 +70,12 @@ export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH   
 #LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
 
 case ${UNAME} in
-  CYGWIN_NT-10.0)
+  CYGWIN)
+      export HOME=/home/$USERNAME
       os_override_path=(~/bin/win ${os_override_path[@]} )
+      zrecompile ~/etc/rc/zshenv.cygwin
+      # do not source the global rcs
+      unsetopt GLOBAL_RCS
       ;;
   Darwin)
       os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~/homebrew/bin)
@@ -90,6 +94,8 @@ path=(
     /usr/X11R6/bin
     /opt/git-gw
 )
+
+(($#debug)) && echo PATH is && echo $PATH | tr ':' '\n' | cat -n | sed -E 's_/cygdrive__; s_(/c/Users/pschaaf|%HOME%)_~_'
 
 fpath=(~pschaaf/etc/zshfunctions ${fpath})
 
@@ -116,6 +122,7 @@ export LC_ALL=en_US.UTF-8
 # ========
 # ======== OS-Specific
 inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
+
 #if inMingW32; then
 #    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
 #    # all slashes, replace semicolons with colons. We can't use cygpath.exe

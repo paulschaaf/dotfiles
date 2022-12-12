@@ -15,7 +15,7 @@ fi
 ## LIBRARIES AND PACKAGES ===========================================
 intelliJPlugins=(
    AceJump                       # https://plugins.jetbrains.com/plugin/7086-acejump
-   ?CodeGlance                   # https://plugins.jetbrains.com/plugin/7275-codeglance
+#   ?CodeGlance                   # https://plugins.jetbrains.com/plugin/7275-codeglance
    GitToolBox                    # https://plugins.jetbrains.com/plugin/7499-gittoolbox
    Grep Console                  # https://plugins.jetbrains.com/plugin/7125-grep-console
    Launch URL From String        # https://plugins.jetbrains.com/plugin/10857-launch-url-from-string
@@ -296,3 +296,14 @@ rehash
 # sudo npm install -g yarn
 
 setScreenTitle
+
+
+return
+
+For CYGWIN
+
+CYGROOT
+CYGPATH=%HOME%\bin\win;%HOME%\bin;%CYGROOT%\bin;%CYGROOT%\usr\bin;%CYGROOT%\usr\local\bin;%CYGROOT%\sbin;%CYGROOT%\usr\local\sbin;
+HOME=%USERPROFILE%
+SHELL=/usr/bin/zsh
+
