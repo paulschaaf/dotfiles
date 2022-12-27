@@ -97,7 +97,7 @@ path=(
 
 (($#debug)) && echo PATH is && echo $PATH | tr ':' '\n' | cat -n | sed -E 's_/cygdrive__; s_(/c/Users/pschaaf|%HOME%)_~_'
 
-fpath=(~pschaaf/etc/zshfunctions ${fpath})
+fpath=(~pschaaf/etc/zshfunctions ${fpath[@]})
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 

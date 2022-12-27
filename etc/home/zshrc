@@ -201,7 +201,7 @@ inCygwin && alias open=explorer
 if inLinux; then
   alias open=dolphin
   function dolphin() {
-     command dolphin ${*:-.}
+     command dolphin ${*:-.} &
   }
 fi
 alias macbook=pschaaf-mbp15
