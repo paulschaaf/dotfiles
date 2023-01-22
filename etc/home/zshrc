@@ -199,9 +199,9 @@ alias grep='grep --extended-regexp --color'
 inLinux && alias hpcalc=x48
 inCygwin && alias open=explorer
 if inLinux; then
-  alias open=dolphin
-  function dolphin() {
-     command dolphin ${*:-.} &
+  function open() {
+     nohup dolphin --new-window ${*:-.} &> /dev/null &
+     disown
   }
 fi
 alias macbook=pschaaf-mbp15
