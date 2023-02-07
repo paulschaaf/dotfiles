@@ -1,7 +1,8 @@
 #!/usr/bin/env zsh
 
-# gray66 is too light, gray50 is too dark
-fg=gray60
+# Set the Defaults
+# lower number is darker, gray60 is too light
+fg=gray50
 pointsize=240
 height=231
 h_offset=25

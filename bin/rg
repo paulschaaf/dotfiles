@@ -42,6 +42,8 @@ function help() {
    cat <<HEREDOC
    --inIntelliJ     Mostly for testing
    --notIntelliJ
+   --expanded
+   --heading
 
 GUIDEWIRE MACROS:       INCLUDES
    --bizrules, no-bizrules
@@ -95,6 +97,7 @@ while (($#@)); do
          ;;
       --dry-run)
          dry_run=true
+         expanded=true
          ;;
       --heading)
          addSwitch --heading --color=never
@@ -141,14 +144,16 @@ done
 
 if (($#dry_run)); then
    exit
-elif (($#inIntelliJ)); then
-   (($#debug)) && set -x
+fi
+
+(($#debug)) && set -x
+
+if (($#inIntelliJ)); then
    # use a separator extremely unlikely to match legit text (and wouldn't match again on a second run)
-   fieldSeparator=`date '+%s!!!'`
+   fieldSeparator=`date '+%s@@@'`
    # put a space after the last coordinate colon
    eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" | toFileUrl
 #   eval "${binary} ${command[*]}" | toFileUrl
 else
-   (($#debug)) && set -x
    eval ${binary} ${command[*]}
 fi

@@ -73,7 +73,7 @@ case ${UNAME} in
   CYGWIN)
       export HOME=/home/$USERNAME
       os_override_path=(~/bin/win ${os_override_path[@]} )
-      zrecompile ~/etc/rc/zshenv.cygwin
+      zrecompile ~/etc/rc/zshenv_cygwin
       # do not source the global rcs
       unsetopt GLOBAL_RCS
       ;;
@@ -121,7 +121,7 @@ export LC_ALL=en_US.UTF-8
 
 # ========
 # ======== OS-Specific
-inCygwin && source ~pschaaf/etc/rc/zshenv.cygwin
+inCygwin && source ~pschaaf/etc/rc/zshenv_cygwin
 
 #if inMingW32; then
 #    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap

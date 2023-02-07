@@ -368,7 +368,7 @@ autoload -Uz zed && alias fned='zed -f'
 
 # ========
 # ======== Key Bindings
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+#[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 bindkey "\033[17~"   kill-whole-line       # F6
 bindkey "\033[18~"   copy-region-as-kill   # F7
