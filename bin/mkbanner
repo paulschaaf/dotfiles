@@ -102,8 +102,13 @@ if [[ -e ${filename} ]]; then
 fi
 
 echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
-if ! dry_run; then
-   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
+command="   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}"
+
+if dry_run; then
+  echo ${command}
+else
+   eval ${command}
+#   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
 
    echo Created ${filename}
    open ${filename}

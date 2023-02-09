@@ -1,3 +1,0 @@
-#!/bin/bash
-
-[ $HOSTNAME = "copernicus" ] && source ~/bin/gwre
