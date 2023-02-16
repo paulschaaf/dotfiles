@@ -202,8 +202,8 @@ fi
 trace Resolved: GW_PLATFORM=$GW_PLATFORM
 
 # If these are empty, default them
-export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 export GW_DB_DIR=${GW_DB_DIR:-/tmp/guidewire/${GW_PLATFORM}}
+export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
 if [[ -z "${IDEA_JDK}" ]]; then
   if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
@@ -358,3 +358,8 @@ fi
 CLASSPATH=$(echo -n "$CLASSPATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}')
 
 typeset -p PATH CLASSPATH
+
+# Other Vars
+export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
+export apiBreakTest_fix=true
+export apiBreakTest_localDumpPath=${HOME}/gw/dumps

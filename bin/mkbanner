@@ -8,17 +8,20 @@ height=231
 h_offset=25
 v_offset=178
 char_width=117
+product=CC
+smush=100
 
 function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
+  --smush      Sets the spacing between the product and the project name (defaults to '${smush}')
   --bg=COLOR   Set the background color (defaults to be transparent)
   --fg=COLOR   Set the foreground color (defaults to '${fg}')
   --width=NUM  Set the width of the text box
-  --debug     Trace the execution
-  --dry_run   Show the resulting command but do not execute
-  --force     Overwrite the existing file, if any
-  -h, --help  Show this screen
+  --debug      Trace the execution
+  --dry_run    Show the resulting command but do not execute
+  --force      Overwrite the existing file, if any
+  -h, --help   Show this screen
 
   All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
   the switch '-font=fixed' will be passed through as '-font fixed'.
@@ -48,18 +51,24 @@ while [[ -n "$*" ]]; do
          usage
          exit
          ;;
-      --bg)
-         bg=${value}
-         bgName=${bg}
-         ;;
+#      --bg)
+#         bg=${value}
+#         bgName=${bg}
+#         ;;
       --fg)
          fg=${value}
          ;;
       --force)
          alias force=true
          ;;
-      --width)
-         width=${value}
+#      --width)
+#         width=${value}
+#         ;;
+      --product)
+         product=${1}
+         ;;
+      --smush)
+         smush=${1}
          ;;
       -*)
          switches+=(${1})
@@ -73,6 +82,25 @@ while [[ -n "$*" ]]; do
    shift
 done
 
+fill=${fg}
+case ${product} in
+  AB)
+    fill=aqua
+    ;;
+  BC)
+    fill=magenta
+    ;;
+  CC)
+    fill=blue;
+    ;;
+  PC)
+    fill=tan;
+    ;;
+  PL)
+    fill=green;
+    ;;
+esac
+
 if ((!$#txt)); then
    echo Error: missing text!
    usage
@@ -83,26 +111,28 @@ elif ((${#*})); then
    exit 1
 fi
 
-((!$#width)) && width=$((${char_width}*${#txt}))
+#((!$#width)) && width=$((${char_width}*${#txt}))
+#
+## if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
+#if ((!$#bg)); then
+#   bgName=transparent
+#   [[ ${fg} == "white" ]] && bg=black || bg=white
+#   switches+=(-transparent ${bg})
+#fi
 
-# if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
-if ((!$#bg)); then
-   bgName=transparent
-   [[ ${fg} == "white" ]] && bg=black || bg=white
-   switches+=(-transparent ${bg})
-fi
-
-filename=banner_${txt// /_}_${fg}_on_${bgName}_${width}w_.png
+#filename=banner_${txt// /_}_${fg}_on_${bgName}_${width}w_.png
+filename=banner_${fill}_${product}_${fg}_${txt// /_}.png
 #(( $#dry_run )) || filename=`mktemp ${filename}`
 
 force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then
-   echo Can only overwrite existing file if --force is specified
+   echo Warning: will only overwrite existing file if --force is specified
    dry_run || exit 1
 fi
 
-echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
-command="   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}"
+#echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
+#command="   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}"
+command="   convert -background none -pointsize 240 -fill ${fill} label:${product} -fill ${fg} label:'${txt}' +smush ${smush} ${filename}"
 
 if dry_run; then
   echo ${command}

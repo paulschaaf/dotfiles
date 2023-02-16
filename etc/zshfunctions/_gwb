@@ -35,6 +35,7 @@ _arguments "*: :((
   'httpkill: Kill the simple http server in the resources directory.'
   'idea: Generate Studio project'
   ij
+  info
   killPort
   killStudio
   'lsApd: List the files that "wipeApd" would delete'

@@ -190,6 +190,24 @@ runTask() {
 # Process arguments
 while [ -n "$*" ]; do
   task=$1
+  
+  jvmArgs=(
+    -Dgw.${GW_PRODUCT}.env=h2mem
+    -Dgw.tests.skip.knownbreak=true
+    -Djava.awt.headless=true
+    -Dgw.webapp.dir=idea/webapp
+    -Dgw.classpath.jar=true
+    -Dgw.plugins.gclasses.dir=idea-gclasses
+    -DgosuInit.supportDiscretePackages=true
+    -Dfile.encoding=UTF-8
+  )
+
+  javaArgs=(
+    -ea
+  )
+#    -ideVersion5
+#    -junit4
+#  )
 
   # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
   if [[ ${task} =~ "Quiet$" ]]; then
@@ -204,6 +222,69 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
+    apibreaktest)
+      javaArgs+=(
+        -Xms7500m
+        -Xmx9500m
+      )
+      jvmArgs+=(
+        -DapiBreakTest.fix=true
+        -Dcom.guidewire.apidiff.apidump.APIDumpRepositoryLocal.PATH_PROPERTY=${HOME}/gw/dumps
+        -DapiBreakTest.dump.dir=$HOME/gw/dumps
+      )
+      ideaTmp=/private/var/folders/r_/sk1r8x993qd8jb8v_dc42dnh0000gq/T
+#      javaArgs+=(
+#        @${ideaTmp}/idea_arg_file57507065
+#        @w@${ideaTmp}/idea_working_dirs_junit.tmp
+#        @${ideaTmp}/idea_junit.tmp
+#      )
+      # todo pschaaf: set up CLASSPATH for cc-test
+      isAppModules=(
+        ${GW_PRODUCT}-test
+        ${GW_PRODUCT}-all
+        ${GW_PRODUCT}-custbuild-test
+        ${GW_PRODUCT}-behavior-test
+        ${GW_PRODUCT}-gunit-behavior
+        ${GW_PRODUCT}-gunit-pcf
+        ${GW_PRODUCT}-gunit-content
+        ${GW_PRODUCT}-content
+        ${GW_PRODUCT}
+        ${GW_PRODUCT}-pl-archiving
+        ${GW_PRODUCT}-pl
+        ${GW_PRODUCT}-pl-bizrules
+        ${GW_PRODUCT}-pl-events
+        ${GW_PRODUCT}-pl-gwhub-auth
+        ${GW_PRODUCT}-pl-heatmap
+        ${GW_PRODUCT}-pl-personaldata
+        ${GW_PRODUCT}-pl-properties
+        ${GW_PRODUCT}-pl-inbound-file
+        ${GW_PRODUCT}-pl-outbound-file
+        ${GW_PRODUCT}-cmd-common
+        ${GW_PRODUCT}-pl-solr
+        ${GW_PRODUCT}-pl-rest-core
+        ${GW_PRODUCT}-plugin
+        ${GW_PRODUCT}-pl-bizrules-content
+        ${GW_PRODUCT}-pl-content
+        ${GW_PRODUCT}-pl-events-content
+        ${GW_PRODUCT}-pl-gwhub-auth-content
+        ${GW_PRODUCT}-pl-personaldata-content
+        ${GW_PRODUCT}-pl-inbound-file-content
+        ${GW_PRODUCT}-pl-properties-content
+        ${GW_PRODUCT}-pl-outbound-file-content
+        ${GW_PRODUCT}-gunit
+        ${GW_PRODUCT}-tools
+        ${GW_PRODUCT}-apd-test-templates
+        ${GW_PRODUCT}-pl-bizrules-test
+        ${GW_PRODUCT}-pl-test
+      )
+      moduleClassDirs=:${(j_/build/idea/classes:_)isAppModules}
+      CLASSPATH+=${moduleClassDirs//:/:${PWD}/app-${GW_PRODUCT}/} # prepend e.g. "./app-cc/" to each component
+      export CLASSPATH
+      echoVar CLASSPATH
+      class="com.intellij.rt.junit.JUnitStarter com.guidewire.cc.apidiff.APIBreakTest"
+
+      fullTask="java ${javaArgs} ${jvmArgs} ${class}"
+      ;;
     backupDb)
       dbName=$(date "+${dbbackup}_%H:%M:%S")
       fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
@@ -248,6 +329,12 @@ while [ -n "$*" ]; do
       echo
       echo "There's no username or password. Make sure the connection string is correct!"
       ;;
+    info)
+      infoTasks=(
+        "echoVar apiBreakTest_dump_dir apiBreakTest_localDumpPath"
+      )
+      fullTask=${(j:; :)infoTasks}
+      ;;
     http)
       spawn=true
       noNotifySuccess=true
@@ -290,7 +377,8 @@ while [ -n "$*" ]; do
 #      fullTask=$(killProcStr ${jvmProcess/90/80})
 #      ;;
     pcf*)
-      # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
+      # extract host:port# argument
+ if none default to localhost:GW_PORT_DEBUG+1
       if [[ $task =~ 'pcf=' ]]; then
         pcfHost=${task##pcf=}
         pcfHost=${pcfHost##http://}
@@ -307,7 +395,8 @@ while [ -n "$*" ]; do
       echoVar report
 
       noNotifySuccess=true
-      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
+      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources)
+ %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
     portCheck)
       fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"

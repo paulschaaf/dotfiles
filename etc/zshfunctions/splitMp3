@@ -6,6 +6,8 @@ local extension=${1##*.}
 local title=${2:-$base}
 local index=1
 set -x
+
+# Split audio into 10 minute clips
 ffmpeg -i ${file} -f segment -segment_time 600 -c copy tmp_${base}%03d.${extension}
 
 count=`ls -1q tmp_* | awk 'END {print NR}'`
@@ -14,3 +16,6 @@ for track in tmp_*; do
   rm -f ${track}
   : $((index++))
 done
+
+# Extract MP3 audio from video
+#ffmpeg -i X.avi X.mp3

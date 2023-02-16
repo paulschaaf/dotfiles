@@ -1,5 +1,5 @@
 [core]
-	editor = $EDITOR -nw
+	editor = nano
 [mergetool]
 	keepbackup = false
 [core]
