@@ -424,44 +424,44 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 
 # ========
 # ======== Remote sessions
-if (( $#SUDO_USER )); then
-    export CONNECTION=sudo
-    colored_connection="%F{magenta}"
-elif (( $#SSH_TTY )); then
-    export CONNECTION=ssh
-    colored_connection="%F{226}%S"
-elif (( $#REMOTEHOST || $#REMOTEUSER )); then
-    export CONNECTION=tlnt
-    colored_connection="%B%F{red}"
-fi
-
-(( $#colored_connection )) && colored_connection=' '${colored_connection}${CONNECTION}%b%f%k%s
+#if (( $#SUDO_USER )); then
+#    export CONNECTION=sudo
+#    colored_connection="%F{magenta}"
+#elif (( $#SSH_TTY )); then
+#    export CONNECTION=ssh
+#    colored_connection="%F{226}%S"
+#elif (( $#REMOTEHOST || $#REMOTEUSER )); then
+#    export CONNECTION=tlnt
+#    colored_connection="%B%F{red}"
+#fi
+#
+#(( $#colored_connection )) && colored_connection=' '${colored_connection}${CONNECTION}%b%f%k%s
 
 
 # ========
 # ======== The Prompt
-autoload -Uz add-zsh-hook vcs_info
-function git_status() {
-  vcs_info
-    export VCS_STATUS="${vcs_info_msg_0_}${vcs_info_msg_0_:+
-}"
-}
-add-zsh-hook precmd git_status
-
-zstyle ':vcs_info:*' enable git
-
-# ref: https://timothybasanov.com/2016/04/23/zsh-prompt-and-vcs_info.html
-zstyle ':vcs_info:git*' check-for-changes true
-zstyle ':vcs_info:git*' stagedstr '%{%F{green}%B%}S%{%b%f%}'
-zstyle ':vcs_info:git*' unstagedstr '%{%F{red}%B%}U%{%b%f%}'
-#-zstyle ':vcs_info:*' formats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{green}%}(%25>…>%b%<<)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
-#-zstyle ':vcs_info:git*' formats "%{$fg[green]%}%b%a%m%u%c%{$reset_color%} "
-zstyle ':vcs_info:git*' formats "(%b m:%m %u c:%c)"
-#-zstyle ':vcs_info:*' actionformats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{red}%}(%a|%m)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
-zstyle ':vcs_info:git*' actionformats "(%b|a:%a m:%m %u c:%c)"
-#zstyle ':vcs_info:*' nvcsformats ''
-zstyle ':vcs_info:git:*' patch-format '%10>…>%p%<< (%n applied)'
-zstyle ':vcs_info:*+set-message:*' hooks home-path
+#autoload -Uz add-zsh-hook vcs_info
+#function git_status() {
+#  vcs_info
+#    export VCS_STATUS="${vcs_info_msg_0_}${vcs_info_msg_0_:+
+#}"
+#}
+#add-zsh-hook precmd git_status
+#
+#zstyle ':vcs_info:*' enable git
+#
+## ref: https://timothybasanov.com/2016/04/23/zsh-prompt-and-vcs_info.html
+#zstyle ':vcs_info:git*' check-for-changes true
+#zstyle ':vcs_info:git*' stagedstr '%{%F{green}%B%}S%{%b%f%}'
+#zstyle ':vcs_info:git*' unstagedstr '%{%F{red}%B%}U%{%b%f%}'
+##-zstyle ':vcs_info:*' formats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{green}%}(%25>…>%b%<<)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
+##-zstyle ':vcs_info:git*' formats "%{$fg[green]%}%b%a%m%u%c%{$reset_color%} "
+#zstyle ':vcs_info:git*' formats "(%b m:%m %u c:%c)"
+##-zstyle ':vcs_info:*' actionformats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{red}%}(%a|%m)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
+#zstyle ':vcs_info:git*' actionformats "(%b|a:%a m:%m %u c:%c)"
+##zstyle ':vcs_info:*' nvcsformats ''
+#zstyle ':vcs_info:git:*' patch-format '%10>…>%p%<< (%n applied)'
+#zstyle ':vcs_info:*+set-message:*' hooks home-path
 #function +vi-home-path() {
 #  # Replace $HOME with ~
 #  hook_com[base]="$(echo ${hook_com[base]} | sed "s/${HOME:gs/\//\\\//}/~/" )"
@@ -506,73 +506,75 @@ zstyle ':vcs_info:*+set-message:*' hooks home-path
 #    }
 #fi
 
-function updateDirs() {
-    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
-}
-(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
+#function updateDirs() {
+#    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
+#}
+#(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
+#
+#add-zsh-hook chpwd updateDirs
 
-add-zsh-hook chpwd updateDirs
+#export GIT_PS1_SHOWDIRTYSTATE=1
+#
+#currentUser=${USER//pschaaf/}
 
-export GIT_PS1_SHOWDIRTYSTATE=1
+#case ${UNAME}:${HOSTNAME} in
+#   CYGWIN*|Windows)
+##       HOST_ICON=`echo "\U1FA9F "`
+#       HOST_ICON="🪟 "
+#       ;;
+#   Darwin*)
+#       HOST_ICON="🍎 "
+#       ;;
+#   Linux*)
+#       HOST_ICON="🐧 "
+#       ;;
+#   *)
+##       HOST_ICON=`echo "\U2047" `
+#       HOST_ICON="⁇ "
+#       ;;
+#esac
+#export HOST_ICON
 
-currentUser=${USER//pschaaf/}
+#if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
+#    if ((UID)); then
+#        case ${UNAME}:${HOSTNAME} in
+#            CYGWIN*)
+#                hostColor=%B%F{white}%K{green}
+#                ;;
+#            Darwin*)
+#                hostColor=%F{green}%K{black}
+#                ;;
+#            Linux*)
+#                hostColor=%F{green}%K{black}
+#                ;;
+#            Windows*)
+#                hostColor=%B%F{white}%K{blue}
+#                ;;
+#            *)
+#                hostColor=%B%F{white}%K{black}
+#                ;;
+#        esac
+#    else
+#       hostColor=%B%F{white}%K{red}
+#    fi
+#
+#    # append the host machine, maybe preceeded by an @
+#    (( $#CONNECTION )) && currentUser=${currentUser}${currentUser:+@}'%m'
+#
+#    currentUser=' '$hostColor${currentUser}%b%f%k
+#    unset hostColor
+#fi
+#
+#(( $#HOSTMESSAGE )) && HOSTMESSAGE=" %B%F{magenta}%K{black}$HOSTMESSAGE%k%f%b"
 
-case ${UNAME}:${HOSTNAME} in
-   CYGWIN*|Windows)
-#       HOST_ICON=`echo "\U1FA9F "`
-       HOST_ICON="🪟 "
-       ;;
-   Darwin*)
-       HOST_ICON="🍎 "
-       ;;
-   Linux*)
-       HOST_ICON="🐧 "
-       ;;
-   *)
-#       HOST_ICON=`echo "\U2047" `
-       HOST_ICON="⁇ "
-       ;;
-esac
-export HOST_ICON
+#PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
+#%(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} ${HOST_ICON}%F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
+#\$VCS_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
+##RPROMPT=\$vcs_info_msg_0_
+#PS2="(%F{magenta}%_%f) > "
 
-if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
-    if ((UID)); then
-        case ${UNAME}:${HOSTNAME} in
-            CYGWIN*)
-                hostColor=%B%F{white}%K{green}
-                ;;
-            Darwin*)
-                hostColor=%F{green}%K{black}
-                ;;
-            Linux*)
-                hostColor=%F{green}%K{black}
-                ;;
-            Windows*)
-                hostColor=%B%F{white}%K{blue}
-                ;;
-            *)
-                hostColor=%B%F{white}%K{black}
-                ;;
-        esac
-    else
-       hostColor=%B%F{white}%K{red}
-    fi
-
-    # append the host machine, maybe preceeded by an @
-    (( $#CONNECTION )) && currentUser=${currentUser}${currentUser:+@}'%m'
-
-    currentUser=' '$hostColor${currentUser}%b%f%k
-    unset hostColor
-fi
-
-(( $#HOSTMESSAGE )) && HOSTMESSAGE=" %B%F{magenta}%K{black}$HOSTMESSAGE%k%f%b"
-
-PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
-%(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} ${HOST_ICON}%F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-\$VCS_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
-#RPROMPT=\$vcs_info_msg_0_
-PS2="(%F{magenta}%_%f) > "
-
+export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
+eval "$(~pschaaf/homebrew/bin/starship init zsh)"
 
 # ========
 # ======== Guidewire
