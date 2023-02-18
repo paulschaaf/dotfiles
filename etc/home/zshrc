@@ -213,7 +213,7 @@ inCygwin || alias rm=trash
 alias root='dirs -c && pcd'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
-alias yay="command yay --color=auto"
+alias yay="command yay --color=auto --answerclean None --answerdiff None --answeredit None"
 
 
 # ========
@@ -639,6 +639,9 @@ done
 
 # ========
 # ======== Tricks and Tips
+
+# shrink music - needs work:
+# for file in Alternative_Rock/**/*.flac; do ffmpeg -i $file -c:v copy -q:a 0 /run/media/pschaaf/E8CC-6CF9/${file:r}.mp3; done
 
 # shrink PDF: gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.6 -dPDFSETTINGS=/ebook -dNOPAUSE -dQUIET -dBATCH -sOutputFile=output.pdf input.pdf
 

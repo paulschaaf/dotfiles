@@ -7,6 +7,7 @@ switch-to-activity-d2b375bc-1e26-4e15-a9b7-27a428fefc36=none,none,Switch to acti
 
 [Clementine]
 _k_friendly_name=Clementine
+next_album=Shift+Media Next,none,Next album
 next_track=none,none,Next track
 play_pause=none,none,Play/Pause
 prev_track=none,none,Previous track

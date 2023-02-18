@@ -14,17 +14,11 @@ $username\
 $hostname\
 $os\
 $localip\
-$singularity\
-$kubernetes\
 $directory\
-$docker_context\
-$nodejs\
-$aws\
 $custom\
 $sudo\
 $line_break\
 $jobs\
-$container\
 $shlvl\
 $env_var\
 $character"""
@@ -93,7 +87,7 @@ cherry_pick = '[🍒 PICKING](bold red)'
 [hostname]
 format = '[$ssh_symbol$hostname]($style) '
 ssh_symbol = ' @'
-style = 'yellow bold'
+style = 'yellow'
 
 [os]
 disabled = false
