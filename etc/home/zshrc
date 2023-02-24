@@ -574,7 +574,7 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 #PS2="(%F{magenta}%_%f) > "
 
 export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
-eval "$(~pschaaf/homebrew/bin/starship init zsh)"
+eval "$(starship init zsh)"
 
 # ========
 # ======== Guidewire

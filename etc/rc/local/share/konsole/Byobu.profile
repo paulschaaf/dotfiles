@@ -2,7 +2,8 @@
 AntiAliasFonts=true
 BoldIntense=true
 ColorScheme=WhiteOnBlack
-Font=Noto Mono,10,-1,5,50,0,0,0,0,0
+Font=Fira Code Retina,10,-1,5,53,0,0,0,0,0,Regular
+UseFontLineChararacters=true
 
 [Encoding Options]
 DefaultEncoding=UTF-8
