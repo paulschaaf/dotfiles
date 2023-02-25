@@ -4,6 +4,18 @@ echo in '============ zshenv_cygwin'
 #export CYGWIN_NOWINPATH-addwinpath="addwinpath"
 echo pwd is; pwd
 
+#if inMingW32; then
+#    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
+#    # all slashes, replace semicolons with colons. We can't use cygpath.exe
+#    # for this because it collapses all references to $CYGROOT to /, which
+#    # doesn't work outside of Cygwin (since $CYGWIN won't be the root
+#    # directory)
+#    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
+#    alias cygpath=${CYGROOT}/bin/cygpath.exe
+#
+#    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
+#fi
+
 fixDOSPathIn () {
     local var val
     for var; do

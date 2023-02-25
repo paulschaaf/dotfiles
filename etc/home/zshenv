@@ -43,7 +43,7 @@ fi
 # ========
 # ======== Recompile if necessary
 autoload -Uz zrecompile
-zrecompile ~/.zshenv ~/.zlogin ~/.zshrc
+zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~/etc/rc/zshenv_*
 
 
 # ========
@@ -61,18 +61,16 @@ fi
 export JAVA_HOME=${JAVA11_HOME}
 export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
 
-# Keep only the first occurrence of duplicates
 export os_override_path=(~/bin ~/bin/quick-ssh ${JAVA_HOME}/bin)
 
+# Keep only the first occurrence of duplicates
 typeset -U CDPATH CLASSPATH FPATH fpath LD_LIBRARY_PATH os_override_path PATH path RUBYLIB
 export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH      RUBYLIB
 
-#LD_LIBRARY_PATH=${LD_LIBRARY_PATH}${LD_LIBRARY_PATH:+:}/lib:/usr/lib:~/lib
-
+# this enables the correct symlink override for one of inCygwin, inMacOS, inLinux, etc.
 case ${UNAME} in
   CYGWIN)
       export HOME=/home/$USERNAME
-      os_override_path=(~/bin/win ${os_override_path[@]} )
       os_override_path=(~/bin/win ${os_override_path[@]} )
       zrecompile ~/etc/rc/zshenv_cygwin
       # do not source the global rcs
@@ -102,6 +100,11 @@ fpath=(~pschaaf/etc/zshfunctions ${fpath[@]})
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
+unset inGuidewire
+
+if inMacOS; then
+  export inGuidewire=true
+fi
 
 # ========
 # ======== Exported Variables
@@ -112,7 +115,12 @@ export EDITOR=/usr/bin/nano
 
 [[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
 export EMAIL=paul.schaaf@gmail.com
-[[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]] && export inIntelliJ=true
+if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
+  alias inIntelliJ=true
+else
+  alias inIntelliJ=false
+fi
+
 inLinux && export IDEA_ROOT=/opt
 export TEMP=/tmp
 
@@ -124,63 +132,7 @@ export LC_ALL=en_US.UTF-8
 # ======== OS-Specific
 inCygwin && source ~pschaaf/etc/rc/zshenv_cygwin
 
-#if inMingW32; then
-#    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
-#    # all slashes, replace semicolons with colons. We can't use cygpath.exe
-#    # for this because it collapses all references to $CYGROOT to /, which
-#    # doesn't work outside of Cygwin (since $CYGWIN won't be the root
-#    # directory)
-#    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
-#    alias cygpath=${CYGROOT}/bin/cygpath.exe
-#
-#    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
-#fi
-
 
 # ========
 # ======== Guidewire
-# shellcheck source=~ # shellcheck cannot follow non-constant source
-[[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
-
-#export P4CLIENT=pschaaf_satori_1124
-
-# APD for CC
-export GW_APD_GenerateSmokeTests=true
-
-# Artifactory
-# https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
-export ARTIFACTORY_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
-export ARTIFACTORY_USERNAME=${USER}
-
-# Claim Automation
-export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
-export CIS_ARTIFACT_REPO_USERNAME=${USER}
-export CIS_ARTIFACT_REPO_URL=${ARTIFACTORY_URL}
-
-# Claims Cloud Policy Integration
-export APPLICATION_AUTH_ENABLED=true
-export DEPLOYMENT_ID_GRN=grn:v1:claimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
-export GW_TENANT=guidewire
-export IG_ARTIFACT_REPO_USERNAME=${USER}
-export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
-export TENANT_ID=futurest
-export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
-
-# InsuranceCore
-export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev
-export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-release
-export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/mavencentral-mvn-remote
-export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoredependencies-mvn-release
-export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-dev
-export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-release
-
-# GradlePlugins
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-dev
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-prod
-export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-thirdparty
-export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/plugins-gradle-remote
-export GRADLE_DISTRIBUTION_REPOSITORY_URL=https://artifactory.guidewire.com/gradledistributions-generic-remote
-
-# Dependency credentials (must not include "@guidewire.com")
-export DEPENDENCY_REPOSITORY_USERNAME=${USER}
-export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
+(($#inGuidewire)) && source ~pschaaf/etc/rc/zshenv_guidewire

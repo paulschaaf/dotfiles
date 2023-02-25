@@ -86,7 +86,7 @@ function addGlobs() {
    expanded=true
 }
 
-(($#inIntelliJ)) && addSwitch --color=always
+[[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]] && addSwitch --color=always
 
 # shellcheck disable=SC1105
 while (($#@)); do

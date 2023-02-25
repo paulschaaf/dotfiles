@@ -370,48 +370,27 @@ autoload -Uz zed && alias fned='zed -f'
 # ======== Key Bindings
 #[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-bindkey "\033[17~"   kill-whole-line       # F6
-bindkey "\033[18~"   copy-region-as-kill   # F7
-bindkey "\033[19~"   yank                  # F8
-bindkey "\033[20~"   history-incremental-search-backward # F9
+bindkey "^?"         backward-delete-char                 # backspace
+bindkey "^H"         backward-kill-word                   # ctrl_backspace
+bindkey "\033[1;3D"  backward-word                        # alt_left
+bindkey "\033[1;5D"  backward-word                        # ctrl_left
+bindkey "\033[H"     beginning-of-line                    # home
+bindkey "\033[18~"   copy-region-as-kill                  # F7
+bindkey "\033[3~"    delete-char                          # delete
+bindkey "\M-C\M-,"   down-case-word
+bindkey "\033[F"     end-of-line                          # end
+bindkey "\033[1;3C"  forward-word                         # alt_right
+bindkey "\033[1;5C"  forward-word                         # ctrl_right
+bindkey "\033[20~"   history-incremental-search-backward  # F9
+bindkey "\033[17~"   kill-whole-line                      # F6
+bindkey "\033[3;5~"  kill-word                            # ctrl_delete
+bindkey "\M-C\M-5"   up-case-word
+bindkey "\033[19~"   yank                                 # F8
 
-if (( $#inIntelliJ )); then
+if inIntelliJ; then
     bindkey "\033[5D"    backward-word         # ctrl_left
     bindkey "\033[5C"    forward-word          # ctrl_right
-
-    bindkey "\033[H"     beginning-of-line     # home
-    bindkey "\033[F"     end-of-line           # end
-else
-    bindkey "\033[1;5D"  backward-word         # ctrl_left
-    bindkey "\033[1;5C"  forward-word          # ctrl_right
-
-    if inCygwin; then
-       bindkey "\033[H"     beginning-of-line     # home
-       bindkey "\033[F"     end-of-line           # end
-    else
-       bindkey "\033[1~"    beginning-of-line     # home
-       bindkey "\033[4~"    end-of-line           # end
-    fi
 fi
-
-bindkey "\M-C\M-5"   up-case-word
-bindkey "\M-C\M-,"   down-case-word
-
-bindkey "\033[3~"    delete-char           # delete
-bindkey "^?"         backward-delete-char  # backspace
-
-bindkey "\033[3;5~"  kill-word             # ctrl_delete
-bindkey "^H"         backward-kill-word    # ctrl_backspace
-
-case ${TERM} in
-    rxvt*)
-        bindkey "^H"     backward-delete-char
-        bindkey "\033?"  backward-kill-word
-        ;;
-    *)
-        ;;
-esac
-
 
 # Macro Keys
 
