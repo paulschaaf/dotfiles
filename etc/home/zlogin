@@ -23,7 +23,7 @@
 export TERM=xterm-256color
 stty start ''   stop   ''
 
-if inIntelliJ; then
+if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
     SHLVL=0
 else
     if inMacOS; then
