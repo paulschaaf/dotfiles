@@ -15,17 +15,14 @@ $username\
 $hostname\
 $os\
 $localip\
-$directory ${env_var.dirs}\
+$directory\
 $sudo\
 $line_break\
 $jobs\
 $shlvl\
-${custom.command_number}\
 $character"""
 
-#right_format = """
-#$package\
-#"""
+right_format = "${custom.zsh_command_number}"
 
 command_timeout = 5000
 
@@ -34,13 +31,13 @@ format = '\$ '
 
 [cmd_duration]
 #min_time = 0
-format = '''[➜ \[⏱ $duration\]]($style)
+format = '''  [➜ ⏱ $duration]($style)
 '''
 style = 'dimmed'
 
-[custom.command_number]
-command = "echo %h"
-format = "[$output](fg:249) "
+[custom.zsh_command_number]
+command = "echo \\|%h"
+format = "[$output](white) "
 when = true
 
 [directory]
@@ -55,32 +52,32 @@ style = 'fg:235'
 [git_branch]
 #symbol = '🌱 '
 format = '''[$symbol$branch(:$remote_branch)]($style)'''
-style = 'cyan'
+style = 'fg:cyan'
 truncation_symbol = ''
 
 [git_commit]
-commit_hash_length = 4
-tag_symbol = '🔖 '
+style = 'white'
 
 [git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
 cherry_pick = '[🍒 PICKING](bold red)'
+format = '[\($state( $progress_current of $progress_total)\)]($style) '
+style = 'fg:cyan'
 
 [git_status]
 #up_to_date = '✓'
-ahead = '⇡'
-behind = '⇣'
-conflicted = '='
+ahead = '[↑](fg:bold bright-green)'
+behind = '[↓](fg:bold bright-blue)'
+conflicted = '[=$count](fg:bright-green)'
 #deleted = '🗑'
-deleted = '✘'
-diverged = '⇕'
-modified = '!'
-renamed = '»'
-staged = '[+\($count\)](bright-green)'
-stashed = '$'
-untracked = '?'
+deleted = '[✘$count](fg:bright-red)'
+diverged = '[⇕$count](fg:white)'
+modified = '[!$count](fg:bright-yellow)'
+renamed = '[»$count](fg:white)'
+staged = '[+$count]fg:(fg:bright-green)'
+stashed = '[$$count](fg:white)'
+untracked = '[?$count](fg:bright-red)'
 up_to_date = ''
-style = 'white'
+style = 'fg:cyan'
 
 [hostname]
 format = '[$ssh_symbol$hostname]($style) '
@@ -106,7 +103,7 @@ symbol = '-'
 
 [time]
 disabled = false
-format = '$time '
+format = '[$time]($style) '
 time_format = '%R'
 style = ''
 

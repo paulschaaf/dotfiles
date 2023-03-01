@@ -377,8 +377,7 @@ while [ -n "$*" ]; do
 #      fullTask=$(killProcStr ${jvmProcess/90/80})
 #      ;;
     pcf*)
-      # extract host:port# argument
- if none default to localhost:GW_PORT_DEBUG+1
+      # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
       if [[ $task =~ 'pcf=' ]]; then
         pcfHost=${task##pcf=}
         pcfHost=${pcfHost##http://}
@@ -395,8 +394,7 @@ while [ -n "$*" ]; do
       echoVar report
 
       noNotifySuccess=true
-      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources)
- %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
+      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
     portCheck)
       fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
