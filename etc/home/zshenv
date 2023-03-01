@@ -43,7 +43,7 @@ fi
 # ========
 # ======== Recompile if necessary
 autoload -Uz zrecompile
-zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~/etc/rc/zshenv_*
+zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~pschaaf/etc/rc/zshenv_*
 
 
 # ========

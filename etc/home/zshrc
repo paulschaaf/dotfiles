@@ -387,7 +387,7 @@ bindkey "\033[3;5~"  kill-word                            # ctrl_delete
 bindkey "\M-C\M-5"   up-case-word
 bindkey "\033[19~"   yank                                 # F8
 
-if inIntelliJ; then
+if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
     bindkey "\033[5D"    backward-word         # ctrl_left
     bindkey "\033[5C"    forward-word          # ctrl_right
 fi
@@ -419,7 +419,8 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 
 # ========
 # ======== The Prompt
-#autoload -Uz add-zsh-hook vcs_info
+autoload -Uz add-zsh-hook vcs_info
+#autoload -Uz vcs_info
 #function git_status() {
 #  vcs_info
 #    export VCS_STATUS="${vcs_info_msg_0_}${vcs_info_msg_0_:+
@@ -485,12 +486,12 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 #    }
 #fi
 
-#function updateDirs() {
-#    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
-#}
-#(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
-#
-#add-zsh-hook chpwd updateDirs
+function updateDirs() {
+    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
+}
+(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
+
+add-zsh-hook chpwd updateDirs
 
 #export GIT_PS1_SHOWDIRTYSTATE=1
 #
@@ -553,6 +554,7 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 #PS2="(%F{magenta}%_%f) > "
 
 export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
+isRoot && PATH+=:~pschaaf/homebrew/bin
 eval "$(starship init zsh)"
 
 # ========
