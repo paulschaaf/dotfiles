@@ -67,7 +67,7 @@ HEREDOC
 
 command=()
 
-function addSwitch() {
+function addSwitches() {
    # shellcheck disable=SC2034
    for switch in "${@}"; do
       command+=("${switch}")
@@ -81,12 +81,15 @@ function addGlobs() {
 
    for pattern in "${@}"; do
       (($#negate)) && pattern="!${pattern}"
-      addSwitch --glob "${(qq)${pattern}}"
+      addSwitches --glob "${(qq)${pattern}}"
    done
    expanded=true
 }
 
-[[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]] && addSwitch --color=always
+if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
+  addSwitches --color=always
+  inIntelliJ=true
+fi
 
 # shellcheck disable=SC1105
 while (($#@)); do
@@ -100,7 +103,7 @@ while (($#@)); do
          expanded=true
          ;;
       --heading)
-         addSwitch --heading --color=never
+         addSwitches --heading --color=never
          expanded=true
          ;;
       -h|--help)
@@ -131,10 +134,10 @@ while (($#@)); do
          ;;
       -*)
          # don't enquote switches
-         addSwitch "${1}"
+         addSwitches "${1}"
          ;;
       *)
-         addSwitch "${(qq)1}"
+         addSwitches "${(qq)1}"
          ;;
    esac
    shift

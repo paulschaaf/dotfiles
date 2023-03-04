@@ -1,0 +1,69 @@
+#!/usr/bin/env zsh
+products=(bc cc ab pc pl)
+platform=halite
+
+switches=()
+alias dry_run=false
+while [[ -n "$*" ]]; do
+   switch=${1%%=*}; value=${1#*=}
+   case ${switch} in
+      --debug)
+         set -x
+         ;;
+      --dry_run|--dry-run)
+         alias dry_run=true
+         ;;
+      --platform)
+        platform=$value
+        ;;
+#      -h|--help)
+#         usage
+#         exit
+#         ;;
+      --ab|--bc|--cc|--pc|--pl)
+        # remap the product
+        products[$products[(i)${switch##--}]]=$value
+        ;;
+      --no*)
+        badprod=${switch##--no}
+        # remove the offending product
+        products[$products[(i)$badprod]]=()
+        ;;
+      -*)
+        switches+=(${1})
+       ;;
+      *)
+        break
+        ;;
+   esac
+   shift
+done
+
+cd ~/gw/$platform
+
+for prod in $products; do
+  case ${prod} in
+    ab)
+      name=ContactManager
+      ;;
+    bc)
+      name=BillingCenter
+      ;;
+    cc)
+      name=ClaimCenter
+      ;;
+    pc)
+      name=PolicyCenter
+      ;;
+    pl)
+      name=Platform
+      ;;
+    *)
+      name=unknown
+      ;;
+  esac
+  name=" ${name}"
+
+  printf "\n\e[1;46m%s%$(($COLUMNS-$#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
+  rg --color=always --case-sensitive ${switches} ${*} $prod
+done

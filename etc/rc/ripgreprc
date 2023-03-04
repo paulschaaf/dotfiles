@@ -1,4 +1,4 @@
---colors=match:fg:255,255,0
+--colors=match:fg:yellow
 --colors=line:none
 --column
 --smart-case

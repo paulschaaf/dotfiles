@@ -363,3 +363,5 @@ typeset -p PATH CLASSPATH
 export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
 export apiBreakTest_fix=true
 export apiBreakTest_localDumpPath=${HOME}/gw/dumps
+
+typeset  -p apiBreakTest_dump_dir apiBreakTest_fix apiBreakTest_localDumpPath

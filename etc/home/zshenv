@@ -72,7 +72,6 @@ case ${UNAME} in
   CYGWIN)
       export HOME=/home/$USERNAME
       os_override_path=(~/bin/win ${os_override_path[@]} )
-      zrecompile ~/etc/rc/zshenv_cygwin
       # do not source the global rcs
       unsetopt GLOBAL_RCS
       ;;
@@ -115,11 +114,6 @@ export EDITOR=/usr/bin/nano
 
 [[ ${USER} != pschaaf ]] && alias emacs='emacs -u pschaaf'
 export EMAIL=paul.schaaf@gmail.com
-if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
-  alias inIntelliJ=true
-else
-  alias inIntelliJ=false
-fi
 
 inLinux && export IDEA_ROOT=/opt
 export TEMP=/tmp
@@ -130,9 +124,14 @@ export LC_ALL=en_US.UTF-8
 
 # ========
 # ======== OS-Specific
-inCygwin && source ~pschaaf/etc/rc/zshenv_cygwin
-
+if inCygwin; then
+  zrecompile ~/etc/rc/zshenv_cygwin
+  source ~pschaaf/etc/rc/zshenv_cygwin
+fi
 
 # ========
 # ======== Guidewire
-(($#inGuidewire)) && source ~pschaaf/etc/rc/zshenv_guidewire
+if (($#inGuidewire)); then
+  zrecompile ~pschaaf/etc/rc/zshenv_guidewire
+  source ~pschaaf/etc/rc/zshenv_guidewire
+fi

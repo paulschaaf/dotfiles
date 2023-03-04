@@ -1,5 +1,3 @@
-#!/bin/zsh
-
 echo in '============ zshenv_cygwin'
 #export CYGWIN_NOWINPATH-addwinpath="addwinpath"
 echo pwd is; pwd

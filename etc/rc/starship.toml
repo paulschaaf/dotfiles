@@ -36,8 +36,8 @@ format = '''  [➜ ⏱ $duration]($style)
 style = 'dimmed'
 
 [custom.zsh_command_number]
-command = "echo \\|%h"
-format = "[$output](white) "
+command = "echo '|%h'"
+format = "[$output](white)"
 when = true
 
 [directory]
@@ -56,7 +56,7 @@ style = 'fg:cyan'
 truncation_symbol = ''
 
 [git_commit]
-style = 'white'
+style = 'bold red'
 
 [git_state]
 cherry_pick = '[🍒 PICKING](bold red)'
@@ -73,7 +73,7 @@ deleted = '[✘$count](fg:bright-red)'
 diverged = '[⇕$count](fg:white)'
 modified = '[!$count](fg:bright-yellow)'
 renamed = '[»$count](fg:white)'
-staged = '[+$count]fg:(fg:bright-green)'
+staged = '[+$count](fg:bright-green)'
 stashed = '[$$count](fg:white)'
 untracked = '[?$count](fg:bright-red)'
 up_to_date = ''
