@@ -23,6 +23,7 @@ ssh/
 !/etc/home/ssh/ssh-open
 !/etc/home/ssh/sshd_config
 
+**/*.zwc.old
 out/
 
 secrets.sh

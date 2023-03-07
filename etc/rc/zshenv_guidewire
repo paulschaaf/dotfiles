@@ -13,33 +13,50 @@ export ARTIFACTORY_USERNAME=${USER}
 
 # Claim Automation
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
-export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export CIS_ARTIFACT_REPO_URL=${ARTIFACTORY_URL}
+export CIS_ARTIFACT_REPO_USERNAME=${USER}
 
 # Claims Cloud Policy Integration
 export APPLICATION_AUTH_ENABLED=true
 export DEPLOYMENT_ID_GRN=grn:v1:claimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
 export GW_TENANT=guidewire
-export IG_ARTIFACT_REPO_USERNAME=${USER}
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
-export TENANT_ID=futurest
+export IG_ARTIFACT_REPO_USERNAME=${USER}
 export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
+export TENANT_ID=futurest
 
 # InsuranceCore
-export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev
-export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-release
-export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/mavencentral-mvn-remote
 export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoredependencies-mvn-release
-export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-dev
 export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-release
+export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-dev
+export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-release
+export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev
+export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/mavencentral-mvn-remote
 
 # GradlePlugins
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-dev
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-prod
-export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-thirdparty
-export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/plugins-gradle-remote
 export GRADLE_DISTRIBUTION_REPOSITORY_URL=https://artifactory.guidewire.com/gradledistributions-generic-remote
+export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/plugins-gradle-remote
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-prod
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-dev
+export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-thirdparty
 
 # Dependency credentials (must not include "@guidewire.com")
-export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
+export DEPENDENCY_REPOSITORY_USERNAME=${USER}
+
+typeset -Ax GW_COLORS=(
+  [BillingCenter]='[105m'     # bright white text on magenta
+  [ClaimCenter]='[97;104m'    # bright white text on blue
+  [ContactManager]='[30;106m' # black text on aqua
+  [ExampleCenter]='[30;107m'  # bright black text on gray
+  [PolicyCenter]='[30;103m'   # black text on tan/yellow
+)
+GW_COLORS[Platform]=${GW_COLORS[ExampleCenter]}
+
+GW_COLORS[bc]=${GW_COLORS[BillingCenter]}
+GW_COLORS[cc]=${GW_COLORS[ClaimCenter]}
+GW_COLORS[ab]=${GW_COLORS[ContactManager]}
+GW_COLORS[cm]=${GW_COLORS[ContactManager]}
+GW_COLORS[ex]=${GW_COLORS[ExampleCenter]}
+GW_COLORS[pc]=${GW_COLORS[PolicyCenter]}
+GW_COLORS[pl]=${GW_COLORS[ExampleCenter]}

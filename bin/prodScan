@@ -46,7 +46,8 @@ done
 cd ~/gw/$platform
 
 for prod in $products; do
-  name=`sed -n 's/^appName=/ /gp' $prod/gradle.properties`
-  printf "\n\e[1;46m%s%$(($COLUMNS-$#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
+  name=`sed -n 's/^appName=//gp' $prod/gradle.properties`
+
+  printf "\n${GW_COLORS[$name]}%s%$(($COLUMNS-$#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
   rg --color=always --case-sensitive ${switches} ${*} $prod
 done

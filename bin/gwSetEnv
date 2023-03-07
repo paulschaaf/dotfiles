@@ -1,6 +1,10 @@
 #!/bin/zsh
 # shellcheck disable=SC2155
 
+# Clear these out
+unset IDEA_HOME IDEA_JDK JAVA_HOME
+unset GW_DB_DIR GW_LIB_DIR
+
 #
 # FUNCTIONS
 #
@@ -55,80 +59,45 @@ function lsPathVar() {
 # DETERMINE THE PLATFORM
 #
 
-trace \$1="$1"
-case "$1" in
-  '' | *[!0-9]*)
-    trace \$1 is empty, or contains non-digits
-    export GW_PLATFORM=$(echo "$PWD" | sed -En '
-              # check if the path explicitly names the platform version
-              s/.*(carbon|diamond|emerald|ferrite|granite|halite).*/\1/
-
-              # otherwise extract the version number from the install directory name
-              s/.*([bcp]c|ab|cm|pl|px|Center|Manager)_*0*(5[0-9]|[1-9]|10).*/\2/
-
-              t print
-
-              # if no substitutions were made--we could not determine the version--exit now with the empty string
-              #T
-
-              # otherwise print what we found
-              :print
-              p')
-    ;;
-  *)
-    trace \$1 contains only digits
-    export GW_PLATFORM=$1
-    shift
-    ;;
-esac
-trace Initial guess for platform is \'"$GW_PLATFORM"\'
-
-# compute platform from studio jar version num
-# ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
+export GW_PL_VERSION=$(sed -nE 's/^plVersion=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
+# or maybe this *is* platform
+(($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
 
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
 #
 
-# Clear these out
-unset IDEA_HOME IDEA_JDK JAVA_HOME
-unset GW_DB_DIR GW_LIB_DIR
-
-case ${GW_PLATFORM} in
-  6 | carbon)
-    export AARDVARK_HOME=/depot/aardvark/alpha
-    #        # export M2_HOME=/depot/maven/apache-maven-2.2.1
-    #        # export M2_HOME=/depot/maven/apache-maven-3.0.3
-    export ANT_HOME=/depot/ant/apache-ant-1.7.1
-    export GW_PL_NUM=6
-    export GW_PLATFORM=carbon
-    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-    export JAVA_HOME=${JAVA16_HOME}
-    #        scriptExtension=.sh
-    ;;
-  7 | diamond)
-    export AARDVARK_HOME=/depot/aardvark/alpha
-    export ANT_HOME=/depot/ant/apache-ant-1.7.1
-    export M2_HOME=/depot/maven/apache-maven-2.2.1
-
-    export GW_PL_NUM=7
-    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-    export JAVA_HOME=${JAVA16_HOME}
-    scriptExtension=.sh
-    ;;
-  8 | emerald)
-    export GW_PL_NUM=8
-    export GW_PLATFORM=emerald
-    export IDEA_HOME=/opt/idea_emerald
-    export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
-    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
-    export AARDVARK_HOME=/depot/aardvark/alpha
-    export ANT_HOME=/depot/ant/apache-ant-1.8.2
-    export M2_HOME=/depot/maven/apache-maven-3.0.4
-    scriptExtension=.sh
-    ;;
-  9 | ferrite)
-    export GW_PL_NUM=9
+case ${GW_PL_VERSION} in
+#  6*)
+#    export AARDVARK_HOME=/depot/aardvark/alpha
+#    export ANT_HOME=/depot/ant/apache-ant-1.7.1
+#    export GW_LIB_DIR=../lib
+#    export GW_PLATFORM=carbon
+#    export GW_START_SCRIPT=./all
+#    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
+#    export JAVA_HOME=${JAVA16_HOME}
+#    ;;
+#  7*)
+#    export AARDVARK_HOME=/depot/aardvark/alpha
+#    export ANT_HOME=/depot/ant/apache-ant-1.7.1
+#    export GW_LIB_DIR=../lib
+#    export GW_START_SCRIPT=./all
+#    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
+#    export JAVA_HOME=${JAVA16_HOME}
+#    export M2_HOME=/depot/maven/apache-maven-2.2.1
+#    ;;
+#  8*)
+#    export AARDVARK_HOME=/depot/aardvark/alpha
+#    export ANT_HOME=/depot/ant/apache-ant-1.8.2
+#    export GW_LIB_DIR=../lib
+#    export GW_PLATFORM=emerald
+#    export GW_START_SCRIPT=./all
+#    export IDEA_HOME=/opt/idea_emerald
+#    export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
+#    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
+#    export M2_HOME=/depot/maven/apache-maven-3.0.4
+#    ;;
+  9*)
     export GW_PLATFORM=ferrite
     inMacOS &&
       export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents' ||
@@ -137,8 +106,18 @@ case ${GW_PLATFORM} in
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
       export JAVA_HOME=/usr/lib/jvm/java-8-jdk
     ;;
-  10 | granite)
-    export GW_PL_NUM=10
+  10.0.0*|10.0.1)
+    # for <= 10.0.1
+    export GW_PLATFORM=granite
+    announce 'Using older config for this platform version'
+    ifMacOS &&
+      export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' ||
+      export IDEA_HOME=/opt/idea-IU-173.4674.33
+    ifMacOS &&
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
+      export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    ;;
+  10*)
     export GW_PLATFORM=granite
     inMacOS &&
       export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
@@ -146,21 +125,8 @@ case ${GW_PLATFORM} in
     inMacOS &&
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
       export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-
-    # for <= 10.0.1
-    if [[ "$1" == "old" ]]; then
-      announce 'Using older config for this platform version'
-      ifMacOS &&
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' ||
-        export IDEA_HOME=/opt/idea-IU-173.4674.33
-      ifMacOS &&
-        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
-        export JAVA_HOME=/usr/lib/jvm/java-8-jdk
-      shift
-    fi
     ;;
-  50 | halite)
-    export GW_PL_NUM=50
+  50*)
     export GW_PLATFORM=halite
     inMacOS &&
       export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
@@ -179,8 +145,6 @@ case ${GW_PLATFORM} in
     ;;
 esac
 
-# requires extended globbing
-#for env in `echo (../)#gw.env(:a)`; do
 for env in {../..,..,.}/gw.env; do
   if [[ -f ${env} ]]; then
     echo Sourcing ${env}
@@ -190,9 +154,6 @@ for env in {../..,..,.}/gw.env; do
   fi
 done
 
-#[[ -f ~/.gw.env ]] && cat ~/.gw.env && source ~/.gw.env
-#[[ -f ./gw.env ]] && cat gw.env && source gw.env
-
 # exit if not a Guidewire installation
 if [[ -z "$GW_PLATFORM" ]]; then
   trace Could not determine the platform version!
@@ -200,8 +161,10 @@ if [[ -z "$GW_PLATFORM" ]]; then
 fi
 
 trace Resolved: GW_PLATFORM=$GW_PLATFORM
+export GW_PL_NUM=${GW_PL_VERSION%.*}
 
 # If these are empty, default them
+export GW_START_SCRIPT=${:-./gwb}
 export GW_DB_DIR=${GW_DB_DIR:-/tmp/guidewire/${GW_PLATFORM}}
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
@@ -250,72 +213,27 @@ lsPathVar GW_ROOT
 # DETERMINE THE PRODUCT
 #
 
-export GW_PRODUCT=$(echo "${GW_ROOT}" | sed -nE 's_^.*(ab|cm|[bcp]c|p[lx]|ContactManager|(Billing|Claim|Example|Policy)Center|Platform).*_\1_p')
-
-case ${GW_PRODUCT:l} in
-  ab | contactmanager)
-    export GW_PRODUCT=ab
-    export GW_PORT=8280
-    export GW_COLOR='[30;106m' # bright white text on aqua
-    ;;
-  bc | billingcenter)
-    export GW_PRODUCT=bc
-    export GW_PORT=8380
-    export GW_COLOR='[105m' # bright white text on magenta
-    ;;
-  pc | policycenter)
-    export GW_PRODUCT=pc
-    export GW_PORT=8180
-    export GW_COLOR='[30;103m' # black text on tan/yellow
-    ;;
-  pl | platform)
-    export GW_PRODUCT=pl
-    export GW_PORT=8480
-    export GW_COLOR='[30;107m' # bright black text on gray
-    ;;
-  gw)
-    export GW_PRODUCT=gw
-    export GW_COLOR='[30;107m' # bright black text on gray
-    ;;
-  cc | claimcenter)
-    export GW_PRODUCT=cc
-    export GW_PORT=8080
-    export GW_COLOR='[97;104m' # bright white text on blue
-    ;;
-  *)
-    # exit if we can't determine the Guidewire product
-    trace Could not determine the Guidewire product
-    unsetGWVars
-    return 1 2>/dev/null || exit
-    ;;
-esac
-
-trace Determined the GW product
-typeset -p GW_PRODUCT
-
+export GW_APPCODE=$(sed -n 's/^appCode=//gp' gradle.properties)
+export GW_PORT=$(sed -n 's/^jettyPort=//gp' gradle.properties)
 # shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
-export GW_TITLE="$GW_PRODUCT$GW_PL_NUM"
-export GW_PROMPT="%{$GW_COLOR%}$GW_TITLE%{[0m%} "
-typeset -p GW_PORT GW_PROMPT GW_PORT_DEBUG GW_TITLE
+# compute platform from studio jar version num
+# ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
+export GW_STUDIO_VERSION=$(sed -n 's/^studioVersion=//gp' gradle.properties)
+export GW_TITLE="$GW_APPCODE$GW_PL_NUM"
+#export GW_PROMPT="%{$GW_COLORs[$GW_APPCODE]%}$GW_TITLE%{[0m%} "
+typeset -p GW_APPCODE GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE
 
 #
 # DETERMINE THE STARTUP SCRIPT
 #
 
-export GW_START_SCRIPT=./gwb
 export GW_START_DIR=$GW_ROOT
 
-GW_START_SCRIPT=$GW_START_SCRIPT${scriptExtension}
-
 if [[ ${GW_PL_NUM} -lt 9 ]]; then
-  export _XX=${GW_PRODUCT}
-  typeset -p _XX
   GW_START_DIR=${GW_ROOT}/bin
-  GW_START_SCRIPT=./all
-  GW_LIB_DIR=../lib
 fi
-lsPathVar GW_LIB_DIR GW_START_DIR GW_START_SCRIPT
+lsPathVar GW_START_DIR GW_START_SCRIPT
 
 #
 # Fix PATH and CLASSPATH
@@ -340,6 +258,7 @@ replaceInList PATH 'java-[0-9]+-jdk' ${JAVA_HOME}/bin
 replaceInList CLASSPATH 'java-[0-9]+-jdk' ${JAVA_HOME}/lib/\*
 
 if [[ "$GW_PL_NUM" -lt 9 ]]; then
+  lsPathVar GW_LIB_DIR
   replaceInList PATH 'ant' $ANT_HOME/bin
   replaceInList CLASSPATH 'ant' $ANT_HOME/lib/\*
 
@@ -348,14 +267,14 @@ if [[ "$GW_PL_NUM" -lt 9 ]]; then
 
   replaceInList PATH 'maven' ${M2_HOME}/bin
   replaceInList CLASSPATH 'maven' ${M2_HOME}/lib/\*
-fi
 
-if (($#GW_LIB_DIR > 0)) && [ -d "$GW_START_DIR"/"$GW_LIB_DIR" ]; then
-  CLASSPATH+=:"$GW_LIB_DIR"/\*
+  if (($#GW_LIB_DIR > 0)) && [ -d "$GW_START_DIR"/"$GW_LIB_DIR" ]; then
+    CLASSPATH+=:"$GW_LIB_DIR"/\*
+  fi
 fi
 
 # Remove any empty or duplicate members
-CLASSPATH=$(echo -n "$CLASSPATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}')
+#CLASSPATH=$(echo -n "$CLASSPATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}')
 
 typeset -p PATH CLASSPATH
 
@@ -364,4 +283,4 @@ export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
 export apiBreakTest_fix=true
 export apiBreakTest_localDumpPath=${HOME}/gw/dumps
 
-typeset  -p apiBreakTest_dump_dir apiBreakTest_fix apiBreakTest_localDumpPath
+typeset -p apiBreakTest_dump_dir apiBreakTest_fix apiBreakTest_localDumpPath
