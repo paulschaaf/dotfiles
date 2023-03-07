@@ -5,7 +5,7 @@ platform=halite
 switches=()
 alias dry_run=false
 while [[ -n "$*" ]]; do
-   switch=${1%%=*}; value=${1#*=}
+   switch=${1%%=*}; [[ ${switch} =~ "=" ]] && value=${1#*=} || value=''
    case ${switch} in
       --debug)
          set -x
@@ -21,8 +21,12 @@ while [[ -n "$*" ]]; do
 #         exit
 #         ;;
       --ab|--bc|--cc|--pc|--pl)
-        # remap the product
-        products[$products[(i)${switch##--}]]=$value
+        product=${switch##--}
+        # either add the product (e.g. "ab=ab", or remap the product (e.g. "Cc"="cc2")
+        products[$products[(i)${product}]]=${value:=$product}
+        ;;
+      --none)
+        products=()
         ;;
       --no*)
         badprod=${switch##--no}
@@ -42,28 +46,7 @@ done
 cd ~/gw/$platform
 
 for prod in $products; do
-  case ${prod} in
-    ab)
-      name=ContactManager
-      ;;
-    bc)
-      name=BillingCenter
-      ;;
-    cc)
-      name=ClaimCenter
-      ;;
-    pc)
-      name=PolicyCenter
-      ;;
-    pl)
-      name=Platform
-      ;;
-    *)
-      name=unknown
-      ;;
-  esac
-  name=" ${name}"
-
+  name=`sed -n 's/^appName=/ /gp' $prod/gradle.properties`
   printf "\n\e[1;46m%s%$(($COLUMNS-$#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
   rg --color=always --case-sensitive ${switches} ${*} $prod
 done
