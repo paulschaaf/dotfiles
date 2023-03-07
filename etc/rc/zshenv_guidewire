@@ -18,8 +18,11 @@ export CIS_ARTIFACT_REPO_USERNAME=${USER}
 
 # Claims Cloud Policy Integration
 export APPLICATION_AUTH_ENABLED=true
-export DEPLOYMENT_ID_GRN=grn:v1:claimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
+export CCPI_IS_LOCAL_SERVER=true
+export DEPLOYMENT_ID_GRN=grn:v1:igclaimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
+
 export GW_TENANT=guidewire
+export HELIOS_ENABLED=false
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
 export IG_ARTIFACT_REPO_USERNAME=${USER}
 export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
