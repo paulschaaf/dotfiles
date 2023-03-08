@@ -20,7 +20,7 @@ $sudo\
 $line_break\
 $jobs\
 $shlvl\
-${custom.gw_product}\
+${custom.ccpi}${custom.gw_product}\
 $character"""
 
 right_format = "${custom.zsh_command_number}"
@@ -36,9 +36,16 @@ format = '''  [➜ ⏱ $duration]($style)
 '''
 style = 'dimmed'
 
+[custom.ccpi]
+description = "Shows CCPI"
+command = 'sed -n "s/^camelVersion=.*/ccpi/gp" gradle.properties'
+format = '[($output)]($style) '
+style = 'bright-white bg:green'
+#detect_folders = ["src/main/java/com/guidewire/integrationgateway"]
+detect_files = ["README-internal.md"]
+
 [custom.gw_product]
 description = "Shows Guidewire product"
-#command = 'app=$(sed -n "s/^appCode=//gp" gradle.properties); version=$(sed -nE "s/^version=([0-9]*).*/\\1/gp" gradle.properties); echo -n "$GW_COLORS[$app]$app$version\e[0m"'
 command = 'app=$(sed -n "s/^appCode=//gp" gradle.properties); echo -n "$GW_COLORS[$app]$app\e[0m"'
 detect_folders = ["studio"]
 format = "$output "

@@ -1,14 +1,13 @@
 # shellcheck source=~ # shellcheck cannot follow non-constant source
 [[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
 
-#export P4CLIENT=pschaaf_satori_1124
-
 # APD for CC
 export GW_APD_GenerateSmokeTests=true
 
 # Artifactory
 # https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
-export ARTIFACTORY_URL=https://artifactory.guidewire.com/devconnect-mvn-prod/
+artifactory=https://artifactory.guidewire.com
+export ARTIFACTORY_URL=${artifactory}/devconnect-mvn-prod/
 export ARTIFACTORY_USERNAME=${USER}
 
 # Claim Automation
@@ -20,7 +19,6 @@ export CIS_ARTIFACT_REPO_USERNAME=${USER}
 export APPLICATION_AUTH_ENABLED=true
 export CCPI_IS_LOCAL_SERVER=true
 export DEPLOYMENT_ID_GRN=grn:v1:igclaimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
-
 export GW_TENANT=guidewire
 export HELIOS_ENABLED=false
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
@@ -29,36 +27,37 @@ export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east
 export TENANT_ID=futurest
 
 # InsuranceCore
-export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoredependencies-mvn-release
-export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-release
-export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoreosgi3rdparty-mvn-dev
-export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-release
-export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-dev
-export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/mavencentral-mvn-remote
+export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitecoredependencies-mvn-release
+export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitecoreosgi3rdparty-mvn-release
+export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecoreosgi3rdparty-mvn-dev
+export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitecore-mvn-release
+export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecore-mvn-dev
+export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=${artifactory}/mavencentral-mvn-remote
 
 # GradlePlugins
-export GRADLE_DISTRIBUTION_REPOSITORY_URL=https://artifactory.guidewire.com/gradledistributions-generic-remote
-export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=https://artifactory.guidewire.com/plugins-gradle-remote
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-prod
-export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecoregradleplugins-mvn-dev
-export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=https://artifactory.guidewire.com/insurancesuitecore-mvn-thirdparty
+export GRADLE_DISTRIBUTION_REPOSITORY_URL=${artifactory}/gradledistributions-generic-remote
+export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=${artifactory}/plugins-gradle-remote
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=${artifactory}/insurancesuitecoregradleplugins-mvn-prod
+export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecoregradleplugins-mvn-dev
+export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=${artifactory}/insurancesuitecore-mvn-thirdparty
 
 # Dependency credentials (must not include "@guidewire.com")
 export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
 export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 
+autoload -Uz colors && colors
 typeset -Ax GW_COLORS=(
-  [BillingCenter]='[105m'     # bright white text on magenta
-  [ClaimCenter]='[97;104m'    # bright white text on blue
-  [ContactManager]='[30;106m' # black text on aqua
-  [ExampleCenter]='[30;107m'  # bright black text on gray
-  [PolicyCenter]='[30;103m'   # black text on tan/yellow
+  [BillingCenter]="[${color[bg-magenta]}m"
+  [ClaimCenter]="[${color[bg-blue]}m"
+  [ContactManager]="[${color[bg-cyan]}m"
+  [ExampleCenter]="[${color[bg-white]};${color[black]}m"  # bright black text on gray
+  [PolicyCenter]="[${color[bg-yellow]}m"
 )
 GW_COLORS[Platform]=${GW_COLORS[ExampleCenter]}
 
+GW_COLORS[ab]=${GW_COLORS[ContactManager]}
 GW_COLORS[bc]=${GW_COLORS[BillingCenter]}
 GW_COLORS[cc]=${GW_COLORS[ClaimCenter]}
-GW_COLORS[ab]=${GW_COLORS[ContactManager]}
 GW_COLORS[cm]=${GW_COLORS[ContactManager]}
 GW_COLORS[pc]=${GW_COLORS[PolicyCenter]}
 GW_COLORS[pl]=${GW_COLORS[ExampleCenter]}
