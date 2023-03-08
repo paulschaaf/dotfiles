@@ -15,7 +15,7 @@ $username\
 $hostname\
 $os\
 $localip\
-$directory\
+$directory${env_var}\
 $sudo\
 $line_break\
 $jobs\
@@ -38,8 +38,10 @@ style = 'dimmed'
 
 [custom.gw_product]
 description = "Shows Guidewire product"
-command = 'app=$(sed -n "s/^appCode=//gp" gradle.properties); prod=$(sed -nE "s/^version=([0-9]*).*/\\1/gp" gradle.properties); echo -n "$GW_COLORS[$app]$app$prod"'
+#command = 'app=$(sed -n "s/^appCode=//gp" gradle.properties); version=$(sed -nE "s/^version=([0-9]*).*/\\1/gp" gradle.properties); echo -n "$GW_COLORS[$app]$app$version\e[0m"'
+command = 'app=$(sed -n "s/^appCode=//gp" gradle.properties); echo -n "$GW_COLORS[$app]$app\e[0m"'
 detect_folders = ["studio"]
+format = "$output "
 
 [custom.zsh_command_number]
 command = "echo '|%h'"
@@ -51,12 +53,15 @@ style = 'bright-yellow'
 truncate_to_repo = false
 truncation_length = 10
 
+[env_var.DIRS]
+default = ''
+format = "[$env_value]($style)"
+style = "243"
+
 [fill]
-#symbol = ' '
 style = 'fg:235'
 
 [git_branch]
-#symbol = '🌱 '
 format = '''[$symbol$branch(:$remote_branch)]($style)'''
 style = 'fg:cyan'
 truncation_symbol = ''
@@ -70,7 +75,6 @@ format = '[\($state( $progress_current of $progress_total)\)]($style) '
 style = 'fg:cyan'
 
 [git_status]
-#up_to_date = '✓'
 ahead = '[↑](fg:bold bright-green)'
 behind = '[↓](fg:bold bright-blue)'
 conflicted = '[=$count](fg:bright-green)'
@@ -82,6 +86,7 @@ renamed = '[»$count](fg:white)'
 staged = '[+$count](fg:bright-green)'
 stashed = '[$$count](fg:white)'
 untracked = '[?$count](fg:bright-red)'
+#up_to_date = '✓'
 up_to_date = ''
 style = 'fg:cyan'
 
@@ -94,9 +99,8 @@ style = 'yellow'
 disabled = false
 
 [package]
-format = '[$symbol$version]($style)'
+format = '[$version]($style)'
 style = '136'
-symbol = '📦'
 version_format = '${raw}'
 
 [shlvl]

@@ -60,6 +60,6 @@ GW_COLORS[bc]=${GW_COLORS[BillingCenter]}
 GW_COLORS[cc]=${GW_COLORS[ClaimCenter]}
 GW_COLORS[ab]=${GW_COLORS[ContactManager]}
 GW_COLORS[cm]=${GW_COLORS[ContactManager]}
-GW_COLORS[ex]=${GW_COLORS[ExampleCenter]}
 GW_COLORS[pc]=${GW_COLORS[PolicyCenter]}
 GW_COLORS[pl]=${GW_COLORS[ExampleCenter]}
+GW_COLORS[px]=${GW_COLORS[ExampleCenter]}

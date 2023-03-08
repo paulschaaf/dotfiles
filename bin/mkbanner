@@ -8,14 +8,14 @@ height=231
 h_offset=25
 v_offset=178
 char_width=117
-product=CC
+product=`sed -n "s/^appCode=//gp" gradle.properties`
+product=${product:u}
 smush=100
 
 function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
   --smush      Sets the spacing between the product and the project name (defaults to '${smush}')
-  --bg=COLOR   Set the background color (defaults to be transparent)
   --fg=COLOR   Set the foreground color (defaults to '${fg}')
   --width=NUM  Set the width of the text box
   --debug      Trace the execution
@@ -51,10 +51,6 @@ while [[ -n "$*" ]]; do
          usage
          exit
          ;;
-#      --bg)
-#         bg=${value}
-#         bgName=${bg}
-#         ;;
       --fg)
          fg=${value}
          ;;
@@ -82,22 +78,22 @@ while [[ -n "$*" ]]; do
    shift
 done
 
-fill=${fg}
+prodColor=${fg}
 case ${product} in
   AB)
-    fill=aqua
+    prodColor=aqua
     ;;
   BC)
-    fill=magenta
+    prodColor=magenta
     ;;
   CC)
-    fill=blue;
+    prodColor=blue;
     ;;
   PC)
-    fill=tan;
+    prodColor=tan;
     ;;
-  PL)
-    fill=green;
+  PL|PX)
+    prodColor=green;
     ;;
 esac
 
@@ -111,18 +107,7 @@ elif ((${#*})); then
    exit 1
 fi
 
-#((!$#width)) && width=$((${char_width}*${#txt}))
-#
-## if the background is unspecified, set it to a non-foreground color then mark that to replace with transparency
-#if ((!$#bg)); then
-#   bgName=transparent
-#   [[ ${fg} == "white" ]] && bg=black || bg=white
-#   switches+=(-transparent ${bg})
-#fi
-
-#filename=banner_${txt// /_}_${fg}_on_${bgName}_${width}w_.png
-filename=banner_${fill}_${product}_${fg}_${txt// /_}.png
-#(( $#dry_run )) || filename=`mktemp ${filename}`
+filename=banner_${product}_${fg}_${txt// /_}.png
 
 force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then
@@ -130,15 +115,20 @@ if [[ -e ${filename} ]]; then
    dry_run || exit 1
 fi
 
-#echo ${0:t} --width=${width} --bg=${bg} --fg=${fg} ${txt} ${filename}
-#command="   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}"
-command="   convert -background none -pointsize 240 -fill ${fill} label:${product} -fill ${fg} label:'${txt}' +smush ${smush} ${filename}"
+command=( convert
+  -background none
+  -pointsize 240
+  -stroke white -strokewidth 2         # outline with white
+  -fill ${prodColor} label:${product}
+  -fill ${fg}        label:\'${txt}\'
+  +smush ${smush}                      # smush the two strings together
+  ${filename}
+)
 
 if dry_run; then
-  echo ${command}
+  echo '   '${command}
 else
    eval ${command}
-#   convert -size ${width}x${height} xc:${bg} -pointsize ${pointsize} -fill ${fg} ${switches//=/ } -annotate +${h_offset}+${v_offset} ${txt} ${filename}
 
    echo Created ${filename}
    open ${filename}

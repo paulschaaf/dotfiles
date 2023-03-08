@@ -487,10 +487,9 @@ autoload -Uz add-zsh-hook vcs_info
 #fi
 
 function updateDirs() {
-    dirs=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
+    export DIRS=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
 }
-(( $#dirs )) || updateDirs # unless dirs is already set, run updateDirs
-
+(( $#DIRS )) || updateDirs # unless DIRS is already set, run updateDirs
 add-zsh-hook chpwd updateDirs
 
 #export GIT_PS1_SHOWDIRTYSTATE=1
