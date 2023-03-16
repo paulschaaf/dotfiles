@@ -44,16 +44,16 @@ done
 # Set up environment
 source $HOME/bin/gwSetEnv ${old:+old}
 
-if [ -z "$GW_PL_NUM" ]; then
+if (($#GW_PL_NUM == 0)); then
   printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
   return 1
 fi
 
-if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
-  eval cd ${GW_START_DIR}
-  echo
-  echo Running in ${PWD}
-fi
+#if [ "${GW_START_DIR//'~'/$HOME}" != "$PWD" ]; then
+#  eval cd ${GW_START_DIR}
+#  echo
+#  echo Running in ${PWD}
+#fi
 
 apd_dirs=(
   app-cc/cc-apd-genlob-content/build
@@ -75,7 +75,7 @@ dbbackup=h2database
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
 jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
-resourcesDir=${GW_START_DIR/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
+resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 ssh_socket=~/tmp/cc-fwd-socket
 webserverPort=$((GW_PORT_DEBUG + 1))
 
@@ -139,7 +139,7 @@ runTask() {
   local failIcon=$4
   #  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
 
-  [ -n "${delay}" ] && echo "\nDelay for $delay" && sleep $delay
+  (($#delay > 0)) && echo "\nDelay for $delay" && sleep $delay
 
   #    echo; typeset -p taskSummary
   setGnuScreenTitle ${taskSummary#./gwb }
@@ -148,13 +148,13 @@ runTask() {
 
   exitCode=0
   SECONDS=0
-  if [ -z $_dry_run ]; then
-    if [ -n "$spawn" ]; then
+  if (($#_dry_run == 0)); then
+    if (($#spawn > 0)); then
       eval nohup ${task} &
     else
       # make sure we source the gwb script instead of just running it
       task=${task/.\/gwb/source gwb}
-      [ -n "$debug" ] && echo actual task is ${task}
+      (($#debug > 0)) && echo actual task is ${task}
       # if it's a Java cmd, display each option indented on a separate line
       eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
@@ -167,7 +167,7 @@ runTask() {
 
   if [ $exitCode -eq 0 ]; then
     log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
-    if [ -z "$noNotifySuccess" ]; then
+    if (($#noNotifySuccess == 0)); then
       notify "Completed $GW_TITLE: $userTask" ${taskSummary}
     else
       unset noNotifySuccess
@@ -183,7 +183,7 @@ runTask() {
   setGnuScreenTitle
 }
 
-[ -n "$debug" ] && set -x
+(($#debug > 0)) && set -x
 
 #${_dry_run} konsoleprofile colors=$GW_APPCODE\;icon=${passIcon}\;tabTitle=$GW_TITLE
 
@@ -356,7 +356,7 @@ while [ -n "$*" ]; do
       export port=${2:=$GW_PORT}
       shift
       export process=$(lsof -i tcp:${port} -t)
-      fullTask="[ -n ${process} ] && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
+      fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
       ;;
     killStudio)
       fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")

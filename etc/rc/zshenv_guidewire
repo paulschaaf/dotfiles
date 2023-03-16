@@ -45,13 +45,24 @@ export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=${artifactory}/insurancesui
 export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
 export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 
+# pastel format ansi-24bit-escapecode indigo | cat -v
+# pastel color blue | pastel lighten 0.3
+function pastelFgBg() {
+  pastel -f paint -n ${1} --on ${2} xxx | sed 's/xxx.*//'
+}
 autoload -Uz colors && colors
 typeset -Ax GW_COLORS=(
-  [BillingCenter]="[${color[bg-magenta]}m"
-  [ClaimCenter]="[${color[bg-blue]}m"
-  [ContactManager]="[${color[bg-cyan]}m"
-  [ExampleCenter]="[${color[bg-white]};${color[black]}m"  # bright black text on gray
-  [PolicyCenter]="[${color[bg-yellow]}m"
+#  [BillingCenter]="[${color[bg-magenta]}m"
+  [BillingCenter]=`pastelFgBg white darkmagenta`
+#  [ClaimCenter]="[${color[bg-blue]}m"
+  [ClaimCenter]=`pastelFgBg white blue`
+#  [ContactManager]="[${color[fg-black]};${color[bg-cyan]}m"
+#  [ClaimCenter]=`pastel -f paint -n white --on blue xxx | sed 's/xxx.*//'`
+#  [ContactManager]=`pastel -f paint -n white --on teal xxx | sed 's/xxx.*//'`
+  [ContactManager]=`pastelFgBg white teal`
+  [ExampleCenter]=`pastelFgBg white blueviolet`
+  [PolicyCenter]=`pastelFgBg black gold`
+#  [PolicyCenter]="[${color[bg-yellow]}m"
 )
 GW_COLORS[Platform]=${GW_COLORS[ExampleCenter]}
 

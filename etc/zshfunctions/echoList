@@ -89,7 +89,7 @@ END {
     }
 }' RS=${RS} file="${*}" ls="/bin/ls \${LS_FLAGS} ${LS_COLOR:+\${LS_COLOR\} }-Hl" override=$override rm_row="${rm_row:-999}" show_type=${show_type}
 
-if [[ -n $rm_row ]]; then
+if (($#rm_row > 0)); then
     contents=`echo ${contents} | awk 'NR != RM_ROW {print}' RM_ROW=$rm_row RS=${RS} ORS=${RS}`
     eval $listName=$contents # update the var
     echo "\n"Removed row $rm_row from $listName

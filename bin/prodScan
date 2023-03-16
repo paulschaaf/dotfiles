@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-products=(bc cc ab pc pl)
+products=(bc cc ab pc px)
 platform=halite
 
 switches=()
@@ -20,21 +20,27 @@ while [[ -n "$*" ]]; do
 #         usage
 #         exit
 #         ;;
-      --ab|--bc|--cc|--pc|--pl)
-        product=${switch##--}
-        # either add the product (e.g. "ab=ab", or remap the product (e.g. "Cc"="cc2")
-        products[$products[(i)${product}]]=${value:=$product}
-        ;;
       --none)
         products=()
         ;;
       --no*)
-        badprod=${switch##--no}
-        # remove the offending product
-        products[$products[(i)$badprod]]=()
+        product=${switch##--no}
+        if (($products[(Ie)$product])); then
+          # remove the offending product
+          products[$products[(i)$product]]=()
+        else
+          echo "Unrecognized product '$product'" >&2
+          exit 1
+        fi
         ;;
       -*)
-        switches+=(${1})
+        product=${switch##--}
+        if (($products[(Ie)$product])); then
+          # either add the product (e.g. "ab=ab", or remap the product (e.g. "Cc"="cc2")
+          products[$products[(i)${product}]]=${value:=$product}
+        else # it's a normal switch
+          switches+=(${1})
+        fi
        ;;
       *)
         break

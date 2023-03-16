@@ -49,8 +49,6 @@ zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~pschaaf/etc/rc/zshenv_*
 # ========
 # ======== Paths
 export JAVA_ROOT=/usr/lib/jvm
-export JAVA16_HOME=/usr/lib32/jvm/java32-6-jdk
-export JAVA18_AMD64_HOME=${JAVA8_HOME}
 export JAVA11_HOME=${JAVA_ROOT}/java-11-openjdk
 CLASSPATH=${CLASSPATH:=.}
 
@@ -59,7 +57,6 @@ if [ "${UNAME}" = "Darwin" ]; then
    export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
 fi
 export JAVA_HOME=${JAVA11_HOME}
-export JAVA8_HOME=${JAVA_ROOT}/java-8-jdk
 
 export os_override_path=(~/bin ~/bin/quick-ssh ${JAVA_HOME}/bin)
 
@@ -116,6 +113,7 @@ export EDITOR=/usr/bin/nano
 export EMAIL=paul.schaaf@gmail.com
 
 inLinux && export IDEA_ROOT=/opt
+export PASTEL_COLOR_MODE=24bit
 export TEMP=/tmp
 
 # set all `locale` variables

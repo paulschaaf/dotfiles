@@ -55,8 +55,8 @@ ordered_packages=(
    google-chrome           # the best browser
    git                     # version control
    intellij-idea-ultimate  # ide
-   tmux                    # terminal multiplexer
-   byobu                   # tmux/screen enhancements
+#   tmux                    # terminal multiplexer
+#   byobu                   # tmux/screen enhancements
    #    cairo-dock             # Mac-like icon dock
    #    cairo-dock-plug-ins    # Mac-like icon dock
    #    nvm                    # nodejs version manager
@@ -90,11 +90,12 @@ unordered_packages=(
    #    npm
    #    oracle~jdk7            # Java 1.7
    #    oracle~jdk8            # Java 1.8
+   pastel                 # text in 24-bit color
    ruby-irb               # Ruby REPL
    #    sqlops                # MS SQL Server admin tool
    tealdeer               # quick man page examples
    trash-cli              # rm replacement uses trashcan
-   tree
+#   tree                  # use broot
    units                  # unit conversions
    vlc                    # video player
    xorg-xkill
@@ -172,7 +173,7 @@ function install-all() {
             [ "$?" -ne 0 ] && error Could not install \'$package\'
          fi
       done
-      [ -n "$skipped" ] && h2 Skipped already installed: $skipped
+      (($#skipped > 0)) && h2 Skipped already installed: $skipped
    fi
 }
 
@@ -282,7 +283,7 @@ else
    h1 Created backups in $backup
 fi
 
-if [ -n "$manually_install" ]; then
+if (($#manually_install > 0)); then
    h1 Manually install the following packages:
    echo "$manually_install"
    for pkg in ${manually_install[@]}; do

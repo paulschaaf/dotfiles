@@ -29,7 +29,7 @@ function update_git_vars_preexec() {
 }
 
 function update_git_vars_precmd() {
-    if [ -n "$__EXECUTED_GIT_COMMAND" ] || [ ! -n "$ZSH_THEME_GIT_PROMPT_CACHE" ]; then
+    if (($#__EXECUTED_GIT_COMMAND > 0)) || [ ! -n "$ZSH_THEME_GIT_PROMPT_CACHE" ]; then
         update_current_git_vars
         unset __EXECUTED_GIT_COMMAND
     fi
@@ -63,7 +63,7 @@ function update_current_git_vars() {
 git_super_status() {
 	update_git_vars_precmd
 
-    if [ -n "$__CURRENT_GIT_STATUS" ]; then
+    if (($#__CURRENT_GIT_STATUS > 0)); then
         STATUS="$ZSH_THEME_GIT_PROMPT_PREFIX$ZSH_THEME_GIT_PROMPT_BRANCH$GIT_BRANCH%{${reset_color}%}"
         if [ "$GIT_BEHIND" -ne "0" ]; then
           STATUS="$STATUS$ZSH_THEME_GIT_PROMPT_BEHIND$GIT_BEHIND%{${reset_color}%}"

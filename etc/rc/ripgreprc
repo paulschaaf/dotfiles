@@ -32,6 +32,7 @@
 # EXTENSION TYPES
 --type-add=bpmn:*.bpmn
 --type-add=eix:*.eix
+--type-add=en:*.en
 --type-add=eti:*.eti
 --type-add=etx:*.etx
 --type-add=feature:*.feature

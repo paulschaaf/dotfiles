@@ -37,22 +37,23 @@ function announce() {
 }
 
 function lsPathVar() {
-  #  set -x
+  local dirColor
   for dirName in "${@}"; do
-    eval dir=\$$dirName
-    # shellcheck disable=SC2154
-    if (($#dir == 0)); then
-      trace "\$${dirName} is undefined"
-    elif [[ -d "${dir}" ]]; then
-      printf "\033[96m%s\033[0m\n" "$(typeset -p ${dirName})"
-    elif [[ -f ${dir} ]]; then
-      printf "\033[92m%s\033[0m\n" "$(typeset -p ${dirName})"
-    else
-      printf "\033[97;101m%s\033[0m\n" "$(typeset -p ${dirName})"
-      #      typeset -p ${dirName}
+    if (($#dirName == 0)); then
+      echo $dirName is \$$dirName
+      echo Error: "\$${dirName} is undefined!"
+      exit 1
     fi
+    eval value=\$${dirName}
+    if [[ -d "$value" ]]; then # echo its a directory
+      dirColor=${color[cyan]}
+    elif [[ -f "$value" ]]; then # echo its a file
+      dirColor=${color[green]}
+    else # echo its neither
+      dirColor=${color[bg-red]}
+    fi
+    echo "[${dirColor}m`typeset -p ${dirName}`[${color[none]}m"
   done
-  #  set +x
 }
 
 #
@@ -62,6 +63,7 @@ function lsPathVar() {
 export GW_PL_VERSION=$(sed -nE 's/^plVersion=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
+typeset -p GW_PL_VERSION
 
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
@@ -145,6 +147,7 @@ case ${GW_PL_VERSION} in
     ;;
 esac
 
+# Source environment overrides
 for env in {../..,..,.}/gw.env; do
   if [[ -f ${env} ]]; then
     echo Sourcing ${env}
@@ -155,7 +158,7 @@ for env in {../..,..,.}/gw.env; do
 done
 
 # exit if not a Guidewire installation
-if [[ -z "$GW_PLATFORM" ]]; then
+if (($#GW_PLATFORM == 0)); then
   trace Could not determine the platform version!
   return 1 2>/dev/null || exit
 fi
@@ -168,7 +171,7 @@ export GW_START_SCRIPT=${:-./gwb}
 export GW_DB_DIR=${GW_DB_DIR:-/tmp/guidewire/${GW_PLATFORM}}
 export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
 
-if [[ -z "${IDEA_JDK}" ]]; then
+if (($#IDEA_JDK == 0)); then
   if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
     export IDEA_JDK=${JAVA_HOME}_nodcevm
   else
@@ -182,34 +185,6 @@ lsPathVar IDEA_HOME IDEA_JDK JAVA_HOME
 typeset -p GW_DB_DIR GW_PL_NUM GW_PLATFORM
 
 #
-# DETERMINE INSTALLATION ROOT
-#
-
-# shellcheck disable=SC2006
-# shellcheck disable=SC2086
-export GW_ROOT=$(echo ${PWD//${HOME}/~} | sed -E "\
-    # strip trailing directories (and exit on first success) ...
-    # ... from git path
-    s_^(.*/${GW_PLATFORM}/(ab|cm|bc|cc|pc|pl)[^/]*).*\$_\1_
-    t
-
-    # ... from Perforce path
-    s_^(.*/(ab|cm|bc|cc|pc|pl|px)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\$_\1_
-    t
-
-    # ... after the one containing the product code+version
-    s_^(.*/(ab|cm|bc|cc|pc|pl|px)[-._0-9]+).*\$_\1_
-    t
-
-    # ... after the one that begins with the product name
-    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\$_\1_
-    t
-
-    # delete pattern space so that empty string is returned
-    d")
-lsPathVar GW_ROOT
-
-#
 # DETERMINE THE PRODUCT
 #
 
@@ -217,23 +192,51 @@ export GW_APPCODE=$(sed -n 's/^appCode=//gp' gradle.properties)
 export GW_PORT=$(sed -n 's/^jettyPort=//gp' gradle.properties)
 # shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
-# compute platform from studio jar version num
-# ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
+# compute platform from studio jar version num => ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
 export GW_STUDIO_VERSION=$(sed -n 's/^studioVersion=//gp' gradle.properties)
 export GW_TITLE="$GW_APPCODE$GW_PL_NUM"
 #export GW_PROMPT="%{$GW_COLORs[$GW_APPCODE]%}$GW_TITLE%{[0m%} "
 typeset -p GW_APPCODE GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE
 
 #
+# DETERMINE INSTALLATION ROOT
+#
+
+# shellcheck disable=SC2006
+# shellcheck disable=SC2086
+#export GW_ROOT=$(echo ${PWD//${HOME}/~} | sed -E "\
+#    # strip trailing directories (and exit on first success) ...
+#    # ... from git path
+#    s_^(.*/${GW_PLATFORM}/($GW_APPCODE)[^/]*).*\$_\1_
+#    t
+#
+#    # ... from Perforce path
+#    s_^(.*/($GW_APPCODE)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\$_\1_
+#    t
+#
+#    # ... after the one containing the product code+version
+#    s_^(.*/($GW_APPCODE)[-._0-9]+).*\$_\1_
+#    t
+#
+#    # ... after the one that begins with the product name
+#    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\$_\1_
+#    t
+#
+#    # delete pattern space so that empty string is returned
+#    d")
+#lsPathVar GW_ROOT
+
+#
 # DETERMINE THE STARTUP SCRIPT
 #
 
-export GW_START_DIR=$GW_ROOT
+#export GW_START_DIR=$GW_ROOT
 
 if [[ ${GW_PL_NUM} -lt 9 ]]; then
-  GW_START_DIR=${GW_ROOT}/bin
+  cd bin
+#  GW_START_DIR=${GW_ROOT}/bin
 fi
-lsPathVar GW_START_DIR GW_START_SCRIPT
+lsPathVar GW_START_SCRIPT
 
 #
 # Fix PATH and CLASSPATH
@@ -268,8 +271,8 @@ if [[ "$GW_PL_NUM" -lt 9 ]]; then
   replaceInList PATH 'maven' ${M2_HOME}/bin
   replaceInList CLASSPATH 'maven' ${M2_HOME}/lib/\*
 
-  if (($#GW_LIB_DIR > 0)) && [ -d "$GW_START_DIR"/"$GW_LIB_DIR" ]; then
-    CLASSPATH+=:"$GW_LIB_DIR"/\*
+  if (($#GW_LIB_DIR > 0)) && [ -d ../"$GW_LIB_DIR" ]; then
+    CLASSPATH+=:${PWD%/*}/"$GW_LIB_DIR"/\*
   fi
 fi
 

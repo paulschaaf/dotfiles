@@ -20,7 +20,7 @@
 
 # ========
 # ======== Terminal Settings
-export TERM=xterm-256color
+# export TERM=xterm-256color
 stty start ''   stop   ''
 
 if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
