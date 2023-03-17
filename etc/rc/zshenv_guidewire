@@ -55,6 +55,7 @@ typeset -Ax GW_COLORS=(
 #  [BillingCenter]="[${color[bg-magenta]}m"
   [BillingCenter]=`pastelFgBg white darkmagenta`
 #  [ClaimCenter]="[${color[bg-blue]}m"
+  [CCPI]=`pastelFgBg white green`
   [ClaimCenter]=`pastelFgBg white blue`
 #  [ContactManager]="[${color[fg-black]};${color[bg-cyan]}m"
 #  [ClaimCenter]=`pastel -f paint -n white --on blue xxx | sed 's/xxx.*//'`

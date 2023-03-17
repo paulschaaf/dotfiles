@@ -3,7 +3,7 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """$cmd_duration\
-${custom.ccpi}${custom.gw_product}$git_branch\
+${custom.gw_is_app}${custom.gw_ccpi}${custom.gw_version}$git_branch\
 $git_commit\
 $git_state\
 $git_status\
@@ -36,20 +36,30 @@ format = ''' [⮑  ⏳ $duration]($style)
 '''
 style = 'white'
 
-[custom.ccpi]
-description = "Shows CCPI"
-command = 'sed -En "s/^integrationGatewayVersion=/CCPI /gp" gradle.properties | tr "\n" " "; echo -n "\e[7;30m"'
-format = '[($output)]($style) '
-style = 'bg:green'
+[custom.gw_ccpi]
+description = "Shows CCPI name"
+command = 'echo -n "$GW_COLORS[CCPI]CCPI"'
 detect_files = ["README-internal.md"]
+style = ''
 
-[custom.gw_product]
-description = "Shows Guidewire product"
-#command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}\e[0m"'
-#command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); ver=$(sed -En "s/^version=([0-9]+).*/\1/gp" gradle.properties); echo -n "$GW_COLORS[$app]${app} $ver\e[7;30m"'
-command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app} "; sed -En "s/^version=([0-9]+).*/\1/gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
+[custom.gw_is_app]
+description = "Shows Guidewire InsuranceSuite application name"
+command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}"'
 detect_folders = ["studio"]
-format = "$output "
+style = ''
+
+[custom.gw_version]
+description = "Shows Guidewire application version"
+command = 'sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
+detect_files = ["README-internal.md"]
+detect_folders = ["studio"]
+style = ''
+
+#[custom.gw_claimcenter]
+#description = "Shows GW ClaimCenter"
+#command = 'echo -n "$GW_COLORS[cc]ClaimCenter"'
+#detect_files = ["cc-all.iml"]
+#style = ''
 
 [custom.zsh_command_number]
 command = "pastel -f paint gray '%h'"
@@ -71,7 +81,6 @@ style = 'fg:235 bg:0'
 
 [git_branch]
 format = '[$symbol$branch(:$remote_branch)]($style)'
-#style = 'fg:white bg:cyan'
 style = 'fg:bright-white bg:cyan'
 truncation_symbol = ''
 
