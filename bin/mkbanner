@@ -87,7 +87,7 @@ case ${product} in
     prodColor=magenta
     ;;
   CC)
-    prodColor=blue;
+    prodColor=royalblue;
     ;;
   PC)
     prodColor=tan;
