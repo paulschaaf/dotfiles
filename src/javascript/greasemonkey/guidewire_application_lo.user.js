@@ -21,6 +21,11 @@
 // @updateURL        file:///Users/pschaaf/src/javascript/greasemonkey/guidewire_application_lo.user.js
 // ==/UserScript==
 
+// @require          https://github.com/paulschaaf/dotfiles/raw/32d53c378fa14c4e7335cca8a8408daba57e0c82/src/javascript/greasemonkey/guidewire_application_lo.user.js
+// @require          https://github.com/paulschaaf/dotfiles/raw/32d53c378fa14c4e7335cca8a8408daba57e0c82/src/javascript/greasemonkey/debugging.js
+// @downloadURL      https://github.com/paulschaaf/dotfiles/raw/32d53c378fa14c4e7335cca8a8408daba57e0c82/src/javascript/greasemonkey/guidewire_application_lo.user.js
+// @updateURL        https://github.com/paulschaaf/dotfiles/raw/32d53c378fa14c4e7335cca8a8408daba57e0c82/src/javascript/greasemonkey/guidewire_application_lo.user.js
+
 var debugLevel = 0;
 
 var eachKeyAndValue = (hash, kvFunction) => {

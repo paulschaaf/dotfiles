@@ -2,7 +2,7 @@
 
 # Set the Defaults
 # lower number is darker, gray60 is too light
-fg=gray50
+fg=gray60
 pointsize=240
 height=231
 h_offset=25

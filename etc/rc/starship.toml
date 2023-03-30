@@ -3,7 +3,8 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """$cmd_duration\
-${custom.gw_is_app}${custom.gw_ccpi}${custom.gw_version}$git_branch\
+${custom.gw_is_app}${custom.gw_ccpi}${custom.gw_version}\
+$git_branch\
 $git_commit\
 $git_state\
 $git_status\
@@ -93,6 +94,7 @@ format = '[\($state( $progress_current of $progress_total)\)]($style) '
 style = 'fg:cyan'
 
 [git_status]
+disabled = true
 ahead = '[↑](fg:bold bright-green)'
 behind = '[↓](fg:bold bright-blue)'
 conflicted = '[=$count](fg:bright-green)'

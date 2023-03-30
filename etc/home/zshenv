@@ -12,7 +12,6 @@
 # ...
 # 5) Login:       $ZDOTDIR/.zlogout, /etc/zlogout
 
-
 # ========
 # ======== Profiling
 ( (($#debug)) || (($#trace)) ) && echo "\e[42m# ===== Sourcing ${(%):-%N}\e[0m"

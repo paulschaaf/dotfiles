@@ -1,4 +1,5 @@
 #!/usr/bin/env zsh
+allProducts=(bc cc ab pc px)
 products=(bc cc ab pc px)
 platform=halite
 
@@ -25,7 +26,7 @@ while [[ -n "$*" ]]; do
         ;;
       --no*)
         product=${switch##--no}
-        if (($products[(Ie)$product])); then
+        if (($allProducts[(Ie)$product])); then
           # remove the offending product
           products[$products[(i)$product]]=()
         else
@@ -35,8 +36,8 @@ while [[ -n "$*" ]]; do
         ;;
       -*)
         product=${switch##--}
-        if (($products[(Ie)$product])); then
-          # either add the product (e.g. "ab=ab", or remap the product (e.g. "Cc"="cc2")
+        if (($allProducts[(Ie)$product])); then
+          # either add the product (e.g. "ab=ab", or remap the product (e.g. "--cc=cc2")
           products[$products[(i)${product}]]=${value:=$product}
         else # it's a normal switch
           switches+=(${1})

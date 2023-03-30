@@ -6,10 +6,12 @@
 --glob=!apidiffs.txt
 --glob=!*.gti
 --glob=!*.snap
+--glob=!**/_*/*
 --glob=!**/build/*
 --glob=!**/classes/*
 --glob=!**/generated/*
 --glob=!**/generated_classes/*
+--glob=!**/logs/*
 --glob=!**/node_modules/*
 
 --glob=!app-??/*perf*/*
