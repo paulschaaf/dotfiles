@@ -1,0 +1,66 @@
+#!/usr/bin/env zsh
+allProducts=(ab bc cc pc px)
+selectedProducts=()
+root=halite
+
+switches=()
+alias dry_run=false
+while [[ -n "$*" ]]; do
+   switch=${1%%=*}
+   [[ ${switch} =~ "=" ]] && value=${1#*=} || value=''
+   case ${switch} in
+      --debug)
+        set -x
+        ;;
+      --dry_run | --dry-run)
+        alias dry_run=true
+        ;;
+      --all)
+        selectedProducts=$allProducts
+        ;;
+      --root)
+        root=$value
+        ;;
+      #      -h|--help)
+      #         usage
+      #         exit
+      #         ;;
+      --none)
+        selectedProducts=()
+        ;;
+      #      --no*)
+      #        product=${switch##--no}
+      #        if (($allProducts[(Ie)$product])); then
+      #          # remove the offending product
+      #          selectedProducts[$selectedProducts[(i)$product]]=()
+      #        else
+      #          echo "Unrecognized product '$product'" >&2
+      #          exit 1
+      #        fi
+      #        ;;
+      -*)
+        product=${switch##--}
+        if (($allProducts[(Ie)$product])); then # if it's a product
+           # either add the product (e.g. "--ab"), or override the assumed directory (e.g. "--cc=cc2")
+           selectedProducts[$selectedProducts[(i)${product}]]=${value:=$product}
+        else # it's a normal switch
+           switches+=(${1})
+        fi
+        ;;
+      *)
+        break
+        ;;
+   esac
+   shift
+done
+
+cd ~/gw/$root
+
+(($#selectedProducts)) || selectedProducts=(cc px)
+
+for prod in $selectedProducts; do
+  name=$(sed -n 's/^appName=//gp' $prod/gradle.properties)
+
+  printf "\n${GW_COLORS[$name]}%s%$(($COLUMNS - $#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
+  rg --color=always --case-sensitive ${switches} ${*} $prod
+done

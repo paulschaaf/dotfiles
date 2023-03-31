@@ -104,18 +104,27 @@ export SAVEHIST=$HISTSIZE
 
 export LESS='--RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 
-# LESS_TERMCAP_DEBUG=true man find        # opens manpage showing markup codes
-export LESS_TERMCAP_mb=${fg_bold[cyan]}   # start blink
-export LESS_TERMCAP_md=${fg_bold[green]}  # start bold
-export LESS_TERMCAP_me=${reset_color}     # end bold, blink & underline
+# LESS_TERMCAP_DEBUG=true        # make manpages show markup codes
 
-export LESS_TERMCAP_so=${fg_bold[yellow]} # start inverse video
-export LESS_TERMCAP_se=${reset_color}     # stop inverse video
+export LESS_TERMCAP_mb=$(tput bold; tput setaf 6) # start blink => cyan
+export LESS_TERMCAP_md=$(tput bold; tput setaf 2) # start bold => green
+export LESS_TERMCAP_me=$(tput sgr0)               # end bold, blink & underline
 
-export LESS_TERMCAP_us=${fg_bold[red]/m/;$color[underline]m} # start underline
-export LESS_TERMCAP_ue=${reset_color}     # end underline
+export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # start inverse video => yellow on blue
+export LESS_TERMCAP_se=$(tput rmso; tput sgr0)                  # stop inverse video =>
 
-export LESSKEY=~pschaaf/.less_${HOSTNAME}
+export LESS_TERMCAP_us=$(tput smul; tput bold;    tput setaf 1) # start underline => ul red
+export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)                  # stop underline
+
+export LESS_TERMCAP_mr=$(tput rev)
+export LESS_TERMCAP_mh=$(tput dim)
+export LESS_TERMCAP_ZN=$(tput ssubm)
+export LESS_TERMCAP_ZV=$(tput rsubm)
+export LESS_TERMCAP_ZO=$(tput ssupm)
+export LESS_TERMCAP_ZW=$(tput rsupm)
+export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
+
+#export LESSKEY=~pschaaf/.less_${HOSTNAME}
 
 # di=38;5;105
 inMacOS export LSCOLORS="gxfxcxdxbxegedabagacad"
