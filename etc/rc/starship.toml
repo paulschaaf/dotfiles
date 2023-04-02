@@ -3,13 +3,11 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 format = """$cmd_duration\
-${custom.gw_is_app}${custom.gw_ccpi}${custom.gw_version}\
+${custom.gw_is_app}${custom.gw_ccpi}$package\
 $git_branch\
 $git_commit\
 $git_state\
-$git_status\
-$fill\
-$package
+$git_status
 $status\
 $time\
 $username\
@@ -46,15 +44,15 @@ style = ''
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
 command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}"'
-detect_folders = ["studio"]
+detect_folders = ["studio", "platform"]
 style = ''
 
-[custom.gw_version]
-description = "Shows Guidewire application version"
-command = 'sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
-detect_files = ["README-internal.md"]
-detect_folders = ["studio"]
-style = ''
+#[custom.gw_version]
+#description = "Shows Guidewire application version"
+#command = 'sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
+#detect_files = ["README-internal.md"]
+#detect_folders = ["studio"]
+#style = ''
 
 #[custom.gw_claimcenter]
 #description = "Shows GW ClaimCenter"
@@ -81,12 +79,12 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = '[$symbol$branch(:$remote_branch)]($style)'
-style = 'fg:bright-white bg:cyan'
+format = '[ $symbol$branch(:$remote_branch) ]($style)'
+style = 'fg:black bg:cyan'
 truncation_symbol = ''
 
 [git_commit]
-style = 'bold red'
+style = 'bold #FF0000 bg:cyan'
 
 [git_state]
 cherry_pick = '[🍒 PICKING](bold red)'
@@ -119,8 +117,8 @@ style = 'yellow'
 disabled = false
 
 [package]
-format = '[$version]($style)'
-style = '136'
+format = '$version '
+#style = '136'
 version_format = '${raw}'
 
 [shlvl]

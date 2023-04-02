@@ -126,9 +126,6 @@ export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
 
 #export LESSKEY=~pschaaf/.less_${HOSTNAME}
 
-# di=38;5;105
-inMacOS export LSCOLORS="gxfxcxdxbxegedabagacad"
-
 #lsColors=(
 #  'bd=40;33;01'  # block devices
 #  'cd=40;33;01'  # character devices

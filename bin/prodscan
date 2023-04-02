@@ -1,21 +1,24 @@
 #!/usr/bin/env zsh
 allProducts=(ab bc cc pc px)
-selectedProducts=()
+typeset -A selectedProducts
 
 switches=()
 alias dry_run=false
 while [[ -n "$*" ]]; do
    switch=${1%%=*}
-   [[ ${switch} =~ "=" ]] && value=${1#*=} || value=''
+   [[ ${1} =~ "=" ]] && value=${1#*=} || value=''
+   (($#debug)) && echo "Processing switch '$switch', value '$value'"
    case ${switch} in
       --debug)
-        set -x
+        debug=true
         ;;
       --dry_run | --dry-run)
         alias dry_run=true
         ;;
       --all)
-        selectedProducts=$allProducts
+        for product in $allProducts; do
+          selectedProducts[$product]=$product
+        done
         ;;
       --root)
         root=$value
@@ -24,25 +27,35 @@ while [[ -n "$*" ]]; do
         product=${switch##--}
         if (($allProducts[(Ie)$product])); then # if it's a product
            # either add the product (e.g. "--ab"), or override the assumed directory (e.g. "--cc=cc2")
-           selectedProducts[$selectedProducts[(i)${product}]]=${value:=$product}
+           selectedProducts[$product]=${value:-$product}
+           (($#debug)) && typeset -p selectedProducts
         else # it's a normal switch
            switches+=(${1})
         fi
         ;;
-      *)
+      *) # it's a normal argument
         break
         ;;
    esac
    shift
 done
 
-cd ~/gw/${root:=halite}
-
-(($#selectedProducts)) || selectedProducts=(cc px)
+(($#selectedProducts)) || selectedProducts=(cc cc px px)
+(($#debug)) && typeset -p selectedProducts
 
 for prod in $selectedProducts; do
-   name=$(sed -n 's/^appName=//gp' $prod/gradle.properties)
+   prodDir=~/gw/${root:=halite}/${selectedProducts[$prod]}
+   name=$(sed -n 's/^appName=//gp' ${prodDir}/gradle.properties)
 
-   printf "\n${GW_COLORS[$name]}%s%$(($COLUMNS - $#name))s\e[0m\n" $name "${PWD//$HOME/~}/$prod"
-   rg --color=always --case-sensitive ${switches} ${*} $prod
+   command=(rg --color=always ${switches} ${*} $prodDir)
+   (($#debug)) && typeset -p prod prodDir command
+
+   nameColor="${GW_COLORS[$name]}"
+   (($#debug)) && name="$name   [7m${command//$HOME/~}[27m"
+
+   (($#debug)) && typeset -p name nameColor
+   name="▶ $name"
+   printf "\n${nameColor}%s%$(($COLUMNS - $#name))s[0m\n" $name "${prodDir//$HOME/~}"
+
+   dry_run || $command
 done
