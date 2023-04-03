@@ -29,13 +29,6 @@ fi
 umask 22
 export UNAME=${UNAME:=$(uname)}
 UNAME=${UNAME//_*/}
-
-if ((UID)); then
-   alias isRoot=false
-else
-   alias isRoot=true
-fi
-
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
 
 

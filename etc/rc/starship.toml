@@ -45,7 +45,7 @@ style = ''
 description = "Shows Guidewire InsuranceSuite application name"
 command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}"'
 detect_folders = ["studio", "platform"]
-style = ''
+format = "$output"
 
 #[custom.gw_version]
 #description = "Shows Guidewire application version"
@@ -79,8 +79,8 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = '[ $symbol$branch(:$remote_branch) ]($style)'
-style = 'fg:black bg:cyan'
+format = '[$symbol$branch(:$remote_branch)]($style)'
+style = 'fg:bright-white bg:cyan'
 truncation_symbol = ''
 
 [git_commit]
@@ -117,8 +117,8 @@ style = 'yellow'
 disabled = false
 
 [package]
-format = '$version '
-#style = '136'
+format = '[ $version ]($style)'
+style = '136 bg:0'
 version_format = '${raw}'
 
 [shlvl]

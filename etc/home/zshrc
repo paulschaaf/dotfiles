@@ -559,7 +559,7 @@ add-zsh-hook chpwd updateDirs
 #PS2="(%F{magenta}%_%f) > "
 
 export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
-isRoot && PATH+=:~pschaaf/homebrew/bin
+((! UID)) && PATH+=:~pschaaf/homebrew/bin
 eval "$(starship init zsh)"
 
 # ========
@@ -576,7 +576,7 @@ eval "$(starship init zsh)"
 # ======== Keychain
 # Start or connect to the existing ssh-agent and/or gpg-agent
 if inLinux && (( ! $#SSH_AGENT_PID )); then
-     isRoot || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
+     ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
 elif inMacOS; then
      ssh-add -T ~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
      alias ssh='command ssh -o UseKeychain=yes'

@@ -1,6 +1,8 @@
 # - *- eval: (...) - *-
 # (man "ssh_config" "foo")
 # manual-program
+# to gen a bunch of keys use e.g.
+# xkcdpass --count=25 --acrostic='chaos' --delimiter=' ' --min=3 --valid-chars='[a-z]' | xargs -n 5 printf '%-10s %-10s %-10s %-10s %-10s\n'
 
 # =========================================================================
 # ======= Global Override - Presides over subsequent settings
