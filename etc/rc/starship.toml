@@ -1,38 +1,34 @@
-# ~/.config/starship.toml
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
 
-format = """$cmd_duration\
+command_timeout = 5000
+
+format = """$status\
+$cmd_duration\
 ${custom.gw_is_app}${custom.gw_ccpi}$package\
 $git_branch\
 $git_commit\
 $git_state\
 $git_status
-$status\
 $time\
-$username\
 $hostname\
 $os\
-$localip\
 $directory${env_var}\
 $sudo\
 $line_break\
 $jobs\
 $shlvl\
-${custom.zsh_command_number} $character"""
+${custom.zsh_command_number} $username\
+$character"""
 
 #right_format = "${custom.zsh_command_number}"
-
-command_timeout = 5000
 
 [character]
 format = '\$ '
 
 [cmd_duration]
 #min_time = 0
-format = ''' [⮑  ⏳ $duration]($style)
-
-'''
+format = " [⮑  ⏳ $duration]($style)\n\n"
 style = 'white'
 
 [custom.gw_ccpi]
@@ -47,17 +43,17 @@ command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLOR
 detect_folders = ["studio", "platform"]
 format = "$output"
 
+#[custom.gw_claimcenter]
+#description = "Shows GW ClaimCenter"
+#command = 'echo -n "$GW_COLORS[cc]ClaimCenter"'
+#detect_files = ["cc-all.iml"]
+#style = ''
+
 #[custom.gw_version]
 #description = "Shows Guidewire application version"
 #command = 'sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
 #detect_files = ["README-internal.md"]
 #detect_folders = ["studio"]
-#style = ''
-
-#[custom.gw_claimcenter]
-#description = "Shows GW ClaimCenter"
-#command = 'echo -n "$GW_COLORS[cc]ClaimCenter"'
-#detect_files = ["cc-all.iml"]
 #style = ''
 
 [custom.zsh_command_number]
@@ -110,7 +106,7 @@ style = 'fg:cyan'
 
 [hostname]
 format = '[$ssh_symbol$hostname]($style) '
-ssh_symbol = ' 🔑 '
+ssh_symbol = '🔑 '
 style = 'yellow'
 
 [os]
@@ -124,10 +120,9 @@ version_format = '${raw}'
 [shlvl]
 disabled = false
 
-[status]
+[status] # i.e. last command return status
 disabled = false
-style = 'bright-white bg:red'
-symbol = '-'
+format = "[ ⮑  $symbol $common_meaning$signal_name$maybe_int]($style)\n\n"
 
 [time]
 disabled = false
@@ -136,5 +131,5 @@ time_format = '%R'
 style = ''
 
 [username]
-format = '[$user]($style)'
-style_root = 'bold white bg:red'
+format = '[$user]($style) '
+style_root = '#FFFFFF bg:red'
