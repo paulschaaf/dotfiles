@@ -107,7 +107,7 @@ style = 'fg:cyan'
 [hostname]
 format = '[$ssh_symbol$hostname]($style) '
 ssh_symbol = '🔑 '
-style = 'yellow'
+style = 'fg:#ffffff bg:#663399'
 
 [os]
 disabled = false
