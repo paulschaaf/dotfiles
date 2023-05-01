@@ -9,13 +9,18 @@
 
 Host *
   AddKeysToAgent yes
-  IdentityFile ~/.ssh/id_dsa
-  IdentityFile ~/.ssh/id_rsa
+  IdentityFile ~/.ssh/id_ecdsa
+#   IdentityFile ~/.ssh/id_dsa
+#   IdentityFile ~/.ssh/id_rsa
 
 # =========================================================================
 # ======= Home Machines
 
 Host copernicus
+   ForwardAgent yes
+   ForwardX11 yes
+
+Host pschaaf-C02G787RMD6R
    ForwardAgent yes
    ForwardX11 yes
 

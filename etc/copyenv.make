@@ -10,12 +10,12 @@ endif
 LOCAL_ZSH_COPIES=$(patsubst %,$(HOME)/.%,$(ZSH_RESOURCES))
 COMPILED_ZSH_RESOURCES=$(patsubst %,%.zwc,$(LOCAL_ZSH_COPIES))
 
-ALL=$(COMPILED_ZSH_RESOURCES) $(OTHER_RESOURCES) ~/bin $(OS_SYMLINKS)
+ALL=$(COMPILED_ZSH_RESOURCES) $(OTHER_RESOURCES) ~/bin $(OS_SYMLINKS) .dircolors.zwc
 all:	$(ALL)
 clean:
 	rm -f $(ALL) $(LOCAL_ZSH_COPIES)
 
-Makefile:   ~pschaaf/etc/Makefile.copyenv
+Makefile:   ~pschaaf/etc/copyenv.make
 	@echo '# If you trust' $^, run the following
 	@echo '  'cp -f $^ $@
 	@echo '  'make
@@ -45,6 +45,9 @@ endif
 
 ~/bin:
 	mkdir ~/bin
+
+.dircolors.zwc:	~pschaaf/.dircolors.zwc
+	cp $^ $@
 
 
 ##### ZSH

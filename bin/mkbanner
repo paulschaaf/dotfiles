@@ -10,7 +10,7 @@ v_offset=178
 char_width=117
 product=`sed -n "s/^appCode=//gp" gradle.properties`
 version=`sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties`
-product=${product:u}
+product=${product:l}
 smush=100
 
 function usage() {
@@ -67,6 +67,9 @@ while [[ -n "$*" ]]; do
       --product)
          product=${value}
          ;;
+      --setx)
+         set -x
+         ;;
       --smush)
          smush=${value}
          ;;
@@ -84,19 +87,19 @@ done
 
 prodColor=${fg}
 case ${product} in
-  AB)
+  ab)
     prodColor=aqua
     ;;
-  BC)
+  bc)
     prodColor=magenta
     ;;
-  CC)
+  cc)
     prodColor=royalblue;
     ;;
-  PC)
+  pc)
     prodColor=tan;
     ;;
-  PL|PX)
+  pl|px)
     prodColor=green;
     ;;
 esac
@@ -123,8 +126,9 @@ command=( convert
   -background none
   -pointsize ${pointsize}
   -stroke white -strokewidth 2         # text outline
-  -fill ${prodColor}                        label:"${product}${version}"
-  -fill ${fg}        ${font:+-font ${font}} label:\'${txt}\'
+  -fill ${prodColor}  label:"${product}${version}"
+  ${font:+-font} ${font:+"${font}"}
+  -fill ${fg}         label:"${txt}"
   +smush ${smush}                      # smush the two strings together
   ${filename}
 )

@@ -170,18 +170,20 @@ export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
 #export LS_COLORS=${(j_:_)lsColors}; unset lsColors
 
 # set LS_COLORS
-src=~/etc/rc/dircolors
-dest=~/.dircolors
-if [[ ! -s ${dest}.zwc || ${dest}.zwc -ot ${src} ]]; then
-  # generate then compile the command script
-  dircolors ${src} >| ${dest}
-  zcompile ${dest}
-  # but only keep the compiled version
-  rm -f ${dest}
-  echo Recompiled ${dest}
+if [[ "$USER" = "pschaaf" ]]; then
+  src=~/etc/rc/dircolors
+  dest=~/.dircolors
+  if [[ ! -s ${dest}.zwc || ${dest}.zwc -ot ${src} ]]; then
+    # generate then compile the command script
+    dircolors ${src} >| ${dest}
+    zcompile ${dest}
+    # but only keep the compiled version
+    rm -f ${dest}
+    echo Recompiled ${dest}
+  fi
+  source ${dest}
+  unset src dest
 fi
-source ${dest}
-unset src dest
 
 export MANPAGER=less
 export NVM_DIR=~/.nvm
@@ -578,8 +580,8 @@ eval "$(starship init zsh)"
 if inLinux && (( ! $#SSH_AGENT_PID )); then
      ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
 elif inMacOS; then
-     ssh-add -T ~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
      alias ssh='command ssh -o UseKeychain=yes'
+     ssh-add -T ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
 fi
 
 # ========
