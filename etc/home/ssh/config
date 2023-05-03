@@ -1,7 +1,4 @@
-# - *- eval: (...) - *-
-# (man "ssh_config" "foo")
-# manual-program
-# to gen a bunch of keys use e.g.
+# to gen a bunch of pass phrases with an acrostic use e.g.
 # xkcdpass --count=25 --acrostic='chaos' --delimiter=' ' --min=3 --valid-chars='[a-z]' | xargs -n 5 printf '%-10s %-10s %-10s %-10s %-10s\n'
 
 # =========================================================================
@@ -12,6 +9,7 @@ Host *
   IdentityFile ~/.ssh/id_ecdsa
 #   IdentityFile ~/.ssh/id_dsa
 #   IdentityFile ~/.ssh/id_rsa
+
 
 # =========================================================================
 # ======= Home Machines
@@ -24,9 +22,6 @@ Host pschaaf-C02G787RMD6R
    ForwardAgent yes
    ForwardX11 yes
 
-Host PSCHAAF-MBP15
-   ForwardAgent yes
-   ForwardX11 yes
 
 # =========================================================================
 # ======= Guidewire Machines
