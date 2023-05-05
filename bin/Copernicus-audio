@@ -3,16 +3,15 @@
 if [[ `hostname` = "copernicus" ]]; then
   (( $# )) && playerctl "${@}"
 
-  RESPONSE=$(playerctl metadata --format "artist='{{xesam:artist}}, \"{{xesam:title}}\"'; album='{{xesam:album}} ({{year}} {{xesam:genre}})'; time='{{emoji(status)}} @ {{duration(position)}}/{{duration(mpris:length)}}'")
+  RESPONSE=$(playerctl metadata --format "artist=\"{{xesam:artist}}, \\\"{{xesam:title}}\\\"\"; album=\"{{xesam:album}} ({{year}} {{xesam:genre}})\"; time=\"{{emoji(status)}} @ {{duration(position)}}/{{duration(mpris:length)}}\"")
   eval $RESPONSE
   echo $RESPONSE
   # shellcheck disable=SC2154
-  notify-send $artist "$album $time"
 else
   RESPONSE=$(ssh -x copernicus ${(F)0:t} "${@}")
   eval $RESPONSE
   echo $artist; echo $album; echo $time
 fi
 
-notify-send "$album
-$time" $artist
+notify-send $artist "$album
+$time"
