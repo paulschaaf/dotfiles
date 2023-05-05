@@ -93,7 +93,7 @@ case $remote_host in
 
         add_ssh_flag '-Y' '-t' '-t'
         bash_cmd='bash --rcfile .bashrc'
-        # (($#cmd == 0)) && cmd="${bash_cmd}"
+        # [ -z "$cmd" ] && cmd="${bash_cmd}"
         cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
         ;;
 
@@ -110,7 +110,7 @@ case $remote_host in
         bash_cmd="bash -c \"${bash_args}\""
 #        ssh_flags=${ssh_flags}'-f '
         #        cmd="/usr/bin/Terminal -x '${bash_cmd}'"
-        (($#cmd == 0)) && cmd="'${bash_cmd}'"
+        [ -z "$cmd" ] && cmd="'${bash_cmd}'"
         # typeset -p cmd def_switch_p4user bash_args bash_cmd
         ;;
 
@@ -120,7 +120,7 @@ case $remote_host in
 
     *@ftp)
         # : ${CD_TO:=/chroot-jail}
-        if (($#cmd == 0)); then
+        if [ -z "$cmd" ]; then
             add_ssh_flag '-t'
             cmd='zsh -il'
         fi
@@ -155,8 +155,8 @@ fi
 # We must manually cd before evaluating any remote commands
 # If no command specified, the remote shell is expected to handle the cd
 #
-if (($#CD_TO > 0)); then
-    if (($#cmd > 0)); then
+if [ -n "$CD_TO" ]; then
+    if [ -n "$cmd" ]; then
         cmd="cd $CD_TO\; "${cmd}
     else
         env_vars_to_pass=${env_vars_to_pass}' CD_TO'
@@ -167,11 +167,11 @@ fi
 # ssh Environment variables
 #
 unset environment
-if (($#env_vars_to_pass > 0)); then
+if [ -n "$env_vars_to_pass" ]; then
     environment='export '
     for variable in ${env_vars_to_pass}; do
         eval value=\$${variable}
-        if (($#value > 0)); then
+        if [ -n "$value" ]; then
             environment=${environment}${variable}=${value}'\; '
         fi
     done
@@ -182,13 +182,13 @@ fi
 final=${final:-${protocol} ${ssh_flags}${remote_host}${cmd:+ -- }${cmd}}
 
 # 'exec' dislikes leading envvar definitions--it's easier to just export them
-if (($#env_vars_to_export > 0)); then
+if [ -n "${env_vars_to_export}" ]; then
     typeset -x ${env_vars_to_export}
     typeset -p ${env_vars_to_export}
 fi
 echo ${final}
 
-if (($#dry_run == 0)); then
+if [ -z "$dry_run" ]; then
 #    echo "\e[k${remote_host}\e["    # set the screen title
 #    trap 'echo -n \e[k-\e[' EXIT    # then set it back on exit
     eval ${final}

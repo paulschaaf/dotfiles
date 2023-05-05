@@ -166,7 +166,7 @@ if inLinux; then
     disown
   }
 fi
-alias macbook=pschaaf-C02G787RMD6R
+alias -g macbook=pschaaf-C02G787RMD6R
 alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
 inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
