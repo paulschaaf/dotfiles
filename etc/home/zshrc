@@ -37,6 +37,7 @@ setopt glob_complete             # When the current word has a glob pattern, cyc
 
 # Expansion and Globbing
 setopt extendedglob              # treat #, ~, and ^ as part of patterns for filename generation
+
 # History
 setopt bang_hist                 # Perform textual history expansion, csh-style, treating the character ‘!’ specially.
 setopt extended_history          # Write the history file in the ":start:elapsed;command" format.
@@ -55,12 +56,12 @@ setopt share_history             # Share history between all sessions.
 
 # Input/Outut
 unsetopt clobber                 # Require ‘>!’ or ‘>|’ to truncate a file.
-setopt correct                   # Try to correct the spelling of commands.
+setopt   correct                 # Try to correct the spelling of commands.
 unsetopt flow_control            # Disable output flow control via start/stop characters.
-setopt hash_cmds                 # Note the location of each command the first time it is executed to avoid future path searches.
-setopt hash_dirs                 # Hash the directory containing a command, as well as all directories that occur earlier in the path.
-setopt ignore_eof                # Do not exit on end-of-file. Require the use of exit or logout instead.
-setopt interactive_comments      # Allow comments even in interactive shells.
+setopt   hash_cmds               # Note the location of each command the first time it is executed to avoid future path searches.
+setopt   hash_dirs               # Hash the directory containing a command, as well as all directories that occur earlier in the path.
+setopt   ignore_eof              # Do not exit on end-of-file. Require the use of exit or logout instead.
+setopt   interactive_comments    # Allow comments even in interactive shells.
 unsetopt print_exit_value        # Do not print the exit value of programs with non-zero exit status.
 unsetopt rm_star_silent          # Query the user before executing ‘rm *’ or ‘rm path/*’.
 
@@ -85,6 +86,7 @@ unsetopt beep                    # Do not beep on error in ZLE.
 # set default bindings before any tweaks made by `autoload`, `source`, etc.
 bindkey -e # Use Emacs key bindings
 
+
 # ========
 # ======== Exported Variables
 autoload -Uz colors && colors
@@ -102,13 +104,12 @@ fi
 export HISTSIZE=3000
 export SAVEHIST=$HISTSIZE
 
+# less
 export LESS='--RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
-
 # LESS_TERMCAP_DEBUG=true        # make manpages show markup codes
-
-export LESS_TERMCAP_mb=$(tput bold; tput setaf 6) # start blink => cyan
-export LESS_TERMCAP_md=$(tput bold; tput setaf 2) # start bold => green
-export LESS_TERMCAP_me=$(tput sgr0)               # end bold, blink & underline
+export LESS_TERMCAP_mb=$(tput bold; tput setaf 6)               # start blink => cyan
+export LESS_TERMCAP_md=$(tput bold; tput setaf 2)               # start bold => green
+export LESS_TERMCAP_me=$(tput sgr0)                             # end bold, blink & underline
 
 export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # start inverse video => yellow on blue
 export LESS_TERMCAP_se=$(tput rmso; tput sgr0)                  # stop inverse video =>
@@ -122,54 +123,10 @@ export LESS_TERMCAP_ZN=$(tput ssubm)
 export LESS_TERMCAP_ZV=$(tput rsubm)
 export LESS_TERMCAP_ZO=$(tput ssupm)
 export LESS_TERMCAP_ZW=$(tput rsupm)
+
 export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
 
-#export LESSKEY=~pschaaf/.less_${HOSTNAME}
-
-#lsColors=(
-#  'bd=40;33;01'  # block devices
-#  'cd=40;33;01'  # character devices
-#  'di=01;34'     # directories
-#  'ex=01;32'     # executable files
-#  'fi=00'        # regular files
-#  'ln=01;36'     # symlinks
-#  'mi=01;37;41'
-#  'no=00'
-#  'or=01;37;41'  # symlinks with no target
-#  'pi=40;33'     # named pipes
-#  'so=01;35'     # sockets
-#
-#  '*.arc=01;31'
-#  '*.arj=01;31'
-#  '*.bmp=01;35'
-#  '*.btm=01;32'
-#  '*.bz2=01;31'
-#  '*.bz=01;31'
-#  '*.gif=01;35'
-#  '*.gz=01;31'
-#  '*.jpeg=01;35'
-#  '*.jpg=01;35'
-#  '*.lha=01;31'
-#  '*.lzh=01;31'
-#  '*.png=01;35'
-#  '*.rpm=01;31'
-#  '*.tar=01;31'
-#  '*.taz=01;31'
-#  '*.tbz2=01;3'
-#  '*.tgz=01;31'
-#  '*.tif=01;35'
-#  '*.tiff=01;35'
-#  '*.tz=01;31'
-#  '*.xbm=01;35'
-#  '*.xpm=01;35'
-#  '*.z=01;31'
-#  '*.Z=01;31'
-#  '*.zip=01;31'
-#)
-## crunch it into a single colon-delimited String for zsh
-#export LS_COLORS=${(j_:_)lsColors}; unset lsColors
-
-# set LS_COLORS
+# set dir colors
 if [[ "$USER" = "pschaaf" ]]; then
   src=~/etc/rc/dircolors
   dest=~/.dircolors
@@ -186,7 +143,6 @@ if [[ "$USER" = "pschaaf" ]]; then
 fi
 
 export MANPAGER=less
-export NVM_DIR=~/.nvm
 export PAGER=less
 export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
 
@@ -199,8 +155,6 @@ export WORDCHARS='|*?-~\\$%^'
 # ======== Aliases
 alias 8080="open http://localhost:8080/cc"
 alias 8090="open http://localhost:8090/cc"
-#alias ..='pushd ..' # doesn't work on MaoOS terminal
-#alias ...="pushd ../.."
 alias cd=pushd
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
@@ -208,20 +162,20 @@ inLinux && alias hpcalc=x48
 inCygwin && alias open=explorer
 if inLinux; then
   function open() {
-     nohup dolphin --new-window ${*:-.} &> /dev/null &
-     disown
+    nohup dolphin --new-window ${*:-.} &> /dev/null &
+    disown
   }
 fi
-alias macbook=pschaaf-mbp15
+alias macbook=pschaaf-C02G787RMD6R
 alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
-alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
+inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
 #alias rm='rm -i'
-inCygwin || alias rm=trash
-alias root='dirs -c && pcd'
+! inCygwin && alias rm=trash
+#alias root='dirs -c && pcd'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
-alias yay="command yay --color=auto --answerclean None --answerdiff None --answeredit None"
+inLinux && alias yay="command yay --color=auto --answerclean None --answerdiff None --answeredit None"
 
 
 # ========
@@ -404,95 +358,13 @@ fi
 
 bindkey -s "\033[21~"  ' exit\n'                  # F10
 bindkey -s "\033[Z"    ' popd\n'                  # shift_tab
-#bindkey -s ""^_""      '\C-apath \C-e\C-m!$\011'  # ctrl_? prepends 'path'
 inMacOS && bindkey -s "\033[27~" ' ~/bin/macos/hpcalc\n'
 inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 
 
 # ========
-# ======== Remote sessions
-#if (( $#SUDO_USER )); then
-#    export CONNECTION=sudo
-#    colored_connection="%F{magenta}"
-#elif (( $#SSH_TTY )); then
-#    export CONNECTION=ssh
-#    colored_connection="%F{226}%S"
-#elif (( $#REMOTEHOST || $#REMOTEUSER )); then
-#    export CONNECTION=tlnt
-#    colored_connection="%B%F{red}"
-#fi
-#
-#(( $#colored_connection )) && colored_connection=' '${colored_connection}${CONNECTION}%b%f%k%s
-
-
-# ========
 # ======== The Prompt
-autoload -Uz add-zsh-hook vcs_info
-#autoload -Uz vcs_info
-#function git_status() {
-#  vcs_info
-#    export VCS_STATUS="${vcs_info_msg_0_}${vcs_info_msg_0_:+
-#}"
-#}
-#add-zsh-hook precmd git_status
-#
-#zstyle ':vcs_info:*' enable git
-#
-## ref: https://timothybasanov.com/2016/04/23/zsh-prompt-and-vcs_info.html
-#zstyle ':vcs_info:git*' check-for-changes true
-#zstyle ':vcs_info:git*' stagedstr '%{%F{green}%B%}S%{%b%f%}'
-#zstyle ':vcs_info:git*' unstagedstr '%{%F{red}%B%}U%{%b%f%}'
-##-zstyle ':vcs_info:*' formats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{green}%}(%25>…>%b%<<)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
-##-zstyle ':vcs_info:git*' formats "%{$fg[green]%}%b%a%m%u%c%{$reset_color%} "
-#zstyle ':vcs_info:git*' formats "(%b m:%m %u c:%c)"
-##-zstyle ':vcs_info:*' actionformats '%{%F{cyan}%}%45<…<%R%<</%{%f%}%{%F{red}%}(%a|%m)%{%f%}%{%F{cyan}%}%S%{%f%}%c%u'
-#zstyle ':vcs_info:git*' actionformats "(%b|a:%a m:%m %u c:%c)"
-##zstyle ':vcs_info:*' nvcsformats ''
-#zstyle ':vcs_info:git:*' patch-format '%10>…>%p%<< (%n applied)'
-#zstyle ':vcs_info:*+set-message:*' hooks home-path
-#function +vi-home-path() {
-#  # Replace $HOME with ~
-#  hook_com[base]="$(echo ${hook_com[base]} | sed "s/${HOME:gs/\//\\\//}/~/" )"
-#}
-#zstyle ':vcs_info:git+post-backend:*' hooks git-remote-staged
-#function +vi-git-remote-staged() {
-#  # Show "unstaged" when changes are not staged or not committed
-#  # Show "staged" when last committed is not pushed
-#  #
-#  # See original VCS_INFO_get_data_git for implementation details
-#
-#  # Set "unstaged" when git reports either staged or unstaged changes
-#  if (( gitstaged || gitunstaged )) ; then
-#    gitunstaged=1
-#  fi
-#
-#  # Set "staged" when current HEAD is not present in the remote branch
-#  if (( querystaged )) && \
-#     [[ "$(${vcs_comm[cmd]} rev-parse --is-inside-work-tree 2> /dev/null)" == 'true' ]] ; then
-#      # Default: off - these are potentially expensive on big repositories
-#      if ${vcs_comm[cmd]} rev-parse --quiet --verify HEAD &> /dev/null ; then
-#          gitstaged=1
-#          if ${vcs_comm[cmd]} status --branch --short | head -n1 | grep -v ahead > /dev/null ; then
-#            gitstaged=
-#          fi
-#      fi
-#  fi
-#
-#  hook_com[staged]=$gitstaged
-#  hook_com[unstaged]=$gitunstaged
-#}
-
-#if [[ -f ~/etc/rc/git/git_zshrc.sh ]]; then
-#    zrecompile -U ~/etc/rc/git/git_zshrc.sh
-#    source ~/etc/rc/git/git_zshrc.sh
-#
-#    function git() {
-#        command git $*
-#        local exitVal=$?
-#        echo "$*" | grep --quiet 'checkout\|--edit-description' && updateGitVars
-#        return $exitVal
-#    }
-#fi
+autoload -Uz add-zsh-hook
 
 function updateDirs() {
     export DIRS=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
@@ -500,68 +372,7 @@ function updateDirs() {
 (( $#DIRS )) || updateDirs # unless DIRS is already set, run updateDirs
 add-zsh-hook chpwd updateDirs
 
-#export GIT_PS1_SHOWDIRTYSTATE=1
-#
-#currentUser=${USER//pschaaf/}
-
-#case ${UNAME}:${HOSTNAME} in
-#   CYGWIN*|Windows)
-##       HOST_ICON=`echo "\U1FA9F "`
-#       HOST_ICON="🪟 "
-#       ;;
-#   Darwin*)
-#       HOST_ICON="🍎 "
-#       ;;
-#   Linux*)
-#       HOST_ICON="🐧 "
-#       ;;
-#   *)
-##       HOST_ICON=`echo "\U2047" `
-#       HOST_ICON="⁇ "
-#       ;;
-#esac
-#export HOST_ICON
-
-#if (( $#currentUser || $#CONNECTION )); then # this is true unless it's simply pschaaf@localhost
-#    if ((UID)); then
-#        case ${UNAME}:${HOSTNAME} in
-#            CYGWIN*)
-#                hostColor=%B%F{white}%K{green}
-#                ;;
-#            Darwin*)
-#                hostColor=%F{green}%K{black}
-#                ;;
-#            Linux*)
-#                hostColor=%F{green}%K{black}
-#                ;;
-#            Windows*)
-#                hostColor=%B%F{white}%K{blue}
-#                ;;
-#            *)
-#                hostColor=%B%F{white}%K{black}
-#                ;;
-#        esac
-#    else
-#       hostColor=%B%F{white}%K{red}
-#    fi
-#
-#    # append the host machine, maybe preceeded by an @
-#    (( $#CONNECTION )) && currentUser=${currentUser}${currentUser:+@}'%m'
-#
-#    currentUser=' '$hostColor${currentUser}%b%f%k
-#    unset hostColor
-#fi
-#
-#(( $#HOSTMESSAGE )) && HOSTMESSAGE=" %B%F{magenta}%K{black}$HOSTMESSAGE%k%f%b"
-
-#PS1="%F{235}%U\${(l.\${COLUMNS}.. .)}%u%f
-#%(?..%B%K{red}-%?%k%b )%T${currentUser}${HOSTMESSAGE} ${HOST_ICON}%F{yellow}%B%80>…>%~%b%F{240} \$dirs%<<%f
-#\$VCS_STATUS%F{cyan}%2(L.%L_.)%!%f${colored_connection} \$GW_PROMPT%(!.#.$) "
-##RPROMPT=\$vcs_info_msg_0_
-#PS2="(%F{magenta}%_%f) > "
-
 export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
-((! UID)) && PATH+=:~pschaaf/homebrew/bin
 eval "$(starship init zsh)"
 
 # ========
@@ -577,12 +388,36 @@ eval "$(starship init zsh)"
 # ========
 # ======== Keychain
 # Start or connect to the existing ssh-agent and/or gpg-agent
-if inLinux && (( ! $#SSH_AGENT_PID )); then
-     ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_?sa`
-elif inMacOS; then
-     alias ssh='command ssh -o UseKeychain=yes'
-     ssh-add -T ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
+if (( ! $#SSH_AGENT_PID )); then
+  if inLinux; then
+    ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_ecdsa`
+  elif inMacOS; then
+    ssh_pid_file="$HOME/.config/ssh-agent.pid"
+    SSH_AUTH_SOCK="$HOME/.config/ssh-agent.sock"
+    if [ -z "$SSH_AGENT_PID" ]; then
+      # no PID exported, try to get it from pidfile
+      SSH_AGENT_PID=$(cat "$ssh_pid_file")
+    fi
+
+    if ! kill -0 $SSH_AGENT_PID &> /dev/null; then
+      # the agent is not running, start it
+      rm "$SSH_AUTH_SOCK" &> /dev/null
+      >&2 echo "Starting SSH agent, since it's not running; this can take a moment"
+      eval "$(ssh-agent -s -a "$SSH_AUTH_SOCK")"
+      echo "$SSH_AGENT_PID" > "$ssh_pid_file"
+      ssh-add -A 2>/dev/null
+
+      >&2 echo "Started ssh-agent with '$SSH_AUTH_SOCK'"
+    # else
+    # 	>&2 echo "ssh-agent on '$SSH_AUTH_SOCK' ($SSH_AGENT_PID)"
+    fi
+    export SSH_AGENT_PID
+    export SSH_AUTH_SOCK
+
+    ssh-add --apple-use-keychain ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
+  fi
 fi
+
 
 # ========
 # ======== Zsh Compinstall

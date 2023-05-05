@@ -1,6 +1,10 @@
 # shellcheck source=~ # shellcheck cannot follow non-constant source
 [[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
 
+# ADS Analytics
+#export DEPLOYMENT_ID_ADS=grn:v1:cc:guidewire:ads:centaurus:rho9:dev:adsgateway:/deployment/andromeda
+# export DEPLOYMENT_ID=${DEPLOYMENT_ID_ADS}
+
 # APD for CC
 export GW_APD_GenerateSmokeTests=true
 

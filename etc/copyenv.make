@@ -1,4 +1,3 @@
-#-*- mode: Makefile -*-
 ZSH_RESOURCES=zlogin zshrc zshenv
 ZSH_RESOURCE_ROOT=~pschaaf/dotfiles/etc/home
 OS_SYMLINKS=~/bin/inCygwin ~/bin/inMacOS ~/bin/inLinux

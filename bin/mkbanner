@@ -2,7 +2,7 @@
 
 # Set the Defaults
 # lower number is darker, gray60 is too light
-fg=gray60
+fgColor=gray60
 pointsize=240
 height=231
 h_offset=25
@@ -17,7 +17,7 @@ function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
   --smush      Sets the spacing between the product and the project name (defaults to '${smush}')
-  --fg=COLOR   Set the foreground color (defaults to '${fg}')
+  --fg=COLOR   Set the foreground color (defaults to '${fgColor}')
   --width=NUM  Set the width of the text box
   --debug      Trace the execution
   --dry_run    Show the resulting command but do not execute
@@ -53,7 +53,7 @@ while [[ -n "$*" ]]; do
          exit
          ;;
       --fg)
-         fg=${value}
+         fgColor=${value}
          ;;
      --font)
          font=${value}
@@ -85,7 +85,6 @@ while [[ -n "$*" ]]; do
    shift
 done
 
-prodColor=${fg}
 case ${product} in
   ab)
     prodColor=aqua
@@ -94,13 +93,16 @@ case ${product} in
     prodColor=magenta
     ;;
   cc)
-    prodColor=royalblue;
+    prodColor=royalblue
     ;;
   pc)
-    prodColor=tan;
+    prodColor=tan
     ;;
   pl|px)
-    prodColor=green;
+    prodColor=green
+    ;;
+  *)
+    prodColor=${fgColor}
     ;;
 esac
 
@@ -114,7 +116,7 @@ elif ((${#*})); then
    exit 1
 fi
 
-filename=banner_${product}${version}_${fg}${font:+_$font}_${txt// /_}.png
+filename=banner_${product}${version}_${fgColor}${font:+_$font}_${txt// /_}.png
 
 force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then
@@ -125,11 +127,13 @@ fi
 command=( convert
   -background none
   -pointsize ${pointsize}
-  -stroke white -strokewidth 2         # text outline
+  -channel A -evaluate multiply 0.5 +channel        # transparency
+  -stroke white -strokewidth 4                      # product name+version outline
   -fill ${prodColor}  label:"${product}${version}"
   ${font:+-font} ${font:+"${font}"}
-  -fill ${fg}         label:"${txt}"
-  +smush ${smush}                      # smush the two strings together
+  -stroke white -strokewidth 2                      # label outline
+  -fill ${fgColor}    label:"${txt}"
+  +smush ${smush}                                   # smush the two strings together
   ${filename}
 )
 

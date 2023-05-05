@@ -65,7 +65,7 @@ case ${UNAME} in
       unsetopt GLOBAL_RCS
       ;;
   Darwin)
-      os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~/homebrew/bin)
+      os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~pschaaf/homebrew/bin)
       fpath=(~pschaaf/homebrew/share/zsh/site-functions ${fpath})
       ;;
   Linux)
@@ -87,12 +87,6 @@ path=(
 fpath=(~pschaaf/etc/zshfunctions ${fpath[@]})
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
-
-unset inGuidewire
-
-if inMacOS; then
-  export inGuidewire=true
-fi
 
 # ========
 # ======== Exported Variables
@@ -119,9 +113,14 @@ if inCygwin; then
   source ~pschaaf/etc/rc/zshenv_cygwin
 fi
 
+
 # ========
 # ======== Guidewire
+if inMacOS; then
+  export inGuidewire=true
+fi
+
 if (($#inGuidewire)); then
-  zrecompile ~pschaaf/etc/rc/zshenv_guidewire
+  zrecompile ~/etc/rc/zshenv_guidewire
   source ~pschaaf/etc/rc/zshenv_guidewire
 fi
