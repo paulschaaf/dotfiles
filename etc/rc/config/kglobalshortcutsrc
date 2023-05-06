@@ -56,7 +56,11 @@ display=Display\tMeta+P,Display\tMeta+P,Switch Display
 
 [khotkeys]
 _k_friendly_name=Custom Shortcuts Service
+{319a57cf-aabd-4d2e-baf4-4bfaa6d9f78e}=Meta+Ctrl+Alt+Shift+Right,none,Next
+{43b60490-1f33-4dfb-a796-95f65fe3befa}=Meta+Ctrl+Alt+Shift+Space,none,Play/Pause
 {45303711-4e70-4f70-9138-4fe5beefe44b}=Launch (1),none,Open HP Calculator
+{7ab48c14-f6ae-40c1-b0e8-0e778c4a028b}=Meta+Ctrl+Alt+Shift+I,none,Info
+{9c1280a1-8bc3-42f8-8984-5f68d204d976}=Meta+Ctrl+Alt+Shift+Left,none,Previous
 {aa8f0f41-d256-4a98-b38a-26f3fa261a32}=Ctrl+Shift+Esc,none,Process Manager
 {d03619b6-9b3c-48cc-9d9c-a2aadb485550}=none,none,Search
 
@@ -442,10 +446,10 @@ _launch=none,none,Launch Slack
 
 [strawberry]
 _k_friendly_name=strawberry
-next_track=none,none,Next track
-play_pause=Ctrl+Alt+Shift+Space,none,Play/Pause
-prev_track=none,none,Previous track
-stop=none,none,Stop
+next_track=,none,Next track
+play_pause=,none,Play/Pause
+prev_track=,none,Previous track
+stop=,none,Stop
 
 [systemsettings.desktop]
 _k_friendly_name=System Settings
