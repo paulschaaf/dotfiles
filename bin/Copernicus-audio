@@ -1,17 +1,17 @@
 #!/bin/zsh
 
 if [[ `hostname` = "copernicus" ]]; then
-  (( $# )) && playerctl "${@}"
+  (( $# )) && playerctl "${@}" # exec command
 
-  RESPONSE=$(playerctl metadata --format "artist=\"{{xesam:artist}}, \\\"{{xesam:title}}\\\"\"; album=\"{{xesam:album}} ({{year}} {{xesam:genre}})\"; time=\"{{emoji(status)}} @ {{duration(position)}}/{{duration(mpris:length)}}\"")
-  eval $RESPONSE
-  echo $RESPONSE
-  # shellcheck disable=SC2154
+  alias notify-send='notify-send -a'
+  RESPONSE=$(playerctl metadata --format 'artist="{{xesam:artist}}"; title="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
 else
   RESPONSE=$(ssh -x copernicus ${(F)0:t} "${@}")
-  eval $RESPONSE
-  echo $artist; echo $album; echo $time
 fi
 
-notify-send $artist "$album
-$time"
+echo $RESPONSE
+eval $RESPONSE
+# shellcheck disable=SC2154 # var referenced but not assigned
+notify-send "$title" "$artist
+\"$album\" ($year) track $track
+$playStatus at $position / $length"
