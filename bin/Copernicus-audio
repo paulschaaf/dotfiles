@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 if [[ `hostname` = "copernicus" ]]; then
-  (( $# )) && playerctl "${@}" # exec command
+  (( $# )) && playerctl -p strawberry "${@}" # exec command
 
   alias notify-send='notify-send -a'
   RESPONSE=$(playerctl metadata --format 'artist="{{xesam:artist}}"; title="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
