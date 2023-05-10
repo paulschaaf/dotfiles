@@ -1,3 +1,3 @@
 #!/bin/bash
 
-www https://stash.guidewire.com/projects/CC/repos/$GIT_REPO/pull-requests?state=OPEN&author=${USERNAME:-$USER}
+www "https://stash.guidewire.com/projects/CC/repos/${GIT_REPO:-cc}/pull-requests?state=OPEN&author=${USERNAME:-$USER}"

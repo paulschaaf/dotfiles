@@ -52,6 +52,7 @@ _arguments "*: :((
   restoreDb
   rmDb
 #  'runSuite: Compile then run the specified suite'
+  'setBg: Set the background image in iTerm'
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
   'tasks: List the tasks understood by the GW ./gwb'

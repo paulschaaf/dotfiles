@@ -1,9 +1,13 @@
 # shellcheck source=~ # shellcheck cannot follow non-constant source
-[[ -f ~/dotfiles/secrets.sh ]] && source ~/dotfiles/secrets.sh
+secrets=~/dotfiles/secrets.sh
+if [[ -f $secrets ]]; then
+  chmod 400 $secrets  # prevent accidents
+  source $secrets
+fi
+unset secrets
 
 # ADS Analytics
 #export DEPLOYMENT_ID_ADS=grn:v1:cc:guidewire:ads:centaurus:rho9:dev:adsgateway:/deployment/andromeda
-# export DEPLOYMENT_ID=${DEPLOYMENT_ID_ADS}
 
 # APD for CC
 export GW_APD_GenerateSmokeTests=true
@@ -22,7 +26,7 @@ export CIS_ARTIFACT_REPO_USERNAME=${USER}
 # Claims Cloud Policy Integration
 export APPLICATION_AUTH_ENABLED=true
 export CCPI_IS_LOCAL_SERVER=true
-export DEPLOYMENT_ID_GRN=grn:v1:igclaimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
+export DEPLOYMENT_ID_CCPI=grn:v1:igclaimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
 export GW_TENANT=guidewire
 export HELIOS_ENABLED=false
 export IG_ARTIFACT_REPO_URL=https://bitbucket.futurest.mint-1.us-east-1.guidewire.net/rest/api/1.0/projects/CLAIMSSVCS/repos/ig-maven-repository/raw/repository
@@ -48,6 +52,10 @@ export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=${artifactory}/insurancesui
 # Dependency credentials (must not include "@guidewire.com")
 export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
 export DEPENDENCY_REPOSITORY_USERNAME=${USER}
+
+
+# ========
+# ======== Colors
 
 # pastel format ansi-24bit-escapecode indigo | cat -v
 # pastel color blue | pastel lighten 0.3

@@ -120,6 +120,7 @@ while (($#@)); do
          addGlobs --negate "${test_dirs[@]}"
          ;;
       --inIntelliJ)
+         # shellcheck disable=SC2034
          inIntelliJ=true
          ;;
       --notIntelliJ)

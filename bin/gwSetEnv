@@ -60,7 +60,7 @@ function lsPathVar() {
 # DETERMINE THE PLATFORM
 #
 
-export GW_PL_VERSION=$(sed -nE 's/^plVersion=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
+export GW_PL_VERSION=$(sed -nE 's/^plVersion=([0-9.]*).*/\1/gp' gradle.properties)
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
 typeset -p GW_PL_VERSION
@@ -137,6 +137,8 @@ case ${GW_PL_VERSION} in
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
       export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
 
+    [[ -d ./h2/test ]] && GW_DB_DIR=./h2/test
+
     if [[ "$1" == "old" ]]; then
       export GW_DB_DIR=/tmp/guidewire/granite
       export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
@@ -188,15 +190,21 @@ typeset -p GW_DB_DIR GW_PL_NUM GW_PLATFORM
 # DETERMINE THE PRODUCT
 #
 
-export GW_APPCODE=$(sed -n 's/^appCode=//gp' gradle.properties)
-export GW_PORT=$(sed -n 's/^jettyPort=//gp' gradle.properties)
+vars=$(sed -n "
+  s/^appCode/GW_APPCODE/p;
+  s/^appName/GW_APPNAME/p;
+  s/^jettyPort/GW_PORT/p;
+  s/^studioVersion=/GW_STUDIO_VERSION/p
+" gradle.properties | sed 's/^/export /g')
+echo $vars
+eval $vars
+
 # shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
 # compute platform from studio jar version num => ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
-export GW_STUDIO_VERSION=$(sed -n 's/^studioVersion=//gp' gradle.properties)
 export GW_TITLE="$GW_APPCODE$GW_PL_NUM"
 #export GW_PROMPT="%{$GW_COLORs[$GW_APPCODE]%}$GW_TITLE%{[0m%} "
-typeset -p GW_APPCODE GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE
+typeset -p GW_PORT_DEBUG GW_TITLE
 
 #
 # DETERMINE INSTALLATION ROOT

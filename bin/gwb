@@ -365,6 +365,10 @@ while [ -n "$*" ]; do
     lsApd)
       fullTask="find ${apd_dirs} -type f 2>/dev/null | xargs ls ${LS_FLAGS} -l --color"
       ;;
+    lsDb)
+      noNotifySuccess=true
+      fullTask="ls ${GW_DB_DIR}/*"
+      ;;
     pgrep)
       fullTask=$(grepProcStr ${jvmProcess})
       ;;
@@ -397,26 +401,22 @@ while [ -n "$*" ]; do
       fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
     portCheck)
-      fullTask="ssh -S $ssh_socket -O check pschaaf@localhost"
+      fullTask="ssh -xS $ssh_socket -O check pschaaf@localhost"
       ;;
     portClose)
-      fullTask="ssh -S $ssh_socket -O exit pschaaf@localhost"
+      fullTask="ssh -xS $ssh_socket -O exit pschaaf@localhost"
       ;;
     portOpen)
       spawn=true
-      fullTask="exec ssh -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
+      fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
       ;;
     restoreDb)
       fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
       shift
       #${dbbackup}.7z"
       ;;
-    lsDb)
-      noNotifySuccess=true
-      fullTask="ls ${GW_DB_DIR}/*"
-      ;;
     rmDb)
-      fullTask="rm -fv ${GW_DB_DIR}/* && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
+      fullTask="rm -fv ${GW_DB_DIR}/* && echo && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
       ;;
       #      runSuite)
       #        if (( ! $#* )); then
@@ -425,6 +425,11 @@ while [ -n "$*" ]; do
       #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
       #        shift
       #        ;;
+    setBg)
+      fullTask="itermBg '$2'"
+      shift
+      ;;
+    setGnuScreenTitle
     studio)
       if [ $GW_PL_NUM -lt 9 ]; then
         spawn=true

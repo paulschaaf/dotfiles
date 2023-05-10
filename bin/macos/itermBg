@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+file=$(readlink -f $1)
+
+/usr/bin/osascript -e 'tell application "iTerm2" to tell current session of current window to set background image to "'$file'"'

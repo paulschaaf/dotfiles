@@ -1,4 +1,4 @@
-HOSTS=copernicus pschaaf-mbp15
+HOSTS=copernicus macbook
 
 .PHONY:	all clean allowUserWrite cleanLinks disallowAllWrites
 

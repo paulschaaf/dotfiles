@@ -19,8 +19,8 @@
 
 # if $zprof is set run the profiler
 if (( $#zprof )); then
-    zmodload zsh/zprof
-    echo Running zprof from ${(%):-%N}
+  zmodload zsh/zprof
+  echo Running zprof from ${(%):-%N}
 fi
 
 
@@ -59,27 +59,28 @@ export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH   
 # this enables the correct symlink override for one of inCygwin, inMacOS, inLinux, etc.
 case ${UNAME} in
   CYGWIN)
-      export HOME=/home/$USERNAME
-      os_override_path=(~/bin/win ${os_override_path[@]} )
-      # do not source the global rcs
-      unsetopt GLOBAL_RCS
-      ;;
+    export HOME=/home/$USERNAME
+    os_override_path=(~/bin/win ${os_override_path[@]} )
+    # do not source the global rcs
+    unsetopt GLOBAL_RCS
+    ;;
   Darwin)
-      os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~pschaaf/homebrew/bin)
-      fpath=(~pschaaf/homebrew/share/zsh/site-functions ${fpath})
-      ;;
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2021.3.2 CE.app/Contents/MacOS"
+    os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~pschaaf/homebrew/bin ${IDEA_HOME})
+    fpath=(~pschaaf/homebrew/share/zsh/site-functions ${fpath})
+    ;;
   Linux)
-      os_override_path=(~/bin/linux ${os_override_path[@]})
-      ;;
+    os_override_path=(~/bin/linux ${os_override_path[@]})
+    ;;
   *)
   ;;
 esac
 
 path=(
-    ${os_override_path[@]}
-    ${path[@]}
-    /usr/X11R6/bin
-    /opt/git-gw
+  ${os_override_path[@]}
+  ${path[@]}
+  /usr/X11R6/bin
+  /opt/git-gw
 )
 
 (($#debug)) && echo PATH is && echo $PATH | tr ':' '\n' | cat -n | sed -E 's_/cygdrive__; s_(/c/Users/pschaaf|%HOME%)_~_'

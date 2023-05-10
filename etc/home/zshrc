@@ -89,16 +89,16 @@ bindkey -e # Use Emacs key bindings
 
 # ========
 # ======== Exported Variables
-autoload -Uz colors && colors
+#autoload -Uz colors && colors
 
 export ESHELL=${SHELL}
 export FCEDIT=zed
 export fignore=(.class .o \~ .stackdump dump.txt nohup.out)
 
 if ((UID)); then
-   export HISTFILE=~/.history
+  export HISTFILE=~/.history
 else
-   export HISTFILE=~/.history_root
+  export HISTFILE=~/.history_root
 fi
 
 export HISTSIZE=3000
@@ -172,7 +172,6 @@ alias pd=popd
 inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
 #alias rm='rm -i'
 ! inCygwin && alias rm=trash
-#alias root='dirs -c && pcd'
 alias term='echoVar TERM'
 alias tree="tree -a --dirsfirst"
 inLinux && alias yay="command yay --color=auto --answerclean None --answerdiff None --answeredit None"
@@ -180,7 +179,7 @@ inLinux && alias yay="command yay --color=auto --answerclean None --answerdiff N
 
 # ========
 # ======== Global Aliases - works anywhere on a line
-alias -g ...='../..'
+#alias -g ...='../..'
 
 
 # ========
@@ -212,9 +211,9 @@ autoload -Uz lsf
 # ======== Var and List Processing
 autoload -Uz echoList
 autoload -Uz echoVar
-alias classpath='echoList CLASSPATH'
-alias fpath='echoList FPATH'
-alias libpath='echoList LD_LIBRARY_PATH'
+#alias classpath='echoList CLASSPATH'
+#alias fpath='echoList FPATH'
+#alias libpath='echoList LD_LIBRARY_PATH'
 alias path='echoList PATH'
 autoload -Uz rubylib
 
@@ -235,8 +234,8 @@ unset autojump
 inMacOS && source /Users/pschaaf/.config/broot/launcher/bash/br
 
 inMacOS \
-    && alias df='df -Phl' \
-    || autoload -Uz df
+  && alias df='df -Phl' \
+  || autoload -Uz df
 
 autoload -Uz ddu
 
@@ -244,10 +243,6 @@ autoload -Uz ddu
 # function dirname() { echo ${(F)@:h} }
 
 inMacOS && function find() { [[ $1 == -* ]] && command find . ${*} || command find ${*} }
-
-autoload -Uz frotz
-
-#autoload -Uz mkfunction
 
 function joinPhotos() {
   local nums=(1 2 3 4 5 6 7 8 9 10)
@@ -268,49 +263,20 @@ function joinPhotos() {
   done
 }
 
-#function parse_options() {
-#  # declare the vars with defaults
-#  local o_port=(-p "default port")
-#  local o_root=(-r "default root")
-#  local o_log=(-d "default log")
-#  local o_help=()
-#
-#  # populate the vars
-#  zparseopts -K -- p:=o_port r:=o_root l:=o_log h=o_help
-#  if [[ $? != 0 || "$o_help" != "" ]]; then
-#    echo Usage: $(basename "$0") "[-p PORT] [-r DIRECTORY]"
-#    exit 1
-#  fi
-#
-#  # extract the args
-#  local port=$o_port[2]
-#  local root=$o_root[2]
-#  local log=$o_log[2]
-#
-#  [[ $root[1] != '/' ]] && root="$PWD/$root"
-#  typeset -p port root log help
-#}
-## now use the function:
-#parse_options -p 1024
-
 # Change to the specified dir & remove starting place from dir stack
 function pcd() { cd "$@" && popd +1 2>/dev/null }
 
 function pidport() {
-   lsof -i tcp:$1
+  lsof -i tcp:$1
 }
 
 # cd to the specified directory, or if it's a file, to the containing directory
 function pushd() {
-    if [[ -f "$1" ]]; then
-        builtin pushd ${1:h}
-    else
-        builtin pushd ${1}
-    fi
-}
-
-function root() {
-    pcd $0 && dirs -
+  if [[ -f "$1" ]]; then
+    builtin pushd ${1:h}
+  else
+    builtin pushd ${1}
+  fi
 }
 
 function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
@@ -350,8 +316,8 @@ bindkey "\M-C\M-5"   up-case-word
 bindkey "\033[19~"   yank                                 # F8
 
 if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
-    bindkey "\033[5D"    backward-word         # ctrl_left
-    bindkey "\033[5C"    forward-word          # ctrl_right
+  bindkey "\033[5D"    backward-word         # ctrl_left
+  bindkey "\033[5C"    forward-word          # ctrl_right
 fi
 
 # Macro Keys
@@ -367,7 +333,7 @@ inMacOS && bindkey -s "\033[28~" ' ~/bin/macos/Copernicus-audio-Play-or-Pause\n'
 autoload -Uz add-zsh-hook
 
 function updateDirs() {
-    export DIRS=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
+  export DIRS=`dirs -p | awk 'NR > 1 {print}' ORS=' '`
 }
 (( $#DIRS )) || updateDirs # unless DIRS is already set, run updateDirs
 add-zsh-hook chpwd updateDirs
@@ -375,13 +341,14 @@ add-zsh-hook chpwd updateDirs
 export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
 eval "$(starship init zsh)"
 
+
 # ========
 # ======== Guidewire
 #if [[ -s ${NVM_DIR}/nvm.sh ]]; then
-#    zrecompile -U ${NVM_DIR}/nvm.sh
-#    # Bootstrap the enormous nvm (Node version manager) function
-#    alias node="nvm install 10.13.0 && unalias node && node"
-#    alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
+#  zrecompile -U ${NVM_DIR}/nvm.sh
+#  # Bootstrap the enormous nvm (Node version manager) function
+#  alias node="nvm install 10.13.0 && unalias node && node"
+#  alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
 #fi
 
 
@@ -391,6 +358,10 @@ eval "$(starship init zsh)"
 if (( ! $#SSH_AGENT_PID )); then
   if inLinux; then
     ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_ecdsa`
+#    export SSH_AGENT_PID
+#    export SSH_AUTH_SOCK
+
+    ssh-add --apple-use-keychain ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
   elif inMacOS; then
     ssh_pid_file="$HOME/.config/ssh-agent.pid"
     SSH_AUTH_SOCK="$HOME/.config/ssh-agent.sock"
@@ -404,23 +375,22 @@ if (( ! $#SSH_AGENT_PID )); then
       rm "$SSH_AUTH_SOCK" &> /dev/null
       >&2 echo "Starting SSH agent, since it's not running; this can take a moment"
       eval "$(ssh-agent -s -a "$SSH_AUTH_SOCK")"
-      echo "$SSH_AGENT_PID" > "$ssh_pid_file"
-      ssh-add -A 2>/dev/null
+      export SSH_AGENT_PID
+      export SSH_AUTH_SOCK
 
+      echo "$SSH_AGENT_PID" >| "$ssh_pid_file"
       >&2 echo "Started ssh-agent with '$SSH_AUTH_SOCK'"
-    # else
-    # 	>&2 echo "ssh-agent on '$SSH_AUTH_SOCK' ($SSH_AGENT_PID)"
-    fi
-    export SSH_AGENT_PID
-    export SSH_AUTH_SOCK
 
-    ssh-add --apple-use-keychain ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
+      ssh-add --apple-use-keychain ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
+    fi
   fi
 fi
 
 
 # ========
 # ======== Zsh Compinstall
+#zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
+
 zstyle ':completion:*' expand prefix suffix
 zstyle ':completion:*' file-sort name
 zstyle ':completion:*' group-name ''
@@ -430,11 +400,10 @@ zstyle ':completion:*' list-prompt '%SAt %p: Hit TAB for more, or the character 
 zstyle ':completion:*' menu select=0
 zstyle ':completion:*' select-prompt '%SScrolling active: current selection at %p%s'
 zstyle ':completion:*' squeeze-slashes true
-zstyle ':zftp:' titlebar true
 zstyle ':completion:*' verbose true
 zstyle ':completion:*:messages' format ' %F{purple} -- %d --%f'
 zstyle ':completion:*:warnings' format ' %F{red}-- no matches found --%f'
-zstyle  :compinstall filename "~/etc/rc/$HOST.zsh"
+
 
 # Load and initialize the completion system ignoring insecure directories with a
 # cache time of 20 hours, so it should almost always regenerate the first time a
@@ -443,11 +412,11 @@ autoload -Uz compinit
 # shellcheck disable=SC1036
 _comp_files=(${ZDOTDIR:-$HOME}/.zcompdump(Nm-20))
 if (( $#_comp_files )); then
-    compinit -i -C
+  compinit -i -C
 else
-    compinit -i
-    # shellcheck disable=SC1073
-    { zrecompile ~/.zcompdump } &!
+  compinit -i
+  # shellcheck disable=SC1073
+  { zrecompile ~/.zcompdump } &!
 fi
 unset _comp_files
 #    unalias  run-help 2>/dev/null && autoload -Uz run-help
@@ -456,7 +425,7 @@ zmodload -i zsh/complist
 
 # load atmos
 for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
-   source $file
+  source $file
 done
 
 
