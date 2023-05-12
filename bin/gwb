@@ -429,7 +429,6 @@ while [ -n "$*" ]; do
       fullTask="itermBg '$2'"
       shift
       ;;
-    setGnuScreenTitle
     studio)
       if [ $GW_PL_NUM -lt 9 ]; then
         spawn=true
