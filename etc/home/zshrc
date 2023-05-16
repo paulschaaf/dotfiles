@@ -358,10 +358,6 @@ eval "$(starship init zsh)"
 if (( ! $#SSH_AGENT_PID )); then
   if inLinux; then
     ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_ecdsa`
-#    export SSH_AGENT_PID
-#    export SSH_AUTH_SOCK
-
-    ssh-add --apple-use-keychain ~/.ssh/id_ecdsa #~/.ssh/id_?sa || ssh-add ~/.ssh/id_?sa
   elif inMacOS; then
     ssh_pid_file="$HOME/.config/ssh-agent.pid"
     SSH_AUTH_SOCK="$HOME/.config/ssh-agent.sock"

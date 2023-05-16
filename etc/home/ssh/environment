@@ -1,2 +1,3 @@
 # CYGWIN: do not forcibly change to home directory
 CHERE_INVOKING=true
+DISPLAY=:0

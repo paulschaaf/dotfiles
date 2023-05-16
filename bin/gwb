@@ -126,7 +126,7 @@ notify() {
   shift
   inLinux && notify-send -c ${title} -t 5000 ${successIcon:+-i} $successIcon "${*}"
   #  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
-  inMacOS && notify-send "${*}" ${title}
+  inMacOS && notify-send ${title} "${*}"
   set +x
 }
 
@@ -134,7 +134,7 @@ notify() {
 runTask() {
   local userTask=$1
   local task=${nice}$2
-  local taskSummary='$ '${task% | sed*} # remove any 'sed' commands from the display
+  local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
   local successIcon=$3
   local failIcon=$4
   #  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
@@ -168,7 +168,8 @@ runTask() {
   if [ $exitCode -eq 0 ]; then
     log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
     if (($#noNotifySuccess == 0)); then
-      notify "Completed $GW_TITLE: $userTask" ${taskSummary}
+      notify $GW_TITLE "Completed: \"$userTask\"
+${taskSummary}"
     else
       unset noNotifySuccess
     fi
@@ -177,7 +178,8 @@ runTask() {
       exitStr="---with exit code $exitCode"
     fi
     log_section ${fail_color} "FAIL '$userTask' $elapsedTime$exitStr" $taskSummary
-    notify "Failed($exitCode) $GW_TITLE: $userTask" ${taskSummary} ${failIcon:+-appIcon} "$failIcon"
+    notify $GW_TITLE "Failed($exitCode): \"$userTask\"
+${taskSummary}" ${failIcon:+-appIcon} "$failIcon"
   fi
 
   setGnuScreenTitle
@@ -211,10 +213,10 @@ while [ -n "$*" ]; do
 
   # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
   if [[ ${task} =~ "Quiet$" ]]; then
-    notify=quiet
+    notifyVolume=quiet
     task=${task%Quiet}
   elif [[ ${task} =~ "Loud$" ]]; then
-    notify=loud
+    notifyVolume=loud
     task=${task%Loud}
   fi
 
@@ -222,69 +224,69 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
-    apibreaktest)
-      javaArgs+=(
-        -Xms7500m
-        -Xmx9500m
-      )
-      jvmArgs+=(
-        -DapiBreakTest.fix=true
-        -Dcom.guidewire.apidiff.apidump.APIDumpRepositoryLocal.PATH_PROPERTY=${HOME}/gw/dumps
-        -DapiBreakTest.dump.dir=$HOME/gw/dumps
-      )
-      ideaTmp=/private/var/folders/r_/sk1r8x993qd8jb8v_dc42dnh0000gq/T
+#    apibreaktest)
 #      javaArgs+=(
-#        @${ideaTmp}/idea_arg_file57507065
-#        @w@${ideaTmp}/idea_working_dirs_junit.tmp
-#        @${ideaTmp}/idea_junit.tmp
+#        -Xms7500m
+#        -Xmx9500m
 #      )
-      # todo pschaaf: set up CLASSPATH for cc-test
-      isAppModules=(
-        ${GW_APPCODE}-test
-        ${GW_APPCODE}-all
-        ${GW_APPCODE}-custbuild-test
-        ${GW_APPCODE}-behavior-test
-        ${GW_APPCODE}-gunit-behavior
-        ${GW_APPCODE}-gunit-pcf
-        ${GW_APPCODE}-gunit-content
-        ${GW_APPCODE}-content
-        ${GW_APPCODE}
-        ${GW_APPCODE}-pl-archiving
-        ${GW_APPCODE}-pl
-        ${GW_APPCODE}-pl-bizrules
-        ${GW_APPCODE}-pl-events
-        ${GW_APPCODE}-pl-gwhub-auth
-        ${GW_APPCODE}-pl-heatmap
-        ${GW_APPCODE}-pl-personaldata
-        ${GW_APPCODE}-pl-properties
-        ${GW_APPCODE}-pl-inbound-file
-        ${GW_APPCODE}-pl-outbound-file
-        ${GW_APPCODE}-cmd-common
-        ${GW_APPCODE}-pl-solr
-        ${GW_APPCODE}-pl-rest-core
-        ${GW_APPCODE}-plugin
-        ${GW_APPCODE}-pl-bizrules-content
-        ${GW_APPCODE}-pl-content
-        ${GW_APPCODE}-pl-events-content
-        ${GW_APPCODE}-pl-gwhub-auth-content
-        ${GW_APPCODE}-pl-personaldata-content
-        ${GW_APPCODE}-pl-inbound-file-content
-        ${GW_APPCODE}-pl-properties-content
-        ${GW_APPCODE}-pl-outbound-file-content
-        ${GW_APPCODE}-gunit
-        ${GW_APPCODE}-tools
-        ${GW_APPCODE}-apd-test-templates
-        ${GW_APPCODE}-pl-bizrules-test
-        ${GW_APPCODE}-pl-test
-      )
-      moduleClassDirs=:${(j_/build/idea/classes:_)isAppModules}
-      CLASSPATH+=${moduleClassDirs//:/:${PWD}/app-${GW_APPCODE}/} # prepend e.g. "./app-cc/" to each component
-      export CLASSPATH
-      echoVar CLASSPATH
-      class="com.intellij.rt.junit.JUnitStarter com.guidewire.cc.apidiff.APIBreakTest"
-
-      fullTask="java ${javaArgs} ${jvmArgs} ${class}"
-      ;;
+#      jvmArgs+=(
+#        -DapiBreakTest.fix=true
+#        -Dcom.guidewire.apidiff.apidump.APIDumpRepositoryLocal.PATH_PROPERTY=${HOME}/gw/dumps
+#        -DapiBreakTest.dump.dir=$HOME/gw/dumps
+#      )
+#      ideaTmp=/private/var/folders/r_/sk1r8x993qd8jb8v_dc42dnh0000gq/T
+##      javaArgs+=(
+##        @${ideaTmp}/idea_arg_file57507065
+##        @w@${ideaTmp}/idea_working_dirs_junit.tmp
+##        @${ideaTmp}/idea_junit.tmp
+##      )
+#      # todo pschaaf: set up CLASSPATH for cc-test
+#      isAppModules=(
+#        ${GW_APPCODE}-test
+#        ${GW_APPCODE}-all
+#        ${GW_APPCODE}-custbuild-test
+#        ${GW_APPCODE}-behavior-test
+#        ${GW_APPCODE}-gunit-behavior
+#        ${GW_APPCODE}-gunit-pcf
+#        ${GW_APPCODE}-gunit-content
+#        ${GW_APPCODE}-content
+#        ${GW_APPCODE}
+#        ${GW_APPCODE}-pl-archiving
+#        ${GW_APPCODE}-pl
+#        ${GW_APPCODE}-pl-bizrules
+#        ${GW_APPCODE}-pl-events
+#        ${GW_APPCODE}-pl-gwhub-auth
+#        ${GW_APPCODE}-pl-heatmap
+#        ${GW_APPCODE}-pl-personaldata
+#        ${GW_APPCODE}-pl-properties
+#        ${GW_APPCODE}-pl-inbound-file
+#        ${GW_APPCODE}-pl-outbound-file
+#        ${GW_APPCODE}-cmd-common
+#        ${GW_APPCODE}-pl-solr
+#        ${GW_APPCODE}-pl-rest-core
+#        ${GW_APPCODE}-plugin
+#        ${GW_APPCODE}-pl-bizrules-content
+#        ${GW_APPCODE}-pl-content
+#        ${GW_APPCODE}-pl-events-content
+#        ${GW_APPCODE}-pl-gwhub-auth-content
+#        ${GW_APPCODE}-pl-personaldata-content
+#        ${GW_APPCODE}-pl-inbound-file-content
+#        ${GW_APPCODE}-pl-properties-content
+#        ${GW_APPCODE}-pl-outbound-file-content
+#        ${GW_APPCODE}-gunit
+#        ${GW_APPCODE}-tools
+#        ${GW_APPCODE}-apd-test-templates
+#        ${GW_APPCODE}-pl-bizrules-test
+#        ${GW_APPCODE}-pl-test
+#      )
+#      moduleClassDirs=:${(j_/build/idea/classes:_)isAppModules}
+#      CLASSPATH+=${moduleClassDirs//:/:${PWD}/app-${GW_APPCODE}/} # prepend e.g. "./app-cc/" to each component
+#      export CLASSPATH
+#      echoVar CLASSPATH
+#      class="com.intellij.rt.junit.JUnitStarter com.guidewire.cc.apidiff.APIBreakTest"
+#
+#      fullTask="java ${javaArgs} ${jvmArgs} ${class}"
+#      ;;
     backupDb)
       dbName=$(date "+${dbbackup}_%H:%M:%S")
       fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
@@ -481,10 +483,10 @@ while [ -n "$*" ]; do
   shift
 
   # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
-  if [ "$notify" = "quiet" ]; then
+  if [ "$notifyVolume" = "quiet" ]; then
     taskPassIcon=
     taskFailIcon=
-  elif [ "$notify" = "loud" ]; then
+  elif [ "$notifyVolume" = "loud" ]; then
     taskPassIcon=$passIcon
     taskFailIcon=$failIcon
   fi

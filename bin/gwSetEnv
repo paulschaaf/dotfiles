@@ -57,13 +57,22 @@ function lsPathVar() {
 }
 
 #
-# DETERMINE THE PLATFORM
+# DETERMINE THE PRODUCT
 #
 
-export GW_PL_VERSION=$(sed -nE 's/^plVersion=([0-9.]*).*/\1/gp' gradle.properties)
+vars=$(sed -En "
+  s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
+  s/^appCode/GW_APPCODE/p;
+  s/^appName/GW_APPNAME/p;
+  s/^jettyPort/GW_PORT/p;
+  s/^studioVersion/GW_STUDIO_VERSION/p
+" gradle.properties | sed 's/^/export /g')
+eval $vars
+
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
-typeset -p GW_PL_VERSION
+typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
+
 
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
@@ -137,7 +146,7 @@ case ${GW_PL_VERSION} in
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
       export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
 
-    [[ -d ./h2/test ]] && GW_DB_DIR=./h2/test
+    [[ -d ./h2 ]] && GW_DB_DIR=./h2
 
     if [[ "$1" == "old" ]]; then
       export GW_DB_DIR=/tmp/guidewire/granite
@@ -152,8 +161,8 @@ esac
 # Source environment overrides
 for env in {../..,..,.}/gw.env; do
   if [[ -f ${env} ]]; then
-    echo Sourcing ${env}
-    cat ${env}
+    echo Sourcing overrides from ${env}
+    cat ${env} | sed 's/^/-  /'
     # shellcheck disable=SC1090
     source ${env}
   fi
@@ -186,24 +195,9 @@ lsPathVar IDEA_HOME IDEA_JDK JAVA_HOME
 # it doesn't matter if GW_DB_DIR doesn't exist yet so we just typeset it
 typeset -p GW_DB_DIR GW_PL_NUM GW_PLATFORM
 
-#
-# DETERMINE THE PRODUCT
-#
-
-vars=$(sed -n "
-  s/^appCode/GW_APPCODE/p;
-  s/^appName/GW_APPNAME/p;
-  s/^jettyPort/GW_PORT/p;
-  s/^studioVersion=/GW_STUDIO_VERSION/p
-" gradle.properties | sed 's/^/export /g')
-echo $vars
-eval $vars
-
-# shellcheck disable=SC2004
 export GW_PORT_DEBUG=$(($GW_PORT + 10))
 # compute platform from studio jar version num => ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
-export GW_TITLE="$GW_APPCODE$GW_PL_NUM"
-#export GW_PROMPT="%{$GW_COLORs[$GW_APPCODE]%}$GW_TITLE%{[0m%} "
+export GW_TITLE="$GW_APPNAME $GW_PL_VERSION"
 typeset -p GW_PORT_DEBUG GW_TITLE
 
 #

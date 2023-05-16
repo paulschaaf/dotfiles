@@ -10,6 +10,7 @@ generated_classes/
 ssh/
 tmp/
 /pgdata/
+.run/*.run.xml
 
 #*#
 $*
