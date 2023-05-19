@@ -1,5 +1,6 @@
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
+# https://starship.rs/config/
 
 command_timeout = 5000
 
@@ -19,17 +20,23 @@ $line_break\
 $jobs\
 $shlvl\
 ${custom.zsh_command_number} $username\
-$character"""
+${custom.prompt_char}"""
 
 #right_format = "${custom.zsh_command_number}"
 
-[character]
-format = '\$ '
+# Useful Unicode symbols
+# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»
 
 [cmd_duration]
 #min_time = 0
 format = " [⮑  ⏳ $duration]($style)\n\n"
 style = 'white'
+
+[custom.prompt_char]
+description = "Shows CCPI name"
+command = "echo -n '%(!.#.$)'" # dollar or pound sign
+style = ''
+when = true
 
 [custom.gw_ccpi]
 description = "Shows CCPI name"
@@ -39,7 +46,7 @@ style = ''
 
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}"'
+command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}\e[30m▐"'
 detect_folders = ["studio", "platform"]
 format = "$output"
 
@@ -75,7 +82,7 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = '[$symbol$branch(:$remote_branch)]($style)'
+format = '[▐](fg:cyan)[$symbol$branch(:$remote_branch)]($style)[▌](fg:cyan)'
 style = 'fg:bright-white bg:cyan'
 truncation_symbol = ''
 
@@ -113,12 +120,14 @@ style = 'fg:#ffffff bg:#663399'
 disabled = false
 
 [package]
-format = '[ $version ]($style)'
+format = '[$version]($style)'
 style = '136 bg:0'
 version_format = '${raw}'
 
 [shlvl]
 disabled = false
+format = '[$shlvl](inverted fg:white):'
+threshold = 2
 
 [status] # i.e. last command return status
 disabled = false

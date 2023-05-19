@@ -1,0 +1,45 @@
+#!/bin/zsh
+
+#sed -En "
+#  s/^(plVersion|project-version)=([0-9.]*).*/GW_PL_VERSION=\2/p;
+#  s/^(appCode|product.code)/GW_APPCODE/p;
+#  s/^appName/GW_APPNAME/p;
+#  s/^product.name/GW_APPNAME/p { s/$/ cust/ };
+#  s/^(studioVersion|studio-version)/GW_STUDIO_VERSION/p
+#" project-version.properties modules/configuration/product.properties gradle.properties
+
+if [[ -f project-version.properties ]]; then # it's a customer build
+  sed -En "
+    s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
+    s/^product.code/GW_APPCODE/p;
+    s/^product.name(.*)/GW_APPNAME\1 cust/p;
+    s/^studio-version/GW_STUDIO_VERSION/p
+  " project-version.properties modules/configuration/product.properties | sed 's/^/export /g'
+
+  if ((! $#GW_PORT)); then
+      case ${GW_APPCODE} in
+      ab)
+        GW_PORT=8280
+        ;;
+      bc)
+        GW_PORT=8580
+        ;;
+      cc)
+        GW_PORT=8080
+        ;;
+      pc)
+        GW_PORT=8180
+        ;;
+      esac
+  fi
+  echo export GW_PORT=$GW_PORT
+
+elif [[ -f gradle.properties ]]; then
+  sed -En "
+    s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
+    s/^appCode/GW_APPCODE/p;
+    s/^appName/GW_APPNAME/p;
+    s/^jettyPort/GW_PORT/p;
+    s/^studioVersion/GW_STUDIO_VERSION/p
+  " gradle.properties | sed 's/^/export /g'
+fi

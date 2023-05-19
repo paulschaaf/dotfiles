@@ -4,7 +4,6 @@
 /bin/**/inLinux
 !/bin/quick-ssh/Makefile
 !/bin/quick-ssh/ssh-to
-!/bin/quick-ssh/make-ssh-config-for
 
 /etc/home/byobu/.screenrc
 /etc/home/byobu/.tmux.conf

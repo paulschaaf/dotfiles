@@ -5,6 +5,7 @@ on run argv
         display notification (item 1 of argv) with title "Notification"
     else if length of argv > 1 then
         display notification (item 2 of argv) with title (item 1 of argv)
+        delay 3
     else
         return "<message> is required\nUsage: notify [<title>] <message>"
     end if

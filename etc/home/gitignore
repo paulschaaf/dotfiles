@@ -22,6 +22,9 @@ $*
 *.elc
 *.jar
 *.lock
+*.lock.db
+*.mv.db
+*.trace.db
 *.rar
 *.pcfc
 *.swp
@@ -37,6 +40,7 @@ $*
 androidPrivateKey.ppk
 banner_*.jpeg
 banner_*.png
+gwb
 hs_err_pid*.log
 id_dsa
 id_rsa

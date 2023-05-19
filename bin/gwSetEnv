@@ -22,7 +22,7 @@ else
   alias TRACE=false
 fi
 
-[[ "$1" == "--debug" ]] && set -x
+[[ "$1" == "--setx" ]] && set -x
 
 function unsetGWVars() {
   trace "We've just moved outside of any GW install, so unset every var named GW_*:"
@@ -60,17 +60,27 @@ function lsPathVar() {
 # DETERMINE THE PRODUCT
 #
 
-vars=$(sed -En "
-  s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
-  s/^appCode/GW_APPCODE/p;
-  s/^appName/GW_APPNAME/p;
-  s/^jettyPort/GW_PORT/p;
-  s/^studioVersion/GW_STUDIO_VERSION/p
-" gradle.properties | sed 's/^/export /g')
+#if [[ -f project-version.properties ]]; then # it's a customer build
+#  vars=$(sed -En "
+#    s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
+#    s/^product.code/GW_APPCODE/p;
+#    s/^product.name/GW_APPNAME/p;
+#    s/^studio-version/GW_STUDIO_VERSION/p
+#  " project-version.properties modules/configuration/product.properties | sed 's/^/export /g')
+#else
+#  vars=$(sed -En "
+#    s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
+#    s/^appCode/GW_APPCODE/p;
+#    s/^appName/GW_APPNAME/p;
+#    s/^jettyPort/GW_PORT/p;
+#    s/^studioVersion/GW_STUDIO_VERSION/p
+#  " gradle.properties | sed 's/^/export /g')
+#fi
+vars=$(gwenv)
 eval $vars
 
 # or maybe this *is* platform
-(($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties)
+(($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties 2>/dev/null)
 typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
 
 
@@ -110,41 +120,41 @@ case ${GW_PL_VERSION} in
 #    ;;
   9*)
     export GW_PLATFORM=ferrite
-    inMacOS &&
-      export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents' ||
-      export IDEA_HOME=/opt/idea_ferrite
-    inMacOS &&
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
-      export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    inMacOS \
+      && export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents' \
+      || export IDEA_HOME=/opt/idea_ferrite
+    inMacOS \
+      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home \
+      || export JAVA_HOME=/usr/lib/jvm/java-8-jdk
     ;;
   10.0.0*|10.0.1)
     # for <= 10.0.1
     export GW_PLATFORM=granite
     announce 'Using older config for this platform version'
-    ifMacOS &&
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' ||
-      export IDEA_HOME=/opt/idea-IU-173.4674.33
-    ifMacOS &&
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home ||
-      export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    ifMacOS \
+      && export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' \
+      || export IDEA_HOME=/opt/idea-IU-173.4674.33
+    ifMacOS \
+      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home \
+      || export JAVA_HOME=/usr/lib/jvm/java-8-jdk
     ;;
   10*)
     export GW_PLATFORM=granite
-    inMacOS &&
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
-      export IDEA_HOME=/opt/idea2019IU
-    inMacOS &&
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
-      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+    inMacOS \
+      && export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' \
+      || export IDEA_HOME=/opt/idea2019IU
+    inMacOS \
+      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home \
+      || export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
     ;;
   50*)
     export GW_PLATFORM=halite
-    inMacOS &&
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' ||
-      export IDEA_HOME=/opt/idea_halite
-    inMacOS &&
-      export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home ||
-      export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
+    inMacOS \
+      && export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' \
+      || export IDEA_HOME=/opt/idea_halite
+    inMacOS \
+      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home \
+      || export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
 
     [[ -d ./h2 ]] && GW_DB_DIR=./h2
 
@@ -169,7 +179,7 @@ for env in {../..,..,.}/gw.env; do
 done
 
 # exit if not a Guidewire installation
-if (($#GW_PLATFORM == 0)); then
+if (($#GW_PL_VERSION == 0)); then
   trace Could not determine the platform version!
   return 1 2>/dev/null || exit
 fi

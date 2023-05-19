@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "${0##*/}" = "ssh-to" ]; then
-    echo Create a symlink to this file named after the server with whom you wish to connect to use as a turbo ssh connections
+    echo Create a symlink to this file named after the server with whom you wish to connect to use as a turbo ssh connection
 fi
 
 # Decrement to not count this script as a level
@@ -44,7 +44,7 @@ while [ -n "$*" ]; do
             shift
             break
             ;;
-        --debug)
+        --setx)
             set -x
             ;;
         --dir)
@@ -86,16 +86,16 @@ case $remote_host in
         env_vars_to_export+=' TERM'
         ;;
 
-    evander)
-        remote_host=perftest@${remote_host}
-
-        CD_TO=/users/\${USER}
-
-        add_ssh_flag '-Y' '-t' '-t'
-        bash_cmd='bash --rcfile .bashrc'
-        # [ -z "$cmd" ] && cmd="${bash_cmd}"
-        cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
-        ;;
+#    evander)
+#        remote_host=perftest@${remote_host}
+#
+#        CD_TO=/users/\${USER}
+#
+#        add_ssh_flag '-Y' '-t' '-t'
+#        bash_cmd='bash --rcfile .bashrc'
+#        # [ -z "$cmd" ] && cmd="${bash_cmd}"
+#        cmd='export SHLVL='${SHLVL}'\; export PERFUSER=${USER}\; '${start_screen}
+#        ;;
 
     # Guidewire merge machines
     [a-z]-cc-*)
@@ -126,10 +126,6 @@ case $remote_host in
         fi
         ;;
 
-    zoe)
-        protocol=ncftp
-        ;;
-
     root@copernicus)
         remote_host=copernicus
         cmd='sudo /bin/su root'
@@ -137,8 +133,7 @@ case $remote_host in
         ;;
 
     root)
-        final='sudo -u root ZDOTDIR=/home/pschaaf zsh -il'
-        env_vars_to_export+=' ZDOTDIR'
+        remote_host=root@localhost
         ;;
 
     *)

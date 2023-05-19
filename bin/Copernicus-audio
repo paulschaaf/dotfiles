@@ -4,9 +4,9 @@ if [[ `hostname` = "copernicus" ]]; then
   (( $# )) && playerctl -p strawberry "${@}" # exec command
 
   alias notify-send='notify-send -a'
-  RESPONSE=$(playerctl metadata --format 'artist="{{xesam:artist}}"; title="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
+  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; title="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
 else
-  RESPONSE=$(ssh -x copernicus ${(F)0:t} "${@}" || echo "title='Network Error'; artist='No response from Copernicus'")
+  RESPONSE=$(ssh -xv copernicus ${(F)0:t} "${@}" || echo "title='Network Error'; artist='No response from Copernicus'")
   echo $?
 fi
 
