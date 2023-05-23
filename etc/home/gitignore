@@ -46,5 +46,4 @@ id_dsa
 id_rsa
 nohup.out
 package-lock.json
-
 gw.env

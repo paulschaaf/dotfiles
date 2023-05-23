@@ -174,7 +174,7 @@ fi
 
 #cmd=$environment\ $cmd
 
-final=${final:-${protocol} ${ssh_flags}${remote_host}${cmd:+ -- }${cmd}}
+final=${final:-${protocol} ${ssh_flags}${remote_host}${cmd:+ -- }\"${cmd}\"}
 
 # 'exec' dislikes leading envvar definitions--it's easier to just export them
 if [ -n "${env_vars_to_export}" ]; then

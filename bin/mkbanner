@@ -1,91 +1,14 @@
 #!/usr/bin/env zsh
 
 # Set the Defaults
-# lower number is darker, gray60 is too light
-fgColor=gray60
+fgColor=gray60      # lower number is darker
 pointsize=240
-height=231
-h_offset=25
-v_offset=178
-char_width=117
-product=`sed -n "s/^appCode=//gp" gradle.properties`
-version=`sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties`
-product=${product:l}
 smush=100
 
-function usage() {
-   echo "Usage: ${0:t} [OPTION...] TEXT
-  Creates an image filename containing the supplied text.
-  --smush      Sets the spacing between the product and the project name (defaults to '${smush}')
-  --fg=COLOR   Set the foreground color (defaults to '${fgColor}')
-  --width=NUM  Set the width of the text box
-  --debug      Trace the execution
-  --dry_run    Show the resulting command but do not execute
-  --force      Overwrite the existing file, if any
-  -h, --help   Show this screen
+eval "$(gwenv)"
+GW_PL_VERSION=${GW_PL_VERSION%%.*}
 
-  All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
-  the switch '-font=fixed' will be passed through as '-font fixed'.
-
-  For a list of color names see https://imagemagick.org/script/color.php#color_names
-"
-}
-
-if ((!$#1)); then
-   usage
-   exit
-fi
-
-switches=()
-alias dry_run=false
-alias force=false
-while [[ -n "$*" ]]; do
-   switch=${1%%=*}; value=${1#*=}
-   case ${switch} in
-      --debug)
-         set -x
-         ;;
-      --dry_run|--dry-run)
-         alias dry_run=true
-         ;;
-      -h|--help)
-         usage
-         exit
-         ;;
-      --fg)
-         fgColor=${value}
-         ;;
-     --font)
-         font=${value}
-         ;;
-      --force)
-         alias force=true
-         ;;
-#      --width)
-#         width=${value}
-#         ;;
-      --product)
-         product=${value}
-         ;;
-      --setx)
-         set -x
-         ;;
-      --smush)
-         smush=${value}
-         ;;
-      -*)
-         switches+=(${1})
-         ;;
-      *)
-         txt=$1
-         shift
-         break
-         ;;
-   esac
-   shift
-done
-
-case ${product} in
+case ${GW_APPCODE} in
   ab)
     prodColor=aqua
     ;;
@@ -106,49 +29,127 @@ case ${product} in
     ;;
 esac
 
-if ((!$#txt)); then
-   echo Error: missing text!
-   usage
-   exit 1
-elif ((${#*})); then
-   echo "Error: extra arguments after the text '${txt}': '${*}'!"
-   usage
-   exit 1
+function usage() {
+   echo "Usage: ${0:t} [OPTION...] TEXT
+  Creates an image filename containing the supplied text.
+  --dry_run          Show the resulting command but do not execute
+  --fg=COLOR         Set the foreground color (default '${fgColor}')
+  --font=font        Set the font of the text
+  --force            Overwrite the existing file, if any
+  -h, --help         Show this screen
+  --prodColor=color  The color to use for the product code (default '$prodColor'}
+  --product          The product code ${GW_APPCODE:+(default '$GW_APPCODE')}
+  --setx             Trace the execution
+  --size=num         Set the size of the font (default $pointsize)
+  --smush            Sets the spacing between the GW_APPCODE and the project name (default '${smush}')
+  --version
+
+  All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
+  the switch '-font=fixed' will be passed through as '-font fixed'.
+
+  For a list of color names see https://imagemagick.org/script/color.php#color_names
+"
+}
+
+if ((!$#1)); then
+  usage
+  exit
 fi
 
-filename=banner_${product}${version}_${fgColor}${font:+_$font}_${txt// /_}.png
+switches=()
+alias dry_run=false
+alias force=false
+while [[ -n "$*" ]]; do
+  switch=${1%%=*}; value=${1#*=}
+  case ${switch} in
+    --dry_run|--dry-run)
+      alias dry_run=true
+      ;;
+    --fg)
+      fgColor=${value}
+      ;;
+    --font)
+      font=${value}
+      ;;
+    --force)
+      alias force=true
+      ;;
+    -h|--help)
+      usage
+      exit
+      ;;
+    --prodColor)
+      prodColor=${value}
+      ;;
+    --product)
+      GW_APPCODE=${value}
+      ;;
+    --setx)
+      set -x
+      ;;
+    --size)
+      pointsize=${value}
+      ;;
+    --smush)
+      smush=${value}
+      ;;
+     --version)
+      GW_PL_VERSION=${value}
+      ;;
+    -*)
+      switches+=(${1})
+      ;;
+    *)
+      txt=$1
+      shift
+      break
+      ;;
+  esac
+  shift
+done
+
+if ((!$#txt)); then
+  echo Error: missing text!
+  usage
+  exit 1
+elif ((${#*})); then
+  echo "Error: extra arguments after the text '${txt}': '${*}'!"
+  usage
+  exit 1
+fi
+
+filename=banner_${GW_APPCODE}${GW_PL_VERSION}_${fgColor}${font:+_$font}_${txt// /_}.png
 
 force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then
-   echo Warning: will only overwrite existing file if --force is specified
-   dry_run || exit 1
+  echo Warning: will only overwrite existing file if --force is specified
+  dry_run || exit 1
 fi
 
 command=( convert
   -background none
   -pointsize ${pointsize}
   -channel A -evaluate multiply 0.5 +channel        # transparency
-  -stroke white -strokewidth 4                      # product name+version outline
-  -fill ${prodColor}  label:"${product}${version}"
-  ${font:+-font} ${font:+"${font}"}
+  -stroke white -strokewidth 4                      # GW_APPCODE name+GW_PL_VERSION outline
+  -fill ${prodColor}  label:"${GW_APPCODE}${GW_PL_VERSION}"
+  ${font:+-font} ${font}
   -stroke white -strokewidth 2                      # label outline
   -fill ${fgColor}    label:"${txt}"
   +smush ${smush}                                   # smush the two strings together
   ${filename}
 )
 
-if dry_run; then
-  echo '   '${command}
-else
-   ${command}
+echo '   '${(q)command}
+if ! dry_run; then
+  ${command}
 
-   echo Created ${filename}
-   open ${filename}
+  echo Created ${filename}
+  open ${filename}
 
-   echo -n 'Keep this file? (y,N) '
-   read -q keep; echo
-   if [ "$keep" = 'n' ] || [ "$keep" = 'N' ]; then
-      rm -f ${filename}
-      echo Deleted ${filename}
-   fi
+  echo -n 'Keep this file? (y,N) '
+  read -q keep; echo
+  if [ "$keep" = 'n' ] || [ "$keep" = 'N' ]; then
+    rm -f ${filename}
+    echo Deleted ${filename}
+  fi
 fi

@@ -60,24 +60,7 @@ function lsPathVar() {
 # DETERMINE THE PRODUCT
 #
 
-#if [[ -f project-version.properties ]]; then # it's a customer build
-#  vars=$(sed -En "
-#    s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
-#    s/^product.code/GW_APPCODE/p;
-#    s/^product.name/GW_APPNAME/p;
-#    s/^studio-version/GW_STUDIO_VERSION/p
-#  " project-version.properties modules/configuration/product.properties | sed 's/^/export /g')
-#else
-#  vars=$(sed -En "
-#    s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
-#    s/^appCode/GW_APPCODE/p;
-#    s/^appName/GW_APPNAME/p;
-#    s/^jettyPort/GW_PORT/p;
-#    s/^studioVersion/GW_STUDIO_VERSION/p
-#  " gradle.properties | sed 's/^/export /g')
-#fi
-vars=$(gwenv)
-eval $vars
+eval "$(gwenv)"
 
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties 2>/dev/null)

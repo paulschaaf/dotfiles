@@ -1,18 +1,41 @@
 #!/bin/zsh
 
+[[ "$1" == "--setx" ]] && set -x
+netError='Cannot reach Copernicus'
+
 if [[ `hostname` = "copernicus" ]]; then
   (( $# )) && playerctl -p strawberry "${@}" # exec command
 
-  alias notify-send='notify-send -a'
-  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; title="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
+  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
 else
-  RESPONSE=$(ssh -xv copernicus ${(F)0:t} "${@}" || echo "title='Network Error'; artist='No response from Copernicus'")
+  RESPONSE=$(ssh -xv copernicus ${(F)0:t} "${@}" || echo "message='$netError'")
   echo $?
 fi
 
-echo $RESPONSE
+echo $RESPONSE; echo
 eval $RESPONSE
+
+if [[ "$message" != "$netError" ]]; then
+  alerter -timeout 5 -title 'Network Error' -message $message
+  return
+fi
+
 # shellcheck disable=SC2154 # var referenced but not assigned
-notify-send "$title" "$artist
-\"$album\" ($year) track $track
-$playStatus at $position / $length"
+title="$song"
+
+  # shellcheck disable=SC2154 # var referenced but not assigned
+  subtitle="$artist"
+
+  # shellcheck disable=SC2154 # var referenced but not assigned
+  message="\\\"$album\" [$year]
+$position / $length ($playStatus track $track)"
+fi
+
+if [[ $UNAME = "Darwin" ]]; then
+  cmd=(alerter -timeout 5 -title ${title} ${subtitle:+-subtitle} ${subtitle} ${message:+-message} ${message})
+  echo ${(q)cmd}
+  ${cmd[*]} &
+else
+  notify-send -a "$title" "$subtitle
+$message"
+fi
