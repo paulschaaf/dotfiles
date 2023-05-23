@@ -10,9 +10,9 @@
 
 if [[ -f project-version.properties ]]; then # it's a customer build
   sed -En "
-    s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
     s/^product.code/GW_APPCODE/p;
     s/^product.name(.*)/GW_APPNAME\1 cust/p;
+    s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
     s/^studio-version/GW_STUDIO_VERSION/p
   " project-version.properties modules/configuration/product.properties | sed 's/^/export /g'
 
@@ -36,10 +36,19 @@ if [[ -f project-version.properties ]]; then # it's a customer build
 
 elif [[ -f gradle.properties ]]; then
   sed -En "
-    s/^plVersion=([0-9.]*).*/GW_PL_VERSION=\1/p;
     s/^appCode/GW_APPCODE/p;
     s/^appName/GW_APPNAME/p;
+    s/^(plVersion|integrationGatewayVersion)=([0-9.]*).*/GW_PL_VERSION=\2/p;
     s/^jettyPort/GW_PORT/p;
-    s/^studioVersion/GW_STUDIO_VERSION/p
+    s/^studioVersion/GW_STUDIO_VERSION/p;
+    s/^camelVersion=.*/GW_APPCODE=ccpi\nGW_APPNAME=CCPI\n/p
   " gradle.properties | sed 's/^/export /g'
+
+else
+  echo unset GW_ANSI_NAME GW_COLOR GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
+  return
 fi
+
+echo '
+; export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
+; export GW_ANSI_NAME=`pastel -f paint -n $(echo ${GW_COLOR// / --on }) ${GW_APPNAME}`'

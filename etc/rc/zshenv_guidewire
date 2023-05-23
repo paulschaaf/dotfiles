@@ -60,22 +60,23 @@ export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 # pastel format ansi-24bit-escapecode indigo | cat -v
 # pastel color blue | pastel lighten 0.3
 function pastelFgBg() {
-  pastel -f paint -n ${1} --on ${2} xxx | sed 's/xxx.*//'
+  pastel -f paint -n ${1%% *} --on ${1##* } $2
 }
 
 typeset -Ax GW_COLORS=(
-  [BillingCenter]=`pastelFgBg white darkmagenta`
-  [CCPI]=`pastelFgBg white green`
-  [ClaimCenter]=`pastelFgBg white blue`
-  [ContactManager]=`pastelFgBg white teal`
-  [ExampleCenter]=`pastelFgBg white blueviolet`
-  [PolicyCenter]=`pastelFgBg black gold`
+  [BillingCenter]='white darkmagenta'
+  [CCPI]='white green'
+  [ClaimCenter]='white blue'
+  [ContactManager]='white teal'
+  [ExampleCenter]='white blueviolet'
+  [PolicyCenter]='black gold'
 )
 GW_COLORS[Platform]=${GW_COLORS[ExampleCenter]}
 
 GW_COLORS[ab]=${GW_COLORS[ContactManager]}
 GW_COLORS[bc]=${GW_COLORS[BillingCenter]}
 GW_COLORS[cc]=${GW_COLORS[ClaimCenter]}
+GW_COLORS[ccpi]=${GW_COLORS[CCPI]}
 GW_COLORS[cm]=${GW_COLORS[ContactManager]}
 GW_COLORS[pc]=${GW_COLORS[PolicyCenter]}
 GW_COLORS[pl]=${GW_COLORS[ExampleCenter]}

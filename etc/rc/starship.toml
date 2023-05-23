@@ -6,7 +6,7 @@ command_timeout = 5000
 
 format = """$status\
 $cmd_duration\
-${custom.gw_is_app}${custom.gw_ccpi}$package\
+${custom.gw_ccpi}${custom.gw_is_app}${package}\
 $git_branch\
 $git_commit\
 $git_state\
@@ -25,7 +25,7 @@ ${custom.prompt_char}"""
 #right_format = "${custom.zsh_command_number}"
 
 # Useful Unicode symbols
-# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»
+# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»
 
 [cmd_duration]
 #min_time = 0
@@ -40,13 +40,14 @@ when = true
 
 [custom.gw_ccpi]
 description = "Shows CCPI name"
-command = 'echo -n "$GW_COLORS[CCPI]CCPI"'
+#command = 'pastel -f paint -n $(echo ${GW_COLORS[CCPI]// / --on }) CCPI; echo "\e[30m▐"'
+command = 'eval $(gwenv); echo "$GW_ANSI_NAME\e[30m▐"'
 detect_files = ["README-internal.md"]
 style = ''
 
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'app=$(sed -n "s/^appName=//gp" gradle.properties); echo -n "$GW_COLORS[$app]${app}\e[30m▐"'
+command = 'eval $(gwenv); echo "$GW_ANSI_NAME\e[30m▐"'
 detect_folders = ["studio", "platform"]
 format = "$output"
 
