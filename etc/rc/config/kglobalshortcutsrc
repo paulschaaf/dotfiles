@@ -18,11 +18,6 @@ Switch keyboard layout to English (US)=none,none,Switch keyboard layout to Engli
 Switch to Next Keyboard Layout=none,none,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
 
-[azuredatastudio.desktop]
-_k_friendly_name=Azure Data Studio
-_launch=none,none,Launch Azure Data Studio
-new-empty-window=none,none,New Empty Window
-
 [chrome-fmgjjmmmlfnkbppncabfkddbjimcfncm-Profile_1.desktop]
 _k_friendly_name=Gmail
 _launch=none,none,Launch Gmail
@@ -446,10 +441,10 @@ _launch=none,none,Launch Slack
 
 [strawberry]
 _k_friendly_name=strawberry
-next_track=,none,Next track
-play_pause=,none,Play/Pause
-prev_track=,none,Previous track
-stop=,none,Stop
+next_track=none,none,Next track
+play_pause=none,none,Play/Pause
+prev_track=none,none,Previous track
+stop=none,none,Stop
 
 [systemsettings.desktop]
 _k_friendly_name=System Settings

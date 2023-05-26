@@ -1,4 +1,4 @@
-HOSTS=root copernicus macbook
+HOSTS=root copernicus telperion
 
 .PHONY:	all clean allowUserWrite cleanLinks disallowAllWrites
 
