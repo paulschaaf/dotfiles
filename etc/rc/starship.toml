@@ -6,7 +6,7 @@ command_timeout = 5000
 
 format = """$status\
 $cmd_duration\
-${custom.gw_ccpi}${custom.gw_is_app}${package}\
+${custom.gw_is_app}${package}\
 $git_branch\
 $git_commit\
 $git_state\
@@ -25,7 +25,7 @@ ${custom.prompt_char}"""
 #right_format = "${custom.zsh_command_number}"
 
 # Useful Unicode symbols
-# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»
+# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»﹍
 
 [cmd_duration]
 #min_time = 0
@@ -38,31 +38,12 @@ command = "echo -n '%(!.#.$)'" # dollar or pound sign
 style = ''
 when = true
 
-[custom.gw_ccpi]
-description = "Shows CCPI name"
-#command = 'pastel -f paint -n $(echo ${GW_COLORS[CCPI]// / --on }) CCPI; echo "\e[30m▐"'
-command = 'eval $(gwenv); echo "$GW_ANSI_NAME\e[30m▐"'
-detect_files = ["README-internal.md"]
-style = ''
-
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'eval $(gwenv); echo "$GW_ANSI_NAME\e[30m▐"'
+command = 'eval $(gwenv); echo "${GW_ANSI_NAME}"'
 detect_folders = ["studio", "platform"]
+detect_files = ["README-internal.md"]
 format = "$output"
-
-#[custom.gw_claimcenter]
-#description = "Shows GW ClaimCenter"
-#command = 'echo -n "$GW_COLORS[cc]ClaimCenter"'
-#detect_files = ["cc-all.iml"]
-#style = ''
-
-#[custom.gw_version]
-#description = "Shows Guidewire application version"
-#command = 'sed -En "s/^version=([0-9]+).*/\1/gp; s/^integrationGatewayVersion=//gp" gradle.properties | tr "\n" " "; echo -n "\e[36;7m\e[0;46m"'
-#detect_files = ["README-internal.md"]
-#detect_folders = ["studio"]
-#style = ''
 
 [custom.zsh_command_number]
 command = "pastel -f paint gray '%h'"
@@ -83,8 +64,8 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = '[▐](fg:cyan)[$symbol$branch(:$remote_branch)]($style)[▌](fg:cyan)'
-style = 'fg:bright-white bg:cyan'
+format = '[ $symbol$branch(:$remote_branch)]($style)[]($style inverted)'
+style = 'fg:black bg:cyan'
 truncation_symbol = ''
 
 [git_commit]
@@ -121,8 +102,8 @@ style = 'fg:#ffffff bg:#663399'
 disabled = false
 
 [package]
-format = '[$version]($style)'
-style = '136 bg:0'
+format = '[ $version]($style)[]($style inverted)'
+style = 'bg:136 fg:0'
 version_format = '${raw}'
 
 [shlvl]

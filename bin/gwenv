@@ -8,6 +8,8 @@
 #  s/^(studioVersion|studio-version)/GW_STUDIO_VERSION/p
 #" project-version.properties modules/configuration/product.properties gradle.properties
 
+[[ "$1" = "--setx" ]] && set -x
+
 if [[ -f project-version.properties ]]; then # it's a customer build
   sed -En "
     s/^product.code/GW_APPCODE/p;
@@ -49,6 +51,6 @@ else
   return
 fi
 
-echo '
-; export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
-; export GW_ANSI_NAME=`pastel -f paint -n $(echo ${GW_COLOR// / --on }) ${GW_APPNAME}`'
+echo ';
+export GW_COLOR=${GW_COLORS[$GW_APPNAME]};
+export GW_ANSI_NAME=`pastel -f paint -n black --on ${(Q)GW_COLOR##* } ""; pastel -f paint -n ${(Q)GW_COLOR%% *} --on ${(Q)GW_COLOR##* } " ${GW_APPNAME}\e[30;7m"`'

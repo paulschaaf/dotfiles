@@ -1,32 +1,33 @@
 #!/bin/zsh
 
-[[ "$1" == "--setx" ]] && set -x
-netError='Cannot reach Copernicus'
+playerHost=copernicus
+thisFile=${(F)0:t}
 
-if [[ `hostname` = "copernicus" ]]; then
-  (( $# )) && playerctl -p strawberry "${@}" # exec command
+if [[ "$1" == "--setx" ]]; then
+  shift
+  set -x
+fi
 
-  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"')
+if [[ `hostname` = "${playerHost}" ]]; then
+  (( $# )) && playerctl -p strawberry "${@}" # arguments are a command
+
+  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"' 2>/dev/null || echo "title='${thisFile}'; message='Error: No track is selected'")
+
 else
-  RESPONSE=$(ssh -xv copernicus ${(F)0:t} "${@}" || echo "message='$netError'")
-  echo $?
+  RESPONSE=$(ssh -x ${playerHost} ${thisFile} "${@}" || echo "'title='${thisFile}'; message='Error: Cannot reach $playerHost'")
 fi
 
 echo $RESPONSE; echo
 eval $RESPONSE
 
-if [[ "$message" == "$netError" ]]; then
-  alerter -timeout 5 -title 'Network Error' -message $message
-  return
-fi
+# shellcheck disable=SC2154 # var referenced but not assigned
+title=${title:-$song}
 
 # shellcheck disable=SC2154 # var referenced but not assigned
-title="$song"
+subtitle="$artist"
 
-  # shellcheck disable=SC2154 # var referenced but not assigned
-  subtitle="$artist"
-
-  # shellcheck disable=SC2154 # var referenced but not assigned
+# shellcheck disable=SC2154 # var referenced but not assigned
+if ((! $#message)); then
   message="\\\"$album\" [$year]
 $position / $length ($playStatus track $track)"
 fi
