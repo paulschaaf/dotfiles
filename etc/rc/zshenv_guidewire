@@ -65,7 +65,7 @@ function pastelFgBg() {
 
 typeset -Ax GW_COLORS=(
   [BillingCenter]='white darkmagenta'
-  [CCPI]='white green'
+  [CCPI]='white forestgreen'
   [ClaimCenter]='white blue'
   [ContactManager]='white teal'
   [ExampleCenter]='white blueviolet'

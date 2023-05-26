@@ -15,7 +15,7 @@ fi
 echo $RESPONSE; echo
 eval $RESPONSE
 
-if [[ "$message" != "$netError" ]]; then
+if [[ "$message" == "$netError" ]]; then
   alerter -timeout 5 -title 'Network Error' -message $message
   return
 fi
