@@ -11,32 +11,39 @@ fi
 if [[ `hostname` = "${playerHost}" ]]; then
   (( $# )) && playerctl -p strawberry "${@}" # arguments are a command
 
-  RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"' 2>/dev/null || echo "title='${thisFile}'; message='Error: No track is selected'")
+  if [[ "${@}" = "stop" ]]; then
+    RESPONSE='message="Stopped"'
+  else
+    RESPONSE=$(playerctl -p strawberry metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"' 2>/dev/null || echo message='Error: No track is selected')
+  fi
 
 else
-  RESPONSE=$(ssh -x ${playerHost} ${thisFile} "${@}" || echo "'title='${thisFile}'; message='Error: Cannot reach $playerHost'")
+  RESPONSE=$(ssh -x ${playerHost} ${thisFile} "${@}" || echo message="Error: Cannot reach $playerHost")
 fi
 
 echo $RESPONSE; echo
 eval $RESPONSE
 
 # shellcheck disable=SC2154 # var referenced but not assigned
-title=${title:-$song}
+if (($#message)); then
+  title=${thisFile}
 
-# shellcheck disable=SC2154 # var referenced but not assigned
-subtitle="$artist"
+else
+  title=${title:-$song}
+  subtitle=${artist}
+  track=${track:-?}
+  year=${year:-?}
+  album=${album:-unkn}
 
-# shellcheck disable=SC2154 # var referenced but not assigned
-if ((! $#message)); then
   message="\\\"$album\" [$year]
-$position / $length ($playStatus track $track)"
+$position / $length ($playStatus track ${track})"
 fi
 
-if [[ $UNAME = "Darwin" ]]; then
+if [[ $UNAME = 'Darwin' ]]; then
   cmd=(alerter -timeout 5 -title ${title} ${subtitle:+-subtitle} ${subtitle} ${message:+-message} ${message})
+  ${cmd[*]} >/dev/null &
   echo ${(q)cmd}
-  ${cmd[*]} &
 else
-  notify-send -a "$title" "$subtitle
+  notify-send -a ${title} "$subtitle
 $message"
 fi
