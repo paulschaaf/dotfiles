@@ -321,15 +321,11 @@ while [ -n "$*" ]; do
       # remove the erroneous spaces from the function defs in the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
-    pgrepStudio)
-      fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD}")
-      taskFailIcon=$failIcon
-      ;;
     h2)
       spawn=true
-      fullTask="find .gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
+      fullTask="find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
       echo
-      echo "There's no username or password. Make sure the connection string is correct!"
+      echo "\nChange the host to 127.0.0.1, and make sure the connection string is correct! There is no username or password."
       ;;
     info)
       infoTasks=(
@@ -371,17 +367,6 @@ while [ -n "$*" ]; do
       noNotifySuccess=true
       fullTask="ls ${GW_DB_DIR}/*"
       ;;
-    pgrep)
-      fullTask=$(grepProcStr ${jvmProcess})
-      ;;
-#    pkill)
-#      pgrep -af $jvmProcess
-#      fullTask=$(killProcStr ${jvmProcess})
-#      ;;
-#    pkill8080)
-#      pgrep -af ${jvmProcess/90/80}
-#      fullTask=$(killProcStr ${jvmProcess/90/80})
-#      ;;
     pcf*)
       # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
       if [[ $task =~ 'pcf=' ]]; then
@@ -402,6 +387,21 @@ while [ -n "$*" ]; do
       noNotifySuccess=true
       fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
+    pgrep)
+      fullTask=$(grepProcStr ${jvmProcess})
+      ;;
+    pgrepStudio)
+      fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD}")
+      taskFailIcon=$failIcon
+      ;;
+#    pkill)
+#      pgrep -af $jvmProcess
+#      fullTask=$(killProcStr ${jvmProcess})
+#      ;;
+#    pkill8080)
+#      pgrep -af ${jvmProcess/90/80}
+#      fullTask=$(killProcStr ${jvmProcess/90/80})
+#      ;;
     portCheck)
       fullTask="ssh -xS $ssh_socket -O check pschaaf@localhost"
       ;;

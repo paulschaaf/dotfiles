@@ -4,23 +4,10 @@
 
 command_timeout = 5000
 
-format = """$status\
-$cmd_duration\
-${custom.gw_is_app}${package}\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status
-$time\
-$hostname\
-$os\
-$directory${env_var}\
-$sudo\
-$line_break\
-$jobs\
-$shlvl\
-${custom.zsh_command_number} $username\
-${custom.prompt_char}"""
+format = """$status$cmd_duration\
+${custom.gw_is_app}${package}${git_branch}${git_commit}${git_state}${git_status}
+${time}${hostname}${os}${directory}${env_var}${sudo}
+${jobs}${shlvl}${custom.zsh_command_number} ${username}${custom.prompt_char}"""
 
 #right_format = "${custom.zsh_command_number}"
 
@@ -32,18 +19,18 @@ ${custom.prompt_char}"""
 format = " [⮑  ⏳ $duration]($style)\n\n"
 style = 'white'
 
-[custom.prompt_char]
-description = "Shows CCPI name"
-command = "echo -n '%(!.#.$)'" # dollar or pound sign
-style = ''
-when = true
-
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
 command = 'eval $(gwenv); echo "${GW_ANSI_NAME}"'
 detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"
+
+[custom.prompt_char]
+description = "Shows prompt char"
+command = "echo -n '%(!.#.$)'" # dollar or pound sign
+style = ''
+when = true
 
 [custom.zsh_command_number]
 command = "pastel -f paint gray '%h'"
@@ -64,19 +51,20 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = '[ $symbol$branch(:$remote_branch)]($style)[]($style inverted)'
-style = 'fg:black bg:cyan'
+format = "[ $symbol$branch(:$remote_branch)]($style)[]($style inverted)"
+style = 'fg:black bg:#00bfff'
 truncation_symbol = ''
 
 [git_commit]
-style = 'bold #FF0000 bg:cyan'
+format = '[](fg:black bg:cyan)[ \($hash$tag\)]($style)[](bg:black fg:cyan) '
+style = 'red bg:cyan'
 
 [git_state]
 cherry_pick = '[🍒 PICKING](bold red)'
 format = '[\($state( $progress_current of $progress_total)\)]($style) '
 style = 'fg:cyan'
 
-[git_status]
+[git_status] # disabled because it's really slow
 disabled = true
 ahead = '[↑](fg:bold bright-green)'
 behind = '[↓](fg:bold bright-blue)'
@@ -103,13 +91,18 @@ disabled = false
 
 [package]
 format = '[ $version]($style)[]($style inverted)'
-style = 'bg:136 fg:0'
+style = 'bg:#9a9a9a fg:0'
+#format = '[ $version]($style)'
+#style = 'fg:136'
 version_format = '${raw}'
 
 [shlvl]
 disabled = false
 format = '[$shlvl](inverted fg:white):'
 threshold = 2
+
+[sudo]
+disabled = false
 
 [status] # i.e. last command return status
 disabled = false

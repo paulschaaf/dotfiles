@@ -58,7 +58,8 @@ export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 # ======== Colors
 
 # pastel format ansi-24bit-escapecode indigo | cat -v
-# pastel color blue | pastel lighten 0.3
+# pastel lighten 0.3 blue
+# pastel color yellow
 # pastel pick
 function pastelFgBg() {
   set -x
@@ -69,7 +70,7 @@ typeset -Ax GW_COLORS=(
   [BillingCenter]='white chocolate'
   [CCPI]='white rebeccapurple'
   [ClaimCenter]='white forestgreen'
-  [ContactManager]='white mediumturquoise'
+  [ContactManager]='white lightseagreen'
   [ExampleCenter]='white dimgray'
   [PolicyCenter]='white royalblue'
 )
