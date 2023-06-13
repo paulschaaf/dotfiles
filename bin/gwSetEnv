@@ -60,7 +60,7 @@ function lsPathVar() {
 # DETERMINE THE PRODUCT
 #
 
-eval "$(gwenv)"
+source ~/bin/gwenv
 
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties 2>/dev/null)

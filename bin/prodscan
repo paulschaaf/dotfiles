@@ -45,8 +45,10 @@ done
 (($#debug)) && typeset -p selectedProducts
 
 for prod in $selectedProducts; do
+  cd ~
   prodDir=~/gw/${root:=halite}/${selectedProducts[$prod]}
-  eval $(cd $prodDir; gwenv)
+  cd $prodDir
+  source ~/bin/gwenv
 
   name="▶ ${GW_APPNAME}"
   color=${GW_ANSI_NAME//$GW_APPNAME*/}

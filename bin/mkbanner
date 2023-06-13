@@ -38,7 +38,7 @@ switches=()
 alias dry_run=false
 alias force=false
 
-eval "$(gwenv)"
+source ~/bin/gwenv
 GW_PL_VERSION=${GW_PL_VERSION%%.*}
 prodColor=${GW_COLOR##* }
 prodColor=${prodColor:-$fgColor}

@@ -1,22 +1,27 @@
 #!/bin/zsh
 
-#sed -En "
-#  s/^(plVersion|project-version)=([0-9.]*).*/GW_PL_VERSION=\2/p;
-#  s/^(appCode|product.code)/GW_APPCODE/p;
-#  s/^appName/GW_APPNAME/p;
-#  s/^product.name/GW_APPNAME/p { s/$/ cust/ };
-#  s/^(studioVersion|studio-version)/GW_STUDIO_VERSION/p
-#" project-version.properties modules/configuration/product.properties gradle.properties
+[[ "$1" = "--setx" ]] && shift && set -x
 
-[[ "$1" = "--setx" ]] && set -x
 
-if [[ -f project-version.properties ]]; then # it's a customer build
-  sed -En "
+function colorLabel() {
+  fg=${1}
+  bg=${2}
+  label=${3}
+  lsymbol=${4:-}
+  rsymbol=${5:-$lsymbol}
+  pastel -f paint -n black --on ${bg} ${lsymbol}
+  pastel -f paint -n ${fg} --on ${bg} " ${label}"
+  pastel -f paint -n ${bg} --on black ${rsymbol}
+}
+
+# if it's a customer build
+if [[ -f project-version.properties ]]; then
+  eval $(sed -En "
     s/^product.code/GW_APPCODE/p;
     s/^product.name(.*)/GW_APPNAME\1 cust/p;
     s/^project-version=([0-9.]*).*/GW_PL_VERSION=\1/p;
     s/^studio-version/GW_STUDIO_VERSION/p
-  " project-version.properties modules/configuration/product.properties | sed '/./ { s/^/export /g; }'
+  " project-version.properties modules/configuration/product.properties | sed '/./ { s/^/export /g; }')
 
   if ((! $#GW_PORT)); then
       case ${GW_APPCODE} in
@@ -34,23 +39,66 @@ if [[ -f project-version.properties ]]; then # it's a customer build
         ;;
       esac
   fi
-  echo export GW_PORT=$GW_PORT
+  export GW_PORT=$GW_PORT
 
 elif [[ -f gradle.properties ]]; then
-  sed -En "
+  eval $(sed -En "
     s/^appCode/GW_APPCODE/p;
     s/^appName/GW_APPNAME/p;
     s/^(plVersion|integrationGatewayVersion)=(.*)/GW_PL_VERSION=\2/p;
     s/^jettyPort/GW_PORT/p;
     s/^studioVersion/GW_STUDIO_VERSION/p;
     s/^camelVersion=.*/GW_APPCODE=ccpi\nGW_APPNAME=CCPI\n/p
-  " gradle.properties | sed '/./ { s/^/export /g; }'
+  " gradle.properties | sed '/./ { s/^/export /g; }')
+
+  case ${GW_PL_VERSION} in
+    50.1.*)
+      GW_SKI_RELEASE=Aspen
+      ;;
+    50.2.*)
+      GW_SKI_RELEASE=Banff
+      ;;
+    50.3.*)
+      GW_SKI_RELEASE=Cortina
+      ;;
+    50.4.*)
+      GW_SKI_RELEASE=Dobson
+      ;;
+    50.5.*)
+      GW_SKI_RELEASE=Elysian
+      ;;
+    50.6.*)
+      GW_SKI_RELEASE=Flaine
+      ;;
+    50.7.*)
+      GW_SKI_RELEASE=Garmisch
+      ;;
+    50.8.*)
+      GW_SKI_RELEASE=Hakuba
+      ;;
+    50.9.*)
+      GW_SKI_RELEASE=Innsbruck
+      ;;
+  esac
+  export GW_SKI_RELEASE=$(colorLabel black orange ${GW_SKI_RELEASE})
 
 else
-  echo unset GW_ANSI_NAME GW_COLOR GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
+  unset GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION
   return
 fi
 
-echo ';
-export GW_COLOR=${GW_COLORS[$GW_APPNAME]};
-export GW_ANSI_NAME=`pastel -f paint -n black --on ${(Q)GW_COLOR##* } ""; pastel -f paint -n ${(Q)GW_COLOR%% *} --on ${(Q)GW_COLOR##* } " ${GW_APPNAME}\e[30;7m"`'
+
+export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
+export GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})${GW_SKI_RELEASE}
+
+namedVars=${@}
+
+
+# if this file is being executed directly--i.e. NOT being sourced
+if [[ ! $ZSH_EVAL_CONTEXT =~ :file$ ]] && ((! $#namedVars )); then
+  namedVars=(GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION)
+#  typeset -p GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION
+fi
+
+(($#namedVars)) && typeset -p ${namedVars}
+unset namedVars

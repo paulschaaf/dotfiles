@@ -21,7 +21,7 @@ style = 'white'
 
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'eval $(gwenv); echo "${GW_ANSI_NAME}"'
+command = 'source ~/bin/gwenv; echo "${GW_ANSI_NAME}"'
 detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"
