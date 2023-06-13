@@ -431,6 +431,10 @@ while [ -n "$*" ]; do
       fullTask="itermBg '$2'"
       shift
       ;;
+    setPlVersion)
+      fullTask="perl -pi.bak -e 's/plVersion=.*/plVersion=$2/g' gradle.properties; diff gradle.properties{,.bak}; true"
+      shift
+      ;;
     studio)
       if [ $GW_PL_NUM -lt 9 ]; then
         spawn=true
@@ -438,7 +442,11 @@ while [ -n "$*" ]; do
       unset inScreen
       taskFailIcon=$failIcon
       inLinux && no_scan=true
-      task="${no_scan:+--no-scan }${task}"
+      if [[ "$GW_APPCODE" = "ccpi" ]]; then
+        fullTask="idea"
+      else
+        task="${no_scan:+--no-scan }${task}"
+      fi
       ;;
     tasks)
       noNotifySuccess=true

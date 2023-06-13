@@ -55,7 +55,7 @@ for prod in $selectedProducts; do
   (($#debug)) && echo "\n===" && typeset -p color command name prod prodDir
   (($#debug)) && prodDir="[7m${command}"
 
-  printf "\n${color}%s%$(($COLUMNS - $#name))s[0m\n" $name "${prodDir//$HOME/~}"
+  printf "\n${color}%s%$(($COLUMNS - $#name - 4))s[30;7m[0m\n" $name "${prodDir//$HOME/~}"
 
   dry_run || $command
 done

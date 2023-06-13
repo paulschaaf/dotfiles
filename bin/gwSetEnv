@@ -64,7 +64,8 @@ eval "$(gwenv)"
 
 # or maybe this *is* platform
 (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties 2>/dev/null)
-typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
+typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME
+[[ "$GW_APPCODE" = "ccpi" ]] || typeset -p GW_PORT GW_STUDIO_VERSION
 
 
 #
@@ -72,6 +73,8 @@ typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME GW_PORT GW_STUDIO_VERSION
 #
 
 case ${GW_PL_VERSION} in
+  1.*)
+    ;;
 #  6*)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
@@ -168,7 +171,12 @@ if (($#GW_PL_VERSION == 0)); then
 fi
 
 trace Resolved: GW_PLATFORM=$GW_PLATFORM
-export GW_PL_NUM=${GW_PL_VERSION%.*}
+export GW_PL_NUM=${GW_PL_VERSION%%.*}
+
+if [[ "$GW_APPCODE" = "ccpi" ]]; then
+  trace Detected ccpi
+  return
+fi
 
 # If these are empty, default them
 export GW_START_SCRIPT=${:-./gwb}
@@ -228,7 +236,7 @@ typeset -p GW_PORT_DEBUG GW_TITLE
 #export GW_START_DIR=$GW_ROOT
 
 if [[ ${GW_PL_NUM} -lt 9 ]]; then
-  cd bin
+  cd bin || exit
 #  GW_START_DIR=${GW_ROOT}/bin
 fi
 lsPathVar GW_START_SCRIPT
