@@ -23,6 +23,9 @@ while [[ -n "$*" ]]; do
     --root)
       root=$value
       ;;
+    --setx)
+      set -x
+      ;;
     -*)
       product=${switch##--}
       if (($allProducts[(Ie)$product])); then # if it's a product
@@ -43,21 +46,23 @@ done
 # default associative array to cc and px
 (($#selectedProducts)) || selectedProducts=(cc cc px px)
 (($#debug)) && typeset -p selectedProducts
-
 for prod in $selectedProducts; do
-  cd ~
   prodDir=~/gw/${root:=halite}/${selectedProducts[$prod]}
   cd $prodDir
-  source ~/bin/gwenv
+  source ~/bin/gwenv ""
 
   name="▶ ${GW_APPNAME}"
-  color=${GW_ANSI_NAME//$GW_APPNAME*/}
   command=(rg --color=always ${switches} ${*} $prodDir)
+  width=$(($COLUMNS - $#name - 3))
 
-  (($#debug)) && echo "\n===" && typeset -p color command name prod prodDir
-  (($#debug)) && prodDir="[7m${command}"
+  if (($#debug)); then
+    echo "\n==="
+    typeset -p command name prod prodDir
+    prodDir="[7m${command}"
+    width=$(($width + 4)) # 4 unprintable chars
+  fi
 
-  printf "\n${color}%s%$(($COLUMNS - $#name - 4))s[30;7m[0m\n" $name "${prodDir//$HOME/~}"
+  printf "\n${GW_ANSI_NAME//$GW_APPNAME/$name%${width}s}\n" ${prodDir//$HOME/\~}
 
   dry_run || $command
 done

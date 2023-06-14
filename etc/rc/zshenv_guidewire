@@ -61,10 +61,6 @@ export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 # pastel lighten 0.3 blue
 # pastel color yellow
 # pastel pick
-function pastelFgBg() {
-  set -x
-  pastel -f paint -n ${1} --on ${2} $3
-}
 
 typeset -Ax GW_COLORS=(
   [BillingCenter]='white chocolate'

@@ -1,0 +1,9 @@
+#!/bin/zsh
+
+fg=${1}
+bg=${2}
+label=${3}
+symbol=${4:-}
+pastel -f paint -n black --on ${bg} ${symbol}
+pastel -f paint -n ${fg} --on ${bg} " ${label}"
+pastel -f paint -n ${bg} --on black ${symbol}

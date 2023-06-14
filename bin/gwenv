@@ -1,18 +1,11 @@
 #!/bin/zsh
 
+allVars=(GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION)
+namedVars=()
+
+autoload -Uz colorLabel
+
 [[ "$1" = "--setx" ]] && shift && set -x
-
-
-function colorLabel() {
-  fg=${1}
-  bg=${2}
-  label=${3}
-  lsymbol=${4:-}
-  rsymbol=${5:-$lsymbol}
-  pastel -f paint -n black --on ${bg} ${lsymbol}
-  pastel -f paint -n ${fg} --on ${bg} " ${label}"
-  pastel -f paint -n ${bg} --on black ${rsymbol}
-}
 
 # if it's a customer build
 if [[ -f project-version.properties ]]; then
@@ -41,6 +34,7 @@ if [[ -f project-version.properties ]]; then
   fi
   export GW_PORT=$GW_PORT
 
+# it's a dev build
 elif [[ -f gradle.properties ]]; then
   eval $(sed -En "
     s/^appCode/GW_APPCODE/p;
@@ -81,24 +75,20 @@ elif [[ -f gradle.properties ]]; then
       ;;
   esac
   export GW_SKI_RELEASE=$(colorLabel black orange ${GW_SKI_RELEASE})
-
-else
-  unset GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION
-  return
 fi
-
-
-export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
-export GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})${GW_SKI_RELEASE}
 
 namedVars=${@}
 
+if (( $#GW_APPNAME )); then
+  export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
+  export GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})
 
-# if this file is being executed directly--i.e. NOT being sourced
-if [[ ! $ZSH_EVAL_CONTEXT =~ :file$ ]] && ((! $#namedVars )); then
-  namedVars=(GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION)
-#  typeset -p GW_ANSI_NAME GW_APPCODE GW_APPNAME GW_COLOR GW_PL_VERSION GW_PORT GW_SKI_RELEASE GW_STUDIO_VERSION
+  # if this file is being executed directly--i.e. NOT being sourced--default to reporting on all variables
+  if [[ ! $ZSH_EVAL_CONTEXT =~ :file$ ]] && ((! $#namedVars )); then
+    namedVars=${allVars}
+  fi
 fi
 
-(($#namedVars)) && typeset -p ${namedVars}
-unset namedVars
+(($#namedVars)) && eval typeset -p ${namedVars}
+
+unset allVars namedVars

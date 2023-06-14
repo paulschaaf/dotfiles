@@ -232,6 +232,8 @@ unset autojump
 
 inMacOS && source /Users/pschaaf/.config/broot/launcher/bash/br
 
+autoload -Uz colorLabel
+
 inMacOS \
   && alias df='df -Phl' \
   || autoload -Uz df
