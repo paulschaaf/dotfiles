@@ -62,8 +62,6 @@ function lsPathVar() {
 
 source ~/bin/gwenv
 
-# or maybe this *is* platform
-(($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=([0-9]*\.[0-9]*).*/\1/gp' gradle.properties 2>/dev/null)
 typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME
 [[ "$GW_APPCODE" = "ccpi" ]] || typeset -p GW_PORT GW_STUDIO_VERSION
 
@@ -163,6 +161,9 @@ for env in {../..,..,.}/gw.env; do
     source ${env}
   fi
 done
+
+typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME
+[[ "$GW_APPCODE" = "ccpi" ]] || typeset -p GW_PORT GW_STUDIO_VERSION
 
 # exit if not a Guidewire installation
 if (($#GW_PL_VERSION == 0)); then

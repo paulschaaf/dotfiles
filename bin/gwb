@@ -87,14 +87,15 @@ echoVar() {
   echo
 }
 
-setGnuScreenTitle() {
-  #    echo -n "\ek${GW_TITLE} ${*}\e\\"
-  #	echo 'GW_TITLE='${GW_TITLE}
-  #	echo '*='${*}
-  #	echo Setting screen title to \"${GW_TITLE} ${*}\"
-
-  printf '\e]1;%s\a' ${GW_TITLE} ${*}
-}
+autoload -Uz settitle
+#setGnuScreenTitle() {
+#  #    echo -n "\ek${GW_TITLE} ${*}\e\\"
+#  #	echo 'GW_TITLE='${GW_TITLE}
+#  #	echo '*='${*}
+#  #	echo Setting screen title to \"${GW_TITLE} ${*}\"
+#
+#  printf '\e]1;%s\a' ${GW_TITLE} ${*}
+#}
 
 log_section() {
   local _color=$1
@@ -142,7 +143,7 @@ runTask() {
   (($#delay > 0)) && echo "\nDelay for $delay" && sleep $delay
 
   #    echo; typeset -p taskSummary
-  setGnuScreenTitle ${taskSummary#./gwb }
+  settitle ${GW_TITLE} ${taskSummary#./gwb }
 
   log_section ${run_color} "START '$userTask'" ${taskSummary}
 
@@ -182,7 +183,7 @@ ${taskSummary}"
 ${taskSummary}" ${failIcon:+-appIcon} "$failIcon"
   fi
 
-  setGnuScreenTitle
+  settitle
 }
 
 (($#debug > 0)) && set -x

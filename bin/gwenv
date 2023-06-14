@@ -6,6 +6,7 @@ namedVars=()
 autoload -Uz colorLabel
 
 [[ "$1" = "--setx" ]] && shift && set -x
+[[ "$1" = "--all" ]] && shift && namedVars=$allVars
 
 # if it's a customer build
 if [[ -f project-version.properties ]]; then
@@ -45,6 +46,10 @@ elif [[ -f gradle.properties ]]; then
     s/^camelVersion=.*/GW_APPCODE=ccpi\nGW_APPNAME=CCPI\n/p
   " gradle.properties | sed '/./ { s/^/export /g; }')
 
+  # or maybe this *is* platform
+  # shellcheck disable=SC2155 # declare separately
+  (($#GW_PL_VERSION)) || export GW_PL_VERSION=$(sed -nE 's/^version=//gp' gradle.properties 2>/dev/null)
+
   case ${GW_PL_VERSION} in
     50.1.*)
       GW_SKI_RELEASE=Aspen
@@ -74,10 +79,10 @@ elif [[ -f gradle.properties ]]; then
       GW_SKI_RELEASE=Innsbruck
       ;;
   esac
-  export GW_SKI_RELEASE=$(colorLabel black orange ${GW_SKI_RELEASE})
+  (($#GW_SKI_RELEASE)) && export GW_SKI_RELEASE=$(colorLabel black orange ${GW_SKI_RELEASE})
 fi
 
-namedVars=${@}
+namedVars=${namedVars:-@}
 
 if (( $#GW_APPNAME )); then
   export GW_COLOR=${GW_COLORS[$GW_APPNAME]}

@@ -280,7 +280,8 @@ function pushd() {
   fi
 }
 
-function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
+#function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
+autoload -Uz settitle
 
 autoload -Uz splitMp3
 autoload -Uz splitFlac
