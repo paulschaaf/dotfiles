@@ -47,7 +47,7 @@ done
 # default associative array to cc and px
 (($#selectedProducts)) || selectedProducts=(cc cc px px)
 (($#debug)) && typeset -p selectedProducts
-for prod prodDir in ${(@kv)selectedProducts}; do
+for prod prodDir in "${(@kv)selectedProducts}"; do
   [[ $prodDir =~ "^/" ]] || prodDir=~/gw/${root:=halite}/${prodDir}
   cd $prodDir
   source ~/bin/gwenv ""
