@@ -430,6 +430,9 @@ done
 # ========
 # ======== Tricks and Tips
 
+## enumerate associative array
+# for key value in ${(@kv)associativeArray}; do ...; done
+
 # shrink music - needs work:
 # for file in Alternative_Rock/**/*.flac; do ffmpeg -i $file -c:v copy -q:a 0 /run/media/pschaaf/E8CC-6CF9/${file:r}.mp3; done
 

@@ -30,6 +30,7 @@ while [[ -n "$*" ]]; do
       product=${switch##--}
       if (($allProducts[(Ie)$product])); then # if it's a product
         # either add the product (e.g. "--ab"), or override the assumed directory (e.g. "--cc=cc2")
+        value=${value//\~/$HOME}
         selectedProducts[$product]=${value:-$product}
         (($#debug)) && typeset -p selectedProducts
       else # it's a normal switch
@@ -46,8 +47,8 @@ done
 # default associative array to cc and px
 (($#selectedProducts)) || selectedProducts=(cc cc px px)
 (($#debug)) && typeset -p selectedProducts
-for prod in $selectedProducts; do
-  prodDir=~/gw/${root:=halite}/${selectedProducts[$prod]}
+for prod prodDir in ${(@kv)selectedProducts}; do
+  [[ $prodDir =~ "^/" ]] || prodDir=~/gw/${root:=halite}/${prodDir}
   cd $prodDir
   source ~/bin/gwenv ""
 
