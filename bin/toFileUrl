@@ -1,6 +1,8 @@
 #!/usr/bin/env zsh
 
+[[ "$1" = "--debug" ]] && shift && debug=true
 sed -E "
+   ${debug:+p}
    # ignore any line that begins with a space, two dashes, number:number:, or file://
    /^ |^--|^[0-9]+:[0-9]+:|file:\/\//b
 

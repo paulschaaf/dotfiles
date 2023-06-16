@@ -87,77 +87,80 @@ function addGlobs() {
 }
 
 if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
-  addSwitches --color=always
+  addSwitches --color=always --colors 'path:none'
   inIntelliJ=true
 fi
 
 # shellcheck disable=SC1105
 while (($#@)); do
-   #   (($#debug)) && typeset firstArg
-   case ${1} in
-      --debug)
-         debug=true
-         ;;
-      --dry-run)
-         dry_run=true
-         expanded=true
-         ;;
-      --heading)
-         addSwitches --heading --color=never
-         expanded=true
-         ;;
-      -h|--help)
-         $binary --help
-         help
-         ;;
-      --bizrules)
-         addGlobs "${bizrules[@]}"
-         ;;
-      --no-bizrules)
-         addGlobs --negate "${bizrules[@]}"
-         ;;
-      --no-test-dirs)
-         addGlobs --negate "${test_dirs[@]}"
-         ;;
-      --inIntelliJ)
-         # shellcheck disable=SC2034
-         inIntelliJ=true
-         ;;
-      --notIntelliJ)
-         unset inIntelliJ
-         ;;
-      --test-dirs)
-         addGlobs "${test_dirs[@]}"
-         ;;
-      --type-list)
-         ${binary} --type-list
-         exit
-         ;;
-      -*)
-         # don't enquote switches
-         addSwitches "${1}"
-         ;;
-      *)
-         addSwitches "${(qq)1}"
-         ;;
-   esac
-   shift
+  #   (($#debug)) && typeset firstArg
+  case ${1} in
+    --debug)
+      debug=true
+      ;;
+    --dry-run)
+      dry_run=true
+      expanded=true
+      ;;
+    --heading)
+      addSwitches --heading --color=never
+      expanded=true
+      ;;
+    -h|--help)
+      $binary --help
+      help
+      ;;
+    --bizrules)
+      addGlobs "${bizrules[@]}"
+      ;;
+    --no-bizrules)
+      addGlobs --negate "${bizrules[@]}"
+      ;;
+    --no-test-dirs)
+      addGlobs --negate "${test_dirs[@]}"
+      ;;
+    --inIntelliJ)
+      # shellcheck disable=SC2034
+      inIntelliJ=true
+      ;;
+    --notIntelliJ)
+      unset inIntelliJ
+      ;;
+    --setx)
+      set -x
+      ;;
+    --test-dirs)
+      addGlobs "${test_dirs[@]}"
+      ;;
+    --type-list)
+      ${binary} --type-list
+      exit
+      ;;
+    -*)
+      # don't enquote switches
+      addSwitches "${1}"
+      ;;
+    *)
+      addSwitches "${(qq)1}"
+      ;;
+  esac
+  shift
 done
 
 (($#expanded)) && printf "\e[90mExpanded to => %s %s\e[0m\n"  "${binary}" "${command[*]}"
 
 if (($#dry_run)); then
-   exit
+  exit
 fi
 
 (($#debug)) && set -x
 
 if (($#inIntelliJ)); then
-   # use a separator extremely unlikely to match legit text (and wouldn't match again on a second run)
-   fieldSeparator=`date '+%s@@@'`
-   # put a space after the last coordinate colon
-   eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" | toFileUrl
-#   eval "${binary} ${command[*]}" | toFileUrl
+  # use a separator extremely unlikely to match legit text (and wouldn't match again on a second run)
+  fieldSeparator=`date '+%s@@@'`
+  # put a space after the last coordinate colon
+  eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" #| toFileUrl
+#  eval "${binary} ${command[*]}" | toFileUrl
 else
-   eval ${binary} ${command[*]}
+  eval ${binary} ${command[*]}
 fi

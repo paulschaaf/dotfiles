@@ -12,7 +12,7 @@ ${jobs}${shlvl}${custom.zsh_command_number} ${username}${custom.prompt_char}"""
 #right_format = "${custom.zsh_command_number}"
 
 # Useful Unicode symbols
-# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»﹍
+# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»■﹍✓📁❌⮕
 
 [cmd_duration]
 #min_time = 0
@@ -21,7 +21,7 @@ style = 'white'
 
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'source ~/bin/gwenv; echo "${GW_ANSI_NAME}${GW_SKI_RELEASE}"'
+command = 'source ~/bin/gwenv; echo "${GW_ANSI_NAME}${GW_ANSI_PLATFORM}"'
 detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"

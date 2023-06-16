@@ -1,9 +1,4 @@
 #!/bin/zsh
-# shellcheck disable=SC2155
-
-# Clear these out
-unset IDEA_HOME IDEA_JDK JAVA_HOME
-unset GW_DB_DIR GW_LIB_DIR
 
 #
 # FUNCTIONS
@@ -36,36 +31,51 @@ function announce() {
   printf "\e[93m%s\e[0m\n" "${@}"
 }
 
+function ⭑⭑⭑() {
+  echo
+  pastel -f paint -n white --on teal " ${@} "
+  echo
+}
+
 function lsPathVar() {
-  local dirColor
+  [[ "$1" = "--ignore-empty" ]] && shift && ignore=true
   for dirName in "${@}"; do
-    if (($#dirName == 0)); then
+    if ((! $#dirName)); then
       echo $dirName is \$$dirName
       echo Error: "\$${dirName} is undefined!"
       exit 1
     fi
     eval value=\$${dirName}
+    # shellcheck disable=SC2154 # referenced but not assigned
     if [[ -d "$value" ]]; then # echo its a directory
-      dirColor=${color[cyan]}
+      echo -n '📁 '
     elif [[ -f "$value" ]]; then # echo its a file
-      dirColor=${color[green]}
+      echo -n '✓ '
     else # echo its neither
-      dirColor=${color[bg-red]}
+      (($#ignore)) && echo -n '? ' || echo -n '❌ '
     fi
-    echo "[${dirColor}m`typeset -p ${dirName}`[${color[none]}m"
+    typeset -p ${dirName}
   done
 }
+
+function replaceInList() {
+  local listName=$1; shift
+  local regex=$1;    shift
+  local newVal=$1;   shift
+
+  local list newList
+  eval list=\$$listName
+  newList=$(echo :"${list// /\\ }" | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~")
+  export "${listName}"="$newList"
+}
+
 
 #
 # DETERMINE THE PRODUCT
 #
-
-source ~/bin/gwenv
-
-typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME
-[[ "$GW_APPCODE" = "ccpi" ]] || typeset -p GW_PORT GW_STUDIO_VERSION
-
-
+⭑⭑⭑ Detected Installation
+# shellcheck disable=SC1090 # can't follow non-constant source
+source ~/bin/gwenv --all
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
 #
@@ -77,7 +87,6 @@ case ${GW_PL_VERSION} in
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
 #    export GW_LIB_DIR=../lib
-#    export GW_PLATFORM=carbon
 #    export GW_START_SCRIPT=./all
 #    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
 #    export JAVA_HOME=${JAVA16_HOME}
@@ -95,7 +104,6 @@ case ${GW_PL_VERSION} in
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.8.2
 #    export GW_LIB_DIR=../lib
-#    export GW_PLATFORM=emerald
 #    export GW_START_SCRIPT=./all
 #    export IDEA_HOME=/opt/idea_emerald
 #    export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
@@ -103,44 +111,24 @@ case ${GW_PL_VERSION} in
 #    export M2_HOME=/depot/maven/apache-maven-3.0.4
 #    ;;
   9*)
-    export GW_PLATFORM=ferrite
-    inMacOS \
-      && export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents' \
-      || export IDEA_HOME=/opt/idea_ferrite
-    inMacOS \
-      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home \
-      || export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
     ;;
   10.0.0*|10.0.1)
     # for <= 10.0.1
-    export GW_PLATFORM=granite
     announce 'Using older config for this platform version'
-    ifMacOS \
-      && export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents' \
-      || export IDEA_HOME=/opt/idea-IU-173.4674.33
-    ifMacOS \
-      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home \
-      || export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+    export JAVA_HOME=/usr/lib/jvm/java-8-jdk
     ;;
   10*)
-    export GW_PLATFORM=granite
-    inMacOS \
-      && export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' \
-      || export IDEA_HOME=/opt/idea2019IU
-    inMacOS \
-      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home \
-      || export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
+    export GW_DB_DIR=/tmp/guidewire/granite
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     ;;
   50*)
-    export GW_PLATFORM=halite
-    inMacOS \
-      && export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents' \
-      || export IDEA_HOME=/opt/idea_halite
-    inMacOS \
-      && export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home \
-      || export JAVA_HOME=/usr/lib/jvm/java-11-openjdk/
-
-    [[ -d ./h2 ]] && GW_DB_DIR=./h2
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
 
     if [[ "$1" == "old" ]]; then
       export GW_DB_DIR=/tmp/guidewire/granite
@@ -152,142 +140,84 @@ case ${GW_PL_VERSION} in
     ;;
 esac
 
+
+#
 # Source environment overrides
+#
+
 for env in {../..,..,.}/gw.env; do
   if [[ -f ${env} ]]; then
-    echo Sourcing overrides from ${env}
-    cat ${env} | sed 's/^/-  /'
-    # shellcheck disable=SC1090
+    ⭑⭑⭑ "** Applying overrides from ${env}"
+    cat ${env} | sed 's/^/  - /'
+    # shellcheck disable=SC1090 # can't follow non-constant source
     source ${env}
   fi
 done
 
-typeset -p GW_PL_VERSION GW_APPCODE GW_APPNAME
-[[ "$GW_APPCODE" = "ccpi" ]] || typeset -p GW_PORT GW_STUDIO_VERSION
 
-# exit if not a Guidewire installation
-if (($#GW_PL_VERSION == 0)); then
-  trace Could not determine the platform version!
-  return 1 2>/dev/null || exit
-fi
-
-trace Resolved: GW_PLATFORM=$GW_PLATFORM
-export GW_PL_NUM=${GW_PL_VERSION%%.*}
-
-if [[ "$GW_APPCODE" = "ccpi" ]]; then
-  trace Detected ccpi
-  return
-fi
-
-# If these are empty, default them
-export GW_START_SCRIPT=${:-./gwb}
-export GW_DB_DIR=${GW_DB_DIR:-/tmp/guidewire/${GW_PLATFORM}}
-export IDEA_HOME=${IDEA_HOME:-$IDEA_ROOT/idea${GW_PLATFORM:+_}$GW_PLATFORM}
-
-if (($#IDEA_JDK == 0)); then
+⭑⭑⭑ Java
+if ((!$#IDEA_JDK)); then
   if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
     export IDEA_JDK=${JAVA_HOME}_nodcevm
   else
     export IDEA_JDK=${JAVA_HOME}
   fi
 fi
-${JAVA_HOME}/bin/java -version 2>&1 | sed 's/^/: /g; s/[)(]//g'
+lsPathVar JAVA_HOME
+${JAVA_HOME}/bin/java -version 2>&1
 
-lsPathVar IDEA_HOME IDEA_JDK JAVA_HOME
-# it doesn't matter if GW_DB_DIR doesn't exist yet so we just typeset it
-typeset -p GW_DB_DIR GW_PL_NUM GW_PLATFORM
+⭑⭑⭑ Idea
+lsPathVar IDEA_HOME IDEA_JDK
 
-export GW_PORT_DEBUG=$(($GW_PORT + 10))
-# compute platform from studio jar version num => ls studio/plugins/ij-studio/lib/ij-studio-*.jar | sed 's/.*ij-studio[^0-9]*\(.*\)\.jar/\1/'
-export GW_TITLE="$GW_APPNAME $GW_PL_VERSION"
-typeset -p GW_PORT_DEBUG GW_TITLE
-
-#
-# DETERMINE INSTALLATION ROOT
-#
-
-# shellcheck disable=SC2006
-# shellcheck disable=SC2086
-#export GW_ROOT=$(echo ${PWD//${HOME}/~} | sed -E "\
-#    # strip trailing directories (and exit on first success) ...
-#    # ... from git path
-#    s_^(.*/${GW_PLATFORM}/($GW_APPCODE)[^/]*).*\$_\1_
-#    t
-#
-#    # ... from Perforce path
-#    s_^(.*/($GW_APPCODE)/(active/[^/]+|merge|(dbupgrade|release)/[0-9]+|stable)).*\$_\1_
-#    t
-#
-#    # ... after the one containing the product code+version
-#    s_^(.*/($GW_APPCODE)[-._0-9]+).*\$_\1_
-#    t
-#
-#    # ... after the one that begins with the product name
-#    s_^(.*/(ContactManager|(Billing|Claim|Example|Policy)Center|Platform)[^/]*).*\$_\1_
-#    t
-#
-#    # delete pattern space so that empty string is returned
-#    d")
-#lsPathVar GW_ROOT
-
-#
-# DETERMINE THE STARTUP SCRIPT
-#
-
-#export GW_START_DIR=$GW_ROOT
-
-if [[ ${GW_PL_NUM} -lt 9 ]]; then
-  cd bin || exit
-#  GW_START_DIR=${GW_ROOT}/bin
-fi
-lsPathVar GW_START_SCRIPT
 
 #
 # Fix PATH and CLASSPATH
 #
 
-function replaceInList() {
-  local listName=$1
-  shift
-  # shellcheck disable=SC2086
-  eval local list=\$$listName
-  local regex=$1
-  shift
-  local newVal=$1
-  shift
-  # shellcheck disable=SC2154
-  local newList=$(echo :"${list// /\\ }" | sed -E "s~:[^:]+(/${regex})[^:]*~~g; s~^:~${newVal}:~")
-  export "${listName}"="$newList"
-}
-
-replaceInList PATH 'idea[0-9]*' ${IDEA_HOME}/bin
-replaceInList PATH 'java-[0-9]+-jdk' ${JAVA_HOME}/bin
+⭑⭑⭑ Paths
+replaceInList PATH      'idea[0-9]*'      ${IDEA_HOME}/bin
+replaceInList PATH      'java-[0-9]+-jdk' ${JAVA_HOME}/bin
 replaceInList CLASSPATH 'java-[0-9]+-jdk' ${JAVA_HOME}/lib/\*
 
 if [[ "$GW_PL_NUM" -lt 9 ]]; then
-  lsPathVar GW_LIB_DIR
-  replaceInList PATH 'ant' $ANT_HOME/bin
-  replaceInList CLASSPATH 'ant' $ANT_HOME/lib/\*
+  replaceInList PATH      ant $ANT_HOME/bin
+  replaceInList CLASSPATH ant $ANT_HOME/lib/\*
 
-  replaceInList PATH 'aardvark' $AARDVARK_HOME/bin
-  replaceInList CLASSPATH 'aardvark' $AARDVARK_HOME/lib/\*
+  replaceInList PATH      aardvark $AARDVARK_HOME/bin
+  replaceInList CLASSPATH aardvark $AARDVARK_HOME/lib/\*
 
-  replaceInList PATH 'maven' ${M2_HOME}/bin
-  replaceInList CLASSPATH 'maven' ${M2_HOME}/lib/\*
+  replaceInList PATH      maven ${M2_HOME}/bin
+  replaceInList CLASSPATH maven ${M2_HOME}/lib/\*
 
-  if (($#GW_LIB_DIR > 0)) && [ -d ../"$GW_LIB_DIR" ]; then
-    CLASSPATH+=:${PWD%/*}/"$GW_LIB_DIR"/\*
+  # shellcheck disable=SC2153 # possible misspelling
+  if (($#GW_LIB_DIR)); then
+    lsPathVar GW_LIB_DIR
+    [[ -d ../"$GW_LIB_DIR" ]] && CLASSPATH+=:${PWD%/*}/"$GW_LIB_DIR"/\*
   fi
 fi
 
-# Remove any empty or duplicate members
-#CLASSPATH=$(echo -n "$CLASSPATH" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s", ln++ ? ":" : "", $0)}}')
-
 typeset -p PATH CLASSPATH
 
-# Other Vars
-export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
-export apiBreakTest_fix=true
-export apiBreakTest_localDumpPath=${HOME}/gw/dumps
 
-typeset -p apiBreakTest_dump_dir apiBreakTest_fix apiBreakTest_localDumpPath
+if (($#GW_PL_VERSION)); then
+  ⭑⭑⭑ Other Vars
+
+  # If these are empty, default them
+  [[ -f ./gwb ]] && export GW_START_SCRIPT=${:-./gwb}
+  lsPathVar GW_START_SCRIPT
+
+  if ((! $#GW_DB_DIR)); then
+    [[ -d ./h2 ]] && GW_DB_DIR=./h2 || GW_DB_DIR=-/tmp/guidewire/${GW_PLATFORM}
+  fi
+  export GW_DB_DIR
+
+  lsPathVar --ignore-empty GW_DB_DIR
+
+  # APIBreakTest
+  export apiBreakTest_fix=true
+  typeset -p apiBreakTest_fix
+
+  export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
+  export apiBreakTest_localDumpPath=${HOME}/gw/dumps
+  lsPathVar --ignore-empty apiBreakTest_dump_dir apiBreakTest_localDumpPath
+fi

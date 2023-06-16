@@ -24,7 +24,7 @@ while [ -n "$*" ]; do
     --old)
       old=true
       ;;
-    --trace)
+    --setx)
       set -x
       ;;
     --wc)
@@ -44,7 +44,7 @@ done
 # Set up environment
 source $HOME/bin/gwSetEnv ${old:+old}
 
-if (($#GW_PL_NUM == 0)); then
+if ((! $#GW_PL_VERSION)); then
   printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
   return 1
 fi
@@ -71,7 +71,6 @@ apd_dirs=(
   app-cc/cc-test-apd/gtest/gw
 )
 dbbackup=h2database
-#failIcon=/usr/share/icons/oxygen/base/48x48/actions/process-stop.png
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
 jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
@@ -88,14 +87,6 @@ echoVar() {
 }
 
 autoload -Uz settitle
-#setGnuScreenTitle() {
-#  #    echo -n "\ek${GW_TITLE} ${*}\e\\"
-#  #	echo 'GW_TITLE='${GW_TITLE}
-#  #	echo '*='${*}
-#  #	echo Setting screen title to \"${GW_TITLE} ${*}\"
-#
-#  printf '\e]1;%s\a' ${GW_TITLE} ${*}
-#}
 
 log_section() {
   local _color=$1
@@ -125,9 +116,7 @@ killProcStr() {
 notify() {
   title="$1"
   shift
-  inLinux && notify-send -c ${title} -t 5000 ${successIcon:+-i} $successIcon "${*}"
-  #  inMacOS && terminal-notifier -title idea -activate com.apple.Terminal -message $*
-  inMacOS && notify-send ${title} "${*}"
+  notify-send ${title} "${*}"
   set +x
 }
 
@@ -155,7 +144,7 @@ runTask() {
     else
       # make sure we source the gwb script instead of just running it
       task=${task/.\/gwb/source gwb}
-      (($#debug > 0)) && echo actual task is ${task}
+      (($#debug)) && echo actual task is ${task}
       # if it's a Java cmd, display each option indented on a separate line
       eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
@@ -186,30 +175,25 @@ ${taskSummary}" ${failIcon:+-appIcon} "$failIcon"
   settitle
 }
 
-(($#debug > 0)) && set -x
-
 #${_dry_run} konsoleprofile colors=$GW_APPCODE\;icon=${passIcon}\;tabTitle=$GW_TITLE
 
 # Process arguments
 while [ -n "$*" ]; do
   task=$1
   
-  jvmArgs=(
-    -Dgw.${GW_APPCODE}.env=h2mem
-    -Dgw.tests.skip.knownbreak=true
-    -Djava.awt.headless=true
-    -Dgw.webapp.dir=idea/webapp
-    -Dgw.classpath.jar=true
-    -Dgw.plugins.gclasses.dir=idea-gclasses
-    -DgosuInit.supportDiscretePackages=true
-    -Dfile.encoding=UTF-8
-  )
-
-  javaArgs=(
-    -ea
-  )
-#    -ideVersion5
-#    -junit4
+#  jvmArgs=(
+#    -Dgw.${GW_APPCODE}.env=h2mem
+#    -Dgw.tests.skip.knownbreak=true
+#    -Djava.awt.headless=true
+#    -Dgw.webapp.dir=idea/webapp
+#    -Dgw.classpath.jar=true
+#    -Dgw.plugins.gclasses.dir=idea-gclasses
+#    -DgosuInit.supportDiscretePackages=true
+#    -Dfile.encoding=UTF-8
+#  )
+#
+#  javaArgs=(
+#    -ea
 #  )
 
   # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
@@ -293,6 +277,7 @@ while [ -n "$*" ]; do
       fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
       ;;
     cleanIdea)
+#      [[ $GW_PL_NUM -lt 9 ]] && fullTask="rm -rf app-cc/cc-studio-run/db"
       taskFailIcon=$failIcon
       ;;
     cleanNuke)
@@ -300,22 +285,12 @@ while [ -n "$*" ]; do
         fullTask='./gwb clean -dxf'
       fi
       ;;
-    cleanStudio)
-      if [ $GW_PL_NUM -lt 9 ]; then
-        fullTask="rm -rf app-cc/cc-studio-run/db"
-      else
-        fullTask=": this task only works on platform versions less than 9.; exit 1"
-      fi
-      ;;
     compile)
       fullTask='./gwb compile -DincludeGtest=true'
       ;;
     dropDb)
-      if [ $GW_PL_NUM -lt 9 ]; then
-        task=dropdb
-      else
-        task=dropDb
-      fi
+      task=dropDb
+      [[ $GW_PL_NUM -lt 9 ]] && task=dropdb
       taskFailIcon=$failIcon
       ;;
     fixgwb)
@@ -328,12 +303,6 @@ while [ -n "$*" ]; do
       echo
       echo "\nChange the host to 127.0.0.1, and make sure the connection string is correct! There is no username or password."
       ;;
-    info)
-      infoTasks=(
-        "echoVar apiBreakTest_dump_dir apiBreakTest_localDumpPath"
-      )
-      fullTask=${(j:; :)infoTasks}
-      ;;
     http)
       spawn=true
       noNotifySuccess=true
@@ -342,10 +311,8 @@ while [ -n "$*" ]; do
     httpkill)
       fullTask="pkill -f '$webserver'"
       ;;
-    idea)
-      if [ $GW_PL_NUM -lt 9 ]; then
-        fullTask=${fullTask/idea/gen-ide}
-      fi
+    idea) # generate studio probect
+      [[ $GW_PL_NUM -lt 9 ]] && fullTask=${fullTask/idea/gen-ide}
       ;;
     ij)
       spawn=true
@@ -421,13 +388,13 @@ while [ -n "$*" ]; do
     rmDb)
       fullTask="rm -fv ${GW_DB_DIR}/* && echo && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
       ;;
-      #      runSuite)
-      #        if (( ! $#* )); then
-      #          echo "No suite specified!"
-      #        fi
-      #        fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
-      #        shift
-      #        ;;
+#    runSuite)
+#      if (( ! $#* )); then
+#        echo "No suite specified!"
+#      fi
+#      fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
+#      shift
+#      ;;
     setBg)
       fullTask="itermBg '$2'"
       shift
@@ -437,19 +404,18 @@ while [ -n "$*" ]; do
       shift
       ;;
     studio)
-      if [ $GW_PL_NUM -lt 9 ]; then
-        spawn=true
-      fi
+      # shellcheck disable=SC2034 # var appears unused
+      [[ $GW_PL_NUM -lt 9 ]] && spawn=true
       unset inScreen
       taskFailIcon=$failIcon
-      inLinux && no_scan=true
-      if [[ "$GW_APPCODE" = "ccpi" ]]; then
+      if [[ "$GW_APPCODE" = 'ccpi' ]]; then
         fullTask="idea"
       else
         task="${no_scan:+--no-scan }${task}"
       fi
       ;;
     tasks)
+      # shellcheck disable=SC2034 # var appears unused
       noNotifySuccess=true
       $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
       exit
@@ -492,10 +458,10 @@ while [ -n "$*" ]; do
   shift
 
   # append 'Loud' or 'Quiet' to any task name to override that task's default for OS notification
-  if [ "$notifyVolume" = "quiet" ]; then
+  if [ "$notifyVolume" = 'quiet' ]; then
     taskPassIcon=
     taskFailIcon=
-  elif [ "$notifyVolume" = "loud" ]; then
+  elif [ "$notifyVolume" = 'loud' ]; then
     taskPassIcon=$passIcon
     taskFailIcon=$failIcon
   fi
