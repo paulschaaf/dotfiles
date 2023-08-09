@@ -282,7 +282,7 @@ while [ -n "$*" ]; do
       ;;
     cleanNuke)
       if read -q "n?Really nuke everything? [yN] "; then
-        fullTask='./gwb clean -dxf'
+        fullTask='git clean -dxf'
       fi
       ;;
     compile)

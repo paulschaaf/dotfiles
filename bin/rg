@@ -159,7 +159,7 @@ if (($#inIntelliJ)); then
   # use a separator extremely unlikely to match legit text (and wouldn't match again on a second run)
   fieldSeparator=`date '+%s@@@'`
   # put a space after the last coordinate colon
-  eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" #| toFileUrl
+  eval "${binary} --field-match-separator '${fieldSeparator}' ${command[*]}" | sed -E "s/(.*)${fieldSeparator}/\1 /g; s/${fieldSeparator}/:/g" | toFileUrl
 #  eval "${binary} ${command[*]}" | toFileUrl
 else
   eval ${binary} ${command[*]}

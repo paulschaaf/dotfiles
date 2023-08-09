@@ -31,14 +31,16 @@ function announce() {
   printf "\e[93m%s\e[0m\n" "${@}"
 }
 
+# shellcheck disable=SC1036
+# shellcheck disable=SC1088
 function ⭑⭑⭑() {
   echo
-  pastel -f paint -n white --on teal " ${@} "
+  pastel -f paint -n white --on teal "${@}"
   echo
 }
 
-function lsPathVar() {
-  [[ "$1" = "--ignore-empty" ]] && shift && ignore=true
+function echoDirNameIn() {
+  [[ "$1" = "--allow-empty" ]] && shift && ignore=true
   for dirName in "${@}"; do
     if ((! $#dirName)); then
       echo $dirName is \$$dirName
@@ -76,14 +78,18 @@ function replaceInList() {
 ⭑⭑⭑ Detected Installation
 # shellcheck disable=SC1090 # can't follow non-constant source
 source ~/bin/gwenv --all
+
+
 #
 # SET THE JDK AND PLATFORM CONFIGURATION
 #
 
-case ${GW_PL_VERSION} in
-  1.*)
-    ;;
-#  6*)
+case ${GW_PLATFORM} in
+#  athena)
+#    ;;
+#  bedrock)
+#    ;;
+#  carbon)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
 #    export GW_LIB_DIR=../lib
@@ -91,7 +97,7 @@ case ${GW_PL_VERSION} in
 #    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
 #    export JAVA_HOME=${JAVA16_HOME}
 #    ;;
-#  7*)
+#  diamond)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
 #    export GW_LIB_DIR=../lib
@@ -100,7 +106,7 @@ case ${GW_PL_VERSION} in
 #    export JAVA_HOME=${JAVA16_HOME}
 #    export M2_HOME=/depot/maven/apache-maven-2.2.1
 #    ;;
-#  8*)
+#  emerald)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.8.2
 #    export GW_LIB_DIR=../lib
@@ -110,30 +116,43 @@ case ${GW_PL_VERSION} in
 #    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
 #    export M2_HOME=/depot/maven/apache-maven-3.0.4
 #    ;;
-  9*)
+  ferrite)
     export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
     ;;
-  10.0.0*|10.0.1)
-    # for <= 10.0.1
-    announce 'Using older config for this platform version'
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-    export JAVA_HOME=/usr/lib/jvm/java-8-jdk
-    ;;
-  10*)
+  granite)
+    case ${GW_PL_VERSION} in
+      10.0.0*|10.0.1)
+        # for <= 10.0.1
+        announce 'Using older config for this platform version'
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+        export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+        ;;
+      *)
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        ;;
+    esac
     export GW_DB_DIR=/tmp/guidewire/granite
+    ;;
+  halite)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=/tmp/guidewire/granite
+    ;;
+  Aspen|Banff|Cortina) # the cutoff between C and D may be incorrect
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=/tmp/guidewire/granite
+    ;;
+  Dobson|Elysian|Flaine|Garmisch|Hakuba)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     ;;
-  50*)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+  Innsbruck)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-
-    if [[ "$1" == "old" ]]; then
-      export GW_DB_DIR=/tmp/guidewire/granite
-      export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
-    fi
     ;;
   *)
     unsetGWVars
@@ -156,18 +175,12 @@ done
 
 
 ⭑⭑⭑ Java
-if ((!$#IDEA_JDK)); then
-  if [[ -d "${JAVA_HOME}_nodcevm" ]]; then
-    export IDEA_JDK=${JAVA_HOME}_nodcevm
-  else
-    export IDEA_JDK=${JAVA_HOME}
-  fi
-fi
-lsPathVar JAVA_HOME
+echoDirNameIn JAVA_HOME
 ${JAVA_HOME}/bin/java -version 2>&1
 
 ⭑⭑⭑ Idea
-lsPathVar IDEA_HOME IDEA_JDK
+echoDirNameIn IDEA_HOME
+(($#IDEA_JDK)) && echoDirNameIn IDEA_JDK
 
 
 #
@@ -191,7 +204,7 @@ if [[ "$GW_PL_NUM" -lt 9 ]]; then
 
   # shellcheck disable=SC2153 # possible misspelling
   if (($#GW_LIB_DIR)); then
-    lsPathVar GW_LIB_DIR
+    echoDirNameIn GW_LIB_DIR
     [[ -d ../"$GW_LIB_DIR" ]] && CLASSPATH+=:${PWD%/*}/"$GW_LIB_DIR"/\*
   fi
 fi
@@ -204,14 +217,14 @@ if (($#GW_PL_VERSION)); then
 
   # If these are empty, default them
   [[ -f ./gwb ]] && export GW_START_SCRIPT=${:-./gwb}
-  lsPathVar GW_START_SCRIPT
+  echoDirNameIn GW_START_SCRIPT
 
   if ((! $#GW_DB_DIR)); then
     [[ -d ./h2 ]] && GW_DB_DIR=./h2 || GW_DB_DIR=-/tmp/guidewire/${GW_PLATFORM}
   fi
   export GW_DB_DIR
 
-  lsPathVar --ignore-empty GW_DB_DIR
+  echoDirNameIn --allow-empty GW_DB_DIR
 
   # APIBreakTest
   export apiBreakTest_fix=true
@@ -219,5 +232,5 @@ if (($#GW_PL_VERSION)); then
 
   export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
   export apiBreakTest_localDumpPath=${HOME}/gw/dumps
-  lsPathVar --ignore-empty apiBreakTest_dump_dir apiBreakTest_localDumpPath
+  echoDirNameIn --allow-empty apiBreakTest_dump_dir apiBreakTest_localDumpPath
 fi
