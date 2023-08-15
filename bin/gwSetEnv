@@ -85,25 +85,12 @@ source ~/bin/gwenv --all
 #
 
 case ${GW_PLATFORM} in
-#  athena)
-#    ;;
-#  bedrock)
-#    ;;
-#  carbon)
+#  athena|bedrock|carbon|diamond)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
 #    export GW_LIB_DIR=../lib
 #    export GW_START_SCRIPT=./all
-#    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-#    export JAVA_HOME=${JAVA16_HOME}
-#    ;;
-#  diamond)
-#    export AARDVARK_HOME=/depot/aardvark/alpha
-#    export ANT_HOME=/depot/ant/apache-ant-1.7.1
-#    export GW_LIB_DIR=../lib
-#    export GW_START_SCRIPT=./all
-#    export JAVA16_HOME=/usr/lib32/jvm/jdk1.6.0_45
-#    export JAVA_HOME=${JAVA16_HOME}
+#    export JAVA_HOME=/usr/lib32/jvm/jdk1.6.0_45
 #    export M2_HOME=/depot/maven/apache-maven-2.2.1
 #    ;;
 #  emerald)
@@ -153,8 +140,11 @@ case ${GW_PLATFORM} in
   Innsbruck)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
     ;;
   *)
+    echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
+    exit 1
     unsetGWVars
     ;;
 esac

@@ -13,6 +13,7 @@ while [ -n "$*" ]; do
       delay=$1
       ;;
     --dry-run)
+      # shellcheck disable=SC2034 # unused
       _dry_run='echo '
       ;;
     --nice)
@@ -28,7 +29,7 @@ while [ -n "$*" ]; do
       set -x
       ;;
     --wc)
-      outputFilter=wc
+      outputFilter='wc'
       ;;
     --*)
       echo Unknown option $1
@@ -467,6 +468,7 @@ while [ -n "$*" ]; do
   fi
 
   # grab any arguments
+  # shellcheck disable=SC2076 # quoted right side won't be treated as regex
   while [[ "$1" =~ "-.*" ]]; do
     fullTask="${fullTask} $1"
     shift

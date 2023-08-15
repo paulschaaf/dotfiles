@@ -4,13 +4,9 @@
 --smart-case
 
 --glob=!apidiffs.txt
---glob=!*.gti
---glob=!*.snap
+--glob=!*.{gti,snap}
 --glob=!**/_*/*
---glob=!**/build/*
---glob=!**/classes/*
---glob=!**/generated/*
---glob=!**/generated_classes/*
+--glob=!**/{build,classes,generated,generated_classes}/*
 --glob=!**/logs/*
 --glob=!**/node_modules/*
 
@@ -19,17 +15,11 @@
 --glob=!perf-build/*
 --glob=!**/*performance*/*
 
---glob=!*_de[._]*
---glob=!*_es[._]*
---glob=!*_fr[._]*
---glob=!*_it[._]*
---glob=!*_ja[._]*
---glob=!*_nl[._]*
---glob=!*_pt[._]*
---glob=!*_ru[._]*
-#--glob=!*_xx[._]*
---glob=!*_yy[._]*
---glob=!*_zh[._]*
+--glob=!{display,typelist}_{de,es,es_ES,fr,it,ja,nl,pt,ru,zh,zh_CN}.properties
+
+# comment these out to include the pseudo-language translations
+--glob=!{display,typelist}_xx.properties
+--glob=!{display,typelist}_yy.properties
 
 # EXTENSION TYPES
 --type-add=bpmn:*.bpmn

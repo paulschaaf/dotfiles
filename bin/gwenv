@@ -53,25 +53,25 @@ fi
 
 if (($#GW_PL_VERSION)); then
   case ${GW_PL_VERSION} in
-  #  4*)
+  #  4.*)
   #    export GW_PLATFORM=athena
   #    ;;
-  #  5*)
+  #  5.*)
   #    export GW_PLATFORM=bedrock
   #    ;;
-  #  6*)
+  #  6.*)
   #    export GW_PLATFORM=carbon
   #    ;;
-  #  7*)
+  #  7.*)
   #    export GW_PLATFORM=diamond
   #    ;;
-  #  8*)
+  #  8.*)
   #    export GW_PLATFORM=emerald
   #    ;;
-    9*)
+    9.*)
       GW_PLATFORM=ferrite
       ;;
-    10*)
+    10.*)
       GW_PLATFORM=granite
       ;;
     50.0.*)
@@ -131,7 +131,6 @@ if (( $#GW_APPNAME )); then
 fi
 
 (($#GW_PORT)) && export GW_PORT_DEBUG=$(($GW_PORT + 10))
-
 
 (($#namedVars)) && eval typeset -p "${namedVars[@]}" 2>/dev/null
 
