@@ -115,9 +115,9 @@ killProcStr() {
 }
 
 notify() {
-  title="$1"
+  subtitle="$1"
   shift
-  notify-send ${title} "${*}"
+  alerter -group $PWD -title "$GW_TITLE" -subtitle "$subtitle" -message "${*}" >/dev/null &
   set +x
 }
 
@@ -159,8 +159,7 @@ runTask() {
   if [ $exitCode -eq 0 ]; then
     log_section ${pass_color} "DONE '$userTask' $elapsedTime" $taskSummary
     if (($#noNotifySuccess == 0)); then
-      notify $GW_TITLE "Completed: \"$userTask\"
-${taskSummary}"
+      notify "Completed: \"$userTask\"" "${taskSummary}"
     else
       unset noNotifySuccess
     fi
@@ -169,8 +168,7 @@ ${taskSummary}"
       exitStr="---with exit code $exitCode"
     fi
     log_section ${fail_color} "FAIL '$userTask' $elapsedTime$exitStr" $taskSummary
-    notify $GW_TITLE "Failed($exitCode): \"$userTask\"
-${taskSummary}" ${failIcon:+-appIcon} "$failIcon"
+    notify "Failed($exitCode): \"$userTask\"" "${taskSummary}" ${failIcon:+-appIcon} "$failIcon"
   fi
 
   settitle
@@ -475,5 +473,5 @@ while [ -n "$*" ]; do
   done
 
   fullTask="${fullTask}${outputFilter:+ | }${outputFilter}"
-  runTask ${task} ${fullTask} ${taskPassIcon:-''} ${taskFailIcon:-''}
+  runTask "${task}" "${fullTask}" ${taskPassIcon:-''} ${taskFailIcon:-''}
 done

@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-allVars=(GW_APPCODE GW_APPNAME GW_PL_VERSION GW_PL_NUM GW_PLATFORM GW_STUDIO_VERSION GW_PORT GW_PORT_DEBUG GW_COLOR GW_ANSI_NAME GW_ANSI_PLATFORM)
+allVars=(GW_APPCODE GW_APPNAME GW_PL_VERSION GW_PL_NUM GW_PLATFORM GW_STUDIO_VERSION GW_PORT GW_PORT_DEBUG GW_COLOR GW_ANSI_NAME GW_ANSI_PLATFORM GW_VERSION GW_TITLE)
 namedVars=()
 
 autoload -Uz colorLabel
@@ -40,6 +40,7 @@ elif [[ -f gradle.properties ]]; then
   eval "$(sed -En '
     s/^appCode/GW_APPCODE/p;
     s/^appName/GW_APPNAME/p;
+    s/^version/GW_VERSION/p;
     s/^plVersion/GW_PL_VERSION/p;
     s/^jettyPort/GW_PORT/p;
     s/^studioVersion/GW_STUDIO_VERSION/p;
@@ -129,6 +130,8 @@ if (( $#GW_APPNAME )); then
     namedVars=(${allVars[@]})
   fi
 fi
+
+export GW_TITLE="${PWD//$HOME/~} (${GW_APPCODE} ${GW_VERSION})"
 
 (($#GW_PORT)) && export GW_PORT_DEBUG=$(($GW_PORT + 10))
 

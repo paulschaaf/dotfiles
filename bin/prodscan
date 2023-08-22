@@ -4,6 +4,7 @@ typeset -A selectedProducts
 
 switches=()
 alias dry_run=false
+root=~/gw
 while [[ -n "$*" ]]; do
   switch=${1%%=*}
   [[ ${1} =~ "=" ]] && value=${1#*=} || value=''
@@ -28,6 +29,8 @@ while [[ -n "$*" ]]; do
       ;;
     -*)
       product=${switch##--}
+      # shellcheck disable=SC1073 # couldn't parse
+      # shellcheck disable=SC1072 # fix any mentioned problems
       if (($allProducts[(Ie)$product])); then # if it's a product
         # either add the product (e.g. "--ab"), or override the assumed directory (e.g. "--cc=cc2")
         value=${value//\~/$HOME}
@@ -48,11 +51,11 @@ done
 (($#selectedProducts)) || selectedProducts=(cc cc px px)
 (($#debug)) && typeset -p selectedProducts
 for prod prodDir in "${(@kv)selectedProducts}"; do
-  [[ $prodDir =~ "^/" ]] || prodDir=~/gw/${root:=halite}/${prodDir}
+  [[ $prodDir =~ "^/" ]] || prodDir=${root:=.}/${prodDir}
   cd $prodDir
   source ~/bin/gwenv ""
 
-  name="▶ ${GW_APPNAME}"
+  name="${GW_APPNAME} ${GW_VERSION}"
   command=(rg --color=always ${switches} ${*} $prodDir)
   width=$(($COLUMNS - $#name - 3))
 
@@ -65,5 +68,5 @@ for prod prodDir in "${(@kv)selectedProducts}"; do
 
   printf "\n${GW_ANSI_NAME//$GW_APPNAME/$name%${width}s}\n" ${prodDir//$HOME/\~}
 
-  dry_run || $command
+  dry_run || $command || echo
 done
