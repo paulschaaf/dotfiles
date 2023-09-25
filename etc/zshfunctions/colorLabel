@@ -4,7 +4,7 @@
 local fg=${1}
 local bg=${2}
 local label=${3}
-local symbol=${4:-}
+local symbol=${4:-}
 pastel -f paint -n black --on ${bg} ${symbol}
-pastel -f paint -n ${fg} --on ${bg} " ${label}"
+pastel -f paint -n ${fg} --on ${bg} " ${label} "
 pastel -f paint -n ${bg} --on black ${symbol}

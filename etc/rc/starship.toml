@@ -51,12 +51,12 @@ style = "243"
 style = 'fg:235 bg:0'
 
 [git_branch]
-format = "[ $symbol$branch(:$remote_branch)]($style)[]($style inverted)"
+format = "[ $symbol$branch(:$remote_branch) ]($style)[]($style inverted)"
 style = 'fg:black bg:#00bfff'
 truncation_symbol = ''
 
 [git_commit]
-format = '[](fg:black bg:cyan)[ \($hash$tag\)]($style)[](bg:black fg:cyan) '
+format = '[](fg:black bg:cyan)[ \($hash$tag\)]($style)[](bg:black fg:cyan) '
 style = 'red bg:cyan'
 
 [git_state]
@@ -90,7 +90,7 @@ style = 'fg:#ffffff bg:#663399'
 disabled = false
 
 [package]
-format = '[ $version]($style)[]($style inverted)'
+format = '[ $version ]($style)[]($style inverted)'
 style = 'bg:#9a9a9a fg:0'
 #format = '[ $version]($style)'
 #style = 'fg:136'
