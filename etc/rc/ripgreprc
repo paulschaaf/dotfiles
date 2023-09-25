@@ -3,17 +3,23 @@
 --column
 --smart-case
 
+# ignore the .gitignore file
+--no-ignore
+
 --glob=!apidiffs.txt
+--glob=!*.class
 --glob=!*.{gti,snap}
 --glob=!**/_*/*
+--glob=!**/.{gradle,idea}/*
 --glob=!**/{build,classes,generated,generated_classes}/*
 --glob=!**/logs/*
 --glob=!**/node_modules/*
+--glob=!**/*perf*/*
 
---glob=!app-??/*perf*/*
---glob=!perf*
---glob=!perf-build/*
---glob=!**/*performance*/*
+#--glob=!app-??/*perf*/*
+#--glob=!perf*
+#--glob=!perf-build/*
+#--glob=!**/*performance*/*
 
 --glob=!{display,typelist}_{de,es,es_ES,fr,it,ja,nl,pt,ru,zh,zh_CN}.properties
 

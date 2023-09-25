@@ -321,7 +321,7 @@ while [ -n "$*" ]; do
       export port=${2:=$GW_PORT}
       shift
       export process=$(lsof -i tcp:${port} -t)
-      fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || echo Port ${port} is not in use"
+      fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || (echo Port ${port} was not in use && exit 1)"
       ;;
     killStudio)
       fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
