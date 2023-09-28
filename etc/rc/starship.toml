@@ -69,7 +69,6 @@ disabled = true # disabled because it's really slow
 ahead = '[↑](fg:bold bright-green)'
 behind = '[↓](fg:bold bright-blue)'
 conflicted = '[=$count](fg:bright-green)'
-deleted = '🗑'
 deleted = '[✘$count](fg:bright-red)'
 diverged = '[⇕$count](fg:white)'
 modified = '[!$count](fg:bright-yellow)'
