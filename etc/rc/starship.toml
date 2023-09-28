@@ -12,7 +12,7 @@ ${jobs}${shlvl}${custom.zsh_command_number} ${username}${custom.prompt_char}"""
 #right_format = "${custom.zsh_command_number}"
 
 # Useful Unicode symbols
-# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»■﹍✓📁❌⮕
+# ⮑▐🗑▌⏳🍒🔑✓↕️↑↓✘«»■﹍📁❌⮕
 
 [cmd_duration]
 #min_time = 0
@@ -56,20 +56,20 @@ style = 'fg:black bg:#00bfff'
 truncation_symbol = ''
 
 [git_commit]
-format = '[](fg:black bg:cyan)[ \($hash$tag\)]($style)[](bg:black fg:cyan) '
+format = '[](fg:black bg:cyan)[ \($hash$tag\) ]($style)[](bg:black fg:cyan) '
 style = 'red bg:cyan'
 
 [git_state]
-cherry_pick = '[🍒 PICKING](bold red)'
+cherry_pick = '[🍒PICKING](bold red)'
 format = '[\($state( $progress_current of $progress_total)\)]($style) '
 style = 'fg:cyan'
 
-[git_status] # disabled because it's really slow
-disabled = true
+[git_status]
+disabled = true # disabled because it's really slow
 ahead = '[↑](fg:bold bright-green)'
 behind = '[↓](fg:bold bright-blue)'
 conflicted = '[=$count](fg:bright-green)'
-#deleted = '🗑'
+deleted = '🗑'
 deleted = '[✘$count](fg:bright-red)'
 diverged = '[⇕$count](fg:white)'
 modified = '[!$count](fg:bright-yellow)'
@@ -77,8 +77,7 @@ renamed = '[»$count](fg:white)'
 staged = '[+$count](fg:bright-green)'
 stashed = '[$$count](fg:white)'
 untracked = '[?$count](fg:bright-red)'
-#up_to_date = '✓'
-up_to_date = ''
+up_to_date = '✓'
 style = 'fg:cyan'
 
 [hostname]

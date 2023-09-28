@@ -94,16 +94,13 @@ log_section() {
   local _status=$2
   local _taskDesc=$3
 
-  local _status=" $(date '+%R') - ${_status} "
+  local _status="$(date '+%R') - ${_status} "
 
-  # indent, then draw an underline the length of the status message
-  printf "\n  \e[4;38;5;243m%-${#_status}s\n" ' '
-
-  # indent with ul, turn ul off, bold & color on, show status, fill remainder with ul
-  printf "  \e[0;1;97;${_color}m%-s\e[0;4;38;5;243m%*s\n" ${_status} $(($COLUMNS - ${#_status} - 2))
+  # turn bold and color on, show status
+  printf "\n\e[97;${_color}m%-s\e[0;38;5;243m\n" ${_status}
 
   # turn off bold and show the task description
-  printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" ' '$_taskDesc
+  printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" $_taskDesc
 }
 
 grepProcStr() {
