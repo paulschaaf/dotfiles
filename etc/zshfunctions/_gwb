@@ -18,6 +18,7 @@ _arguments "*: :((
   backupDb
   'clean: Deletes the build directory'
   'cleanIdea: Deletes the Studio project'
+  'cleanNuke: git clean -dxf -- remove untracked directories, files, and ignores'
   codegen
   compile
   dropDb
@@ -26,7 +27,7 @@ _arguments "*: :((
   genPcfDictionary
   genPcfXsd
   'genSystemData: Compiled from system_data.xml'
-  'genTypeInfo: Generate .gti files'
+  'genTypeInfo: OBSOLETE Generate .gti files'
   genWsdl
   genWsiLocal
   'h2: Open the H2 console'

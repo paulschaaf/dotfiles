@@ -108,6 +108,9 @@ if (($#GW_PL_VERSION)); then
     50.10.*)
       GW_PLATFORM=Jasper
       ;;
+    50.11.*)
+      GW_PLATFORM=Kufri
+      ;;
     *)
       GW_PLATFORM='???'
       ;;
