@@ -15,7 +15,8 @@ if [[ `hostname` = "${playerHost}" ]]; then
   if [[ "${@}" = "stop" ]]; then
     RESPONSE='message="Stopped"'
   else
-    RESPONSE=$(playerctl ${player:+-p} ${player} metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"; let rating="((5*{{xesam:userRating}}))"; stars=$(print -r -- "${(pl:$rating::★:)}")' 2>/dev/null || echo message='Error: No track is selected')
+    typeset -i rating
+    RESPONSE=$(playerctl ${player:+-p} ${player} metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"; let rating="((5*{{xesam:userRating}}))"; stars=$(print -r -- "${(pl:$rating::★:)}${(pl:((5-$rating))::☆:)}")' 2>/dev/null || echo message='Error: No track is selected')
   fi
 
 else
@@ -36,8 +37,9 @@ else
   year=${year:-?}
   album=${album:-unkn}
 
-  message="\\\"$album\" [$year]
+  message="\"$album\" [$year]
 $position / $length ($playStatus track ${track})"
+  [[ $UNAME = 'Darwin' ]] && message="\\"${message}
 fi
 
 if [[ $UNAME = 'Darwin' ]]; then
