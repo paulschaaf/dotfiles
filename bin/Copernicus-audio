@@ -15,8 +15,7 @@ if [[ `hostname` = "${playerHost}" ]]; then
   if [[ "${@}" = "stop" ]]; then
     RESPONSE='message="Stopped"'
   else
-    typeset -i rating
-    RESPONSE=$(playerctl ${player:+-p} ${player} metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"; let rating="((5*{{xesam:userRating}}))"; stars=$(print -r -- "${(pl:$rating::★:)}${(pl:((5-$rating))::☆:)}")' 2>/dev/null || echo message='Error: No track is selected')
+    RESPONSE=$(playerctl ${player:+-p} ${player} metadata --format 'artist="{{xesam:artist}}"; song="{{xesam:title}}"; album="{{xesam:album}}"; track="{{xesam:trackNumber}}"; year="{{year}}"; playStatus="{{lc(status)}}"; position="{{duration(position)}}"; length="{{duration(mpris:length)}}"; typeset -i rating; let rating="((5*{{xesam:userRating}}))"; stars=$(print -r -- "${(pl:$rating::★:)}${(pl:((5-$rating))::☆:)}")' 2>/dev/null || echo message='Error: No track is selected')
   fi
 
 else
