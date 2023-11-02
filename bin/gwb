@@ -280,7 +280,7 @@ while [ -n "$*" ]; do
       ;;
     cleanNuke)
       if read -q "n?Really nuke everything? [yN] "; then
-        fullTask='git clean -dxf'
+        fullTask='git clean -dxf' # git reset --hard
       fi
       ;;
     compile)
@@ -424,6 +424,9 @@ while [ -n "$*" ]; do
       ;;
     testPass | testpass)
       fullTask='time && sleep 1s && echo "done"'
+      ;;
+    triggerTests)
+      fullTask="git commit --amend --date=now --no-edit; git push -f"
       ;;
     wipeApd)
       echo

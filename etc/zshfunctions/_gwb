@@ -56,5 +56,6 @@ _arguments "*: :((
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
   'tasks: List the tasks understood by the GW ./gwb'
+  'triggerTests: dummy change to force TC to re-run tests'
   'wipeApd: remove the generated APD files'
 ))"

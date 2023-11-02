@@ -9,7 +9,7 @@ Host *
   IdentityFile ~/.ssh/id_ecdsa
 #   IdentityFile ~/.ssh/id_dsa
 #   IdentityFile ~/.ssh/id_rsa
-   UseKeychain yes
+  UseKeychain yes
 
 
 # =========================================================================
@@ -30,7 +30,6 @@ Host pschaaf-C02G787RMD6R
 
 # =========================================================================
 # ======= Other Machines
-
 
 
 # =========================================================================
