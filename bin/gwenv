@@ -111,6 +111,9 @@ if (($#GW_PL_VERSION)); then
     50.11.*)
       GW_PLATFORM=Kufri
       ;;
+    50.12.*)
+      GW_PLATFORM=LLLLLLL
+      ;;
     *)
       GW_PLATFORM='???'
       ;;

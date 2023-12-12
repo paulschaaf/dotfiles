@@ -6,26 +6,28 @@
 # ignore the .gitignore file
 --no-ignore
 
+# ignore all this stuff
 --glob=!apidiffs.txt
 --glob=!*.class
+--glob=!*.puml
 --glob=!*.{gti,snap}
---glob=!**/_*/*
 --glob=!**/.{gradle,idea}/*
+--glob=!**/_*/*
 --glob=!**/{build,classes,generated,generated_classes}/*
 --glob=!**/logs/*
 --glob=!**/node_modules/*
 --glob=!**/*perf*/*
 
+# language translations
+--glob=!{display,typelist}_{de,es,es_ES,fr,it,ja,nl,pt,ru,zh,zh_CN}.properties
+# comment these out to include the pseudo-language translations
+--glob=!{display,typelist}_xx.properties
+--glob=!{display,typelist}_yy.properties
+
 #--glob=!app-??/*perf*/*
 #--glob=!perf*
 #--glob=!perf-build/*
 #--glob=!**/*performance*/*
-
---glob=!{display,typelist}_{de,es,es_ES,fr,it,ja,nl,pt,ru,zh,zh_CN}.properties
-
-# comment these out to include the pseudo-language translations
---glob=!{display,typelist}_xx.properties
---glob=!{display,typelist}_yy.properties
 
 # EXTENSION TYPES
 --type-add=bpmn:*.bpmn

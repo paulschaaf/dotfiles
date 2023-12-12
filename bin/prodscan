@@ -58,13 +58,13 @@ for prod prodDir in "${(@kv)selectedProducts}"; do
   name="${GW_APPNAME} ${GW_VERSION}"
   width=$(($COLUMNS - $#name - 4)) # don't count zero-width chars
 
-  command=(rg --color=always ${switches} ${*} $prodDir)
+  command=(rg --color=never ${switches} ${*} $prodDir)
 
   if (($#debug)); then
     echo "\n==="
     typeset -p command name prod prodDir
     prodDir="[7m${command}"
-    width=$(($width + 4)) $ another set of zero-width chars
+    width=$(($width + 4)) # another set of zero-width chars
   fi
 
   printf "\n${GW_ANSI_NAME//$GW_APPNAME/$name%${width}s}\n" ${prodDir//$HOME/\~}

@@ -3,14 +3,18 @@
 [[ "$1" = "--debug" ]] && shift && debug=true
 sed -E "
    ${debug:+p}
+
    # ignore any line that begins with a space, two dashes, number:number:, or file://
    /^ |^--|^[0-9]+:[0-9]+:|file:\/\//b
+   ${debug:+p}
 
    # prepend PWD to all relative paths (those without a leading /)
    /^[^/]/ { s&^&${PWD}/&; }
+   ${debug:+p}
 
    # replace all occurrences of /./ with /
    s_/\\./_/_
+   ${debug:+p}
 
    # prepend file:// to each absolute path so it appears as a link
    s_^/_file:///_
