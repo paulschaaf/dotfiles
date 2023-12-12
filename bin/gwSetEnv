@@ -147,6 +147,11 @@ case ${GW_PLATFORM} in
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp/test
     ;;
+  Kufri)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
   *)
     echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
     exit 1
