@@ -6,6 +6,7 @@ run_color=${run_color:-'48;5;21'}
 pass_color=${pass_color:-'48;5;34'}
 fail_color=${fail_color:-'48;5;196'}
 warn_color=${warn_color:-'48;5;228'}
+unset nice
 
 # Command-line Switches
 while [ -n "$*" ]; do
@@ -19,7 +20,7 @@ while [ -n "$*" ]; do
       _dry_run='echo '
       ;;
     --nice)
-      nice='nice '
+      nice=true
       ;;
     --no-scan)
       no_scan=true
@@ -123,7 +124,8 @@ notify() {
 # Run the Actual Task
 runTask() {
   local userTask=$1
-  local task=${nice}$2
+  local task=$2
+  (($#ignoreNice == 0 && $#nice > 0)) && task='nice '${task}
   local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
   local successIcon=$3
   local failIcon=$4
@@ -177,6 +179,7 @@ runTask() {
 
 # Process arguments
 while [ -n "$*" ]; do
+  unset ignoreNice
   task=$1
   
 #  jvmArgs=(
@@ -402,6 +405,7 @@ while [ -n "$*" ]; do
       shift
       ;;
     studio)
+      ignoreNice=true
       # shellcheck disable=SC2034 # var appears unused
       [[ $GW_PL_NUM -lt 9 ]] && spawn=true
       unset inScreen

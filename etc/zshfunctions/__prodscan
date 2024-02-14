@@ -1,0 +1,18 @@
+#compdef prodscan
+
+# local -a options
+
+_arguments "*: :((
+  --debug
+  --dry-run
+  '--all: include all defined products (suite + ccpi)'
+  '--suite: include ab, bc, cc, pc, and px'
+  '--root: specify the install root'
+  --setx
+  '--ab'
+  --bc
+  --cc
+  --ccpi
+  --pc
+  --px
+))"

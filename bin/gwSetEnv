@@ -115,13 +115,22 @@ case ${GW_PLATFORM} in
         export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
         export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+        export GW_DB_DIR=/tmp/guidewire/granite
         ;;
-      *)
+      10.201.*)
         export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        export GW_DB_DIR=./tmp/granite
+        if [[ "$GW_APPCODE" = "ab" ]]; then
+          export GW_DB_DIR=./tmp
+        fi
+        ;;
+      *)
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        export GW_DB_DIR=./tmp/granite
         ;;
     esac
-    export GW_DB_DIR=/tmp/guidewire/granite
     ;;
   halite)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
@@ -146,8 +155,13 @@ case ${GW_PLATFORM} in
     export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp/test
-    ;;
+  ;;
   Kufri)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
+  Las\ Leñas)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp/test

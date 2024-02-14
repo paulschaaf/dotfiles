@@ -112,7 +112,10 @@ if (($#GW_PL_VERSION)); then
       GW_PLATFORM=Kufri
       ;;
     50.12.*)
-      GW_PLATFORM=LLLLLLL
+      GW_PLATFORM=Las\ Leñas
+      ;;
+    50.13.*)
+      GW_PLATFORM=MMMMMMM
       ;;
     *)
       GW_PLATFORM='???'

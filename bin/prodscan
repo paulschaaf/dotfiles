@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
-allProducts=(ab bc cc ccpi pc px)
+suite=(ab bc cc pc px)
+allProducts=(${suite} ccpi)
 typeset -A selectedProducts
 
 switches=()
@@ -18,6 +19,11 @@ while [[ -n "$*" ]]; do
       ;;
     --all)
       for product in $allProducts; do
+        selectedProducts[$product]=$product
+      done
+      ;;
+    --suite)
+      for product in $suite; do
         selectedProducts[$product]=$product
       done
       ;;
