@@ -13,7 +13,7 @@ if [[ -f project-version.properties ]]; then
   eval "$(sed -En '
     s/^product.code/GW_APPCODE/p;
     s/^product.name(.*)/GW_APPNAME\1 cust/p;
-    s/^project-version=/GW_PL_VERSION/p;
+    s/^project-version/GW_PL_VERSION/p;
     s/^studio-version/GW_STUDIO_VERSION/p
   ' project-version.properties modules/configuration/product.properties | sed '/./ { s/^/export /g; }')"
 

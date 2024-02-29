@@ -15,6 +15,9 @@ while [ -n "$*" ]; do
       shift
       delay=$1
       ;;
+    --debug)
+      debug=true
+      ;;
     --dry-run)
       # shellcheck disable=SC2034 # unused
       _dry_run='echo '
@@ -144,9 +147,9 @@ runTask() {
     if (($#spawn > 0)); then
       eval nohup ${task} &
     else
-      # make sure we source the gwb script instead of just running it
-      task=${task/.\/gwb/source gwb}
-      (($#debug)) && echo actual task is ${task}
+      # unless being nice, make sure we source the gwb script instead of just running it
+      (($#ignoreNice == 0 || $#nice ==0)) && task=${task/.\/gwb/source gwb}
+      (($#debug)) && typeset task | sed 's/task=/actual task is /'
       # if it's a Java cmd, display each option indented on a separate line
       eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
