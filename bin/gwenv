@@ -115,8 +115,9 @@ if (($#GW_PL_VERSION)); then
       GW_PLATFORM=Las\ Leñas
       ;;
     50.13.*)
-      GW_PLATFORM=MMMMMMM
+      GW_PLATFORM=Mammoth
       ;;
+    # if you add a new version here make sure to set the required enivronment in gwSetEnv: https://github.com/paulschaaf/dotfiles/blob/fa6f3b262f571edc66ded8853bbebb47a8a0b516/bin/gwSetEnv#L169-L169
     *)
       GW_PLATFORM='???'
       ;;

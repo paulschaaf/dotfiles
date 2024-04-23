@@ -103,7 +103,8 @@ elif ((${#*})); then
   exit 1
 fi
 
-filename=banner_${GW_APPCODE}${GW_PL_VERSION}_${fgColor}${font:+_$font}_${txt// /_}.png
+filename=banner_${GW_APPCODE}${GW_PL_VERSION}_${fgColor}${font:+_$font}_${txt}.png
+filename=`echo ${filename} | sed 's/[^-.A-Za-z0-9_]/_/g'`
 
 force && (dry_run || rm -f ${filename})
 if [[ -e ${filename} ]]; then

@@ -10,6 +10,8 @@
 	root = !pwd
 [branch]
 	sort = -committerdate
+[column]
+	ui = auto
 [commit]
     verbose = true
 [core]
@@ -45,6 +47,9 @@
 ;     path = "~/dotfiles/.gitconfig"
 [interactive]
     diffFilter = delta --color-only
+[maintenance]
+	repo = /Users/pschaaf/gw/cc
+	repo = /Users/pschaaf/gw/cc3
 [merge]
 #    tool = araxis
     conflictstyle = zdiff3
@@ -56,6 +61,8 @@
 	trustExitCode = true
 [push]
 	default = current
+[rerere]
+	enabled = true
 [user]
 	name = Paul Schaaf
 	email = pschaaf@guidewire.com

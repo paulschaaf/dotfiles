@@ -109,8 +109,13 @@ log_section() {
   printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" $_taskDesc
 }
 
+debugPrint() {
+  (($#debug)) || return
+  print -P "%F{13}$*%f"
+}
+
 grepProcStr() {
-  echo "pgrep -af -- '$1'"
+  echo "pgrep -afl -- '$1' | grep -v pgrep"
 }
 
 killProcStr() {
@@ -128,10 +133,14 @@ notify() {
 runTask() {
   local userTask=$1
   local task=$2
+  (($#debug)) && typeset nice ignoreNice
   (($#ignoreNice == 0 && $#nice > 0)) && task='nice '${task}
   local taskSummary=${task% | sed*} # remove any 'sed' commands from the display
+  (($#debug)) && typeset userTask task taskSummary
   local successIcon=$3
   local failIcon=$4
+  debugPrint alpha
+  debugPrint beta
   #  local whichJava="pwd:  $(pwd)\njava: $(which java)\n\n$(java -version 2>&1)"
 
   (($#delay > 0)) && echo "\nDelay for $delay" && sleep $delay
@@ -148,7 +157,7 @@ runTask() {
       eval nohup ${task} &
     else
       # unless being nice, make sure we source the gwb script instead of just running it
-      (($#ignoreNice == 0 || $#nice ==0)) && task=${task/.\/gwb/source gwb}
+      (($#ignoreNice == 0 || $#nice == 0)) && task=${task/.\/gwb/source gwb}
       (($#debug)) && typeset task | sed 's/task=/actual task is /'
       # if it's a Java cmd, display each option indented on a separate line
       eval ${task} | sed '/java / { s/ -/\n   -/g
