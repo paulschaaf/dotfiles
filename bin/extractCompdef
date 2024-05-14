@@ -1,0 +1,57 @@
+#!/bin/zsh
+
+outfile=/dev/stdout
+debug=false
+force=false
+zcompletionDir=~/dotfiles/etc/zshfunctions
+
+# Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
+while [ -n "$*" ]; do
+  case $1 in
+    --debug)# print debugging info
+      debug=true
+      ;;
+#    --dry-run)# Print the commands that will be run, but to not run them
+#      # shellcheck disable=SC2034 # unused
+#      _dry_run='echo '
+#      ;;
+    --force)# forcibly update the file in $PWD
+      force=true
+      ;;
+    --setx)# run "set -x" once this switch is parsed
+      set -x
+      ;;
+    --*)
+      echo Unknown option $1
+      return 1
+      ;;
+    *)
+      script=${1}
+      scriptShortName=$(basename $1)
+      break
+      ;;
+  esac
+  shift
+done
+
+(($#script)) || exit
+
+outfile_name=$zcompletionDir/_${scriptShortName}
+$force && outfile=${outfile_name}
+
+echo '== Using environment'
+typeset -p scriptShortName zcompletionDir outfile outfile_name
+echo
+
+# extract every line that has a ')' char directly followed by a # (a commented switch line in a case statement) into
+# a line suitable for an entry in a zcompletion file
+switches=$(sed -n 's/[)]# */: /p' ${script} | grep -v '^ *#' | sed "s/^ *\(.*\)/  '\1'/; s/: *'/'/" | sed 's/"/\\"/g' | sort)
+
+cat <<__EOF >| $outfile
+#compdef $scriptShortName
+# This file was generated using '$(basename $0) $*'
+
+_arguments "*: :((
+${switches}
+))"
+__EOF

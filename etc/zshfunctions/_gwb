@@ -1,61 +1,53 @@
 #compdef gwb
-
-# local -a options
-
-# options=(
-#    clean
-#    'stop:Stop Gradle daemon'
-#    tasks
-# )
-
-# _describe 'values' options
+# This file was generated using 'extractCompdef bin/gwb'
 
 _arguments "*: :((
-  --delay
-  '--dry-run: Print the commands that will be run, but to not run them.'
-  '--nice: run the command with the specified niceness'
-  '--wc: Pipe the command output through "wc"'
-  backupDb
+  '--debug'
+  '--delay: Sleep for the specified number of seconds (the default)'
+  '--dry-run: Print the commands that will be run, but to not run them'
+  '--nice: Run the command with the specified niceness'
+  '--setx: run \"set -x\" once this switch is parsed'
+  '--wc: Pipe the command output through wc'
+  'backupDb'
   'clean: Deletes the build directory'
   'cleanIdea: Deletes the Studio project'
   'cleanNuke: git clean -dxf -- remove untracked directories, files, and ignores'
-  codegen
-  compile
-  dropDb
+  'codegen'
+  'compile'
+  'dropDb'
   'fixgwb: remove the erroneous spaces from the OOB product gwb script'
   'genDataDictionary: in the relative path build/XX/dictionary'
-  genPcfDictionary
-  genPcfXsd
+  'genPcfDictionary'
+  'genPcfXsd'
   'genSystemData: Compiled from system_data.xml'
   'genTypeInfo: OBSOLETE Generate .gti files'
-  genWsdl
-  genWsiLocal
+  'genWsdl'
+  'genWsiLocal'
   'h2: Open the H2 console'
-  'http: Start a simple http server in the resources directory.'
-  'httpkill: Kill the simple http server in the resources directory.'
+  'http: Start a simple http server in the resources directory'
+  'httpkill: Kill the simple http server in the resources directory'
   'idea: Generate Studio project'
-  ij
-  killPort
-  killStudio
-  'lsApd: List the files that "wipeApd" would delete'
-  lsDb
+  'ij: Start the appropriate intellij'
+  'killPort: Kill the process that is holding the specified port, or $GW_PORT if none is specified'
+  'killStudio: Kill the studio whose sdkroot is pwd'
+  'lsApd: List the files that \"wipeApd\" would delete'
+  'lsDb: List the contents of the database directory'
   'packageCustomerDist: Generate a customer build zip of this code'
-  'pcf: Browse the most recently changed file named /tmp/*.html'
+  'pcf*: (optional host:port#) Browse the most recently changed file named /tmp/*.html'
   'pgrep: Is the server process running?'
   'pgrepStudio: Is studio running?'
-  'pkill: Kill the server process on 8090'
-  'pkill8080: Kill the server process on 8080'
   'portCheck: Is the SSH tunnel open?'
   'portClose: Stop the SSH tunnel on port 8080'
   'portOpen: Open an SSH tunnel on port 8080 redirecting to 8090'
-  restoreDb
-  rmDb
-#  'runSuite: Compile then run the specified suite'
+  'restoreDb'
+  'rmDb: Forcibly delete the files in GW_DB_DIR'
   'setBg: Set the background image in iTerm'
   'setPlVersion: Set the platform version in gradle.properties'
   'stop: Stop Gradle daemon'
   'studio: Add --no-scan to skip publishing the build scan'
   'tasks: List the tasks understood by the GW ./gwb'
+  'testFail: Perform a test that automatically fails. Useful for testing'
+  'testPass: Perform a test that automatically succeeds. Useful for testing'
   'triggerTests: dummy change to force TC to re-run tests'
   'wipeApd: remove the generated APD files'
 ))"

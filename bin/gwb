@@ -8,21 +8,21 @@ fail_color=${fail_color:-'48;5;196'}
 warn_color=${warn_color:-'48;5;228'}
 unset nice
 
-# Command-line Switches
+# Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
 while [ -n "$*" ]; do
   case $1 in
-    --delay)
+    --delay)# Sleep for the specified number of seconds (the default)
       shift
       delay=$1
       ;;
-    --debug)
+    --debug)#
       debug=true
       ;;
-    --dry-run)
+    --dry-run)# Print the commands that will be run, but to not run them
       # shellcheck disable=SC2034 # unused
       _dry_run='echo '
       ;;
-    --nice)
+    --nice)# Run the command with the specified niceness
       nice=true
       ;;
     --no-scan)
@@ -31,10 +31,10 @@ while [ -n "$*" ]; do
     --old)
       old=true
       ;;
-    --setx)
+    --setx)# run "set -x" once this switch is parsed
       set -x
       ;;
-    --wc)
+    --wc)# Pipe the command output through wc
       outputFilter='wc'
       ;;
     --*)
@@ -166,7 +166,7 @@ runTask() {
       exitCode=${pipestatus[1]}
     fi
   fi
-  # tries to display the elapsed seconds as something like 0:00.00.
+  # tries to display the elapsed seconds as something like 0:00.00
   elapsedTime=$(date -u -d @${SECONDS} +"in %T")
 
   if [ $exitCode -eq 0 ]; then
@@ -222,133 +222,89 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
-#    apibreaktest)
-#      javaArgs+=(
-#        -Xms7500m
-#        -Xmx9500m
-#      )
-#      jvmArgs+=(
-#        -DapiBreakTest.fix=true
-#        -Dcom.guidewire.apidiff.apidump.APIDumpRepositoryLocal.PATH_PROPERTY=${HOME}/gw/dumps
-#        -DapiBreakTest.dump.dir=$HOME/gw/dumps
-#      )
-#      ideaTmp=/private/var/folders/r_/sk1r8x993qd8jb8v_dc42dnh0000gq/T
-##      javaArgs+=(
-##        @${ideaTmp}/idea_arg_file57507065
-##        @w@${ideaTmp}/idea_working_dirs_junit.tmp
-##        @${ideaTmp}/idea_junit.tmp
-##      )
-#      # todo pschaaf: set up CLASSPATH for cc-test
-#      isAppModules=(
-#        ${GW_APPCODE}-test
-#        ${GW_APPCODE}-all
-#        ${GW_APPCODE}-custbuild-test
-#        ${GW_APPCODE}-behavior-test
-#        ${GW_APPCODE}-gunit-behavior
-#        ${GW_APPCODE}-gunit-pcf
-#        ${GW_APPCODE}-gunit-content
-#        ${GW_APPCODE}-content
-#        ${GW_APPCODE}
-#        ${GW_APPCODE}-pl-archiving
-#        ${GW_APPCODE}-pl
-#        ${GW_APPCODE}-pl-bizrules
-#        ${GW_APPCODE}-pl-events
-#        ${GW_APPCODE}-pl-gwhub-auth
-#        ${GW_APPCODE}-pl-heatmap
-#        ${GW_APPCODE}-pl-personaldata
-#        ${GW_APPCODE}-pl-properties
-#        ${GW_APPCODE}-pl-inbound-file
-#        ${GW_APPCODE}-pl-outbound-file
-#        ${GW_APPCODE}-cmd-common
-#        ${GW_APPCODE}-pl-solr
-#        ${GW_APPCODE}-pl-rest-core
-#        ${GW_APPCODE}-plugin
-#        ${GW_APPCODE}-pl-bizrules-content
-#        ${GW_APPCODE}-pl-content
-#        ${GW_APPCODE}-pl-events-content
-#        ${GW_APPCODE}-pl-gwhub-auth-content
-#        ${GW_APPCODE}-pl-personaldata-content
-#        ${GW_APPCODE}-pl-inbound-file-content
-#        ${GW_APPCODE}-pl-properties-content
-#        ${GW_APPCODE}-pl-outbound-file-content
-#        ${GW_APPCODE}-gunit
-#        ${GW_APPCODE}-tools
-#        ${GW_APPCODE}-apd-test-templates
-#        ${GW_APPCODE}-pl-bizrules-test
-#        ${GW_APPCODE}-pl-test
-#      )
-#      moduleClassDirs=:${(j_/build/idea/classes:_)isAppModules}
-#      CLASSPATH+=${moduleClassDirs//:/:${PWD}/app-${GW_APPCODE}/} # prepend e.g. "./app-cc/" to each component
-#      export CLASSPATH
-#      echoVar CLASSPATH
-#      class="com.intellij.rt.junit.JUnitStarter com.guidewire.cc.apidiff.APIBreakTest"
-#
-#      fullTask="java ${javaArgs} ${jvmArgs} ${class}"
-#      ;;
-    backupDb)
+    backupDb)#
       dbName=$(date "+${dbbackup}_%H:%M:%S")
       fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
       ;;
-    cleanIdea)
+    clean)# Deletes the build directory
+      ;;
+    cleanIdea)# Deletes the Studio project
 #      [[ $GW_PL_NUM -lt 9 ]] && fullTask="rm -rf app-cc/cc-studio-run/db"
       taskFailIcon=$failIcon
       ;;
-    cleanNuke)
+    cleanNuke)# git clean -dxf -- remove untracked directories, files, and ignores
       if read -q "n?Really nuke everything? [yN] "; then
         fullTask='git clean -dxf' # git reset --hard
       fi
       ;;
-    compile)
+    codegen)#
+      ;;
+    compile)#
       fullTask='./gwb compile -DincludeGtest=true'
       ;;
-    dropDb)
+    dropDb)#
       task=dropDb
       [[ $GW_PL_NUM -lt 9 ]] && task=dropdb
       taskFailIcon=$failIcon
       ;;
-    fixgwb)
-      # remove the erroneous spaces from the function defs in the OOB product gwb script
+    fixgwb)# remove the erroneous spaces from the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
-    h2)
+    genDataDictionary)# in the relative path build/XX/dictionary
+      ;;
+    genPcfDictionary)#
+      ;;
+    genPcfXsd)#
+      ;;
+    genSystemData)# Compiled from system_data.xml
+      ;;
+    genTypeInfo)# OBSOLETE Generate .gti files
+      ;;
+    genWsdl)#
+      ;;
+    genWsiLocal)#
+      ;;
+    h2)# Open the H2 console
       spawn=true
       fullTask="find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
       echo
       echo "\nChange the host to 127.0.0.1, and make sure the connection string is correct! There is no username or password."
       ;;
-    http)
+    http)# Start a simple http server in the resources directory
       spawn=true
       noNotifySuccess=true
       fullTask=$webserver
       ;;
-    httpkill)
+    httpkill)# Kill the simple http server in the resources directory
       fullTask="pkill -f '$webserver'"
       ;;
-    idea) # generate studio probect
+    idea)# Generate Studio project
       [[ $GW_PL_NUM -lt 9 ]] && fullTask=${fullTask/idea/gen-ide}
       ;;
-    ij)
+    ij)# Start the appropriate intellij
       spawn=true
       fullTask="${IDEA_HOME}/bin/idea.sh"
       ;;
-    killPort)
+    killPort)# Kill the process that is holding the specified port, or $GW_PORT if none is specified
       export port=${2:=$GW_PORT}
       shift
       export process=$(lsof -i tcp:${port} -t)
       fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || (echo Port ${port} was not in use && exit 1)"
       ;;
-    killStudio)
+    killStudio)# Kill the studio whose sdkroot is pwd
       fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
       taskFailIcon=$failIcon
       ;;
-    lsApd)
+    lsApd)# List the files that "wipeApd" would delete
       fullTask="find ${apd_dirs} -type f 2>/dev/null | xargs ls ${LS_FLAGS} -l --color"
       ;;
-    lsDb)
+    lsDb)# List the contents of the database directory
       noNotifySuccess=true
       fullTask="ls ${GW_DB_DIR}/*"
       ;;
-    pcf*)
+    packageCustomerDist)# Generate a customer build zip of this code
+      ;;
+    pcf*)# (optional host:port#) Browse the most recently changed file named /tmp/*.html
       # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
       if [[ $task =~ 'pcf=' ]]; then
         pcfHost=${task##pcf=}
@@ -368,55 +324,57 @@ while [ -n "$*" ]; do
       noNotifySuccess=true
       fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
-    pgrep)
+    pgrep)# Is the server process running?
       fullTask=$(grepProcStr ${jvmProcess})
       ;;
-    pgrepStudio)
+    pgrepStudio)# Is studio running?
       fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD}")
       taskFailIcon=$failIcon
       ;;
-#    pkill)
+#    pkill)# Kill the server process on 8090
 #      pgrep -af $jvmProcess
 #      fullTask=$(killProcStr ${jvmProcess})
 #      ;;
-#    pkill8080)
+#    pkill8080)# Kill the server process on 8080
 #      pgrep -af ${jvmProcess/90/80}
 #      fullTask=$(killProcStr ${jvmProcess/90/80})
 #      ;;
-    portCheck)
+    portCheck)# Is the SSH tunnel open?
       fullTask="ssh -xS $ssh_socket -O check pschaaf@localhost"
       ;;
-    portClose)
+    portClose)# Stop the SSH tunnel on port 8080
       fullTask="ssh -xS $ssh_socket -O exit pschaaf@localhost"
       ;;
-    portOpen)
+    portOpen)# Open an SSH tunnel on port 8080 redirecting to 8090
       spawn=true
       fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
       ;;
-    restoreDb)
+    restoreDb)#
       fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
       shift
       #${dbbackup}.7z"
       ;;
-    rmDb)
+    rmDb)# Forcibly delete the files in GW_DB_DIR
       fullTask="rm -fv ${GW_DB_DIR}/* && echo && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
       ;;
-#    runSuite)
+#    runSuite)# Compile then run the specified suite
 #      if (( ! $#* )); then
 #        echo "No suite specified!"
 #      fi
 #      fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
 #      shift
 #      ;;
-    setBg)
+    setBg)# Set the background image in iTerm
       fullTask="itermBg '$2'"
       shift
       ;;
-    setPlVersion)
+    setPlVersion)# Set the platform version in gradle.properties
       fullTask="perl -pi.bak -e 's/plVersion=.*/plVersion=$2/g' gradle.properties; diff gradle.properties{,.bak}; true"
       shift
       ;;
-    studio)
+    stop)# Stop Gradle daemon
+      ;;
+    studio)# Add --no-scan to skip publishing the build scan
       ignoreNice=true
       # shellcheck disable=SC2034 # var appears unused
       [[ $GW_PL_NUM -lt 9 ]] && spawn=true
@@ -428,23 +386,23 @@ while [ -n "$*" ]; do
         task="${no_scan:+--no-scan }${task}"
       fi
       ;;
-    tasks)
+    tasks)# List the tasks understood by the GW ./gwb
       # shellcheck disable=SC2034 # var appears unused
       noNotifySuccess=true
       $GW_START_SCRIPT tasks | sed "s/^\([a-z].*\)\( - \)/[96m\1[0m\2/g" # colorize the output
       exit
       ;;
-    testFail | testfail)
+    testFail)# Perform a test that automatically fails. Useful for testing
       fullTask="time && sleep 1 && exit ${2:-1}"
       shift
       ;;
-    testPass | testpass)
+    testPass)# Perform a test that automatically succeeds. Useful for testing
       fullTask='time && sleep 1s && echo "done"'
       ;;
-    triggerTests)
+    triggerTests)# dummy change to force TC to re-run tests
       fullTask="git commit --amend --date=now --no-edit; git push -f"
       ;;
-    wipeApd)
+    wipeApd)# remove the generated APD files
       echo
       potentialTask="rm -rfv ${apd_dirs}"
       if [[ $# -eq 1 ]]; then # is this the final argument?

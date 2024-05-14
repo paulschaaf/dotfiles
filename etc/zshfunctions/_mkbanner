@@ -1,0 +1,16 @@
+#compdef mkbanner
+# This file was generated using 'extractCompdef bin/mkbanner'
+
+_arguments "*: :((
+  '--dry-run: Print the commands that will be run, but to not run them'
+  '--fg: set the foreground color'
+  '--font'
+  '--force: overwrite existing file'
+  '--help'
+  '--prodColor: override the default product color'
+  '--product: override the calculated product'
+  '--setx: run \"set -x\" once this switch is parsed'
+  '--size: override the default size'
+  '--smush: override the default smush value'
+  '--version: override the calculated version'
+))"

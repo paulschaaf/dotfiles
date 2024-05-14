@@ -1,0 +1,16 @@
+#compdef prodscan
+# This file was generated using 'extractCompdef bin/prodscan'
+
+_arguments "*: :((
+  '--ab: include AB, add an equals sign to override the assumed subdirectory'
+  '--all: include all defined products (suite + ccpi)'
+  '--bc: include BC, add an equals sign to override the assumed subdirectory'
+  '--cc: include CC, add an equals sign to override the assumed subdirectory'
+  '--debug: print debugging info'
+  '--dry-run: Print the commands that will be run, but to not run them'
+  '--pc: include PC, add an equals sign to override the assumed subdirectory'
+  '--px: include PX, add an equals sign to override the assumed subdirectory'
+  '--root: override the default installation root'
+  '--setx: run \"set -x\" once this switch is parsed'
+  '--suite: include ab, bc, cc, pc, and px'
+))"

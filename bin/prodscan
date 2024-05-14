@@ -11,26 +11,26 @@ while [[ -n "$*" ]]; do
   [[ ${1} =~ "=" ]] && value=${1#*=} || value=''
   (($#debug)) && echo "Processing switch '$switch', value '$value'"
   case ${switch} in
-    --debug)
+    --debug)# print debugging info
       debug=true
       ;;
-    --dry_run | --dry-run)
+    --dry-run)# Print the commands that will be run, but to not run them
       alias dry_run=true
       ;;
-    --all)
+    --all)# include all defined products (suite + ccpi)
       for product in $allProducts; do
         selectedProducts[$product]=$product
       done
       ;;
-    --suite)
+    --suite)# include ab, bc, cc, pc, and px
       for product in $suite; do
         selectedProducts[$product]=$product
       done
       ;;
-    --root)
+    --root)# override the default installation root
       root=$value
       ;;
-    --setx)
+    --setx)# run "set -x" once this switch is parsed
       set -x
       ;;
     -*)
@@ -52,6 +52,15 @@ while [[ -n "$*" ]]; do
   esac
   shift
 done
+
+# These are listed so they can be extracted by extractCompdef
+: <<HERE
+    --ab)# include AB, add an equals sign to override the assumed subdirectory
+    --bc)# include BC, add an equals sign to override the assumed subdirectory
+    --cc)# include CC, add an equals sign to override the assumed subdirectory
+    --pc)# include PC, add an equals sign to override the assumed subdirectory
+    --px)# include PX, add an equals sign to override the assumed subdirectory
+HERE
 
 # default associative array to cc and px
 (($#selectedProducts)) || selectedProducts=(cc cc px px)

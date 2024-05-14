@@ -1,0 +1,9 @@
+#compdef extractCompdef
+# This file was generated using 'extractCompdef bin/extractCompdef'
+
+_arguments \"*: :((
+  '--debug: print debugging info'
+  '--force: forcibly update the file in $PWD'
+  '--setx: run \"set -x\" once this switch is parsed'
+  'zcompletion: Regenerate the zcompletion file for this script at (~/dotfiles/etc/zshfunctions/_extractCompdef)'
+))"

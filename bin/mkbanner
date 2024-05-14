@@ -46,39 +46,39 @@ prodColor=${prodColor:-$fgColor}
 while [[ -n "$*" ]]; do
   switch=${1%%=*}; value=${1#*=}
   case ${switch} in
-    --dry_run|--dry-run)
+    --dry-run)# Print the commands that will be run, but to not run them
       alias dry_run=true
       ;;
-    --fg)
+    --fg)# set the foreground color
       fgColor=${value}
       ;;
-    --font)
+    --font)#
       font=${value}
       ;;
-    --force)
+    --force)# overwrite existing file
       alias force=true
       ;;
-    -h|--help)
+    --help)#
       usage
       exit
       ;;
-    --prodColor)
+    --prodColor)# override the default product color
       prodColor=${value}
       ;;
-    --product)
+    --product)# override the calculated product
       GW_APPCODE=${value}
       ;;
-    --setx)
+    --setx)# run "set -x" once this switch is parsed
       typeset -p prodColor
       set -x
       ;;
-    --size)
+    --size)# override the default size
       pointsize=${value}
       ;;
-    --smush)
+    --smush)# override the default smush value
       smush=${value}
       ;;
-     --version)
+     --version)# override the calculated version
       GW_PL_VERSION=${value}
       ;;
     -*)
