@@ -1,5 +1,5 @@
 #compdef gwb
-# This file was generated using 'extractCompdef /Users/pschaaf/bin/gwb'
+# This file was generated using 'extractCompdef bin/gwb'
 
 _arguments "*: :((
   '--debug'
