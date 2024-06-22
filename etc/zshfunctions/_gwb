@@ -1,5 +1,5 @@
 #compdef gwb
-# This file was generated using 'extractCompdef bin/gwb'
+# This file was generated using 'extractCompdef /Users/pschaaf/bin/gwb'
 
 _arguments "*: :((
   '--debug'
@@ -41,6 +41,7 @@ _arguments "*: :((
   'portOpen: Open an SSH tunnel on port 8080 redirecting to 8090'
   'restoreDb'
   'rmDb: Forcibly delete the files in GW_DB_DIR'
+  'scratchReport: Generate scratch suite entries for tests in the current working set'
   'setBg: Set the background image in iTerm'
   'setPlVersion: Set the platform version in gradle.properties'
   'stop: Stop Gradle daemon'
@@ -49,5 +50,6 @@ _arguments "*: :((
   'testFail: Perform a test that automatically fails. Useful for testing'
   'testPass: Perform a test that automatically succeeds. Useful for testing'
   'triggerTests: dummy change to force TC to re-run tests'
+  'wc: count all lines of code excluding generated files and tests'
   'wipeApd: remove the generated APD files'
 ))"

@@ -28,9 +28,6 @@ while [ -n "$*" ]; do
     --no-scan)
       no_scan=true
       ;;
-    --old)
-      old=true
-      ;;
     --setx)# run "set -x" once this switch is parsed
       set -x
       ;;
@@ -49,7 +46,7 @@ while [ -n "$*" ]; do
 done
 
 # Set up environment
-source $HOME/bin/gwSetEnv ${old:+old}
+source $HOME/bin/gwSetEnv
 
 if ((! $#GW_PL_VERSION)); then
   printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
@@ -364,6 +361,38 @@ while [ -n "$*" ]; do
 #      fullTask="gwb compile -DincludeGtest=true; gwb runSuite -Dsuite=${1}"
 #      shift
 #      ;;
+    scratchReport)# Generate scratch suite entries for tests in the current working set
+      query="git status --porcelain | grep 'Test\.(gs|java)' | /usr/bin/sed 's/^[ A-Z]* //; s_^.*/g*src/__; s_^.*/g*test/__; s_/_._g; /gs$/ { s/^/\"/; s/.gs$/\"/; }; /java$/ { s/java$/class/; }; s/^/.withTest(/; s/$/)/'"
+#      declare query=%q(git status --porcelain \| grep -e 'Test\.(gs|java)' \| /usr/bin/sed ' s_^\[ A-Z]* __; s_^.*/g*src/__; s_^.*/g*test/__; s_/_._g; /gs$/ { s_^_\"_; s_.gs$_\"_; \}; /java$/ { s_java$_class_; \}; s_^_.withTest(_; s_$_\)_' )
+#      declare query=%q(git status --porcelain \| grep -e 'Test\.(gs|java)' \| /usr/bin/sed ' s_^[ A-Z]* __; s_^.*/g*src/__; s_^.*/g*test/__; s_/_._g; /gs$/ { s_^_\"_; s_.gs$_\"_; }; /java$/ { s_java$_class_; }; s_^_.withTest(_; s_$_)_' )
+
+#      declare -a query=(
+#        git status --porcelain
+#        \| grep -e 'Test\.(gs|java)'
+#        \| /usr/bin/sed '\
+#            s_^[ A-Z]* __;   \
+#            s_^.*/g*src/__;  \
+#            s_^.*/g*test/__; \
+#            s_/_._g;         \
+#            /gs$/   { s_^_\"_;           \
+#                      s_.gs$_\"_; };     \
+#            /java$/ { s_java$_class_; }; \
+#            s_^_.withTest(_;             \
+#            s_$_)_'
+#      )
+
+#      declare -a query=(git status --porcelain
+#          \| grep 'Test\.(gs|java)'
+#      )
+      echoVar query
+      eval "$query"
+      fullTask="echo '${answer}'"
+      fullTask=${query}
+#      set -x
+#      fullTask="git diff --name-only > /dev/stdout"
+#      answer=`$fullTask`
+#      echo $answer
+      ;;
     setBg)# Set the background image in iTerm
       fullTask="itermBg '$2'"
       shift
@@ -401,6 +430,13 @@ while [ -n "$*" ]; do
       ;;
     triggerTests)# dummy change to force TC to re-run tests
       fullTask="git commit --amend --date=now --no-edit; git push -f"
+      ;;
+    wc)# count all lines of code excluding generated files and tests
+      dirs=(app-${GW_APPCODE})
+      [[ -d appcommons ]] && dirs=(${dirs} appcommons)
+      [[ -d platform ]] && dirs=(${dirs} platform)
+#      fullTask="nice -n 15 find ${dirs} -type f \( -path '*/build/*' -o -path '*/generated/*' -o -iregex '.*test.*' -prune \) -o \( -name '*.java' -o -name '*.gs' -o -name '*.gst' \) -exec wc --lines {} + | xargs printf \"\n%'9d %s\"; echo ' from non-test files in: ${dirs}'"
+      fullTask="gfind ${dirs} -type f \( -path '*/build/*' -o -path '*/generated/*' -o -iregex '.*test.*' -prune \) -o \( -name '*.java' -o -name '*.gs' -o -name '*.gst' \) -print0 | wc --lines --files0-from=- | xargs printf \"\n%'9d %s\"; echo ' from non-test files in: ${dirs}'"
       ;;
     wipeApd)# remove the generated APD files
       echo

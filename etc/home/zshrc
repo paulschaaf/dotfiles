@@ -169,6 +169,7 @@ fi
 alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
 inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
+alias rpn='java -jar ~/Applications/rpncalc.jar'
 #alias rm='rm -i'
 ! inCygwin && alias rm=trash
 alias term='echoVar TERM'

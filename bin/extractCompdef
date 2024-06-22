@@ -43,6 +43,12 @@ echo '== Using environment'
 typeset -p scriptShortName zcompletionDir outfile outfile_name
 echo
 
+if ! ${force}; then
+  echo -n '\nUse --force to '
+  [[ -f ${outfile_name} ]] && echo -n overwrite || echo -n create
+  echo " $outfile_name with the following:\n"
+fi
+
 # extract every line that has a ')' char directly followed by a # (a commented switch line in a case statement) into
 # a line suitable for an entry in a zcompletion file
 switches=$(sed -n 's/[)]# */: /p' ${script} | grep -v '^ *#' | sed "s/^ *\(.*\)/  '\1'/; s/: *'/'/" | sed 's/"/\\"/g' | sort)
