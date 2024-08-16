@@ -1,9 +1,15 @@
 #!/bin/zsh
 
-allVars=(GW_APPCODE GW_APPNAME GW_PL_VERSION GW_PL_NUM GW_PLATFORM GW_STUDIO_VERSION GW_PORT GW_PORT_DEBUG GW_COLOR GW_ANSI_NAME GW_ANSI_PLATFORM GW_VERSION GW_TITLE)
+allVars=(GW_ANSI_NAME GW_ANSI_PLATFORM GW_APPCODE GW_APPNAME GW_COLOR GW_DB_DIR GW_PL_NUM GW_PL_VERSION GW_PLATFORM GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE GW_VERSION IDEA_HOME JAVA_HOME)
 namedVars=()
 
 autoload -Uz colorLabel
+
+function ⭑⭑⭑() {
+  echo
+  pastel -f paint -n white --on teal "${@}"
+  echo
+}
 
 [[ "$1" = "--setx" ]] && shift && set -x
 [[ "$1" = "--all" ]] && shift && namedVars+=(${allVars[@]})
@@ -117,7 +123,13 @@ if (($#GW_PL_VERSION)); then
     50.13.*)
       GW_PLATFORM=Mammoth
       ;;
-    # if you add a new version here make sure to set the required enivronment in gwSetEnv: https://github.com/paulschaaf/dotfiles/blob/fa6f3b262f571edc66ded8853bbebb47a8a0b516/bin/gwSetEnv#L169-L169
+    50.14.*)
+      GW_PLATFORM=Niseko
+      ;;
+    50.15.*)
+      GW_PLATFORM=Olos
+      ;;
+    # if you add a new version here make sure to set the required environment below
     *)
       GW_PLATFORM='???'
       ;;
@@ -126,6 +138,122 @@ if (($#GW_PL_VERSION)); then
   GW_ANSI_PLATFORM=$(colorLabel black orange ${GW_PLATFORM})
   export GW_PLATFORM GW_ANSI_PLATFORM
 fi
+
+#
+# SET THE JDK AND PLATFORM CONFIGURATION
+#
+
+case ${GW_PLATFORM} in
+#  athena|bedrock|carbon|diamond)
+#    export AARDVARK_HOME=/depot/aardvark/alpha
+#    export ANT_HOME=/depot/ant/apache-ant-1.7.1
+#    export GW_LIB_DIR=../lib
+#    export GW_START_SCRIPT=./all
+#    export JAVA_HOME=/usr/lib32/jvm/jdk1.6.0_45
+#    export M2_HOME=/depot/maven/apache-maven-2.2.1
+#    ;;
+#  emerald)
+#    export AARDVARK_HOME=/depot/aardvark/alpha
+#    export ANT_HOME=/depot/ant/apache-ant-1.8.2
+#    export GW_LIB_DIR=../lib
+#    export GW_START_SCRIPT=./all
+#    export IDEA_HOME=/opt/idea_emerald
+#    export IDEA_JDK=/usr/lib32/jvm/java-7-jdk
+#    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
+#    export M2_HOME=/depot/maven/apache-maven-3.0.4
+#    ;;
+  ferrite)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+    ;;
+  granite)
+    case ${GW_PL_VERSION} in
+      10.0.0*|10.0.1)
+        # for <= 10.0.1
+        announce 'Using older config for this platform version'
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2017.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+        export JAVA_HOME=/usr/lib/jvm/java-8-jdk
+        export GW_DB_DIR=/tmp/guidewire/granite
+        ;;
+      10.201.*)
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        export GW_DB_DIR=./tmp/granite
+        if [[ "$GW_APPCODE" = "ab" ]]; then
+          export GW_DB_DIR=./tmp
+        fi
+        ;;
+      *)
+        export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+        export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+        export GW_DB_DIR=./tmp/granite
+        ;;
+    esac
+    ;;
+  halite)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=/tmp/guidewire/granite
+    ;;
+  Aspen|Banff|Cortina) # the cutoff between C and D may be incorrect
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=/tmp/guidewire/granite
+    ;;
+  Dobson|Elysian|Flaine|Garmisch|Hakuba)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    ;;
+  Innsbruck)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
+  Jasper)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+  ;;
+  Kufri)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
+  Las\ Leñas)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
+  Mammoth|Niseko|Olos)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp/test
+    ;;
+    # if you add a new version here make sure to set the required environment above
+  *)
+    echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
+    exit 1
+    unsetGWVars
+    ;;
+esac
+
+
+#
+# Source environment overrides
+#
+
+for env in {../..,..,.}/gw.env; do
+  if [[ -f ${env} ]]; then
+#    ⭑⭑⭑ "** Applying overrides from ${env}"
+#    cat ${env} | sed 's/^/  - /'
+    # shellcheck disable=SC1090 # can't follow non-constant source
+    source ${env}
+  fi
+done
+
+(($#GW_PORT)) && export GW_PORT_DEBUG=$(($GW_PORT + 10))
+
 
 namedVars=(${namedVars:-$*})
 
@@ -142,8 +270,6 @@ if (( $#GW_APPNAME )); then
 fi
 
 export GW_TITLE="${PWD//$HOME/~} (${GW_APPCODE} ${GW_VERSION})"
-
-(($#GW_PORT)) && export GW_PORT_DEBUG=$(($GW_PORT + 10))
 
 (($#namedVars)) && eval typeset -p "${namedVars[@]}" 2>/dev/null
 

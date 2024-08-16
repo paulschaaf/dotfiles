@@ -18,9 +18,15 @@ while [ -n "$*" ]; do
     --debug)#
       debug=true
       ;;
-    --dry-run)# Print the commands that will be run, but to not run them
+    --dry-run)# Print the commands that will be run, but do not actually run them
       # shellcheck disable=SC2034 # unused
       _dry_run='echo '
+      ;;
+    --log)# Log session to gwb_$(date "+%Y.%m.%d-%H.%M.%S").log
+      logfile=gwb_\$\(date "+%Y.%m.%d-%H.%M.%S"\).log
+      echo Logging to $logfile
+      exec > >(tee -i $logfile)
+      exec 2>&1
       ;;
     --nice)# Run the command with the specified niceness
       nice=true
@@ -28,7 +34,7 @@ while [ -n "$*" ]; do
     --no-scan)
       no_scan=true
       ;;
-    --setx)# run "set -x" once this switch is parsed
+    --setx)# run "set -x" upon parsing this switch
       set -x
       ;;
     --wc)# Pipe the command output through wc
@@ -80,6 +86,11 @@ jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
 resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 ssh_socket=~/tmp/cc-fwd-socket
+if [[ "$UNAME" = "Darwin" ]]; then
+  seven_zip=7zz
+else
+  seven_zip=7z
+fi
 webserverPort=$((GW_PORT_DEBUG + 1))
 
 webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
@@ -189,8 +200,10 @@ runTask() {
 # Process arguments
 while [ -n "$*" ]; do
   unset ignoreNice
-  task=$1
-  
+  task=${1%%=*}
+  # value is the text after the equals sign, or empty string if there is none
+  value=${${1##*=}//$task/}
+
 #  jvmArgs=(
 #    -Dgw.${GW_APPCODE}.env=h2mem
 #    -Dgw.tests.skip.knownbreak=true
@@ -219,9 +232,16 @@ while [ -n "$*" ]; do
   taskFailIcon=
   taskPassIcon=
   case $task in
-    backupDb)#
-      dbName=$(date "+${dbbackup}_%H:%M:%S")
-      fullTask="7za a ${dbName} $GW_DB_DIR; 7z l ${dbName}.7z"
+    backupDb)# (optionally specify comment) creates backup named $(date "+${dbbackup}${comment}_%H:%M:%S")
+      if (( $#value )); then
+        # extract the name portion, and replace spaces with underscores
+        comment=_${value// /_}
+      else
+        comment=""
+      fi
+
+      dbName=$(date "+${dbbackup}${comment}_%H:%M:%S")
+      fullTask="$seven_zip a ${dbName} $GW_DB_DIR; $seven_zip l ${dbName}.7z"
       ;;
     clean)# Deletes the build directory
       ;;
@@ -249,7 +269,7 @@ while [ -n "$*" ]; do
       ;;
     genDataDictionary)# in the relative path build/XX/dictionary
       ;;
-    genPcfDictionary)#
+    genPcfDictionary)# gen document of each pcf element in build/pcf.xml
       ;;
     genPcfXsd)#
       ;;
@@ -289,7 +309,7 @@ while [ -n "$*" ]; do
       fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || (echo Port ${port} was not in use && exit 1)"
       ;;
     killStudio)# Kill the studio whose sdkroot is pwd
-      fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD}")
+      fullTask=$(killProcStr "-Dstudio.sdkroot=${PWD} ")
       taskFailIcon=$failIcon
       ;;
     lsApd)# List the files that "wipeApd" would delete
@@ -299,13 +319,15 @@ while [ -n "$*" ]; do
       noNotifySuccess=true
       fullTask="ls ${GW_DB_DIR}/*"
       ;;
+    lsport)# List processes holding the specified port
+      fullTask="lsof -i tcp:${value}"
+      ;;
     packageCustomerDist)# Generate a customer build zip of this code
       ;;
-    pcf*)# (optional host:port#) Browse the most recently changed file named /tmp/*.html
+    pcfs)# (optional host:port#) Browse the most recently changed file named /tmp/*.html
       # extract host:port# argument, if none default to localhost:GW_PORT_DEBUG+1
-      if [[ $task =~ 'pcf=' ]]; then
-        pcfHost=${task##pcf=}
-        pcfHost=${pcfHost##http://}
+      if (( $#value )); then
+        pcfHost=${task##http://}
       else
         pcfHost=localhost:$webserverPort
       fi
@@ -325,13 +347,13 @@ while [ -n "$*" ]; do
       fullTask=$(grepProcStr ${jvmProcess})
       ;;
     pgrepStudio)# Is studio running?
-      fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD}")
+      fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD} ")
       taskFailIcon=$failIcon
       ;;
-#    pkill)# Kill the server process on 8090
-#      pgrep -af $jvmProcess
-#      fullTask=$(killProcStr ${jvmProcess})
-#      ;;
+    pkill)# Kill the server process on $GW_PORT_DEBUG
+      pgrep -af $jvmProcess
+      fullTask=$(killProcStr ${jvmProcess})
+      ;;
 #    pkill8080)# Kill the server process on 8080
 #      pgrep -af ${jvmProcess/90/80}
 #      fullTask=$(killProcStr ${jvmProcess/90/80})
@@ -346,10 +368,13 @@ while [ -n "$*" ]; do
       spawn=true
       fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
       ;;
-    restoreDb)#
-      fullTask="7za x -aoa -o${GW_DB_DIR}/.. '$2'"
-      shift
-      #${dbbackup}.7z"
+    restoreDb)# Restore the database file named in the argument
+      if (( $#value == 0 )); then
+        fullTask="echo '$task' requires a database name argument\! && exit 1"
+      else
+        mkdir -p ${GW_DB_DIR}
+        fullTask="$seven_zip x -aoa -o${GW_DB_DIR}/.. '${value}'"
+      fi
       ;;
     rmDb)# Forcibly delete the files in GW_DB_DIR
       fullTask="rm -fv ${GW_DB_DIR}/* && echo && tree ${GW_DB_DIR}" #ls -BCFbhHGl ${GW_DB_DIR}"
