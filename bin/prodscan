@@ -82,7 +82,9 @@ for prod prodDir in "${(@kv)selectedProducts}"; do
     width=$(($width + 4)) # another set of zero-width chars
   fi
 
-  printf "\n${GW_ANSI_NAME//$GW_APPNAME/$name%${width}s}\n" ${prodDir//$HOME/\~}
+  branch=$(git rev-parse --abbrev-ref HEAD)
+  printf "\n${GW_ANSI_NAME//$GW_APPNAME/$name%${width}s}" ${prodDir//$HOME/\~}
+  printf "\n${GW_ANSI_NAME//$GW_APPNAME/$branch}\n";
 
   dry_run || $command || echo
 done

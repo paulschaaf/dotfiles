@@ -82,7 +82,7 @@ apd_dirs=(
 )
 dbbackup=h2database
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
-jvmProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
+serverDebugProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
 resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
 ssh_socket=~/tmp/cc-fwd-socket
@@ -275,7 +275,7 @@ while [ -n "$*" ]; do
       ;;
     genPcfXsd)#
       ;;
-    genSystemData)# Compiled from system_data.xml
+    genSystemData)# Compiled from system_data.xml -- for pre-Mammoth builds
       ;;
     genTypeInfo)# OBSOLETE Generate .gti files
       ;;
@@ -311,9 +311,9 @@ while [ -n "$*" ]; do
       fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || (echo Port ${port} was not in use && exit 1)"
       ;;
     killServer)# Kill the server process on $GW_PORT_DEBUG
-      pgrep -af $jvmProcess
-#      fullTask=$(killProcStr ${jvmProcess})
-      fullTask="${PKILL} ${jvmProcess}"
+      pgrep -af $serverDebugProcess
+#      fullTask=$(killProcStr ${serverDebugProcess})
+      fullTask="${PKILL} ${serverDebugProcess}"
       ;;
     killStudio)# Kill the studio whose sdkroot is pwd
       fullTask="${PKILL} '-Dstudio.sdkroot=${PWD}'"
@@ -350,8 +350,8 @@ while [ -n "$*" ]; do
       noNotifySuccess=true
       fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
-    pgrep)# Is the server process running?
-      fullTask=$(grepProcStr ${jvmProcess})
+    pgrepServer)# Is the server process running?
+      fullTask=$(grepProcStr ${serverDebugProcess})
       ;;
     pgrepStudio)# Is studio running?
       fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD} ")
@@ -422,7 +422,7 @@ while [ -n "$*" ]; do
       shift
       ;;
     setPlVersion)# Set the platform version in gradle.properties
-      fullTask="perl -pi.bak -e 's/plVersion=.*/plVersion=$2/g' gradle.properties; diff gradle.properties{,.bak}; true"
+      fullTask="perl -pi.bak -e 's/^plVersion=.*/plVersion=$2/g' gradle.properties; rm gradle.properties.bak; git add gradle.properties; git diff gradle.properties"
       shift
       ;;
     stop)# Stop Gradle daemon

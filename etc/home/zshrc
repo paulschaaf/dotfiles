@@ -488,3 +488,6 @@ done
 
 ## MacOS kill listener on port 8081
 # /bin/kill -9 $(lsof -i tcp:8081 -t) 2> /dev/null && print -P "%K{42}Killed%k" || print -P "%K{20}Not found%k"
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/pschaaf/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)

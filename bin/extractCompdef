@@ -69,3 +69,7 @@ _arguments "*: :((
 ${switches}
 ))"
 __EOF
+
+if ${force}; then
+  git diff $outfile
+fi
