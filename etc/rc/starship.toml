@@ -7,7 +7,8 @@ command_timeout = 5000
 format = """$status$cmd_duration\
 ${custom.gw_is_app}${package}${git_branch}${git_commit}${git_state}${git_status}
 ${time}${hostname}${os}${directory}${env_var}${sudo}
-${jobs}${shlvl}${custom.zsh_command_number} ${username}${custom.prompt_char}"""
+${jobs}${shlvl}${custom.zsh_command_number} ${username}\\$ """
+#${custom.prompt_char}"""
 
 #right_format = "${custom.zsh_command_number}"
 
@@ -26,11 +27,11 @@ detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"
 
-[custom.prompt_char]
-description = "Shows prompt char"
-command = "echo -n '%(!.#.$)'" # dollar or pound sign
-style = ''
-when = true
+#[custom.prompt_char]
+#description = "Shows prompt char"
+#command = "echo -n '%(!.#.$)'" # dollar or pound sign
+#style = ''
+#when = true
 
 [custom.zsh_command_number]
 command = "pastel -f paint gray '%h'"

@@ -191,7 +191,7 @@ alias -s txt=kate
 # ======== ls Aliases and Functions
 export LS_FLAGS='-BbCFHh --color'
 
-inMacOS && _ls=/usr/local/bin/ls || _ls=/bin/ls
+inMacOS && _ls=/usr/local/bin/gls || _ls=/bin/ls
 alias ls="${_ls} ${LS_FLAGS}"
 unset _ls
 
@@ -491,3 +491,5 @@ done
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/pschaaf/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+source /Users/pschaaf/.config/broot/launcher/bash/br

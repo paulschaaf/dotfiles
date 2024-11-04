@@ -42,7 +42,7 @@ $position / $length ($playStatus track ${track})"
 fi
 
 if [[ $UNAME = 'Darwin' ]]; then
-  cmd=(alerter -timeout 5 -title ${title} ${subtitle:+-subtitle} ${subtitle} ${message:+-message} ${message})
+  cmd=(terminal-notifier -title ${title} ${subtitle:+-subtitle} ${subtitle} ${message:+-message} ${message})
   ${cmd[*]} >/dev/null &
   echo ${(q)cmd}
 else

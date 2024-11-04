@@ -135,7 +135,7 @@ killProcStr() {
 notify() {
   subtitle="$1"
   shift
-  alerter -group $PWD -title "$GW_TITLE" -subtitle "$subtitle" -message "${*}" >/dev/null &
+  terminal-notifier -group $PWD -title "$GW_TITLE" -subtitle "$subtitle" -message "${*}" >/dev/null &
   set +x
 }
 
