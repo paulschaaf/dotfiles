@@ -11,6 +11,7 @@ binary=$(if [ -f /usr/local/bin/rg ]; then \
    fi)
 
 bizrules=('**/bizrules/*.xml')
+snowcat=('**/cc-snowcat/*')
 test_dirs=(
    '**/*-test*/'
    '**/*-gunit-*/'
@@ -45,9 +46,12 @@ function help() {
    --expanded
    --heading
 
-GUIDEWIRE MACROS:       INCLUDES
+GUIDEWIRE MACROS / INCLUDES
    --bizrules, no-bizrules
        '${(j:', ':)bizrules}'
+
+   --snowcat, no-snowcat
+       '${(j:', ':)snowcat}'
 
    --test-dirs, no-test-dirs
     	'${(j:', ':)test_dirs}'
@@ -113,8 +117,14 @@ while (($#@)); do
     --bizrules)
       addGlobs "${bizrules[@]}"
       ;;
+    --snowcat)
+      addGlobs "${snowcat[@]}"
+      ;;
     --no-bizrules)
       addGlobs --negate "${bizrules[@]}"
+      ;;
+    --no-snowcat)
+      addGlobs --negate "${snowcat[@]}"
       ;;
     --no-test-dirs)
       addGlobs --negate "${test_dirs[@]}"

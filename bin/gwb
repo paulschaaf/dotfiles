@@ -8,6 +8,10 @@ fail_color=${fail_color:-'48;5;196'}
 warn_color=${warn_color:-'48;5;228'}
 unset nice
 
+if [[ "$UNAME" = "Darwin" ]]; then
+  alias date=gdate
+fi
+
 # Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
 while [ -n "$*" ]; do
   case $1 in
