@@ -41,6 +41,7 @@ function help() {
    includes=$(echo "$type_adds" | sed -En "s/^([^:]*):include:(.*)$/   \1   		\2/p")
 
    cat <<HEREDOC
+
    --inIntelliJ     Mostly for testing
    --notIntelliJ
    --expanded
@@ -104,6 +105,9 @@ while (($#@)); do
       ;;
     --dry-run)
       dry_run=true
+      expanded=true
+      ;;
+    --expanded)
       expanded=true
       ;;
     --heading)

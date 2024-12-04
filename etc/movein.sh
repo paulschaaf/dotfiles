@@ -40,6 +40,8 @@ forMacOS=(
    ripgrep
    ascii
    inxi
+   trash
+   tree
 )
 
 forArch=(

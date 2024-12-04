@@ -10,6 +10,7 @@ unset nice
 
 if [[ "$UNAME" = "Darwin" ]]; then
   alias date=gdate
+  alias sleep=gsleep
 fi
 
 # Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
@@ -246,7 +247,7 @@ while [ -n "$*" ]; do
         comment=""
       fi
 
-      dbName=$(date "+${dbbackup}${comment}_%H:%M:%S")
+      dbName=$(date "+${dbbackup}${comment}_%y%m%d_%H:%M:%S")
       fullTask="$seven_zip a ${dbName} $GW_DB_DIR; $seven_zip l ${dbName}.7z"
       ;;
     clean)# Deletes the build directory
@@ -272,6 +273,28 @@ while [ -n "$*" ]; do
       ;;
     fixgwb)# remove the erroneous spaces from the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
+      ;;
+    fixPuml)
+      if (( $#value == 0 )); then
+        fullTask="echo '$task' requires a file name argument\! && exit 1"
+      else
+        # make a backup
+        cp -f $value{,.bak}
+        # add skinparam etc. if it's not already there
+        rg 'skinparam class' $value && ruby -pi -e "gsub(/^@startuml$/, %Q(@startuml\n!pragma useIntermediatePackages false\n'scale 1800 width\n'scale 4000 height\nhide empty members\n'left to right direction\n'set separator none\nskinparam class {\n  BackgroundColor<<gosu>> lightgreen\n  BackgroundColor<<internal>> lightblue\n  AttributeFontColor<<legacy>> Gray\n  StereotypeFontColor<<legacy>> Gray\n}\npackage entity #wheat {}
+))" $value
+        ruby -pi -e "gsub(/^.*\b[gs]et(BeanVersion|CreateTime|CreateUser|ID|LoadCommandID|PublicID|Retired|RetiredValue|UpdateTime|UpdateUser)\b.*\n/, %q());\
+        gsub(/^.*\b((Insert|Remove|Update)Callback|__createInternalInterface|__getDelegateMap|__getInternalInterface|AbstractEditableRetireableBeanProxy|Approvable|Bean|BeanBase|DelegateLoader|EFTDataDelegate|EntityPropertyInfoReference|EntityTypeReference|EventAware|Extractable|gw.pl.persistence.core.Key|isNew|isNewlyImported|KeyableBean|List<EventDescriptor>|Retireable|touch|TransactionTAccountOperationsDelegate|Validatable|Versionable)\b.*\n/, %q());\
+        gsub(/^.*[~-] \{static\}.*\n/, %q());\
+        gsub(/^.*(DELEGATE_MAP|_DYNPROP|_EVENT|_internal)\n/, %q());\
+        gsub(/\b(typekey|java\.(lang|math|util))\./, %q());" $value
+        if diff -q $value{,.bak}; then
+          rm ${value}.bak
+          fullTask="echo No changes made."
+        else
+          fullTask="wc -l $value{,.bak} | grep -v total"
+        fi
+      fi
       ;;
     genDataDictionary)# in the relative path build/XX/dictionary
       ;;

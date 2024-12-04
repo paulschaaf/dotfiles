@@ -58,6 +58,11 @@ elif [[ -f gradle.properties ]]; then
   (($#GW_PL_VERSION)) || eval "$(sed -nE 's/^version=/export GW_PL_VERSION=/gp' gradle.properties 2>/dev/null)"
 fi
 
+# advance the port # based on the digits in the dirname
+lastDigits=$(echo ${PWD##$HOME/gw/} | sed -E 's/[^0-9]//g')
+(($#lastDigits)) && GW_PORT=$(($GW_PORT + 5 + $lastDigits))
+unset lastDigits
+
 if (($#GW_PL_VERSION)); then
   case ${GW_PL_VERSION} in
   #  4.*)
