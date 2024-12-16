@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 playerHost=copernicus
-#player=strawberry
+player=strawberry
 thisFile=${(F)0:t}
 
 if [[ "$1" == "--setx" ]]; then
@@ -10,7 +10,7 @@ if [[ "$1" == "--setx" ]]; then
 fi
 
 if [[ `hostname` = "${playerHost}" ]]; then
-  (( $# )) && playerctl -p strawberry "${@}" # arguments are a command
+  (( $# )) && playerctl -p $player "${@}" # arguments are a command
 
   if [[ "${@}" = "stop" ]]; then
     RESPONSE='message="Stopped"'

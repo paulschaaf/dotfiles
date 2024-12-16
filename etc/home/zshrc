@@ -281,6 +281,8 @@ function pushd() {
   fi
 }
 
+alias rmgps='exiftool -gps:all= -xmp-exif:all='
+
 #function settitle() { printf '\e]1;%s\a' ${*:-$GIT_REPO} }
 autoload -Uz settitle
 
