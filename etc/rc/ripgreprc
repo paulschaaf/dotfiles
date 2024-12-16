@@ -57,7 +57,8 @@
 
 # PATTERN TYPES
 --type-add=builder:*Builder*
---type-add=displaykey:display*.properties
+--type-add=displaykey:display.properties
+--type-add=displaykeyall:display*.properties
 --type-add=gosutest:*Test*.gs
 --type-add=javatest:*Test*.java
 --type-add=ruleorder:order.txt

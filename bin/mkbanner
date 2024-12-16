@@ -22,7 +22,7 @@ function usage() {
   --smush            Sets the spacing between the GW_APPCODE and the project name (default '${smush}')
   --version
 
-  All other switches are passed through to 'convert', after replacing any equals signs with a space. So for instance
+  All other switches are passed through to 'magick convert', after replacing any equals signs with a space. So for instance
   the switch '-font=fixed' will be passed through as '-font fixed'.
 
   For a list of color names see https://imagemagick.org/script/color.php#color_names
@@ -103,7 +103,9 @@ elif ((${#*})); then
   exit 1
 fi
 
-filename=banner_${GW_APPCODE}${GW_PL_VERSION}_${fgColor}${font:+_$font}_${txt}.png
+LABEL=${GW_APPCODE}${GW_PLATFORM:0:1}
+
+filename=banner_${LABEL}_${fgColor}${font:+_$font}_${txt}.png
 filename=`echo ${filename} | sed 's/[^-.A-Za-z0-9_]/_/g'`
 
 force && (dry_run || rm -f ${filename})
@@ -112,12 +114,12 @@ if [[ -e ${filename} ]]; then
   dry_run || exit 1
 fi
 
-command=( convert
+command=( magick convert
   -background none
   -pointsize ${pointsize}
   -channel A -evaluate multiply 0.5 +channel        # transparency
   -stroke white -strokewidth 4                      # GW_APPCODE name+GW_PL_VERSION outline
-  -fill ${prodColor}  label:"${GW_APPCODE}${GW_PL_VERSION}"
+  -fill ${prodColor}  label:"${LABEL}"
   ${font:+-font} ${font}
   -stroke white -strokewidth 2                      # label outline
   -fill ${fgColor}    label:"${txt}"

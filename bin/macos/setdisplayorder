@@ -1,0 +1,5 @@
+#!/bin/zsh
+
+# Sets the order of displays for Guidewire office desktop
+
+displayplacer "id:120CCEEC-46D2-A531-69FE-48C625DC63B7 res:2048x1280 hz:59 color_depth:4 enabled:true scaling:on origin:(0,0) degree:0" "id:65EC0F44-EF2E-2583-024B-08124EB4C26C res:1920x1200 hz:59 color_depth:8 enabled:true scaling:off origin:(985,-1200) degree:0" "id:E7C25FB1-F7A4-5361-A362-4F71E1E1B969 res:1920x1200 hz:59 color_depth:8 enabled:true scaling:off origin:(-935,-1200) degree:0"
