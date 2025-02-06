@@ -394,10 +394,10 @@ _launch=Ctrl+Shift+Esc
 
 [strawberry]
 _k_friendly_name=strawberry
-next_track=,none,Next track
+next_track=none,none,Next track
 play_pause=Meta+Ctrl+Alt+Shift+Space,none,Play/Pause
-prev_track=,none,Previous track
-stop=,none,Stop
+prev_track=none,none,Previous track
+stop=none,none,Stop
 
 [yakuake]
 _k_friendly_name=Yakuake
