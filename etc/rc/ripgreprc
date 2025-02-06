@@ -46,8 +46,12 @@
 --type-add=javasrc:*.java
 --type-add=jsp:*.jsp
 --type-add=jspx:*.jspx
+--type-add=map:*.map
 --type-add=pcf:*.pcf
 --type-add=properties:*.properties
+--type-add=regexp:*.regexp
+--type-add=rtf:*.rtf
+--type-add=suite:*.suite
 --type-add=tix:*.tix
 --type-add=tti:*.tti
 --type-add=ttx:*.ttx
@@ -66,7 +70,7 @@
 
 # INCLUDE TYPES
 --type-add=entity:include:eti,eix,etx
---type-add=gosu:include:gs,gsx
+--type-add=gosu:include:gs,gsx,gst
 --type-add=gosurules:include:gr,grs,ruleorder
 --type-clear=java
 --type-add=java:include:javasrc,jsp,jspx

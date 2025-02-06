@@ -85,7 +85,7 @@ while [[ -n "$*" ]]; do
       switches+=(${1})
       ;;
     *)
-      txt=$1
+      txt=$*
       shift
       break
       ;;
@@ -97,10 +97,10 @@ if ((!$#txt)); then
   echo Error: missing text!
   usage
   exit 1
-elif ((${#*})); then
-  echo "Error: extra arguments after the text '${txt}': '${*}'!"
-  usage
-  exit 1
+#elif ((${#*})); then
+#  echo "Error: extra arguments after the text '${txt}': '${*}'!"
+#  usage
+#  exit 1
 fi
 
 LABEL=${GW_APPCODE}${GW_PLATFORM:0:1}

@@ -26,20 +26,19 @@ if [[ -f project-version.properties ]]; then
   if ((! $#GW_PORT)); then
       case ${GW_APPCODE} in
       ab)
-        GW_PORT=8280
+        export GW_PORT=8280
         ;;
       bc)
-        GW_PORT=8580
+        export GW_PORT=8580
         ;;
       cc)
-        GW_PORT=8080
+        export GW_PORT=8080
         ;;
       pc)
-        GW_PORT=8180
+        export GW_PORT=8180
         ;;
       esac
   fi
-  export GW_PORT=$GW_PORT
 
 # it's a dev build
 elif [[ -f gradle.properties ]]; then
@@ -213,12 +212,14 @@ case ${GW_PLATFORM} in
   Innsbruck|Jasper|Kufri)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-    export GW_DB_DIR=./tmp/test
+    export GW_DB_DIR=./tmp
+    [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
   Las\ Leñas|Mammoth|Niseko|Olos)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-    export GW_DB_DIR=./tmp/test
+    export GW_DB_DIR=./tmp
+    [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
     # if you add a new version here make sure to set the required environment above
   *)
@@ -234,11 +235,12 @@ esac
 #
 
 for env in {../..,..,.}/gw.env; do
-  if [[ -f ${env} ]]; then
-#    ⭑⭑⭑ "** Applying overrides from ${env}"
+  if [[ -s ${env} ]]; then
+    ⭑⭑⭑ "** Applying overrides from ${env}"
 #    cat ${env} | sed 's/^/  - /'
     # shellcheck disable=SC1090 # can't follow non-constant source
     source ${env}
+    echo
   fi
 done
 

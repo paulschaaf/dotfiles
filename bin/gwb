@@ -89,7 +89,29 @@ dbbackup=h2database
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
 serverDebugProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
-resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp/resources
+
+catPumlHeader() {
+cat <<HERE
+@startuml
+!pragma useIntermediatePackages false
+'scale 1800 width
+'scale 4000 height
+hide empty members
+'left to right direction
+'set separator none
+skinparam class {
+  BackgroundColor<<gosu>> lightgreen
+  BackgroundColor<<internal>> lightblue
+  AttributeFontColor<<legacy>> Gray
+  StereotypeFontColor<<legacy>> Gray
+}
+package entity #wheat {}
+
+@enduml
+HERE
+}
+
+resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp
 ssh_socket=~/tmp/cc-fwd-socket
 if [[ "$UNAME" = "Darwin" ]]; then
   seven_zip=7zz
@@ -283,8 +305,8 @@ while [ -n "$*" ]; do
         # add skinparam etc. if it's not already there
         rg 'skinparam class' $value && ruby -pi -e "gsub(/^@startuml$/, %Q(@startuml\n!pragma useIntermediatePackages false\n'scale 1800 width\n'scale 4000 height\nhide empty members\n'left to right direction\n'set separator none\nskinparam class {\n  BackgroundColor<<gosu>> lightgreen\n  BackgroundColor<<internal>> lightblue\n  AttributeFontColor<<legacy>> Gray\n  StereotypeFontColor<<legacy>> Gray\n}\npackage entity #wheat {}
 ))" $value
-        ruby -pi -e "gsub(/^.*\b[gs]et(BeanVersion|CreateTime|CreateUser|ID|LoadCommandID|PublicID|Retired|RetiredValue|UpdateTime|UpdateUser)\b.*\n/, %q());\
-        gsub(/^.*\b((Insert|Remove|Update)Callback|__createInternalInterface|__getDelegateMap|__getInternalInterface|AbstractEditableRetireableBeanProxy|Approvable|Bean|BeanBase|DelegateLoader|EFTDataDelegate|EntityPropertyInfoReference|EntityTypeReference|EventAware|Extractable|gw.pl.persistence.core.Key|isNew|isNewlyImported|KeyableBean|List<EventDescriptor>|Retireable|touch|TransactionTAccountOperationsDelegate|Validatable|Versionable)\b.*\n/, %q());\
+        ruby -pi -e "gsub(/^.*\b[gs]et(ArchivePartition|BeanVersion|CreateTime|CreateUser|ID|LoadCommandID|PublicID|Retired|RetiredValue|UpdateTime|UpdateUser)\b.*\n/, %q());\
+        gsub(/^.*\b((Insert|Remove|Update)Callback|__createInternalInterface|__getDelegateMap|__getInternalInterface|AbstractEditableRetireableBeanProxy|Approvable|Bean|BeanBase|DelegateLoader|EFTDataDelegate|EntityPropertyInfoReference|EntityTypeReference|EventAware|Extractable|gw.pl.persistence.core.Key|isNew|isNewlyImported|isRetired|KeyableBean|List<EventDescriptor>|remove|Retireable|touch|TransactionTAccountOperationsDelegate|Validatable|Versionable)\b.*\n/, %q());\
         gsub(/^.*[~-] \{static\}.*\n/, %q());\
         gsub(/^.*(DELEGATE_MAP|_DYNPROP|_EVENT|_internal)\n/, %q());\
         gsub(/\b(typekey|java\.(lang|math|util))\./, %q());" $value
@@ -314,7 +336,7 @@ while [ -n "$*" ]; do
       spawn=true
       fullTask="find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
       echo
-      echo "\nChange the host to 127.0.0.1, and make sure the connection string is correct! There is no username or password."
+      echo "\n\e[5;97;101mChange the host to 127.0.0.1, and make sure the JDBC URL is correct! There is no username or password.\e[0m"
       ;;
     http)# Start a simple http server in the resources directory
       spawn=true
@@ -326,21 +348,23 @@ while [ -n "$*" ]; do
       ;;
     ij)# Start the appropriate intellij
       spawn=true
-      fullTask="${IDEA_HOME}/bin/idea.sh"
+      fullTask="${IDEA_HOME}/bin/idelsa.sh"
+      ;;
+    killH2)# Kill the H2 server on port 8082
+      export port=8082
+      fullTask='process=$(lsof -i tcp:'$port' -t) && /bin/kill -9 ${process} 2> /dev/null && echo Killed process $process || (echo Port '$port' was not in use && exit 1)'
       ;;
     killHttp)# Kill the simple http server in the resources directory
       fullTask="pkill -f '$webserver'"
       ;;
     killPort)# Kill the process that is holding the specified port, or $GW_PORT if none is specified
-      export port=${2:=$GW_PORT}
-      shift
-      export process=$(lsof -i tcp:${port} -t)
-      fullTask="(($#process > 0)) && /bin/kill -9 ${process} 2> /dev/null && echo Killed || (echo Port ${port} was not in use && exit 1)"
+      export port=${value:=$GW_PORT}
+      fullTask='process=$(lsof -i tcp:'$port' -t) && /bin/kill -9 ${process} 2> /dev/null && echo Killed process $process || (echo Port '$port' was not in use && exit 1)'
       ;;
     killServer)# Kill the server process on $GW_PORT_DEBUG
       pgrep -af $serverDebugProcess
 #      fullTask=$(killProcStr ${serverDebugProcess})
-      fullTask="${PKILL} ${serverDebugProcess}"
+      fullTask="${PKILL} '${serverDebugProcess}'"
       ;;
     killStudio)# Kill the studio whose sdkroot is pwd
       fullTask="${PKILL} '-Dstudio.sdkroot=${PWD}'"
@@ -355,6 +379,14 @@ while [ -n "$*" ]; do
       ;;
     lsport)# List processes holding the specified port
       fullTask="lsof -i tcp:${value}"
+      ;;
+    mkpuml)
+      if (( $#value == 0 )); then
+        fullTask="echo '$task' requires a file name argument\! && exit 1"
+      else
+        catPumlHeader > ${value}.puml
+        fullTask="ls ${value}.puml"
+      fi
       ;;
     packageCustomerDist)# Generate a customer build zip of this code
       ;;
@@ -375,7 +407,7 @@ while [ -n "$*" ]; do
       echoVar report
 
       noNotifySuccess=true
-      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
+      fullTask="ruby -pi -e 'gsub(%r(http://[^:]+:(null|[0-9]+)/\w+/resources), %q(http://$pcfHost/resources))' /tmp/*.html && ls -l $report && ${BROWSER} $report"
       ;;
     pgrepServer)# Is the server process running?
       fullTask=$(grepProcStr ${serverDebugProcess})
@@ -486,8 +518,7 @@ while [ -n "$*" ]; do
       dirs=(app-${GW_APPCODE})
       [[ -d appcommons ]] && dirs=(${dirs} appcommons)
       [[ -d platform ]] && dirs=(${dirs} platform)
-#      fullTask="nice -n 15 find ${dirs} -type f \( -path '*/build/*' -o -path '*/generated/*' -o -iregex '.*test.*' -prune \) -o \( -name '*.java' -o -name '*.gs' -o -name '*.gst' \) -exec wc --lines {} + | xargs printf \"\n%'9d %s\"; echo ' from non-test files in: ${dirs}'"
-      fullTask="gfind ${dirs} -type f \( -path '*/build/*' -o -path '*/generated/*' -o -iregex '.*test.*' -prune \) -o \( -name '*.java' -o -name '*.gs' -o -name '*.gst' \) -print0 | wc --lines --files0-from=- | xargs printf \"\n%'9d %s\"; echo ' from non-test files in: ${dirs}'"
+      fullTask="nice -n 15 gfind ${dirs} -type f \( -path '*/build/*' -o -path '*/generated/*' -o -iregex '.*test.*' -prune \) -o \( -name '*.java' -o -name '*.gs' -o -name '*.gst' \) -print0 | gwc --lines --files0-from=- | xargs printf \"\n%'9d %s\"; echo ' from non-test files in: ${dirs}'"
       ;;
     wipeApd)# remove the generated APD files
       echo
