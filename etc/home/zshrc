@@ -494,4 +494,4 @@ done
 export PATH="/Users/pschaaf/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
 
-source /Users/pschaaf/.config/broot/launcher/bash/br
+source ~/.config/broot/launcher/bash/br
