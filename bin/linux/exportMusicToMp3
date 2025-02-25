@@ -1,0 +1,54 @@
+#!/bin/zsh
+
+srcDir=~/Music
+destDir=~/soundKonverter/Music
+
+while [ -n "$*" ]; do
+  case $1 in
+    --debug)#
+      # shellcheck disable=SC2034
+      debug=true
+      ;;
+    --dry-run)# Print the commands that will be run, but do not actually run them
+      # shellcheck disable=SC2034 # unused
+      _dry_run='echo '
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
+
+
+function convertToMp3() {
+  src=${1}
+  destDir="${dest}/${src%.flac}.dest"
+
+  typeset src destDir
+}
+
+# Convert FLAC to MP3 if missing
+cd ${srcDir} || exit 1
+#fd --type file --extension flac --exec convertToMp3
+#for src in **/*.flac; do
+#    dest="${destDir}/${src%.flac}.mp3"
+##    typeset src dest
+#    if [[ -f "${dest}" ]]; then
+##      echo ${dest} is up to date
+#    else
+#      echo "Converting $src to $dest"
+#      (($#_dry_run)) || ffmpeg -i "$src" -q:a 2 "$dest"
+#    fi
+#done
+
+# Delete orphaned MP3s (no corresponding FLAC)
+
+cd ${destDir} || exit 1
+for dest in **/*.mp3; do
+    src="${srcDir}/${dest%.mp3}.*"
+    if [[ ! -f "${src}" ]]; then
+      echo "Deleting orphaned MP3: ${destDir}/${(q)dest}"
+#        rm "$dest"
+    fi
+done

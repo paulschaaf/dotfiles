@@ -19,6 +19,13 @@ Switch to Last-Used Keyboard Layout=Meta+Alt+L,none,Switch to Last-Used Keyboard
 Switch to Next Keyboard Layout=none,none,Switch to Next Keyboard Layout
 _k_friendly_name=Keyboard Layout Switcher
 
+[Strawberry]
+_k_friendly_name=Strawberry
+next_track=Meta+Ctrl+Alt+Shift+Right,none,Next track
+play_pause=none,none,Play/Pause
+prev_track=Meta+Ctrl+Alt+Shift+Left,none,Previous track
+stop=none,none,Stop
+
 [kaccess]
 Toggle Screen Reader On and Off=Meta+Alt+S,Meta+Alt+S,Toggle Screen Reader On and Off
 _k_friendly_name=Accessibility
