@@ -21,6 +21,7 @@ while [ -n "$*" ]; do
       delay=$1
       ;;
     --debug)#
+      # shellcheck disable=SC2034
       debug=true
       ;;
     --dry-run)# Print the commands that will be run, but do not actually run them
@@ -29,6 +30,7 @@ while [ -n "$*" ]; do
       ;;
     --log)# Log session to gwb_$(date "+%Y.%m.%d-%H.%M.%S").log
       logfile=gwb_\$\(date "+%Y.%m.%d-%H.%M.%S"\).log
+      # shellcheck disable=SC2154
       echo Logging to $logfile
       exec > >(tee -i $logfile)
       exec 2>&1
@@ -333,7 +335,7 @@ while [ -n "$*" ]; do
     genWsiLocal)#
       ;;
     h2)# Open the H2 console
-      spawn=true
+#      spawn=true
       fullTask="find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
       echo
       echo "\n\e[5;97;101mChange the host to 127.0.0.1, and make sure the JDBC URL is correct! There is no username or password.\e[0m"

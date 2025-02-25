@@ -22,7 +22,7 @@ style = 'white'
 
 [custom.gw_is_app]
 description = "Shows Guidewire InsuranceSuite application name"
-command = 'source ~/bin/gwenv; echo "${GW_ANSI_NAME}${GW_ANSI_PLATFORM}"'
+command = 'source ~/bin/gwenv >/dev/null; echo "${GW_ANSI_NAME}${GW_ANSI_PLATFORM}"'
 detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"

@@ -1,0 +1,318 @@
+<templateSet group="pschaaf">
+  <template name="todo" value=" $COMMENT_START$ todo $USER$: $MESSAGE$$THIS$$COMMENT_END$$END$" description="" toReformat="false" toShortenFQNames="false">
+    <variable name="COMMENT_START" expression="" defaultValue="commentStart()" alwaysStopAt="false" />
+    <variable name="USER" expression="" defaultValue="user()" alwaysStopAt="false" />
+    <variable name="MESSAGE" expression="" defaultValue="&quot;fix&quot;" alwaysStopAt="true" />
+    <variable name="THIS" expression="" defaultValue="&quot; this&quot;" alwaysStopAt="true" />
+    <variable name="COMMENT_END" expression="" defaultValue="commentEnd()" alwaysStopAt="false" />
+    <context>
+      <option name="ANY_OPENAPI_JSON_FILE" value="false" />
+      <option name="ANY_OPENAPI_YAML_FILE" value="false" />
+      <option name="GOSU_CODE" value="true" />
+      <option name="HTTP_CLIENT_ENVIRONMENT" value="false" />
+      <option name="JSP" value="false" />
+      <option name="MAVEN" value="false" />
+      <option name="OTHER" value="true" />
+      <option name="PROTO" value="false" />
+      <option name="PROTOTEXT" value="false" />
+      <option name="REQUEST" value="false" />
+    </context>
+  </template>
+  <template name="assert_gs" value="assertThat($EXPR$)&#10;  .$AS$(&quot;$DESCRIPTION$&quot;)&#10;  .$METHOD$&#10;$END$" description="V3 Test Assertion" toReformat="false" toShortenFQNames="true">
+    <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="EXPR" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD" expression="complete()" defaultValue="&quot;isEqualTo(&quot;" alwaysStopAt="true" />
+    <variable name="AS" expression="complete()" defaultValue="&quot;as&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_EXPRESSION" value="true" />
+      <option name="GOSU_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="txn_java" value="gw.transaction.Transaction.runWithNewBundle(bundle -&gt; {&#10;    $END$&#10;})&#10;" description="" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_DECLARATION" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_STRING" value="false" />
+    </context>
+  </template>
+  <template name="txn_gs" value="gw.transaction.Transaction.runWithNewBundle(\bundle -&gt; {&#10;    $END$&#10;})&#10;" description="" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_EXPRESSION" value="false" />
+    </context>
+  </template>
+  <template name="lazyget_gs" value="var _$VAR$: $TYPE$&#10;&#10;property get $ACCESSOR$(): $TYPE$ {&#10;  if (_$VAR$ == null) {&#10;    _$VAR$ = new $TYPE$($END$)&#10;  }&#10;  return _$VAR$&#10;}" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="TYPE" expression="" defaultValue="&quot;DATA_TYPE&quot;" alwaysStopAt="true" />
+    <variable name="VAR" expression="decapitalize(TYPE)" defaultValue="" alwaysStopAt="true" />
+    <variable name="ACCESSOR" expression="capitalize(VAR)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="@test" value="@TestCase(&quot;$JIRA$&quot;)$TODO$$END$" description="@TestCase annotation" toReformat="true" toShortenFQNames="true">
+    <variable name="JIRA" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="TODO" expression="groovyScript(&quot;_1 == '' ? '  // todo pschaaf: add Jira number' : ''&quot;, JIRA)" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_EXPRESSION" value="false" />
+      <option name="GOSU_STATEMENT" value="false" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_STATEMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+      <option name="JS_CLASS" value="true" />
+      <option name="JS_EXPRESSION" value="true" />
+    </context>
+  </template>
+  <template name="bundleAdd_gs" value="$VAR$ = bundle.add($VAR$)&#10;$END$" description="" toReformat="true" toShortenFQNames="true">
+    <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_DECLARATION" value="false" />
+    </context>
+  </template>
+  <template name="lazyget_java" value="private $TYPE$ $VAR$;&#10;&#10;public $TYPE$ get$ACCESSOR$() {&#10;  if ($VAR$ == null) {&#10;    $VAR$ = new $TYPE$($ARGS$);&#10;  }&#10;  return $VAR$;&#10;}&#10;$END$" description="A getter for a lazily-initialized variable" toReformat="true" toShortenFQNames="true">
+    <variable name="TYPE" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+    <variable name="VAR" expression="concat(&quot;_&quot;, decapitalize(TYPE))" defaultValue="" alwaysStopAt="true" />
+    <variable name="ACCESSOR" expression="capitalize(groovyScript(&quot;_1.replaceAll('^_', '')&quot;, VAR))" defaultValue="" alwaysStopAt="true" />
+    <variable name="ARGS" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="logexp" value="Logger.$LEVEL$(&quot;//*** $USER$ $CLASS$:$LINE$ ($METHOD$) `$EXPRNAME$` =&gt; &quot; + $EXPR$$STACK$)  // todo $USER$ $DATE$ $TIME$: Remove this $DEBUGGING$code$END$" description="Logs an expression" toReformat="true" toShortenFQNames="true">
+    <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="EXPRNAME" expression="EXPR" defaultValue="" alwaysStopAt="false" />
+    <variable name="CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="LINE" expression="lineNumber()" defaultValue="" alwaysStopAt="false" />
+    <variable name="METHOD" expression="methodName()" defaultValue="" alwaysStopAt="false" />
+    <variable name="STACK" expression="" defaultValue="&quot;, new Exception(\&quot;This exception does not indicate a real problem, it's just to show a stacktrace\&quot;)&quot;`" alwaysStopAt="true" />
+    <variable name="LEVEL" expression="enum(&quot;warn&quot;, &quot;info&quot;, &quot;error&quot;, &quot;debug&quot;, &quot;trace&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="USER" expression="user()" defaultValue="" alwaysStopAt="false" />
+    <variable name="DATE" expression="date(&quot;MM/dd/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:MM&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="DEBUGGING" expression="" defaultValue="&quot;debugging &quot;" alwaysStopAt="false" />
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_DECLARATION" value="false" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_DECLARATION" value="false" />
+      <option name="JAVA_STRING" value="false" />
+    </context>
+  </template>
+  <template name="logvar_gs" value="Logger.$LEVEL$(&quot;//**** $USER$ $CLASS$:$LINE$ ($METHOD$) var $VARNAME$$TYPEOF$ =&gt; &quot; + $VAR$$STACK$)  // todo $USER$ $DATE$ $TIME$: Remove this $DEBUGGING$code$END$" description="Logs a variable's name, type and value" toReformat="true" toShortenFQNames="true">
+    <variable name="LEVEL" expression="enum(&quot;warn&quot;, &quot;info&quot;, &quot;error&quot;, &quot;debug&quot;, &quot;trace&quot;)" defaultValue="&quot;info&quot;" alwaysStopAt="true" />
+    <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="LINE" expression="lineNumber()" defaultValue="" alwaysStopAt="false" />
+    <variable name="METHOD" expression="methodName()" defaultValue="" alwaysStopAt="false" />
+    <variable name="TYPEOF" expression="groovyScript(&quot;': \&quot; + typeof ' + _1 + ' + \&quot;'&quot;, VAR)" defaultValue="" alwaysStopAt="true" />
+    <variable name="VARNAME" expression="VAR" defaultValue="" alwaysStopAt="false" />
+    <variable name="STACK" expression="" defaultValue="&quot;, new Exception(\&quot;This exception does not indicate a real problem, it's just to show a stacktrace\&quot;)&quot;" alwaysStopAt="true" />
+    <variable name="USER" expression="user()" defaultValue="" alwaysStopAt="false" />
+    <variable name="DATE" expression="date(&quot;MM/dd/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:MM&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="DEBUGGING" expression="" defaultValue="&quot;debugging &quot;" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_DECLARATION" value="false" />
+    </context>
+  </template>
+  <template name="logvar_java" value="gw.api.system.CCLoggerCategory.$LOGGER$.$LEVEL$(&quot;//**** $USER$ $CLASS$:$LINE$ ($METHOD$) var $TYPE$ $VARNAME$ =&gt; &quot; + $VAR$$STACK$);  // todo $USER$ $DATE$ $TIME$: Remove this $DEBUGGING$code$END$" description="Logs a variable's name, type and value" toReformat="true" toShortenFQNames="true">
+    <variable name="LOGGER" expression="complete()" defaultValue="&quot;APPLICATION&quot;" alwaysStopAt="true" />
+    <variable name="LEVEL" expression="enum(&quot;warn&quot;, &quot;info&quot;, &quot;info&quot;, &quot;debug&quot;, &quot;trace&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="USER" expression="user()" defaultValue="" alwaysStopAt="false" />
+    <variable name="CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="LINE" expression="lineNumber()" defaultValue="" alwaysStopAt="false" />
+    <variable name="METHOD" expression="methodName()" defaultValue="" alwaysStopAt="false" />
+    <variable name="VAR" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <variable name="TYPE" expression="typeOfVariable(VAR)" defaultValue="" alwaysStopAt="false" />
+    <variable name="VARNAME" expression="VAR" defaultValue="" alwaysStopAt="false" />
+    <variable name="STACK" expression="" defaultValue="&quot;, new Exception(\&quot;This exception does not indicate a real problem, it's just to show a stacktrace\&quot;)&quot;" alwaysStopAt="true" />
+    <variable name="DATE" expression="date(&quot;MM/dd/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:MM&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="DEBUGGING" expression="" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+    </context>
+  </template>
+  <template name="logvar_js" value="console.log(`//*** $USER$: $VAR$: ${typeof $VAR$} =&gt;`, $VAR$);  // todo $USER$ $DATE$ $TIME$: Remove this $DEBUGGING$code$END$" description="Logs a variable's name, type and value" toReformat="true" toShortenFQNames="true">
+    <variable name="USER" expression="user()" defaultValue="" alwaysStopAt="false" />
+    <variable name="VAR" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DATE" expression="date(&quot;MM/dd/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:mm&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="DEBUGGING" expression="" defaultValue="&quot;debugging &quot;" alwaysStopAt="true" />
+    <context>
+      <option name="CUCUMBER_FEATURE_FILE" value="false" />
+      <option name="GOSU_CODE" value="false" />
+      <option name="GROOVY" value="false" />
+      <option name="HTML" value="false" />
+      <option name="JAVA_CODE" value="false" />
+      <option name="JAVA_SCRIPT" value="true" />
+      <option name="JSON" value="false" />
+      <option name="OTHER" value="true" />
+      <option name="SHELL_SCRIPT" value="false" />
+      <option name="XML" value="false" />
+    </context>
+  </template>
+  <template name="testDelegateOverride_gs" value="@gw.lang.Deprecated(&quot;Make sure not to check this in, it's only useful for manual debugging&quot;) // todo $USER$ $DATE$ $TIME$: Remove this debugging method&#10;function testDelegateOverride() {&#10;  $DELEGATE_NAME$.test$TEST_NAME$$END$&#10;}&#10;" description="A test method shell to launch individual tests on a delegate" toReformat="true" toShortenFQNames="true">
+    <variable name="USER" expression="user()" defaultValue="" alwaysStopAt="false" />
+    <variable name="DATE" expression="date(&quot;MM/DD/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:MM&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="DELEGATE_NAME" expression="" defaultValue="&quot;DelegateImpl&quot;" alwaysStopAt="true" />
+    <variable name="TEST_NAME" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_EXPRESSION" value="false" />
+      <option name="GOSU_STATEMENT" value="false" />
+    </context>
+  </template>
+  <template name="timestamp" value="$DATE$_$TIME$$END$" description="insert the current timestamp" toReformat="true" toShortenFQNames="true">
+    <variable name="DATE" expression="date(&quot;MM/dd/YY&quot;)" defaultValue="" alwaysStopAt="false" />
+    <variable name="TIME" expression="time(&quot;HH:MM:ss.SSS&quot;)" defaultValue="" alwaysStopAt="false" />
+    <context>
+      <option name="OTHER" value="true" />
+    </context>
+  </template>
+  <template name="var_gs" value="var _$VAR$: $TYPE$ as $READONLY$$ACCESSOR$&#10;" description="Define an instance variable" toReformat="true" toShortenFQNames="true">
+    <variable name="TYPE" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="VAR" expression="decapitalize(TYPE)" defaultValue="" alwaysStopAt="true" />
+    <variable name="READONLY" expression="" defaultValue="&quot;readonly &quot;" alwaysStopAt="true" />
+    <variable name="ACCESSOR" expression="capitalize(VAR)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_EXPRESSION" value="false" />
+      <option name="GOSU_STATEMENT" value="false" />
+    </context>
+  </template>
+  <template name="waypoint_js" value="require('/Users/pschaaf/src/guidewire/debug').logWaypoint($USERMESSAGE$); // todo $USER$ Remove this debugging code&#10;$END$&#10;" description="Logs an expression" toReformat="false" toShortenFQNames="true">
+    <variable name="USERMESSAGE" expression="&quot;message&quot;" defaultValue="" alwaysStopAt="true" />
+    <variable name="USER" expression="" defaultValue="user()" alwaysStopAt="false" />
+    <context>
+      <option name="JAVA_SCRIPT" value="true" />
+    </context>
+  </template>
+  <template name="builderParam" value="var _$VAR$: $TYPE$ as readonly $ACCESSOR$&#10;&#10;function with$ACCESSOR$($VAR$ : $TYPE$): $CLASS$ $CLASS2$ $CLASS3$ {&#10;  _$VAR$ = $VAR$&#10;  return this&#10;}" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="TYPE" expression="" defaultValue="&quot;DATA_TYPE&quot;" alwaysStopAt="true" />
+    <variable name="VAR" expression="decapitalize(TYPE)" defaultValue="" alwaysStopAt="true" />
+    <variable name="ACCESSOR" expression="capitalize(VAR)" defaultValue="" alwaysStopAt="true" />
+    <variable name="CLASS" expression="className()" defaultValue="" alwaysStopAt="true" />
+    <variable name="CLASS2" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+    <variable name="CLASS3" expression="expectedType()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="test_gs" value="function test$NAME$() {&#10;  $CODE$&#10;}&#10;&#10;$END$" description="GUnit test method skeleton" toReformat="true" toShortenFQNames="true">
+    <variable name="NAME" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="CODE" expression="" defaultValue="&quot;fail('This test has not yet been completed') // todo pschaaf&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="true" />
+      <option name="GOSU_EXPRESSION" value="false" />
+      <option name="GOSU_STATEMENT" value="false" />
+    </context>
+  </template>
+  <template name="fail" value="fail(&quot;$MESSAGE$&quot;); // todo pschaaf" description="Insert a not completed &quot;failure&quot; message" toReformat="false" toShortenFQNames="true">
+    <variable name="MESSAGE" expression="" defaultValue="&quot;This test has not yet been completed&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_CODE" value="false" />
+      <option name="GOSU_DECLARATION" value="true" />
+      <option name="GOSU_EXPRESSION" value="true" />
+      <option name="GOSU_STATEMENT" value="true" />
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="sleep" value="try {&#10;  Thread.sleep($TIME$); // todo pschaaf: $COMMENT$&#10;} catch (InterruptedException e) {&#10;  $CATCH$;&#10;}&#10;" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="TIME" expression="" defaultValue="&quot;1000&quot;" alwaysStopAt="true" />
+    <variable name="COMMENT" expression="" defaultValue="&quot;remove this&quot;" alwaysStopAt="true" />
+    <variable name="CATCH" expression="" defaultValue="&quot;e.printStackTrace()&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_DECLARATION" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_STRING" value="false" />
+    </context>
+  </template>
+  <template name="optional" value="Optional.ofNullable($SELECTION$)" description="Surround with Optional.ofNullable()" toReformat="false" toShortenFQNames="true">
+    <context>
+      <option name="COMPLETION" value="false" />
+      <option name="GOSU_EXPRESSION" value="true" />
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_COMMENT" value="false" />
+      <option name="JAVA_CONSUMER" value="false" />
+      <option name="JAVA_STATEMENT" value="false" />
+      <option name="JAVA_STRING" value="false" />
+    </context>
+  </template>
+  <template name="updateSuccessfully" value="&#10;  function updateSuccessfully() : $PASS_DEST$ {&#10;    return ValidationMessageHandler.updateSuccessfully()&#10;  }&#10;&#10;  function updateUnsuccessfully() : $FAIL_DEST$ {&#10;    return ValidationMessageHandler.updateUnsuccessfully()&#10;  }&#10;&#10;  property get ValidationMessageHandler() : UpdatableValidationMessageHandler&lt;$START$, $DEST$&gt; {&#10;    return new (this)&#10;  }&#10;" description="" toReformat="false" toShortenFQNames="true">
+    <variable name="FAIL_DEST" expression="regularExpression(className(), &quot;_?Enhancement&quot;, &quot;&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="PASS_DEST" expression="" defaultValue="&quot;PCFLocation&quot;" alwaysStopAt="true" />
+    <variable name="START" expression="" defaultValue="$FAIL_DEST$" alwaysStopAt="true" />
+    <variable name="DEST" expression="" defaultValue="$START_DEST$" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="singleton" value="$ACCESSMODIFIER$ static final $CLASS$ $INSTANCE$ = new $CLASS$($ARGS$);&#10;&#10;$GETTERACCESSMODIFIER$ static $CLASS$ getInstance() {&#10;  return $INSTANCE$;&#10;}&#10;$END$" description="A singleton static variable" toReformat="true" toShortenFQNames="true">
+    <variable name="ACCESSMODIFIER" expression="enum(&quot;private&quot;, &quot;protected&quot;, &quot;public&quot;)" defaultValue="&quot;private&quot;" alwaysStopAt="true" />
+    <variable name="CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="INSTANCE" expression="" defaultValue="&quot;INSTANCE&quot;" alwaysStopAt="true" />
+    <variable name="ARGS" expression="completeSmart()" defaultValue="" alwaysStopAt="true" />
+    <variable name="GETTERACCESSMODIFIER" expression="enum(&quot;protected&quot;, &quot;public&quot;)" defaultValue="&quot;protected&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_CODE" value="true" />
+      <option name="JAVA_CONSUMER" value="false" />
+      <option name="JAVA_ELSE_PLACE" value="false" />
+      <option name="JAVA_EXPRESSION" value="false" />
+      <option name="JAVA_STRING" value="false" />
+    </context>
+  </template>
+  <template name="deprecate method" value="@deprecated Use {@link $END$} instead" description="" toReformat="true" toShortenFQNames="true">
+    <context>
+      <option name="JAVA_COMMENT" value="true" />
+    </context>
+  </template>
+  <template name="assertJava" value="assertThat($EXPR$)&#10;  .$AS$(&quot;$DESCRIPTION$&quot;)&#10;  .$METHOD$;&#10;$END$" description="V3 Test Assertion" toReformat="true" toShortenFQNames="true">
+    <variable name="EXPR" expression="" defaultValue="" alwaysStopAt="true" />
+    <variable name="DESCRIPTION" expression="EXPR" defaultValue="" alwaysStopAt="true" />
+    <variable name="METHOD" expression="complete()" defaultValue="&quot;isEqualTo&quot;" alwaysStopAt="true" />
+    <variable name="AS" expression="complete()" defaultValue="&quot;as&quot;" alwaysStopAt="true" />
+    <context>
+      <option name="GOSU_EXPRESSION" value="true" />
+      <option name="GOSU_STATEMENT" value="true" />
+      <option name="JAVA_STATEMENT" value="true" />
+    </context>
+  </template>
+  <template name="withMethod" value="public $BUILDER_CLASS$ with$TARGET_FIELD_NAME$($TARGET_FIELD_TYPE$ $PARAM$) {&#10;  return with$TARGET_FIELD_NAME$(wrapBean($PARAM$));&#10;}&#10;&#10;public $BUILDER_CLASS$ with$TARGET_FIELD_NAME$(ValueGenerator&lt;? extends $TARGET_FIELD_TYPE$&gt; $PARAM_GENERATOR$) {&#10;  $BUILDER_ADD$($TARGET_CLASS$.$TARGET_PROP$.get(), $PARAM_GENERATOR$);&#10;// use either the line above or the commented lines below&#10;//  addPopulator(new AbstractBeanPopulator&lt;&gt;($PARAM_GENERATOR$) {&#10;//    @Override protected void execute($BUILDER_CLASS$ bean, Object[] vals) {&#10;//      $TARGET_FIELD_TYPE$ $PARAM$ = ($TARGET_FIELD_TYPE$) vals[0];&#10;//      bean.set$TARGET_FIELD_NAME$($PARAM$);&#10;//    }&#10;//  });&#10;  return thisAsB();&#10;}" description="" toReformat="true" toShortenFQNames="true">
+    <variable name="BUILDER_CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="TARGET_FIELD_TYPE" expression="camelCase(regularExpression(TARGET_PROP, &quot;_PROP&quot;, &quot;&quot;))" defaultValue="" alwaysStopAt="true" />
+    <variable name="TARGET_FIELD_NAME" expression="TARGET_FIELD_TYPE" defaultValue="" alwaysStopAt="true" />
+    <variable name="PARAM" expression="decapitalize(TARGET_FIELD_NAME)" defaultValue="" alwaysStopAt="true" />
+    <variable name="PARAM_GENERATOR" expression="concat(PARAM, &quot;Generator&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="BUILDER_ADD" expression="enum(&quot;set&quot;, &quot;addArrayElement&quot;)" defaultValue="" alwaysStopAt="true" />
+    <variable name="TARGET_CLASS" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <variable name="TARGET_PROP" expression="complete()" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
+  <template name="withUsingPopulator" value="public $BUILDER_CLASS$ with$TARGET_FIELD_NAME$($TARGET_FIELD_TYPE$ $PARAM$) {&#10;  return with$TARGET_FIELD_NAME$(wrapBean($PARAM$));&#10;}&#10;&#10;public $BUILDER_CLASS$ with$TARGET_FIELD_NAME$(ValueGenerator&lt;? extends $TARGET_FIELD_TYPE$&gt; $PARAM_GENERATOR$) {&#10;  addPopulator(new AbstractBeanPopulator&lt;&gt;($PARAM_GENERATOR$) {&#10;    @Override protected void execute($BUILDER_CLASS$ bean, Object[] vals) {&#10;      $TARGET_FIELD_TYPE$ $PARAM$ = ($TARGET_FIELD_TYPE$) vals[0];&#10;      bean.set$TARGET_FIELD_NAME$($PARAM$);&#10;    }&#10;  });&#10;  return thisAsB();&#10;}" description="" toReformat="true" toShortenFQNames="true">
+    <variable name="BUILDER_CLASS" expression="className()" defaultValue="" alwaysStopAt="false" />
+    <variable name="TARGET_FIELD_TYPE" expression="camelCase(regularExpression(TARGET_PROP, &quot;_PROP&quot;, &quot;&quot;))" defaultValue="" alwaysStopAt="true" />
+    <variable name="TARGET_FIELD_NAME" expression="TARGET_FIELD_TYPE" defaultValue="" alwaysStopAt="true" />
+    <variable name="PARAM" expression="decapitalize(TARGET_FIELD_TYPE)" defaultValue="" alwaysStopAt="true" />
+    <variable name="PARAM_GENERATOR" expression="concat(PARAM, &quot;Generator&quot;)" defaultValue="" alwaysStopAt="true" />
+    <context>
+      <option name="JAVA_DECLARATION" value="true" />
+    </context>
+  </template>
+</templateSet>

@@ -1,0 +1,33 @@
+    <component name="IssueNavigationConfiguration">
+        <option name="links">
+            <list>
+                <IssueNavigationLink>
+                    <option name="issueRegexp" value="\bhttpAuth/app/rest/\S+"/>
+                    <option name="linkRegexp" value="https://gwre-devexp-ci-production-devci.gwre-devops.net/$0"/>
+                </IssueNavigationLink>
+                <IssueNavigationLink>
+                    <option name="issueRegexp"
+                            value="\b(?i)((casp|ccru|cstp|is(bc|cc|cm|pc|pl|spc|studio)|intf|uxd)-\d+)\b"/>
+                    <option name="linkRegexp" value="https://guidewirejira.atlassian.net/browse/$1"/>
+                </IssueNavigationLink>
+                <IssueNavigationLink>
+                    <option name="issueRegexp" value="\b(\d{3}-\d{2}-\d{6})\b"/>
+                    <option name="linkRegexp"
+                            value="http://localhost:8090/cc/ClaimSummaryLink.do?claimNumber=$1&amp;loginPassword=gw&amp;loginName=su"/>
+                </IssueNavigationLink>
+                <IssueNavigationLink>
+                    <option name="issueRegexp" value="\b(?i)((clm)-\d+)\b"/>
+                    <option name="linkRegexp" value="https://rally1.rallydev.com/slm/rally.sp#/search?keywords=$1"/>
+                </IssueNavigationLink>
+                <IssueNavigationLink>
+                    <option name="issueRegexp" value="\b(?i)(cc1)-(\d+)\b"/>
+                    <option name="linkRegexp" value="https://guidewire.aha.io/features/$1-$2"/>
+                </IssueNavigationLink>
+                <IssueNavigationLink>
+                    <option name="issueRegexp"
+                            value="\b(?i)((ab|apollo|bc|cc|cm|ctc|devccperf|doc|gl|ide|pc|pl|rd|rn|sam|std|suite|ux)-\d+)\b"/>
+                    <option name="linkRegexp" value="https://gwjira-sandbox-633.atlassian.net/browse/$1"/>
+                </IssueNavigationLink>
+            </list>
+        </option>
+    </component>

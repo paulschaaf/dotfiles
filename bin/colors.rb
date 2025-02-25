@@ -85,6 +85,9 @@ STRING
   print rainbows
   print rainbows.gsub(/\e/, '\\e')
 
+elsif ARGV[0] == "--lost"
+  printf "\n\e[92m>: 4 8 15 16 23 42\n"
+
 elsif ARGV[0] == "--24"
   # truecolor
   [BG].each { |ground|

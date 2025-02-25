@@ -5,6 +5,8 @@ namedVars=()
 
 autoload -Uz colorLabel
 
+# shellcheck disable=SC1036 # '(' is invalid here
+# shellcheck disable=SC1088 # Parsing stopped here
 function ⭑⭑⭑() {
   echo
   pastel -f paint -n white --on teal "${@}"
@@ -15,13 +17,16 @@ function ⭑⭑⭑() {
 [[ "$1" = "--all" ]] && shift && namedVars+=(${allVars[@]})
 
 # if it's a customer build
-if [[ -f project-version.properties ]]; then
+if [[ -f product.properties ]]; then
   eval "$(sed -En '
-    s/^product.code/GW_APPCODE/p;
-    s/^product.name(.*)/GW_APPNAME\1 cust/p;
-    s/^project-version/GW_PL_VERSION/p;
-    s/^studio-version/GW_STUDIO_VERSION/p
-  ' project-version.properties modules/configuration/product.properties | sed '/./ { s/^/export /g; }')"
+    s/^product.name(.*)/export GW_APPNAME\1 cust/p;
+    s/^product.code/export GW_APPCODE/p;
+    s/^product\./export product_/p
+  ' product.properties)"
+  set | grep product
+
+  (($#GW_VERSION)) || export GW_VERSION=${product_majorversion}.${product_minorversion}.${product_patchversion}${product_patchsuffix}
+  (($#GW_PL_VERSION)) || export GW_PL_VERSION=${GW_VERSION}
 
   if ((! $#GW_PORT)); then
       case ${GW_APPCODE} in
@@ -63,6 +68,7 @@ lastDigits=$(echo ${PWD##$HOME/gw/} | sed -E 's/[^0-9]//g')
 unset lastDigits
 
 if (($#GW_PL_VERSION)); then
+  # see https://guidewireconfluence.atlassian.net/wiki/spaces/DEV/pages/796889885/Ski+Release+Name+Decoder
   case ${GW_PL_VERSION} in
   #  4.*)
   #    export GW_PLATFORM=athena
