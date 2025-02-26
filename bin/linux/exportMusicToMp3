@@ -1,8 +1,13 @@
 #!/bin/zsh
 
-srcDir=~/Music
-destDir=~/soundKonverter/Music
+srcRoot=~/Music
+destRoot=~/soundKonverter/Music
 
+alias TEST_MODE=false
+alias TRACE=false
+
+######################################################
+# process command line arguments
 while [ -n "$*" ]; do
   case $1 in
     --debug)#
@@ -13,6 +18,42 @@ while [ -n "$*" ]; do
       # shellcheck disable=SC2034 # unused
       _dry_run='echo '
       ;;
+    --destRoot)
+      destRoot="$2"
+      shift
+      ;;
+    --srcRoot)
+      srcRoot="$2"
+      shift
+      ;;
+    --setx)
+      set -x
+      ;;
+    --test)
+      cd ~/tmp || exit 1
+      srcRoot=${PWD}/src
+      destRoot=${PWD}/dest
+      test=(${srcRoot} ${destRoot})
+
+      mkdir -p {${srcRoot},${destRoot}}/{Blues,Rock} ${destRoot}/Jazz
+
+      touch {${srcRoot},${destRoot}}/Blues/identical\[file\].flac
+
+      touch  ${srcRoot}/Rock/existing\[file\].flac
+      touch ${destRoot}/Rock/existing\[file\].mp3
+
+      touch ${srcRoot}/{Blues,Rock}/added\(file\).flac
+      touch ${destRoot}/{Jazz,Rock}/orphaned\ -\ \'file\'\"name\".mp3
+
+      alias TEST_MODE=true
+      ;;
+    --trace)
+      alias TRACE=true
+      ;;
+    --*)
+      echo Illegal switch "$1"!
+      exit 1
+      ;;
     *)
       break
       ;;
@@ -20,35 +61,78 @@ while [ -n "$*" ]; do
   shift
 done
 
-
-function convertToMp3() {
-  src=${1}
-  destDir="${dest}/${src%.flac}.dest"
-
-  typeset src destDir
+function log() {
+  echo
+  level=$1; shift
+  case $level in
+    1)
+      echo -n "\e[46m"
+      ;;
+    2)
+      echo -n "   \e[96m"
+      ;;
+    3)
+      echo -n "      \e[36m"
+      ;;
+    *)
+      echo -n "---"
+      ;;
+    esac
+  echo "$*\e[0m"
 }
 
-# Convert FLAC to MP3 if missing
-cd ${srcDir} || exit 1
+function showTree() {
+  echo "\n---------"
+  tree -n --noreport ${srcRoot} ${destRoot}
+  echo
+}
+
+######################################################
+log 1 Convert FLAC to MP3 if missing
+cd ${srcRoot} || exit 1
 #fd --type file --extension flac --exec convertToMp3
-#for src in **/*.flac; do
-#    dest="${destDir}/${src%.flac}.mp3"
-##    typeset src dest
-#    if [[ -f "${dest}" ]]; then
-##      echo ${dest} is up to date
-#    else
-#      echo "Converting $src to $dest"
-#      (($#_dry_run)) || ffmpeg -i "$src" -q:a 2 "$dest"
-#    fi
-#done
+for src in **/*.flac; do
+    TRACE && showTree
+    dest="${destRoot}/${src%.flac}.mp3"
+#    TRACE && typeset src dest
+    if [[ -n $(ls "${dest%.*}".*) ]]; then
+      TRACE && log 2 "Already converted \e[4m'$src'\e[24m"
+    else
+      log 2 "Converting \e[4m'$src'\e[24m"
+      cmd="ffmpeg -i '${(q)src}' -q:a 2 '${(q)dest}'"
 
-# Delete orphaned MP3s (no corresponding FLAC)
+     (($#_dry_run)) && echo $cmd
 
-cd ${destDir} || exit 1
-for dest in **/*.mp3; do
-    src="${srcDir}/${dest%.mp3}.*"
-    if [[ ! -f "${src}" ]]; then
-      echo "Deleting orphaned MP3: ${destDir}/${(q)dest}"
-#        rm "$dest"
+     # shameful hack to silently swap the command when in test mode
+     TEST_MODE && cmd="cp '${src}' '${dest}'" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
+
+     (($#_dry_run)) || eval $cmd
     fi
 done
+
+######################################################
+log 1 'Delete orphaned MP3s (no corresponding file in src)'
+cd ${destRoot} || exit 1
+
+for dest in **/*.mp3; do
+    TRACE && showTree
+    srcFileSpec=${srcRoot}/${dest%.*}
+#    src=$(fd --max-depth 1 "^${srcFileSpec##*/}" ${srcFileSpec%/*})
+#    TRACE && typeset srcFileSpec src
+    if [[ -n $(ls "${srcFileSpec}".*) ]]; then
+      TRACE && log 2 "Keeping \e[4m'$(basename ${dest})'\e[24m"
+    else
+      log 2 "Deleting \e[4m'${(q)dest}'\e[24m"
+      eval $_dry_run rm "${(q)dest}"
+    fi
+done
+
+log 2 "Removing empty directories from \e[4m'${destRoot}'\e[24m"
+eval $_dry_run find -type d -empty -exec rmdir -pv {} +
+
+set +x
+if TEST_MODE; then
+  log 1 Cleaning up test files
+  find ${test} -type f -empty -exec rm {} +
+  find ${test} -type d -empty -exec rmdir -p {} + &>/dev/null
+fi
