@@ -1,7 +1,7 @@
 #!/bin/zsh
 
-srcRoot=~/Music
-destRoot=~/soundKonverter/Music
+srcRoot=~/data/Music
+destRoot=~/data/soundKonverter/Music
 
 alias TEST_MODE=false
 alias TRACE=false
@@ -39,11 +39,11 @@ while [ -n "$*" ]; do
 
       touch {${srcRoot},${destRoot}}/Blues/identical\[file\].flac
 
-      touch  ${srcRoot}/Rock/existing\[file\].flac
+      touch  ${srcRoot}/Rock/existing\[file\]\'.flac
       touch ${destRoot}/Rock/existing\[file\].mp3
 
       touch ${srcRoot}/{Blues,Rock}/added\(file\).flac
-      touch ${destRoot}/{Jazz,Rock}/orphaned\ -\ \'file\'\"name\".mp3
+      touch ${destRoot}/{Jazz,Rock}/orphaned\ -\ \'file\"name.mp3
 
       alias TEST_MODE=true
       ;;
@@ -99,14 +99,33 @@ for src in **/*.flac; do
       TRACE && log 2 "Already converted \e[4m'$src'\e[24m"
     else
       log 2 "Converting \e[4m'$src'\e[24m"
-      cmd="ffmpeg -i '${(q)src}' -q:a 2 '${(q)dest}'"
+      destDir=$(dirname ${dest})
+      cmd="mkdir -p \"${destDir}\"; ffmpeg -i \"${src}\" -q:a 2 \"${dest}\""
 
-     (($#_dry_run)) && echo $cmd
+      echo $cmd
 
-     # shameful hack to silently swap the command when in test mode
-     TEST_MODE && cmd="cp '${src}' '${dest}'" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
+      # shameful hack to silently swap the command when in test mode
+      TEST_MODE && cmd="cp '${src}' '${dest}'" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
 
-     (($#_dry_run)) || eval $cmd
+      (($#_dry_run)) || eval $cmd
+    fi
+done
+
+######################################################
+log 1 Copy M4A, M4P, MP3, and MP4 files if missing
+for src in **/*.{m4a,m4p,mp3,mp4}; do
+    TRACE && showTree
+    dest="${destRoot}/${src}"
+    if [[ -f "${dest}" ]]; then
+      TRACE && log 2 "Already copied \e[4m'$src'\e[24m"
+    else
+      log 2 "Copying \e[4m'$src'\e[24m"
+      destDir=$(dirname ${dest})
+      cmd="mkdir -p \"${destDir}\"; cp \"${src}\" \"${dest}\""
+
+      echo $cmd
+
+      (($#_dry_run)) || eval $cmd
     fi
 done
 
@@ -122,17 +141,28 @@ for dest in **/*.mp3; do
     if [[ -n $(ls "${srcFileSpec}".*) ]]; then
       TRACE && log 2 "Keeping \e[4m'$(basename ${dest})'\e[24m"
     else
-      log 2 "Deleting \e[4m'${(q)dest}'\e[24m"
-      eval $_dry_run rm "${(q)dest}"
+      log 2 "Deleting \e[4m'${destRoot}/${dest}'\e[24m"
+      eval $_dry_run rm "${destRoot}/${dest}"
     fi
 done
 
-log 2 "Removing empty directories from \e[4m'${destRoot}'\e[24m"
-eval $_dry_run find -type d -empty -exec rmdir -pv {} +
+TRACE && showTree
+
+######################################################
+log 1 "Removing empty directories from \e[4m'file://${destRoot}'\e[24m"
+
+for dir in ${srcRoot} ${destRoot}; do
+  log 2 "... from \e[4m'${dir}'\e[24m"
+  eval $_dry_run find ${dir} -type d -empty -exec rmdir -pv {} + &>/dev/null
+done
 
 set +x
+TRACE && showTree
 if TEST_MODE; then
-  log 1 Cleaning up test files
+  log 1 Cleaning up tests
+  log 2 Removing test files
   find ${test} -type f -empty -exec rm {} +
+  log 2 Removing test directories
   find ${test} -type d -empty -exec rmdir -p {} + &>/dev/null
+  true ## don't propagate any error from the previous command
 fi

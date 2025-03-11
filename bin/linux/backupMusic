@@ -1,4 +1,87 @@
 #!/usr/bin/zsh
 
-echo '# to take/update a backup'
-echo 'nice rsync --recursive --safe-links --perms --times --owner --verbose --update --delete --dry-run ~/Music/ /run/media/pschaaf/Seagate\ 1TB/Music'
+srcRoot=~/data/Music
+destRoot='/run/media/pschaaf/Seagate 1TB/backup/Music'
+
+alias TEST_MODE=false
+alias TRACE=false
+
+######################################################
+# process command line arguments
+while [ -n "$*" ]; do
+  case $1 in
+    --debug)#
+      # shellcheck disable=SC2034
+      debug=true
+      ;;
+    --dry-run)# Print the commands that will be run, but do not actually run them
+      # shellcheck disable=SC2034 # unused
+      _dry_run='echo '
+      ;;
+    --destRoot)
+      destRoot="$2"
+      shift
+      ;;
+    --srcRoot)
+      srcRoot="$2"
+      shift
+      ;;
+    --setx)
+      set -x
+      ;;
+#    --test)
+#      cd ~/tmp || exit 1
+#      srcRoot=${PWD}/src
+#      destRoot=${PWD}/dest
+#      test=(${srcRoot} ${destRoot})
+#
+#      mkdir -p {${srcRoot},${destRoot}}/{Blues,Rock} ${destRoot}/Jazz
+#
+#      touch {${srcRoot},${destRoot}}/Blues/identical\[file\].flac
+#
+#      touch  ${srcRoot}/Rock/existing\[file\]\'.flac
+#      touch ${destRoot}/Rock/existing\[file\].mp3
+#
+#      touch ${srcRoot}/{Blues,Rock}/added\(file\).flac
+#      touch ${destRoot}/{Jazz,Rock}/orphaned\ -\ \'file\"name.mp3
+#
+#      alias TEST_MODE=true
+#      ;;
+    --trace)
+      alias TRACE=true
+      ;;
+    --*)
+      echo Illegal switch "$1"!
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
+
+function log() {
+  echo
+  level=$1; shift
+  case $level in
+    1)
+      echo -n "\e[46m"
+      ;;
+    2)
+      echo -n "   \e[96m"
+      ;;
+    3)
+      echo -n "      \e[36m"
+      ;;
+    *)
+      echo -n "---"
+      ;;
+    esac
+  echo "$*\e[0m"
+}
+
+cmd="rsync --recursive --safe-links --perms --times --owner --verbose --update --delete${_dry_run:+ --dry-run} ${(q)srcRoot}/ ${(q)destRoot}"
+echo $cmd
+
+eval $cmd
