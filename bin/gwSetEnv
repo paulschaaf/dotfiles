@@ -138,6 +138,6 @@ if (($#GW_PL_VERSION)); then
   typeset -p apiBreakTest_fix
 
   export apiBreakTest_dump_dir=${TEMP}/gwdumpCache
-  export apiBreakTest_localDumpPath=${HOME}/gw/dumps
+  export apiBreakTest_localDumpPath=${HOME}/gw/apiBreakTest_dumps
   echoDirNameIn --allow-empty apiBreakTest_dump_dir apiBreakTest_localDumpPath
 fi

@@ -233,6 +233,8 @@ unset autojump
 
 inMacOS && source /Users/pschaaf/.config/broot/launcher/bash/br
 
+alias gwcd='cd $(gwls)'
+
 autoload -Uz colorLabel
 
 inMacOS \

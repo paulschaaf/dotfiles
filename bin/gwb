@@ -60,6 +60,8 @@ done
 
 # Set up environment
 source $HOME/bin/gwSetEnv
+defaultRunPort=$(sed -n 's/jettyPort=//p' gradle.properties)
+defaultDebugPort=$((defaultRunPort + 10))
 
 if ((! $#GW_PL_VERSION)); then
   printf '\e[1;48;5;196mCould not determine Guidewire platform version!\e[0m' >&2
@@ -226,8 +228,6 @@ runTask() {
   settitle
 }
 
-#${_dry_run} konsoleprofile colors=$GW_APPCODE\;icon=${passIcon}\;tabTitle=$GW_TITLE
-
 # Process arguments
 while [ -n "$*" ]; do
   unset ignoreNice
@@ -295,8 +295,11 @@ while [ -n "$*" ]; do
       [[ $GW_PL_NUM -lt 9 ]] && task=dropdb
       taskFailIcon=$failIcon
       ;;
-    fixgwb)# remove the erroneous spaces from the OOB product gwb script
+    fixgwb)# Remove the erroneous spaces from the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
+      ;;
+    fixRunConfigs)# Replaces the literal port numbers with env var references in each of the .idea/runConfigurations
+      fullTask="perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml"
       ;;
     fixPuml)
       if (( $#value == 0 )); then
@@ -352,8 +355,8 @@ while [ -n "$*" ]; do
       spawn=true
       fullTask="${IDEA_HOME}/bin/idelsa.sh"
       ;;
-    killH2)# Kill the H2 server on port 8082
-      export port=8082
+    killH2)# Kill the H2 server on port $((defaultRunPort + 2))
+      export port=$((defaultRunPort + 2))
       fullTask='process=$(lsof -i tcp:'$port' -t) && /bin/kill -9 ${process} 2> /dev/null && echo Killed process $process || (echo Port '$port' was not in use && exit 1)'
       ;;
     killHttp)# Kill the simple http server in the resources directory
@@ -389,6 +392,9 @@ while [ -n "$*" ]; do
         catPumlHeader > ${value}.puml
         fullTask="ls ${value}.puml"
       fi
+      ;;
+    opendd)# Open the data dictionary
+      fullTask='open build/cc/dictionary/data/index.html'
       ;;
     packageCustomerDist)# Generate a customer build zip of this code
       ;;

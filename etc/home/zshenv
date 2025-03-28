@@ -41,13 +41,11 @@ zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~pschaaf/etc/rc/zshenv_*
 # ========
 # ======== Paths
 export JAVA_ROOT=/usr/lib/jvm
-export JAVA11_HOME=${JAVA_ROOT}/java-11-openjdk
 CLASSPATH=${CLASSPATH:=.}
 
 if [ "${UNAME}" = "Darwin" ]; then
    export JAVA_ROOT=/Library/Java/JavaVirtualMachines
-   export JAVA11_HOME=${JAVA_ROOT}/amazon-corretto-11.jdk/Contents/Home
-   export JAVA_HOME=${JAVA11_HOME}
+   export JAVA_HOME=${JAVA_ROOT}/amazon-corretto-23.jdk/Contents/Home
 else
   export JAVA_HOME=/usr/lib/jvm/default
 fi

@@ -1,0 +1,23 @@
+#!/bin/zsh
+
+opts=()
+for dir in ~/gw/*; do
+  if [[ -d ${dir}/.git ]]; then
+    pushd ${dir} || exit 1
+
+#    echo -n "${PWD//$HOME/~} -> "; git rev-parse --abbrev-ref HEAD
+    title=${GW_TITLE:-${PWD//${HOME}/~}}
+#    source gwenv
+#    typeset -p title
+    opt=$(printf "%-25s -> %s\n" "${PWD//${HOME}/~}" $(git rev-parse --abbrev-ref HEAD))
+    opts+=(${opt})
+    popd || exit 1
+  fi
+done
+
+select opt in ${opts}; do
+#  echo you chose ${opt}
+  dir=$(echo ${opt} | sed 's/ *-\>.*$//')
+  echo ${dir//\~/$HOME}
+  break
+done

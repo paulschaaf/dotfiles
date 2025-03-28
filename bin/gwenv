@@ -221,9 +221,16 @@ case ${GW_PLATFORM} in
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
-  Las\ Leñas|Mammoth|Niseko|Olos)
+  Las\ Leñas|Mammoth)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 CE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
+    export GW_DB_DIR=./tmp
+    [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
+    ;;
+    # if you add a new version here make sure to set the required environment above
+  Niseko|Olos)
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 CE.app/Contents'
+    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
