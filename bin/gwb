@@ -115,7 +115,7 @@ package entity #wheat {}
 HERE
 }
 
-resourcesDir=${PWD/\~/$HOME}/app-cc/cc-run/build/idea/webapp
+resourcesDir=${PWD/\~/$HOME}/app-${GW_APPCODE}/${GW_APPCODE}-run/build/idea/webapp
 ssh_socket=~/tmp/cc-fwd-socket
 if [[ "$UNAME" = "Darwin" ]]; then
   seven_zip=7zz
@@ -277,7 +277,7 @@ while [ -n "$*" ]; do
     clean)# Deletes the build directory
       ;;
     cleanIdea)# Deletes the Studio project
-#      [[ $GW_PL_NUM -lt 9 ]] && fullTask="rm -rf app-cc/cc-studio-run/db"
+      #[[ $GW_PL_NUM -lt 9 ]] && fullTask="rm -rf app-${GW_APPCODE}/${GW_APPCODE}-studio-run/db"
       taskFailIcon=$failIcon
       ;;
     cleanNuke)# git clean -dxf -- remove untracked directories, files, and ignores
@@ -295,13 +295,17 @@ while [ -n "$*" ]; do
       [[ $GW_PL_NUM -lt 9 ]] && task=dropdb
       taskFailIcon=$failIcon
       ;;
+    editDisplayKey)# Edit display.properties in a plain (non-studio) IntelliJ Idea
+      spawn=true
+      fullTask="idea app-${GW_APPCODE}/${GW_APPCODE}/config/locale/display.properties"
+      ;;
     fixgwb)# Remove the erroneous spaces from the OOB product gwb script
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
     fixRunConfigs)# Replaces the literal port numbers with env var references in each of the .idea/runConfigurations
       fullTask="perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml"
       ;;
-    fixPuml)
+    fixPuml)# Remove the cruft (internal classes, DYNPROPs, Bean-level properties, etc. from the file
       if (( $#value == 0 )); then
         fullTask="echo '$task' requires a file name argument\! && exit 1"
       else
@@ -329,9 +333,9 @@ while [ -n "$*" ]; do
       ;;
     genPcfXsd)#
       ;;
-    genSystemData)# Compiled from system_data.xml -- for pre-Mammoth builds
+    genSystemData)# Compile files from system_data.xml -- for pre-Mammoth builds
       ;;
-    genTypeInfo)# OBSOLETE Generate .gti files
+    genTypeInfo)# OBSOLETE as of Mammoth -- Generate .gti files
       ;;
     genWsdl)#
       ;;

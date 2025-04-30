@@ -1,23 +1,61 @@
 #!/bin/zsh
 
-opts=()
+unset choose debug setx
+
+while [[ -n "$*" ]]; do
+  case $1 in
+    --debug)#
+      # shellcheck disable=SC2034
+      debug=true
+      ;;
+    --choose)# prompt the user to select one
+      # add this to .zshrc: alias gwcd='cd "$(gwls --choose)"'
+      choose=true
+      ;;
+    --setx)# turn on tracing
+      setx=true
+      ;;
+    *)
+      echo Illegal argument: "$1"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+repos=()
+sentinel='0'
+formatStr="%-2s %-90s %-18s %s"
+
+# display column headers on stderr so they don't get piped to the next command
+(($#choose)) && echo -n '#  ' >&2 # header for the number column when the list is displayed using 'select'
+printf "${formatStr}\n" '  ' 'Branch' 'Version' 'Dir' >&2
+
+(($#setx)) && set -x
+
 for dir in ~/gw/*; do
   if [[ -d ${dir}/.git ]]; then
     pushd ${dir} || exit 1
 
-#    echo -n "${PWD//$HOME/~} -> "; git rev-parse --abbrev-ref HEAD
-    title=${GW_TITLE:-${PWD//${HOME}/~}}
-#    source gwenv
-#    typeset -p title
-    opt=$(printf "%-25s -> %s\n" "${PWD//${HOME}/~}" $(git rev-parse --abbrev-ref HEAD))
-    opts+=(${opt})
+    dir="${PWD//${HOME}/~}"
+    (($#debug)) && echo --- $dir >&2
+
+    source gwenv --quiet
+    appCode=${GW_ANSI_APPCODE:--}
+    version=${GW_VERSION:--}
+    branch=$(git rev-parse --abbrev-ref HEAD); branch=${branch//user?$USER/@}
+
+    repo=$(printf ${formatStr} ${appCode} ${branch} ${version} ${sentinel}${dir})
+    (($#choose)) && repos+=(${repo}) || echo $repo
     popd || exit 1
   fi
 done
 
-select opt in ${opts}; do
-#  echo you chose ${opt}
-  dir=$(echo ${opt} | sed 's/ *-\>.*$//')
-  echo ${dir//\~/$HOME}
-  break
-done
+if (($#choose)); then
+  select repo in ${repos}; do
+    dir=${repo##*${sentinel}}
+    (($#debug)) && typeset repo dir >&2
+    echo ${dir//\~/${HOME}}
+    break
+  done
+fi

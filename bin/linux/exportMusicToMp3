@@ -8,7 +8,7 @@ alias TRACE=false
 
 ######################################################
 # process command line arguments
-while [ -n "$*" ]; do
+while [[ -n "$*" ]]; do
   case $1 in
     --debug)#
       # shellcheck disable=SC2034
@@ -51,7 +51,7 @@ while [ -n "$*" ]; do
       alias TRACE=true
       ;;
     --*)
-      echo Illegal switch "$1"!
+      echo Illegal switch: "$1"
       exit 1
       ;;
     *)

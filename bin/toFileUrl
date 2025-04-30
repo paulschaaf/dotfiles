@@ -1,6 +1,32 @@
 #!/usr/bin/env zsh
 
-[[ "$1" = "--debug" ]] && shift && debug=true
+while [ -n "$*" ]; do
+  case $1 in
+    --debug)#
+      # shellcheck disable=SC2034
+      debug=true
+      ;;
+#    --dry-run)# Print the commands that will be run, but do not actually run them
+#      # shellcheck disable=SC2034 # unused
+#      _dry_run='echo '
+#      ;;
+    --setx)
+      set -x
+      ;;
+    --escape)
+      escape=true
+      ;;
+    --*)
+      echo Illegal switch "$1"!
+      exit 1
+      ;;
+    *)
+      break
+      ;;
+  esac
+  shift
+done
+
 sed -E "
    ${debug:+p}
 
@@ -15,6 +41,14 @@ sed -E "
    # replace all occurrences of /./ with /
    s_/\\./_/_
    ${debug:+p}
+
+   # remove backslashes
+   s_\\\__g
+   ${debug:+p}
+
+   # escape any spaces
+   ${escape:+s_ _%20_g}
+   ${escape:+${debug:+p}}
 
    # prepend file:// to each absolute path so it appears as a link
    s_^/_file:///_

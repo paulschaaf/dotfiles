@@ -1,20 +1,44 @@
 #!/bin/zsh
 
-allVars=(GW_ANSI_NAME GW_ANSI_PLATFORM GW_APPCODE GW_APPNAME GW_COLOR GW_DB_DIR GW_PL_NUM GW_PL_VERSION GW_PLATFORM GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE GW_VERSION IDEA_HOME JAVA_HOME)
+allVars=(GW_ANSI_APPCODE GW_ANSI_NAME GW_ANSI_PLATFORM GW_APPCODE GW_APPNAME GW_COLOR GW_DB_DIR GW_PL_NUM GW_PL_VERSION GW_PLATFORM GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE GW_VERSION IDEA_HOME JAVA_HOME)
 namedVars=()
+unset $allVars
 
 autoload -Uz colorLabel
+
+while [[ -n "$*" ]]; do
+  case $1 in
+    --debug)#
+      # shellcheck disable=SC2034
+      debug=true
+      ;;
+    --setx)# turn on tracing
+      setx=true
+      ;;
+    --all)
+      namedVars+=(${allVars[@]})
+      ;;
+    --quiet)
+      quiet=true
+      ;;
+    *)
+      echo Illegal argument: "$1"
+      exit 1
+      ;;
+  esac
+  shift
+done
 
 # shellcheck disable=SC1036 # '(' is invalid here
 # shellcheck disable=SC1088 # Parsing stopped here
 function ⭑⭑⭑() {
+  (($#quiet)) && return
   echo
   pastel -f paint -n white --on teal "${@}"
   echo
 }
 
-[[ "$1" = "--setx" ]] && shift && set -x
-[[ "$1" = "--all" ]] && shift && namedVars+=(${allVars[@]})
+(($#setx)) && set -x
 
 # if it's a customer build
 if [[ -f product.properties ]]; then
@@ -222,22 +246,22 @@ case ${GW_PLATFORM} in
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
   Las\ Leñas|Mammoth)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 CE.app/Contents'
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 UE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
     # if you add a new version here make sure to set the required environment above
   Niseko|Olos)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 CE.app/Contents'
+    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 UE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
     # if you add a new version here make sure to set the required environment above
   *)
-    echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
-    exit
+    (($#quiet)) || echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
+    return
     unsetGWVars
     ;;
 esac
@@ -253,7 +277,7 @@ for env in {../..,..,.}/gw.env; do
 #    cat ${env} | sed 's/^/  - /'
     # shellcheck disable=SC1090 # can't follow non-constant source
     source ${env}
-    echo
+    (($#quiet)) || echo
   fi
 done
 
@@ -265,8 +289,8 @@ namedVars=(${namedVars:-$*})
 if (( $#GW_APPNAME )); then
   # shellcheck disable=SC2153 # possible misspelling
   export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
-  export GW_ANSI_NAME
-  GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})
+  export GW_ANSI_APPCODE=$(pastel -f paint -n ${(Q)GW_COLOR%% *} --on ${(Q)GW_COLOR##* } ${(U)GW_APPCODE})
+  export GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})
 
   # if this file is being executed directly--i.e. NOT being sourced--default to reporting on all variables
   if [[ ! $ZSH_EVAL_CONTEXT =~ :file$ ]] && ((! $#namedVars )); then

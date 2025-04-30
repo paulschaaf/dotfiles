@@ -65,8 +65,8 @@ case ${UNAME} in
     unsetopt GLOBAL_RCS
     ;;
   Darwin)
-    export IDEA_HOME="/Applications/IntelliJ IDEA 2021.3.2 CE.app/Contents/MacOS"
-    os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~pschaaf/homebrew/bin ${IDEA_HOME})
+    alias idea='/Applications/IntelliJ\ IDEA\ 2024.2.3\ CE.app/Contents/MacOS/idea'
+    os_override_path=(~/bin/macos ${os_override_path[@]} /usr/local/opt/findutils/libexec/gnubin ~pschaaf/homebrew/bin)
     fpath=(~pschaaf/homebrew/share/zsh/site-functions ${fpath})
     ;;
   Linux)
