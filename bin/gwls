@@ -2,7 +2,7 @@
 
 unset choose debug setx
 
-while [[ -n "$*" ]]; do
+while (($#*)); do
   case $1 in
     --debug)#
       # shellcheck disable=SC2034
@@ -23,9 +23,12 @@ while [[ -n "$*" ]]; do
   shift
 done
 
+branch_width=75
+version_width=18
+
 repos=()
 sentinel='0'
-formatStr="%-2s %-90s %-18s %s"
+formatStr="%-2s %-${branch_width}s %-${version_width}s %s"
 
 # display column headers on stderr so they don't get piped to the next command
 (($#choose)) && echo -n '#  ' >&2 # header for the number column when the list is displayed using 'select'

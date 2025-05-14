@@ -229,7 +229,7 @@ runTask() {
 }
 
 # Process arguments
-while [ -n "$*" ]; do
+while (($#@)); do
   unset ignoreNice
   task=${1%%=*}
   # value is the text after the equals sign, or empty string if there is none
@@ -426,6 +426,7 @@ while [ -n "$*" ]; do
       ;;
     pgrepStudio)# Is studio running?
       fullTask=$(grepProcStr "-Dstudio.sdkroot=${PWD} ")
+      echo $fullTask
       taskFailIcon=$failIcon
       ;;
     portCheck)# Is the SSH tunnel open?

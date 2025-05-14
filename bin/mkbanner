@@ -10,13 +10,13 @@ maxHeight=$maxWidth
 function usage() {
    echo "Usage: ${0:t} [OPTION...] TEXT
   Creates an image filename containing the supplied text.
-  --dry_run          Show the resulting command but do not execute
+  --dry-run          Show the resulting command but do not execute
   --fg=COLOR         Set the foreground color (default '${fgColor}')
   --font=font        Set the font of the text
   --force            Overwrite the existing file, if any
   -h, --help         Show this screen
   --prodColor=color  The color to use for the product code
-  --product          The product code
+  --product          The product code (default GW_APPCODE=${(q)GW_APPCODE})
   --setx             Trace the execution
   --size=num         Set the size of the font (default $pointsize)
   --smush            Sets the spacing between the GW_APPCODE and the project name (default '${smush}')
@@ -38,13 +38,16 @@ switches=()
 alias dry_run=false
 alias force=false
 
+args=${@}; @=() # save the args so gwenv doesn't eat them
 source ~/bin/gwenv
+
 GW_PL_VERSION=${GW_PL_VERSION%%.*}
 prodColor=${GW_COLOR##* }
 prodColor=${prodColor:-$fgColor}
 
-while [[ -n "$*" ]]; do
+while (($#args)); do
   switch=${1%%=*}; value=${1#*=}
+  echo; typeset switch value
   case ${switch} in
     --dry-run)# Print the commands that will be run, but to not run them
       alias dry_run=true

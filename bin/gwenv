@@ -6,7 +6,7 @@ unset $allVars
 
 autoload -Uz colorLabel
 
-while [[ -n "$*" ]]; do
+while (($#*)); do
   case $1 in
     --debug)#
       # shellcheck disable=SC2034
