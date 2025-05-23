@@ -1,3 +1,0 @@
-#!/bin/sh
-
-find $HOME/etc/cron ${PATH//:/ } \( -name '*~' -o -name '#*#' \) -perm +111 | xargs echo chmod -x

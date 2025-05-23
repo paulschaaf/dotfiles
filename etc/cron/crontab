@@ -14,7 +14,7 @@ LOGFILE=/tmp/pschaaf/cron.log
 
 # 35     12     *      *  *   $NICELY_RUN $CRON/day.every       >| $LOGFILE
 # 00     7      *      *  1-5 $NICELY_RUN $CRON/day.workdays    >| $LOGFILE
-  00     7      *      *  1-5 $NICELY_RUN /usr/bin/caffeinate -dimsut 86400 >| /tmp/pschaaf/cron.log
+  30     7      *      *  1-5 /usr/bin/caffeinate -dimsut 86400 >| /tmp/pschaaf/cron.log
 
 # 35     12     *      *  1   $NICELY_RUN $CRON/week.every      >| $LOGFILE
 

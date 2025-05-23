@@ -121,6 +121,9 @@ while (($#@)); do
     --bizrules)
       addGlobs "${bizrules[@]}"
       ;;
+    --no-content-changes)
+      addGlobs --negate "content-changes.yaml"
+      ;;
     --snowcat)
       addGlobs "${snowcat[@]}"
       ;;

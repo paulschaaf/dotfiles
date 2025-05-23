@@ -1,10 +1,18 @@
 #!/bin/zsh
 
 srcRoot=~/data/Music
-destRoot=~/data/soundKonverter/Music
+dstRoot=~/data/soundKonverter/Music
 
 alias TEST_MODE=false
 alias TRACE=false
+
+#setopt +o nullglob
+setopt +o nomatch # supress display of "No match found" when globbing fails
+
+function showTree() {
+  tree -n --noreport ${srcRoot} ${dstRoot}
+  echo "────────────────"
+}
 
 ######################################################
 # process command line arguments
@@ -18,8 +26,8 @@ while [[ -n "$*" ]]; do
       # shellcheck disable=SC2034 # unused
       _dry_run='echo '
       ;;
-    --destRoot)
-      destRoot="$2"
+    --dstRoot)
+      dstRoot="$2"
       shift
       ;;
     --srcRoot)
@@ -30,21 +38,39 @@ while [[ -n "$*" ]]; do
       set -x
       ;;
     --test)
-      cd ~/tmp || exit 1
-      srcRoot=${PWD}/src
-      destRoot=${PWD}/dest
-      test=(${srcRoot} ${destRoot})
+      testRoot=~/tmp/exportMusicTest
+      rm -rf ${testRoot}
+      mkdir $testRoot && cd $testRoot || exit 1
+      srcRoot=$testRoot/src
+      dstRoot=$testRoot/dest
 
-      mkdir -p {${srcRoot},${destRoot}}/{Blues,Rock} ${destRoot}/Jazz
+      mkdir -p ${srcRoot}/{Blues,Rock,Soul}
+      mkdir -p ${dstRoot}/{Blues,Rock,Jazz,Soul}
 
-      touch {${srcRoot},${destRoot}}/Blues/identical\[file\].flac
+      mkdir ${srcRoot}/Soul/"What's Going On?"
+      mkdir ${dstRoot}/Soul/"What's Going On?"
 
-      touch  ${srcRoot}/Rock/existing\[file\]\'.flac
-      touch ${destRoot}/Rock/existing\[file\].mp3
+      touch "${srcRoot}/Blues/identical[file].flac"
+      touch "${dstRoot}/Blues/identical[file].flac"
 
-      touch ${srcRoot}/{Blues,Rock}/added\(file\).flac
-      touch ${destRoot}/{Jazz,Rock}/orphaned\ -\ \'file\"name.mp3
+      touch "${srcRoot}/Rock/existing[file].flac"
+      touch "${dstRoot}/Rock/existing[file].mp3"
 
+      touch "${srcRoot}/Soul/What's Going On?/existing_file.flac"
+      touch "${dstRoot}/Soul/What's Going On?/existing_file.flac"
+
+      touch "${srcRoot}/Blues/added(file).flac"
+
+      touch "${srcRoot}/Rock/added(file).flac"
+      touch "${srcRoot}/Rock/added[file].flac"
+      touch "${srcRoot}/Rock/added_file.mp3"
+
+      touch "${srcRoot}/Soul/What's Going On?/added_file.flac"
+
+      touch "${dstRoot}/Jazz/orphaned - 'file\"name.mp3"
+      touch "${dstRoot}/Rock/orphaned - 'file\"name.mp3"
+
+      showTree
       alias TEST_MODE=true
       ;;
     --trace)
@@ -75,47 +101,72 @@ function log() {
       echo -n "      \e[36m"
       ;;
     *)
-      echo -n "---"
+      echo -n "─────────"
       ;;
     esac
   echo "$*\e[0m"
 }
 
-function showTree() {
-  echo "\n---------"
-  tree -n --noreport ${srcRoot} ${destRoot}
-  echo
-}
+######################################################
+log 1 'Delete orphaned MP3s (no corresponding file in src)'
+cd ${dstRoot} || exit 1
+
+for dest in **/*.mp3; do
+    srcFileSpec=${srcRoot}/${dest%.*}
+#    src=$(fd --max-depth 1 "^${srcFileSpec##*/}" ${srcFileSpec%/*})
+#    TRACE && typeset srcFileSpec src
+    if [[ -n $(ls "${srcFileSpec}".* 2>/dev/null) ]]; then
+      TRACE && log 2 "Keeping \e[4m${(q)dstRoot}/${(q)dest}\e[24m"
+    else
+      log 2 "Deleting \e[4m${(q)dstRoot}/${(q)dest}\e[24m"
+      eval $_dry_run rm "${(q)dstRoot}/${(q)dest}"
+    fi
+    TRACE && showTree
+done
+
 
 ######################################################
-log 1 Convert FLAC to MP3 if missing
+log 1 "Removing empty directories from \e[4mfile://${(q)dstRoot}\e[24m"
+
+for dir in ${srcRoot} ${dstRoot}; do
+  log 2 "... from \e[4m${(q)dir}\e[24m"
+  eval $_dry_run find ${(q)dir} -type d -empty -exec rmdir -pv {} + &>/dev/null
+done
+TRACE && showTree
+
+
+######################################################
+log 1 'Convert FLAC to MP3 if missing'
 cd ${srcRoot} || exit 1
 #fd --type file --extension flac --exec convertToMp3
 for src in **/*.flac; do
-    TRACE && showTree
-    dest="${destRoot}/${src%.flac}.mp3"
+    destRootName="${dstRoot}/${src%.flac}"
 #    TRACE && typeset src dest
-    if [[ -n $(ls "${dest%.*}".*) ]]; then
-      TRACE && log 2 "Already converted \e[4m'$src'\e[24m"
+    if [[ -n $(ls "${destRootName}".* 2>/dev/null) ]]; then
+      TRACE && log 2 "Already converted \e[4m'${(q)src}'\e[24m"
     else
-      log 2 "Converting \e[4m'$src'\e[24m"
-      destDir=$(dirname ${dest})
-      cmd="mkdir -p \"${destDir}\"; ffmpeg -i \"${src}\" -q:a 2 \"${dest}\""
+      log 2 "Converting \e[4m'${(q)src}'\e[24m"
+      dest="${destRootName}.mp3"
+      destDir=$(dirname ${(q)dest})
+      cmd="mkdir -p ${(q)destDir}; ffmpeg -i ${(q)src} -q:a 2 ${(q)dest}"
 
       echo $cmd
 
       # shameful hack to silently swap the command when in test mode
-      TEST_MODE && cmd="cp '${src}' '${dest}'" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
+      TEST_MODE && pwd
+      TEST_MODE && cmd="cp ${(q)src} ${(q)dest}" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
 
-      (($#_dry_run)) || eval $cmd
+      (($#_dry_run)) || eval ${cmd}
     fi
+    TRACE && showTree
 done
+
 
 ######################################################
 log 1 Copy M4A, M4P, MP3, and MP4 files if missing
 for src in **/*.{m4a,m4p,mp3,mp4}; do
-    TRACE && showTree
-    dest="${destRoot}/${src}"
+    [[ ! -f "${src}" ]] && continue # nomatch means we'll enter this loop even if e.g. no mp4's exist
+    dest="${dstRoot}/${src}"
     if [[ -f "${dest}" ]]; then
       TRACE && log 2 "Already copied \e[4m'$src'\e[24m"
     else
@@ -127,42 +178,18 @@ for src in **/*.{m4a,m4p,mp3,mp4}; do
 
       (($#_dry_run)) || eval $cmd
     fi
-done
-
-######################################################
-log 1 'Delete orphaned MP3s (no corresponding file in src)'
-cd ${destRoot} || exit 1
-
-for dest in **/*.mp3; do
     TRACE && showTree
-    srcFileSpec=${srcRoot}/${dest%.*}
-#    src=$(fd --max-depth 1 "^${srcFileSpec##*/}" ${srcFileSpec%/*})
-#    TRACE && typeset srcFileSpec src
-    if [[ -n $(ls "${srcFileSpec}".*) ]]; then
-      TRACE && log 2 "Keeping \e[4m'$(basename ${dest})'\e[24m"
-    else
-      log 2 "Deleting \e[4m'${destRoot}/${dest}'\e[24m"
-      eval $_dry_run rm "${destRoot}/${dest}"
-    fi
 done
 
-TRACE && showTree
 
 ######################################################
-log 1 "Removing empty directories from \e[4m'file://${destRoot}'\e[24m"
-
-for dir in ${srcRoot} ${destRoot}; do
-  log 2 "... from \e[4m'${dir}'\e[24m"
-  eval $_dry_run find ${dir} -type d -empty -exec rmdir -pv {} + &>/dev/null
-done
-
-set +x
-TRACE && showTree
 if TEST_MODE; then
   log 1 Cleaning up tests
   log 2 Removing test files
-  find ${test} -type f -empty -exec rm {} +
+  cd ${(q)testRoot} || exit 1
+  find -type f -empty -exec rm {} +
   log 2 Removing test directories
-  find ${test} -type d -empty -exec rmdir -p {} + &>/dev/null
-  true ## don't propagate any error from the previous command
+  find -type d -empty -exec rmdir -p {} + &>/dev/null
+  cd ..
+  rmdir ${(q)testRoot}
 fi
