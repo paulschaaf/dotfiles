@@ -46,7 +46,6 @@ while [[ -n "$*" ]]; do
 
       mkdir -p ${srcRoot}/{Blues,Rock,Soul}
       mkdir -p ${dstRoot}/{Blues,Rock,Jazz,Soul}
-
       mkdir ${srcRoot}/Soul/"What's Going On?"
       mkdir ${dstRoot}/Soul/"What's Going On?"
 
@@ -56,13 +55,12 @@ while [[ -n "$*" ]]; do
       touch "${srcRoot}/Rock/existing[file].flac"
       touch "${dstRoot}/Rock/existing[file].mp3"
 
-      touch "${srcRoot}/Soul/What's Going On?/existing_file.flac"
-      touch "${dstRoot}/Soul/What's Going On?/existing_file.flac"
+      touch "${srcRoot}/Soul/What's Going On?/identical.flac"
+      touch "${dstRoot}/Soul/What's Going On?/identical.flac"
 
       touch "${srcRoot}/Blues/added(file).flac"
 
-      touch "${srcRoot}/Rock/added(file).flac"
-      touch "${srcRoot}/Rock/added[file].flac"
+      touch "${srcRoot}/Rock/added([{file}])\"\`.flac"
       touch "${srcRoot}/Rock/added_file.mp3"
 
       touch "${srcRoot}/Soul/What's Going On?/added_file.flac"
@@ -143,9 +141,9 @@ for src in **/*.flac; do
     destRootName="${dstRoot}/${src%.flac}"
 #    TRACE && typeset src dest
     if [[ -n $(ls "${destRootName}".* 2>/dev/null) ]]; then
-      TRACE && log 2 "Already converted \e[4m'${(q)src}'\e[24m"
+      TRACE && log 2 "Already converted \e[4m${(q)src}\e[24m"
     else
-      log 2 "Converting \e[4m'${(q)src}'\e[24m"
+      log 2 "Converting \e[4m${(q)src}\e[24m"
       dest="${destRootName}.mp3"
       destDir=$(dirname ${(q)dest})
       cmd="mkdir -p ${(q)destDir}; ffmpeg -i ${(q)src} -q:a 2 ${(q)dest}"
@@ -168,11 +166,11 @@ for src in **/*.{m4a,m4p,mp3,mp4}; do
     [[ ! -f "${src}" ]] && continue # nomatch means we'll enter this loop even if e.g. no mp4's exist
     dest="${dstRoot}/${src}"
     if [[ -f "${dest}" ]]; then
-      TRACE && log 2 "Already copied \e[4m'$src'\e[24m"
+      TRACE && log 2 "Already copied \e[4m${(q)src}\e[24m"
     else
-      log 2 "Copying \e[4m'$src'\e[24m"
-      destDir=$(dirname ${dest})
-      cmd="mkdir -p \"${destDir}\"; cp \"${src}\" \"${dest}\""
+      log 2 "Copying \e[4m${(q)src}\e[24m"
+      destDir=$(dirname ${(q)dest})
+      cmd="mkdir -p ${(q)destDir}; cp ${(q)src} ${(q)dest}"
 
       echo $cmd
 
