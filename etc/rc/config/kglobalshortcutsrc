@@ -9,7 +9,7 @@ switch-to-activity-d2b375bc-1e26-4e15-a9b7-27a428fefc36=none,none,Switch to acti
 _k_friendly_name=Clementine
 next_album=Shift+Media Next,none,Next album
 next_track=none,none,Next track
-play_pause=none,none,Play/Pause
+play_pause=Meta+Ctrl+Alt+Space,none,Play/Pause
 prev_track=none,none,Previous track
 stop=none,none,Stop
 
@@ -21,9 +21,9 @@ _k_friendly_name=Keyboard Layout Switcher
 
 [Strawberry]
 _k_friendly_name=Strawberry
-next_track=Meta+Ctrl+Alt+Shift+Right,none,Next track
+next_track=none,none,Next track
 play_pause=none,none,Play/Pause
-prev_track=Meta+Ctrl+Alt+Shift+Left,none,Previous track
+prev_track=none,none,Previous track
 stop=none,none,Stop
 
 [kaccess]
@@ -33,7 +33,7 @@ _k_friendly_name=Accessibility
 [kcm_touchpad]
 Disable Touchpad=Touchpad Off,Touchpad Off,Disable Touchpad
 Enable Touchpad=Touchpad On,Touchpad On,Enable Touchpad
-Toggle Touchpad=Touchpad Toggle,Touchpad Toggle,Toggle Touchpad
+Toggle Touchpad=Touchpad Toggle,Touchpad Toggle\tMeta+Ctrl+Touchpad Toggle\tMeta+Ctrl+Zenkaku Hankaku,Toggle Touchpad
 _k_friendly_name=Touchpad
 
 [khotkeys]
@@ -161,6 +161,10 @@ Walk Through Windows of Current Application Alternative (Reverse)=none,,Walk Thr
 Window Above Other Windows=none,,Keep Window Above Others
 Window Below Other Windows=none,,Keep Window Below Others
 Window Close=Alt+F4,Alt+F4,Close Window
+Window Custom Quick Tile Bottom=none,,Custom Quick Tile Window to the Bottom
+Window Custom Quick Tile Left=none,,Custom Quick Tile Window to the Left
+Window Custom Quick Tile Right=none,,Custom Quick Tile Window to the Right
+Window Custom Quick Tile Top=none,,Custom Quick Tile Window to the Top
 Window Fullscreen=none,,Make Window Fullscreen
 Window Grow Horizontal=none,,Expand Window Horizontally
 Window Grow Vertical=none,,Expand Window Vertically
@@ -344,7 +348,7 @@ powerProfile=Battery,Battery\tMeta+B,Switch Power Profile
 _k_friendly_name=plasmashell
 activate application launcher=Meta,Meta\tAlt+F1,Activate Application Launcher
 activate task manager entry 1=none,Meta+1,Activate Task Manager Entry 1
-activate task manager entry 10=Meta+0,Meta+0,Activate Task Manager Entry 10
+activate task manager entry 10=Meta+0,,Activate Task Manager Entry 10
 activate task manager entry 2=none,Meta+2,Activate Task Manager Entry 2
 activate task manager entry 3=none,Meta+3,Activate Task Manager Entry 3
 activate task manager entry 4=none,Meta+4,Activate Task Manager Entry 4
@@ -375,7 +379,7 @@ edit_clipboard=none,none,Edit Contents…
 manage activities=Meta+Q,Meta+Q,Show Activity Switcher
 next activity=Meta+A,none,Walk through activities
 previous activity=Meta+Shift+A,none,Walk through activities (Reverse)
-repeat_action=Ctrl+Alt+R,Meta+Ctrl+R,Manually Invoke Action on Current Clipboard
+repeat_action=Ctrl+Alt+R,,Manually Invoke Action on Current Clipboard
 show dashboard=none,Ctrl+F12,Show Desktop
 show-barcode=none,,Show Barcode…
 show-on-mouse-pos=none,Meta+V,Show Clipboard Items at Mouse Position
@@ -390,6 +394,15 @@ _launch=ScrollLock
 [services][net.local.Copernicus-audio-2.desktop]
 _launch=Meta+Ctrl+Alt+Shift+I
 
+[services][net.local.Copernicus-audio-3.desktop]
+_launch=Meta+Ctrl+Alt+Shift+Right
+
+[services][net.local.Copernicus-audio-4.desktop]
+_launch=Meta+Ctrl+Alt+Shift+Left
+
+[services][net.local.Copernicus-audio.desktop]
+_launch=Meta+Ctrl+Alt+Shift+Space
+
 [services][org.kde.kcalc.desktop]
 _launch=none
 
@@ -402,7 +415,7 @@ _launch=Ctrl+Shift+Esc
 [strawberry]
 _k_friendly_name=strawberry
 next_track=none,none,Next track
-play_pause=Meta+Ctrl+Alt+Shift+Space,none,Play/Pause
+play_pause=none,none,Play/Pause
 prev_track=none,none,Previous track
 stop=none,none,Stop
 

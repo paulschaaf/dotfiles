@@ -81,7 +81,20 @@ function log() {
   echo "$*\e[0m"
 }
 
+function showFileCount() {
+  echo $(fd . ${srcRoot}  --type=f | wc -l) "files in Source ${(q)srcRoot}"
+  echo $(fd . ${destRoot} --type=f | wc -l) "files in Dest   ${(q)destRoot}"
+}
+
+before=$(showFileCount)
+
+echo
 cmd="rsync --recursive --safe-links --perms --times --owner --verbose --update --delete${_dry_run:+ --dry-run} ${(q)srcRoot}/ ${(q)destRoot}"
 echo $cmd
-
 eval $cmd
+
+echo "\nBefore"
+echo $before
+
+echo "\nAfter"
+showFileCount

@@ -4,13 +4,16 @@ srcRoot=~/data/Music
 dstRoot=~/data/soundKonverter/Music
 
 alias TEST_MODE=false
+alias DEBUG=false
 alias TRACE=false
 
 #setopt +o nullglob
 setopt +o nomatch # supress display of "No match found" when globbing fails
 
 function showTree() {
-  tree -n --noreport ${srcRoot} ${dstRoot}
+  tree -n --noreport ${srcRoot}
+  echo -n Files: ; fd --type=f | wc -l
+  tree -n --noreport ${dstRoot}
   echo "────────────────"
 }
 
@@ -20,7 +23,7 @@ while [[ -n "$*" ]]; do
   case $1 in
     --debug)#
       # shellcheck disable=SC2034
-      debug=true
+      alias DEBUG=true
       ;;
     --dry-run)# Print the commands that will be run, but do not actually run them
       # shellcheck disable=SC2034 # unused
@@ -29,6 +32,11 @@ while [[ -n "$*" ]]; do
     --dstRoot)
       dstRoot="$2"
       shift
+      ;;
+    --report)
+      fd --type=f . ${srcRoot} | grep -v '\.(jpg|png)$' | sed "s_^${srcRoot}__; s_[.][^.]*\$__" | sort >| source.txt
+      fd --type=f . ${dstRoot} | sed "s_^${dstRoot}__; s_[.][^.]*\$__" | sort >| dest.txt
+      exit
       ;;
     --srcRoot)
       srcRoot="$2"
@@ -105,22 +113,33 @@ function log() {
   echo "$*\e[0m"
 }
 
+function showFileCount() {
+  echo $(fd . ${srcRoot} --type=f | wc -l) "files in Source ${(q)srcRoot}"
+  echo $(fd . ${dstRoot} --type=f | wc -l) "files in Dest   ${(q)dstRoot}"
+}
+
+before=$(showFileCount)
+
 ######################################################
-log 1 'Delete orphaned MP3s (no corresponding file in src)'
+log 1 'Delete orphaned files (no corresponding file of any type in src)'
 cd ${dstRoot} || exit 1
 
-for dest in **/*.mp3; do
+count=0; ignore=0
+for dest in **/*.*; do
     srcFileSpec=${srcRoot}/${dest%.*}
 #    src=$(fd --max-depth 1 "^${srcFileSpec##*/}" ${srcFileSpec%/*})
 #    TRACE && typeset srcFileSpec src
     if [[ -n $(ls "${srcFileSpec}".* 2>/dev/null) ]]; then
       TRACE && log 2 "Keeping \e[4m${(q)dstRoot}/${(q)dest}\e[24m"
+      ((ignore++))
     else
       log 2 "Deleting \e[4m${(q)dstRoot}/${(q)dest}\e[24m"
       eval $_dry_run rm "${(q)dstRoot}/${(q)dest}"
+      ((count++))
     fi
-    TRACE && showTree
+    DEBUG && showTree
 done
+log 2 Deleted ${count} files, kept ${ignore}
 
 
 ######################################################
@@ -130,18 +149,20 @@ for dir in ${srcRoot} ${dstRoot}; do
   log 2 "... from \e[4m${(q)dir}\e[24m"
   eval $_dry_run find ${(q)dir} -type d -empty -exec rmdir -pv {} + &>/dev/null
 done
-TRACE && showTree
+DEBUG && showTree
 
 
 ######################################################
 log 1 'Convert FLAC to MP3 if missing'
 cd ${srcRoot} || exit 1
-#fd --type file --extension flac --exec convertToMp3
+
+count=0; ignore=0
 for src in **/*.flac; do
     destRootName="${dstRoot}/${src%.flac}"
 #    TRACE && typeset src dest
     if [[ -n $(ls "${destRootName}".* 2>/dev/null) ]]; then
       TRACE && log 2 "Already converted \e[4m${(q)src}\e[24m"
+      ((ignore++))
     else
       log 2 "Converting \e[4m${(q)src}\e[24m"
       dest="${destRootName}.mp3"
@@ -155,29 +176,41 @@ for src in **/*.flac; do
       TEST_MODE && cmd="cp ${(q)src} ${(q)dest}" && TRACE && log 3 "Replacing 'ffmpeg' with 'cp' due to test mode"
 
       (($#_dry_run)) || eval ${cmd}
+      ((count++))
     fi
-    TRACE && showTree
+    DEBUG && showTree
 done
+log 2 Converted ${count} files, kept ${ignore}
 
 
 ######################################################
 log 1 Copy M4A, M4P, MP3, and MP4 files if missing
+count=0; ignore=0
 for src in **/*.{m4a,m4p,mp3,mp4}; do
     [[ ! -f "${src}" ]] && continue # nomatch means we'll enter this loop even if e.g. no mp4's exist
     dest="${dstRoot}/${src}"
     if [[ -f "${dest}" ]]; then
       TRACE && log 2 "Already copied \e[4m${(q)src}\e[24m"
+      ((ignore++))
     else
       log 2 "Copying \e[4m${(q)src}\e[24m"
-      destDir=$(dirname ${(q)dest})
+      destDir=$(dirname ${dest})
       cmd="mkdir -p ${(q)destDir}; cp ${(q)src} ${(q)dest}"
 
       echo $cmd
 
       (($#_dry_run)) || eval $cmd
+      ((count++))
     fi
-    TRACE && showTree
+    DEBUG && showTree
 done
+log 2 Copied ${count} files, kept ${ignore} existing files
+
+echo "\nBefore"
+echo $before
+
+echo "\nAfter"
+showFileCount
 
 
 ######################################################
