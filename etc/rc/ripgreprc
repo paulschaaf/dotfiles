@@ -77,6 +77,6 @@
 --type-add=src:include:gosu,java
 --type-add=test:include:feature,gosutest,javatest
 --type-add=typelist:include:tti,tix,ttx,typelistprops
---type-add=ui:include:displaykey,pcf
+--type-add=ui:include:displaykey,pcf,typelistprops
 
 --type-add=datamodel:include:entity,typelist

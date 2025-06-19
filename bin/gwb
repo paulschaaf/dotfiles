@@ -386,6 +386,21 @@ while (($#@)); do
       noNotifySuccess=true
       fullTask="ls -l ${GW_DB_DIR}"
       ;;
+    lsplugins)# List all of the user IntelliJ plugins
+      expectedPlugins=(
+        'GitHub Copilot'
+        'GitLink'
+        'GitToolBox'
+        'Grep Console'
+        'Launch URL from String'
+        'PlantUML Integration'
+        'PlantUML Parser'
+        'String Manipulation'
+      )
+      echo Expected:; (for exp in ${expectedPlugins}; do echo $exp; done) | cat -n
+#      fullTask="echo Found:; fd --base-directory .idea/settings/system/plugins --no-ignore -e zip --format '{/.}' | sort --ignore-case | cat -n"
+      fullTask="sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n"
+      ;;
     lsport)# List processes holding the specified port
       fullTask="lsof -i tcp:${value}"
       ;;
@@ -429,16 +444,16 @@ while (($#@)); do
       echo $fullTask
       taskFailIcon=$failIcon
       ;;
-    portCheck)# Is the SSH tunnel open?
-      fullTask="ssh -xS $ssh_socket -O check pschaaf@localhost"
-      ;;
-    portClose)# Stop the SSH tunnel on port 8080
-      fullTask="ssh -xS $ssh_socket -O exit pschaaf@localhost"
-      ;;
-    portOpen)# Open an SSH tunnel on port 8080 redirecting to 8090
-      spawn=true
-      fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
-      ;;
+#    portCheck)# Is the SSH tunnel open?
+#      fullTask="ssh -xS $ssh_socket -O check pschaaf@localhost"
+#      ;;
+#    portClose)# Stop the SSH tunnel on port 8080
+#      fullTask="ssh -xS $ssh_socket -O exit pschaaf@localhost"
+#      ;;
+#    portOpen)# Open an SSH tunnel on port 8080 redirecting to 8090
+#      spawn=true
+#      fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
+#      ;;
     restoreDb)# Restore the database file named in the argument
       if (( $#value == 0 )); then
         fullTask="echo '$task' requires a database name argument\! && exit 1"

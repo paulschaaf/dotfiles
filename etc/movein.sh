@@ -13,16 +13,6 @@ fi
 
 
 ## LIBRARIES AND PACKAGES ===========================================
-intelliJPlugins=(
-   AceJump                       # https://plugins.jetbrains.com/plugin/7086-acejump
-#   ?CodeGlance                   # https://plugins.jetbrains.com/plugin/7275-codeglance
-   GitToolBox                    # https://plugins.jetbrains.com/plugin/7499-gittoolbox
-   Grep Console                  # https://plugins.jetbrains.com/plugin/7125-grep-console
-   Launch URL From String        # https://plugins.jetbrains.com/plugin/10857-launch-url-from-string
-   ProjectTree Color Highlighter # https://plugins.jetbrains.com/plugin/13951-projecttree-color-highlighter
-   String Manipulation           # https://plugins.jetbrains.com/plugin/2162-string-manipulation
-)
-
 libraries=(
    #    libimage-exiftool-perl # edit EXIF data in image
    #    libncurses
@@ -34,14 +24,38 @@ forMacOS=(
 #   xcode-select --install
    "mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew"
 #   git
-   git-lfs
-   coreutils
-   findutils
-   ripgrep
-   ascii
-   inxi
-   trash
-   tree
+  ascii
+  broot
+  coreutils
+  displayplacer
+  fd
+  findutils
+  git
+  git-delta
+  git-lfs
+  htop
+  imagemagick
+  neofetch
+  pastel
+  readline
+  ripgrep
+  ripgrep-all
+  ruby
+  screenresolution
+  sevenzip
+  starship
+  terminal-notifier
+  trash
+  tree
+
+  # ==> Casks
+  alfred
+  gimp
+  inkscape
+  intellij-idea-ultimate # 2024.1.5, plus latest
+  iterm2
+  karabiner-elements
+  logi-options-plus
 )
 
 forArch=(
@@ -75,8 +89,8 @@ unordered_packages=(
    #    davfs2                # mount box.com into filesystem
    #    devede                # make video DVDs
    dust                   # disk usage
-   emacs                  # the king of editors
-   enscript               # convert txt to ps, html, rtf, etc.
+#   emacs                  # the king of editors
+#   enscript               # convert txt to ps, html, rtf, etc.
    fzf                    # fuzzy-search autocompletion
    glances                # process info
    jdk-dcevm              # Java Dynamic Code Evolution VM

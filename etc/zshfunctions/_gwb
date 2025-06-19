@@ -1,5 +1,5 @@
 #compdef gwb
-# This file was generated using 'extractCompdef bin/gwb'
+# This file was generated using 'extractCompdef /Users/pschaaf/bin/gwb'
 
 _arguments "*: :((
   '--debug'
@@ -38,15 +38,13 @@ _arguments "*: :((
   'killStudio: Kill the studio whose sdkroot is pwd'
   'lsApd: List the files that \"wipeApd\" would delete'
   'lsDb: List the contents of the database directory'
+  'lsplugins: List all of the user IntelliJ plugins'
   'lsport: List processes holding the specified port'
   'opendd: Open the data dictionary'
   'packageCustomerDist: Generate a customer build zip of this code'
   'pcfs: (optional host:port#) Browse the most recently changed file named /tmp/*.html'
   'pgrepServer: Is the server process running?'
   'pgrepStudio: Is studio running?'
-  'portCheck: Is the SSH tunnel open?'
-  'portClose: Stop the SSH tunnel on port 8080'
-  'portOpen: Open an SSH tunnel on port 8080 redirecting to 8090'
   'restoreDb: Restore the database file named in the argument'
   'rmDb: Forcibly delete the files in GW_DB_DIR'
   'scratchReport: Generate scratch suite entries for tests in the current working set'

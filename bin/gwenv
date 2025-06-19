@@ -1,10 +1,19 @@
 #!/bin/zsh
 
-allVars=(GW_ANSI_APPCODE GW_ANSI_NAME GW_ANSI_PLATFORM GW_APPCODE GW_APPNAME GW_COLOR GW_DB_DIR GW_PL_NUM GW_PL_VERSION GW_PLATFORM GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE GW_VERSION IDEA_HOME JAVA_HOME)
+allVars=(GW_ANSI_APPCODE GW_ANSI_NAME GW_ANSI_PLATFORM GW_APPCODE GW_APPNAME GW_COLOR GW_DB_DIR GW_PL_NUM GW_PL_VERSION GW_PLATFORM GW_PORT GW_PORT_DEBUG GW_STUDIO_VERSION GW_TITLE GW_VERSION IDEA_HOME IDEA_JDK JAVA_HOME)
 namedVars=()
 unset $allVars
 
 autoload -Uz colorLabel
+
+# shellcheck disable=SC1036 # '(' is invalid here
+# shellcheck disable=SC1088 # Parsing stopped here
+function ⭑⭑⭑() {
+  (($#quiet)) && return
+  echo
+  pastel -f paint -n white --on teal "${@}"
+  echo
+}
 
 while (($#*)); do
   case $1 in
@@ -13,7 +22,7 @@ while (($#*)); do
       debug=true
       ;;
     --setx)# turn on tracing
-      setx=true
+      set -x
       ;;
     --all)
       namedVars+=(${allVars[@]})
@@ -28,15 +37,6 @@ while (($#*)); do
   esac
   shift
 done
-
-# shellcheck disable=SC1036 # '(' is invalid here
-# shellcheck disable=SC1088 # Parsing stopped here
-function ⭑⭑⭑() {
-  (($#quiet)) && return
-  echo
-  pastel -f paint -n white --on teal "${@}"
-  echo
-}
 
 (($#setx)) && set -x
 
@@ -163,6 +163,9 @@ if (($#GW_PL_VERSION)); then
     50.15.*)
       GW_PLATFORM=Olos
       ;;
+    50.16.*)
+      GW_PLATFORM=Portillo
+      ;;
     # if you add a new version here make sure to set the required environment below
     *)
       GW_PLATFORM='???'
@@ -178,6 +181,11 @@ fi
 #
 
 case ${GW_PLATFORM} in
+  "")
+    (($#quiet)) || echo No GW_PLATFORM determined!
+    return
+    unsetGWVars
+    ;;
 #  athena|bedrock|carbon|diamond)
 #    export AARDVARK_HOME=/depot/aardvark/alpha
 #    export ANT_HOME=/depot/ant/apache-ant-1.7.1
@@ -196,10 +204,10 @@ case ${GW_PLATFORM} in
 #    export JAVA_HOME=/usr/lib/jvm/java-7-jdk
 #    export M2_HOME=/depot/maven/apache-maven-3.0.4
 #    ;;
-  ferrite)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
-    ;;
+#  ferrite)
+#    export IDEA_HOME='/Applications/IntelliJ IDEA 15.app/Contents'
+#    export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home
+#    ;;
   granite)
     case ${GW_PL_VERSION} in
       10.0.0*|10.0.1)
@@ -251,19 +259,13 @@ case ${GW_PLATFORM} in
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
-    # if you add a new version here make sure to set the required environment above
-  Niseko|Olos)
+  Niseko|Olos|*)
     export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 UE.app/Contents'
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
-    # if you add a new version here make sure to set the required environment above
-  *)
-    (($#quiet)) || echo Unknown GW_PLATFORM \"$GW_PLATFORM\"
-    return
-    unsetGWVars
-    ;;
+  # if you add a new version here make sure to set the required environment above
 esac
 
 

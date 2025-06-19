@@ -40,7 +40,7 @@ function ⭑⭑⭑() {
 }
 
 function echoDirNameIn() {
-  [[ "$1" = "--allow-empty" ]] && shift && ignore=true
+  [[ "$1" = "--allow-empty" ]] && shift && allowEmpty=true
   for dirName in "${@}"; do
     if ((! $#dirName)); then
       echo $dirName is \$$dirName
@@ -54,7 +54,7 @@ function echoDirNameIn() {
     elif [[ -f "$value" ]]; then # echo its a file
       echo -n '✓ '
     else # echo its neither
-      (($#ignore)) && echo -n '? ' || echo -n '❌ '
+      (($#allowEmpty)) && echo -n '? ' || echo -n '❌ '
     fi
     typeset -p ${dirName}
   done
