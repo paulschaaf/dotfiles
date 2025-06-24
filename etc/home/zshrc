@@ -191,7 +191,7 @@ alias -s txt=kate
 # ======== ls Aliases and Functions
 export LS_FLAGS='-BbCFHh --color'
 
-inMacOS && _ls=/usr/local/bin/gls || _ls=/bin/ls
+inMacOS && _ls=${HOMEBREW_PREFIX}/bin/gls || _ls=/bin/ls
 alias ls="${_ls} ${LS_FLAGS}"
 unset _ls
 
@@ -230,8 +230,6 @@ inMacOS && autojump=/usr/local/etc/profile.d/autojump.sh
 inLinux && autojump=/etc/profile.d/autojump.sh
 [[ -s $autojump ]] && source $autojump
 unset autojump
-
-inMacOS && source /Users/pschaaf/.config/broot/launcher/bash/br
 
 alias gwcd='cd "$(gwls --choose)"'
 
@@ -430,12 +428,6 @@ zmodload -i zsh/complist
 for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
   source $file
 done
-
-### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-export PATH="/Users/pschaaf/.rd/bin:$PATH"
-### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
-source ~/.config/broot/launcher/bash/br
 
 # ========
 # ======== Tricks and Tips
