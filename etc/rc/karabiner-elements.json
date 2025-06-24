@@ -1,0 +1,71 @@
+[
+  {
+    "description": "Map Shift + Backspace to Forward Delete",
+    "manipulators": [
+      {
+        "from": {
+          "key_code": "delete_or_backspace",
+          "modifiers": {
+            "mandatory": [
+              "shift"
+            ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "delete_forward"
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+  {
+    "description": "End key to the end of the line (Control + e)",
+    "manipulators": [
+      {
+        "from": {
+          "key_code": "end",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "e",
+            "modifiers": [
+              "left_control"
+            ]
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  },
+  {
+    "description": "Home key to the beginning of the line (Control + a)",
+    "manipulators": [
+      {
+        "from": {
+          "key_code": "home",
+          "modifiers": {
+            "optional": [
+              "any"
+            ]
+          }
+        },
+        "to": [
+          {
+            "key_code": "a",
+            "modifiers": [
+              "left_control"
+            ]
+          }
+        ],
+        "type": "basic"
+      }
+    ]
+  }
+]

@@ -21,27 +21,34 @@ libraries=(
 )
 
 forMacOS=(
-#   xcode-select --install
-   "mkdir homebrew && curl -L https://github.com/Homebrew/brew/tarball/master | tar xz --strip 1 -C homebrew"
-#   git
-  ascii
-  broot
-  coreutils
-  displayplacer
-  fd
-  findutils
+  # ==> Homebrew
+  # https://brew.sh/
+  #
+#  xcode-select --install
+  karabiner-elements
+  logi-options-plus
+  iterm2
   git
   git-delta
   git-lfs
+
+  ascii
+  broot
+  coreutils
+
+  displayplacer
+  fd
+  findutils
   htop
   imagemagick
+
   neofetch
   pastel
-  readline
+
   ripgrep
   ripgrep-all
   ruby
-  screenresolution
+
   sevenzip
   starship
   terminal-notifier
@@ -52,10 +59,6 @@ forMacOS=(
   alfred
   gimp
   inkscape
-  intellij-idea-ultimate # 2024.1.5, plus latest
-  iterm2
-  karabiner-elements
-  logi-options-plus
 )
 
 forArch=(
