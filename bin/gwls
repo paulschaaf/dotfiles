@@ -23,7 +23,7 @@ while (($#*)); do
   shift
 done
 
-branch_width=75
+branch_width=68
 version_width=18
 
 repos=()

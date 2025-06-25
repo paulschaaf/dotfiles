@@ -7,8 +7,7 @@ command_timeout = 5000
 format = """$status$cmd_duration\
 ${custom.gw_is_app}${package}${git_branch}${git_commit}${git_state}${git_status}
 ${time}${hostname}${os}${directory}${env_var}${sudo}
-${jobs}${shlvl}${custom.zsh_command_number} ${username}\\$ """
-#${custom.prompt_char}"""
+${custom.iterm_prompt_mark}${jobs}${shlvl}${custom.zsh_command_number}${username}${custom.prompt_char}"""
 
 #right_format = "${custom.zsh_command_number}"
 
@@ -27,15 +26,21 @@ detect_folders = ["studio", "platform"]
 detect_files = ["README-internal.md"]
 format = "$output"
 
-#[custom.prompt_char]
-#description = "Shows prompt char"
-#command = "echo -n '%(!.#.$)'" # dollar or pound sign
-#style = ''
-#when = true
+[custom.iterm_prompt_mark]
+when = '[ "$TERM_PROGRAM" = "iTerm.app" ]'
+format = "\u001b\\]133;A\u0007"
+shell = "sh"
+
+[custom.prompt_char]
+unsafe_no_escape = true
+command = "echo '%(!.#.$)'"
+style = 'fg:#cccccc'
+when = true
 
 [custom.zsh_command_number]
-command = "pastel -f paint gray '%h'"
-format = "$output"
+unsafe_no_escape = true
+command = 'echo %!'
+style = 'fg:#888888'
 when = true
 
 [directory]
@@ -116,3 +121,4 @@ style = ''
 [username]
 format = '[$user]($style) '
 style_root = '#FFFFFF bg:red'
+disabled = false

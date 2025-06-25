@@ -150,6 +150,11 @@ export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
 # considered separate words, regardless of what may be adjacent.
 export WORDCHARS='|*?-~\\$%^'
 
+if inMacOS; then
+  eval "$(starship init zsh)"
+  export ITERM2_SQUELCH_MARK=1
+  test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+fi
 
 # ========
 # ======== Aliases
