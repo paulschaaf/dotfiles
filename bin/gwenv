@@ -15,6 +15,8 @@ function ⭑⭑⭑() {
   echo
 }
 
+(($#communityEdition)) && ijEdition='CE' || ijEdition='UE'
+
 while (($#*)); do
   case $1 in
     --debug)#
@@ -219,7 +221,7 @@ case ${GW_PLATFORM} in
         export GW_DB_DIR=/tmp/guidewire/granite
         ;;
       10.201.*)
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+        export IDEA_HOME="/Applications/IntelliJ IDEA 2021.1.3 ${ijEdition}.app/Contents"
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         export GW_DB_DIR=./tmp/granite
         if [[ "$GW_APPCODE" = "ab" ]]; then
@@ -227,40 +229,40 @@ case ${GW_PLATFORM} in
         fi
         ;;
       *)
-        export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+        export IDEA_HOME="/Applications/IntelliJ IDEA 2022.3.3 ${ijEdition}.app/Contents"
         export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
         export GW_DB_DIR=./tmp/granite
         ;;
     esac
     ;;
   halite)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2019.3.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=/tmp/guidewire/granite
     ;;
   Aspen|Banff|Cortina) # the cutoff between C and D may be incorrect
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2019.3.5 CE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2019.3.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=/tmp/guidewire/granite
     ;;
   Dobson|Elysian|Flaine|Garmisch|Hakuba)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2021.1.3 CE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2021.1.3 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     ;;
   Innsbruck|Jasper|Kufri)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2022.3.3 CE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2022.3.3 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
   Las\ Leñas|Mammoth)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 UE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
   Niseko|Olos|*)
-    export IDEA_HOME='/Applications/IntelliJ IDEA 2024.1.5 UE.app/Contents'
+    export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test

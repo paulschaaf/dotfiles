@@ -164,6 +164,7 @@ alias cd=pushd
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
 inLinux && alias hpcalc=x48
+[[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]] && alias fd='fd --format "file://${PWD}/{}"'
 inCygwin && alias open=explorer
 if inLinux; then
   function open() {

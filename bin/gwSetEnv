@@ -4,26 +4,26 @@
 # FUNCTIONS
 #
 
-if [[ "$1" == "--trace" || "$1" == "--debug" ]]; then
+if [[ "$1" == "--log" || "$1" == "--debug" ]]; then
   shift
-  function trace() {
+  function log() {
     echo "[45m# $*[0m"
   }
-  alias TRACE=true
+  alias LOG=true
 else
-  function trace() {
+  function log() {
     :
   }
-  alias TRACE=false
+  alias LOG=false
 fi
 
 [[ "$1" == "--setx" ]] && set -x
 
 function unsetGWVars() {
-  trace "We've just moved outside of any GW install, so unset every var named GW_*:"
+  log "We've just moved outside of any GW install, so unset every var named GW_*:"
   for var in $(env | grep ^'GW_' | cut -d '=' -f 1); do
     unset -v "$var"
-    trace "   ... $var"
+    log "   ... $var"
   done
 }
 

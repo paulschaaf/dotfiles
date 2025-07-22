@@ -3,30 +3,31 @@
 #   find * -type f -printf '%f\n' | grep -v '~$' | sed -n '/\./ { s/^.*\.//g; p; }' | sort -u | tee extensions
 
 export debug expanded
-binary=$(if [ -f /usr/local/bin/rg ]; then \
+binary=$(if [[ -f /usr/local/bin/rg ]]; then \
       echo /usr/local/bin/rg; \
-   elif [ -f ~/homebrew/bin/rg ]; then \
-      echo ~/homebrew/bin/rg; \
+   elif [[ -f /opt/homebrew/bin/rg ]]; then \
+      echo /opt/homebrew/bin/rg; \
    else echo /usr/bin/rg; \
    fi)
 
 bizrules=('**/bizrules/*.xml')
 snowcat=('**/cc-snowcat/*')
 test_dirs=(
-   '**/*-test*/'
-   '**/*-gunit-*/'
-   '**/apitestbench*/'
-   '**/gtest/'
-   '**/pcftest/'
-   '**/servertest/'
-   '**/smoketests/'
-   '**/test-*/'
-   '**/test/'
-   '**/testdata/'
-   '**/testharness/'
-   '**/testResources/'
-   '**/tests/'
-   '**/testsupport/'
+   '**/*-test*/**'
+   '**/*-gunit-*/**'
+   '**/apitestbench*/**'
+   '**/gtest/**'
+   '**/pcftest/**'
+   '**/servertest/**'
+   '**/smoketests/**'
+   '**/test-*/**'
+   '**/test/**'
+   '**/testdata/**'
+   '**/testharness/**'
+   '**/testResources/**'
+   '**/tests/**'
+   '**/testsupport/**'
+   '!**/{build,classes,generated,generated_classes}/'
 )
 
 function help() {
@@ -164,7 +165,7 @@ while (($#@)); do
   shift
 done
 
-(($#expanded)) && printf "\e[90mExpanded to => %s %s\e[0m\n"  "${binary}" "${command[*]}"
+(($#expanded)) && printf "\e[97mExpanded to => %s %s\e[0m\n"  "${binary}" "${command[*]}"
 
 if (($#dry_run)); then
   exit

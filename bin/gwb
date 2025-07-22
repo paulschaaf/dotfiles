@@ -6,6 +6,7 @@ run_color=${run_color:-'48;5;21'}
 pass_color=${pass_color:-'48;5;34'}
 fail_color=${fail_color:-'48;5;196'}
 warn_color=${warn_color:-'48;5;228'}
+note_color=${note_color:-'97;46'}
 unset nice
 
 if [[ "$UNAME" = "Darwin" ]]; then
@@ -16,6 +17,9 @@ fi
 # Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
 while [ -n "$*" ]; do
   case $1 in
+    --ce)# Force use of the IJ Community Edition
+      communityEdition=true
+      ;;
     --delay)# Sleep for the specified number of seconds (the default)
       shift
       delay=$1
@@ -94,7 +98,7 @@ failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertS
 serverDebugProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
 
-catPumlHeader() {
+function catPumlHeader() {
 cat <<HERE
 @startuml
 !pragma useIntermediatePackages false
@@ -127,14 +131,20 @@ webserverPort=$((GW_PORT_DEBUG + 1))
 webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 
 # Printing and Grep Functions
-echoVar() {
+function note() {
+  echo
+  pastel -f paint -n white --on teal "${@}"
+  echo
+}
+
+function echoVar() {
   typeset -p $* | sed 's/^declare\( -x\)* / /'
   echo
 }
 
 autoload -Uz settitle
 
-log_section() {
+function log_section() {
   local _color=$1
   local _status=$2
   local _taskDesc=$3
@@ -148,22 +158,22 @@ log_section() {
   printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" $_taskDesc
 }
 
-debugPrint() {
+function debugPrint() {
   (($#debug)) || return
   print -P "%F{13}$*%f"
 }
 
-grepProcStr() {
+function grepProcStr() {
   echo "pgrep -afl -- '$1' | grep -v pgrep"
 }
 
 PKILL='pkill -KILL -f --'
 
-killProcStr() {
+function killProcStr() {
   echo $(grepProcStr "$1")" && $PKILL '$1'"
 }
 
-notify() {
+function notify() {
   subtitle="$1"
   shift
   terminal-notifier -group $PWD -title "$GW_TITLE" -subtitle "$subtitle" -message "${*}" >/dev/null &
@@ -171,7 +181,7 @@ notify() {
 }
 
 # Run the Actual Task
-runTask() {
+function runTask() {
   local userTask=$1
   local task=$2
   (($#debug)) && typeset nice ignoreNice
@@ -393,13 +403,15 @@ while (($#@)); do
         'GitToolBox'
         'Grep Console'
         'Launch URL from String'
-        'PlantUML Integration'
         'PlantUML Parser'
+        'plantuml4idea'
         'String Manipulation'
       )
-      echo Expected:; (for exp in ${expectedPlugins}; do echo $exp; done) | cat -n
+      echo EXPECTED
+      note 'Expected:'
+      (for exp in ${expectedPlugins}; do echo $exp; done) | cat -n
 #      fullTask="echo Found:; fd --base-directory .idea/settings/system/plugins --no-ignore -e zip --format '{/.}' | sort --ignore-case | cat -n"
-      fullTask="sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n"
+      fullTask="echo; sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n | lite $expectedPlugins"
       ;;
     lsport)# List processes holding the specified port
       fullTask="lsof -i tcp:${value}"

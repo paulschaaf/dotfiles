@@ -72,9 +72,9 @@ case ${UNAME} in
     alias idea='/Applications/IntelliJ\ IDEA\ 2024.2.3\ CE.app/Contents/MacOS/idea'
     os_override_path=(
       ~/bin/macos
+      ${os_override_path[@]}
       ${HOMEBREW_PREFIX}/bin
       ${HOMEBREW_PREFIX}/sbin/
-      ${os_override_path[@]}
      )
     fpath=(${HOMEBREW_PREFIX}/share/zsh/site-functions ${fpath})
     ;;
