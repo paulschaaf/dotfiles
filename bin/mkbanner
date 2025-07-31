@@ -2,9 +2,9 @@
 
 # Set the Defaults
 fgColor=gray60      # lower number is darker
-pointsize=240
+pointsize=200
 smush=100
-maxWidth=1900
+maxWidth=1500
 maxHeight=$maxWidth
 
 function usage() {

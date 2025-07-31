@@ -161,6 +161,7 @@ fi
 alias 8080="open http://localhost:8080/cc"
 alias 8090="open http://localhost:8090/cc"
 alias cd=pushd
+inMacOS && alias cp='gcp'
 alias du='du -h'
 alias grep='grep --extended-regexp --color'
 inLinux && alias hpcalc=x48

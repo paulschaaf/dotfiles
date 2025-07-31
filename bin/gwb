@@ -93,7 +93,7 @@ apd_dirs=(
   app-cc/cc-test-apd/gsrc
   app-cc/cc-test-apd/gtest/gw
 )
-dbbackup=h2database
+dbbackup=h2db
 failIcon=/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns
 serverDebugProcess="java .*-Dgw.port=${GW_PORT_DEBUG}.* com.guidewire"
 passIcon=/gw-dev/icons/$(echo $GW_APPCODE | sed 's/.*/\U\0/')_favicon.ico
@@ -273,7 +273,7 @@ while (($#@)); do
   taskFailIcon=
   taskPassIcon=
   case $task in
-    backupDb)# (optionally specify comment) creates backup named $(date "+${dbbackup}${comment}_%H:%M:%S")
+    backupDb)# (optionally specify comment) creates backup named $(date "+${dbbackup}_%H:%M:%S${comment}")
       if (( $#value )); then
         # extract the name portion, and replace spaces with underscores
         comment=_${value// /_}
@@ -281,7 +281,7 @@ while (($#@)); do
         comment=""
       fi
 
-      dbName=$(date "+${dbbackup}${comment}_%y%m%d_%H:%M:%S")
+      dbName=$(date "+${dbbackup}_%y%m%d_%H:%M:%S${comment}") # keep this in sync with the switch comment above
       fullTask="$seven_zip a ${dbName} $GW_DB_DIR; $seven_zip l ${dbName}.7z"
       ;;
     clean)# Deletes the build directory
