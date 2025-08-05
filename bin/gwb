@@ -351,11 +351,22 @@ while (($#@)); do
       ;;
     genWsiLocal)#
       ;;
-    h2)# Open the H2 console
+    h2)# Open the H2 console connected to the database
 #      spawn=true
-      fullTask="find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit | xargs java -jar"
+      jarFile=`find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit`
+      db_path=`pwd`${GW_DB_DIR#.}/${GW_APPCODE}
+      fullTask="java -jar ${jarFile} -url 'jdbc:h2:${db_path};IFEXISTS=TRUE'"
       echo
-      echo "\n\e[5;97;101mChange the host to 127.0.0.1, and make sure the JDBC URL is correct! There is no username or password.\e[0m"
+      echo "\n\e[5;97;101mChange the host to 127.0.0.1.\e[0m"
+      ;;
+    h2Basic)# Open the H2 console
+#      spawn=true
+      jarFile=`find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit`
+      db_path=`pwd`${GW_DB_DIR#.}/${GW_APPCODE}
+
+      fullTask="java -jar ${jarFile}"
+      echo
+      echo "\n\e[5;97;101mChange the host to 127.0.0.1, and make sure the JDBC URL is '${db_path}'! There is no username or password.\e[0m"
       ;;
     http)# Start a simple http server in the resources directory
       spawn=true

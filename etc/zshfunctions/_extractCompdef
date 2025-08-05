@@ -2,7 +2,8 @@
 # This file was generated using 'extractCompdef bin/extractCompdef'
 
 _arguments "*: :((
+  '--changed: update for all changed files in ~/bin'
   '--debug: print debugging info'
-  '--force: forcibly update the file in $PWD'
+  '--force: forcibly update the file in \\\$PWD'
   '--setx: run \"set -x\" once this switch is parsed'
 ))"
