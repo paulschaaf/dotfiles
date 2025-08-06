@@ -167,7 +167,7 @@ for src in **/*.flac; do
       log 2 "Converting \e[4m${(q)src}\e[24m"
       dest="${destRootName}.mp3"
       destDir=$(dirname ${(q)dest})
-      cmd="mkdir -p ${(q)destDir}; ffmpeg -i ${(q)src} -q:a 2 ${(q)dest}"
+      cmd="mkdir -p ${destDir}; ffmpeg -i ${(q)src} -q:a 2 ${(q)dest}"
 
       echo $cmd
 

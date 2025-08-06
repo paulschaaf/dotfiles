@@ -100,7 +100,7 @@ RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
 # ========
 # ======== Exported Variables
-export BROWSER=google-chrome-stable
+export BROWSER=/usr/bin/thorium-browser
 inMacOS && export BROWSER=open
 #inMacOS && export DISPLAY=:0
 export EDITOR=/usr/bin/nano

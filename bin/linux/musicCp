@@ -1,0 +1,60 @@
+#!/bin/zsh
+
+if [[ "$1" == "--help" ]]; then
+  cat <<EOF
+Copies a file from the source music directory to a user-specific destination directory, using a regex to match files.
+
+- The first argument is the user name; all remaining arguments are combined as the regex.
+- If no files match, it exits with a message.
+- If one file matches, it copies it directly.
+- If multiple files match, it prompts the user to select one.
+- The file is copied with its parent directories preserved.
+
+Usage: $0 <user> <regex>
+EOF
+  exit 0
+fi
+
+if [[ -z "$1" || -z "$2" ]]; then
+  echo "Usage: $0 <user> <regex>"
+  exit 1
+fi
+
+srcRoot=~/data/soundKonverter/Music
+
+user="$1"
+shift
+regex="$*"
+dest_dir="${srcRoot}.${user}"
+if [[ ! -d "$dest_dir" ]]; then
+  echo "Destination directory for user '$user' does not exist at $dest_dir."
+  exit 1
+fi
+
+cd "${srcRoot}" || exit 1
+
+matches=()
+while IFS= read -r file; do
+  matches+=("$file")
+done < <(fd --type f --regex "$regex")
+
+selection=
+if [[ ${#matches[@]} -eq 0 ]]; then
+  echo "No files found matching the regex."
+  exit 1
+elif [[ ${#matches[@]} -eq 1 ]]; then
+  selection="${matches[1]}"
+else
+  echo "Select a file:"
+  select selection in "${matches[@]}"; do
+    if [[ -n "$selection" ]]; then
+      echo
+      break
+    else
+      echo "Invalid selection."
+    fi
+  done
+fi
+
+cp --parents "$selection" "$dest_dir"
+echo "Copied '$selection' to $dest_dir"
