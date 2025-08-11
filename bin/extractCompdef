@@ -39,10 +39,13 @@ while [ -n "$*" ]; do
 done
 
 if ${changed}; then
-  for file in $(git diff --name-only | grep '\bbin'); do
+  files=$(git diff --name-only | grep '\bbin')
+  for file in $files; do
     echo "\n== $file"
     extractCompdef ${force:+--force} $file
   done
+  (($#files)) || echo 'Nothing to do!'
+  exit
 fi
 
 (($#script)) || exit
