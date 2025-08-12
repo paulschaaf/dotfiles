@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-if [[ "$1" == "--help" ]]; then
+show_help() {
   cat <<EOF
 Copies a file from the source music directory to a user-specific destination directory, using a regex to match files.
 
@@ -13,17 +13,35 @@ Copies a file from the source music directory to a user-specific destination dir
 Usage: $0 <user> <regex>
 EOF
   exit 0
-fi
+}
 
-if [[ -z "$1" || -z "$2" ]]; then
-  echo "Usage: $0 <user> <regex>"
+# Process switches
+while [[ $# -gt 0 && "$1" =~ ^-- ]]; do
+  case "$1" in
+    --athena)# Athena user
+      user=Athena
+      ;;
+    --victoria)# Victoria user
+      user=Victoria
+      ;;
+    --help)# help
+      show_help
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+if [[ -z "$1" ]]; then
+  echo "Usage: $0 [--athena|--victoria] <regex>"
   exit 1
 fi
 
 srcRoot=~/data/soundKonverter/Music
 
-user="$1"
-shift
 regex="$*"
 dest_dir="${srcRoot}.${user}"
 if [[ ! -d "$dest_dir" ]]; then
@@ -40,7 +58,7 @@ done < <(fd --type f --regex "$regex")
 
 selection=
 if [[ ${#matches[@]} -eq 0 ]]; then
-  echo "No files found matching the regex."
+  echo -n "No files found matching the regex '$regex' under "; pwd
   exit 1
 elif [[ ${#matches[@]} -eq 1 ]]; then
   selection="${matches[1]}"

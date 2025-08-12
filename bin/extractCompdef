@@ -30,60 +30,64 @@ while [ -n "$*" ]; do
       return 1
       ;;
     *)
-      script=${1}
-      scriptShortName=$(basename $1)
       break
       ;;
   esac
   shift
 done
 
-if ${changed}; then
-  files=$(git diff --name-only | grep '\bbin')
-  for file in $files; do
-    echo "\n== $file"
-    extractCompdef ${force:+--force} $file
-  done
-  (($#files)) || echo 'Nothing to do!'
+scripts=()
+
+if $changed; then
+  echo '== Using changed scripts'
+  scripts=($(git diff --name-only | grep '\bbin'))
+else
+  scripts="$@"
+fi
+
+if ((! $#scripts)); then
+  echo 'Nothing to do!'
   exit
 fi
 
-(($#script)) || exit
+for script in $scripts; do
+  if [[ ! -f ${script} ]]; then
+    echo "Script not found: ${script}"
+    exit 1
+  fi
 
-outfile_name=$zcompletionDir/_${scriptShortName}
-$force && outfile=${outfile_name}
+  scriptShortName=$(basename ${script})
+  outfile_name=$zcompletionDir/_${scriptShortName}
+  $force && outfile=${outfile_name}
 
-echo '== Using environment'
-typeset -p scriptShortName zcompletionDir outfile outfile_name
-echo
+  # Extract lines suitable for entry in a zcompletion file:
+  # 1. grab every line that has a ')' char directly followed by a # (a commented switch line in a case statement)
+  # 2. filter out any that are commented out
+  # 3. standardize the leading whitespace, single-quote what's left
+  # 4. escape any double quotes and put three backslashes before every dollar sign
+  switches=$(sed -n 's/[)]# */: /p' ${script} | grep -v '^ *#' | sed "s/^ *\(.*\)/  '\1'/; s/: *'/'/" | sed 's/"/\\"/g; s/[$]/\\\\\\\$/g' | sort)
 
-# Extract lines suitable for entry in a zcompletion file:
-# 1. grab every line that has a ')' char directly followed by a # (a commented switch line in a case statement)
-# 2. filter out any that are commented out
-# 3. standardize the leading whitespace, single-quote what's left
-# 4. escape any double quotes and put three backslashes before every dollar sign
-switches=$(sed -n 's/[)]# */: /p' ${script} | grep -v '^ *#' | sed "s/^ *\(.*\)/  '\1'/; s/: *'/'/" | sed 's/"/\\"/g; s/[$]/\\\\\\\$/g' | sort)
+  if ((!$#switches)); then
+    echo No switches found for $0
+    exit 1
+  fi
 
-if ((!$#switches)); then
-  echo No switches found for $0
-  exit 1
-fi
+  if ! ${force}; then
+    echo -n '\nUse --force to '
+    [[ -f ${outfile_name} ]] && echo -n overwrite || echo -n create
+    echo " $outfile_name with the following:\n"
+  fi
 
-if ! ${force}; then
-  echo -n '\nUse --force to '
-  [[ -f ${outfile_name} ]] && echo -n overwrite || echo -n create
-  echo " $outfile_name with the following:\n"
-fi
-
-cat <<__EOF >| $outfile
+  cat <<__EOF >| $outfile
 #compdef $scriptShortName
-# This file was generated using '$(basename $0) $*'
+# This file was generated using '$(basename $0) $script'
 
 _arguments "*: :((
 ${switches}
 ))"
 __EOF
 
-if ${force}; then
-  git diff $outfile
-fi
+  if ${force}; then
+    git diff $outfile
+  fi
+done

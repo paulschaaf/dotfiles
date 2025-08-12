@@ -1,0 +1,8 @@
+#compdef musicCp
+# This file was generated using 'extractCompdef bin/linux/musicCp'
+
+_arguments "*: :((
+  '--athena: Athena user'
+  '--help: help'
+  '--victoria: Victoria user'
+))"
