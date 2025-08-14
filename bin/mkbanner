@@ -5,6 +5,7 @@ fgColor=gray60      # lower number is darker
 pointsize=200
 smush=100
 maxWidth=1500
+# shellcheck disable=SC2034 # unused var
 maxHeight=$maxWidth
 
 function usage() {
@@ -38,6 +39,7 @@ switches=()
 alias dry_run=false
 alias force=false
 
+# shellcheck disable=SC2034 # unused variable
 args=${@}; @=() # save the args so gwenv doesn't eat them
 source ~/bin/gwenv
 
@@ -100,10 +102,6 @@ if ((!$#txt)); then
   echo Error: missing text!
   usage
   exit 1
-#elif ((${#*})); then
-#  echo "Error: extra arguments after the text '${txt}': '${*}'!"
-#  usage
-#  exit 1
 fi
 
 LABEL=${GW_APPCODE}${GW_PLATFORM:0:1}
@@ -121,13 +119,14 @@ command=( magick convert
   -background none
   -pointsize ${pointsize}
   -channel A -evaluate multiply 0.5 +channel        # transparency
-  -stroke white -strokewidth 4                      # GW_APPCODE name+GW_PL_VERSION outline
+  -stroke white -strokewidth 4
   -fill ${prodColor}  label:"${LABEL}"
   ${font:+-font} ${font}
   -stroke white -strokewidth 2                      # label outline
   -fill ${fgColor}    label:"${txt}"
   +smush ${smush}                                   # smush the two strings together
   -resize $maxWidthx$maxHeight                      # if necessary shrink to fit within this box
+  ${switches}
   ${filename}
 )
 

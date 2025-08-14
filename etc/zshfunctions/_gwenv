@@ -1,0 +1,7 @@
+#compdef gwenv
+# This file was generated using 'extractCompdef bin/gwenv'
+
+_arguments "*: :((
+  '--debug'
+  '--setx: turn on tracing'
+))"

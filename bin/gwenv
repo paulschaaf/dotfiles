@@ -94,85 +94,47 @@ lastDigits=$(echo ${PWD##$HOME/gw/} | sed -E 's/[^0-9]//g')
 unset lastDigits
 
 if (($#GW_PL_VERSION)); then
-  # see https://guidewireconfluence.atlassian.net/wiki/spaces/DEV/pages/796889885/Ski+Release+Name+Decoder
-  case ${GW_PL_VERSION} in
-  #  4.*)
-  #    export GW_PLATFORM=athena
-  #    ;;
-  #  5.*)
-  #    export GW_PLATFORM=bedrock
-  #    ;;
-  #  6.*)
-  #    export GW_PLATFORM=carbon
-  #    ;;
-  #  7.*)
-  #    export GW_PLATFORM=diamond
-  #    ;;
-  #  8.*)
-  #    export GW_PLATFORM=emerald
-  #    ;;
-    9.*)
-      GW_PLATFORM=ferrite
-      ;;
-    10.*)
-      GW_PLATFORM=granite
-      ;;
-    50.0.*)
-      GW_PLATFORM=halite
-      ;;
-    50.1.*)
-      GW_PLATFORM=Aspen
-      ;;
-    50.2.*)
-      GW_PLATFORM=Banff
-      ;;
-    50.3.*)
-      GW_PLATFORM=Cortina
-      ;;
-    50.4.*)
-      GW_PLATFORM=Dobson
-      ;;
-    50.5.*)
-      GW_PLATFORM=Elysian
-      ;;
-    50.6.*)
-      GW_PLATFORM=Flaine
-      ;;
-    50.7.*)
-      GW_PLATFORM=Garmisch
-      ;;
-    50.8.*)
-      GW_PLATFORM=Hakuba
-      ;;
-    50.9.*)
-      GW_PLATFORM=Innsbruck
-      ;;
-    50.10.*)
-      GW_PLATFORM=Jasper
-      ;;
-    50.11.*)
-      GW_PLATFORM=Kufri
-      ;;
-    50.12.*)
-      GW_PLATFORM=Las\ Leñas
-      ;;
-    50.13.*)
-      GW_PLATFORM=Mammoth
-      ;;
-    50.14.*)
-      GW_PLATFORM=Niseko
-      ;;
-    50.15.*)
-      GW_PLATFORM=Olos
-      ;;
-    50.16.*)
-      GW_PLATFORM=Portillo
-      ;;
+  typeset -A GW_PLATFORM_MAP=(
+     9       ferrite
+    10       granite
+    # see https://guidewireconfluence.atlassian.net/wiki/spaces/DEV/pages/796889885/Ski+Release+Name+Decoder
+    50.0     halite
+    50.1     Aspen
+    50.2     Banff
+    50.3     Cortina
+    50.4     Dobson
+    50.5     Elysian
+    50.6     Flaine
+    50.7     Garmisch
+    50.8     Hakuba
+    50.9     Innsbruck
+    50.10    Jasper
+    50.11    Kufri
+    50.12    'Las Leñas'
+    50.13    Mammoth
+    50.14    Niseko
+    50.15    Olos
+    50.16    Palisades
+    50.17    Qusar
+    50.18    Revelstoke
+    50.19    Sestriere
+    50.20    Tiffindell
+    50.21    Unazuki
+    50.22    Voss
+    50.23    Wengen
+    50.24    Xiling
+    50.25    Yongpyong
+    50.26    Zermatt
     # if you add a new version here make sure to set the required environment below
-    *)
-      GW_PLATFORM='???'
-      ;;
-  esac
+  )
+
+  ver_key="${GW_PL_VERSION%%.*}"
+  if [[ "$ver_key" == "50" ]]; then
+    # For 50.x.y, use the first two components
+    ver_key="${GW_PL_VERSION%.*}"
+  fi
+
+  GW_PLATFORM="${GW_PLATFORM_MAP[$ver_key]:-'???'}"
   export GW_PL_NUM=${GW_PL_VERSION%%.*}
   GW_ANSI_PLATFORM=$(colorLabel black orange ${GW_PLATFORM})
   export GW_PLATFORM GW_ANSI_PLATFORM
@@ -235,12 +197,7 @@ case ${GW_PLATFORM} in
         ;;
     esac
     ;;
-  halite)
-    export IDEA_HOME="/Applications/IntelliJ IDEA 2019.3.5 ${ijEdition}.app/Contents"
-    export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
-    export GW_DB_DIR=/tmp/guidewire/granite
-    ;;
-  Aspen|Banff|Cortina) # the cutoff between C and D may be incorrect
+  halite|Aspen|Banff|Cortina) # the cutoff between C and D may be incorrect
     export IDEA_HOME="/Applications/IntelliJ IDEA 2019.3.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-11.jdk/Contents/Home
     export GW_DB_DIR=/tmp/guidewire/granite
@@ -291,7 +248,6 @@ done
 namedVars=(${namedVars:-$*})
 
 if (( $#GW_APPNAME )); then
-  # shellcheck disable=SC2153 # possible misspelling
   export GW_COLOR=${GW_COLORS[$GW_APPNAME]}
   export GW_ANSI_APPCODE=$(pastel -f paint -n ${(Q)GW_COLOR%% *} --on ${(Q)GW_COLOR##* } ${(U)GW_APPCODE})
   export GW_ANSI_NAME=$(colorLabel ${(Q)GW_COLOR%% *} ${(Q)GW_COLOR##* } ${GW_APPNAME})

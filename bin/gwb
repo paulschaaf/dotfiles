@@ -243,6 +243,7 @@ while (($#@)); do
   unset ignoreNice
   task=${1%%=*}
   # value is the text after the equals sign, or empty string if there is none
+  # shellcheck disable=SC2299 # expansion can't be nested
   value=${${1##*=}//$task/}
 
 #  jvmArgs=(
