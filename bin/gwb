@@ -17,8 +17,12 @@ fi
 # Command-line Switches. Add a # directly after the paren to include the switch in the generated zcompletion
 while [ -n "$*" ]; do
   case $1 in
-    --ce)# Force use of the IJ Community Edition
+    --ce)# Force gwenv to use the IJ Community Edition
+      # shellcheck disable=SC2034 # unused variable
       communityEdition=true
+      ;;
+    --clipboard)# put the command output on the clipboard
+      clipboard=true
       ;;
     --delay)# Sleep for the specified number of seconds (the default)
       shift
@@ -29,7 +33,7 @@ while [ -n "$*" ]; do
       debug=true
       ;;
     --dry-run)# Print the commands that will be run, but do not actually run them
-      # shellcheck disable=SC2034 # unused
+      # shellcheck disable=SC2034 # unused variable
       _dry_run='echo '
       ;;
     --log)# Log session to gwb_$(date "+%Y.%m.%d-%H.%M.%S").log
@@ -210,11 +214,17 @@ function runTask() {
       # unless being nice, make sure we source the gwb script instead of just running it
       (($#ignoreNice == 0 || $#nice == 0)) && task=${task/.\/gwb/source gwb}
       (($#debug)) && typeset task | sed 's/task=/actual task is /'
+      [[ $clipboard ]] && task="${task} | pbcopy"
       # if it's a Java cmd, display each option indented on a separate line
       eval ${task} | sed '/java / { s/ -/\n   -/g
             }'
       # keep the exit code from the first command in the chain (i.e. not the sed)
       exitCode=${pipestatus[1]}
+      if (($#clipboard )); then
+        echo "\n\e[30;${note_color}mAdded the following to the clipboard\e[0m"
+        pbpaste
+        echo
+      fi
     fi
   fi
   # tries to display the elapsed seconds as something like 0:00.00
@@ -314,7 +324,7 @@ while (($#@)); do
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
     fixRunConfigs)# Replaces the literal port numbers with env var references in each of the .idea/runConfigurations
-      fullTask="perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml"
+      fullTask="perl -pi.bak -e 's/-Xmx4g/-Dgw.port=8001 -Xmx4g/' .idea/runConfigurations/Snowcat*.xml && perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml"
       ;;
     fixPuml)# Remove the cruft (internal classes, DYNPROPs, Bean-level properties, etc. from the file
       if (( $#value == 0 )); then
@@ -408,12 +418,19 @@ while (($#@)); do
       noNotifySuccess=true
       fullTask="ls -l ${GW_DB_DIR}"
       ;;
+    lsDiff)# put the list of files that have changed since origin/h-master (or the specified branch) on the clipboard
+      branch=${value:-origin/h-master}
+      [[ $branch = 'coins' ]] && branch=origin/feat/gcl_coinsurance
+      clipboard=true
+      fullTask="git show --name-only --pretty='' ${branch}.. | toIJScope"
+      ;;
     lsplugins)# List all of the user IntelliJ plugins
       expectedPlugins=(
         'GitHub Copilot'
         'GitLink'
         'GitToolBox'
         'Grep Console'
+        'Jump to Line'
         'Launch URL from String'
         'PlantUML Parser'
         'plantuml4idea'
@@ -423,7 +440,39 @@ while (($#@)); do
       note 'Expected:'
       (for exp in ${expectedPlugins}; do echo $exp; done) | cat -n
 #      fullTask="echo Found:; fd --base-directory .idea/settings/system/plugins --no-ignore -e zip --format '{/.}' | sort --ignore-case | cat -n"
-      fullTask="echo; sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n | lite $expectedPlugins"
+      installedPlugins=("${(@f)$(sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case)}") #" quote to force IJ to consider the previous string as ended
+
+      # Create lookup tables for matches
+      typeset -A matched_expected
+      typeset -A matched_installed
+
+      # Find all matches
+      for expected in "${expectedPlugins[@]}"; do
+        for installed in "${installedPlugins[@]}"; do
+          if [[ "$installed" == "$expected"* ]]; then
+            matched_expected["$expected"]=1
+            matched_installed["$installed"]=1
+          fi
+        done
+      done
+
+      echoVar matched_expected matched_installed
+
+      # Create new arrays excluding matched items
+      missingExpected=()
+      extraInstalled=()
+      set -x
+      for expected in "${expectedPlugins[@]}"; do
+        [[ -z "${matched_expected[$expected]}" ]] && missingExpected+=("$expected")
+      done
+      set +x
+      for installed in "${installedPlugins[@]}"; do
+        [[ -z "${matched_installed[$installed]}" ]] && extraInstalled+=("$installed")
+      done
+
+      echoVar missingExpected extraInstalled
+
+      fullTask="echo; sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n | lite "${expectedPlugins}
       ;;
     lsport)# List processes holding the specified port
       fullTask="lsof -i tcp:${value}"

@@ -1,0 +1,32 @@
+#!/usr/bin/perl
+
+# Script to transform git file list to IJ "scope" regex format
+#   e.g. change
+#     app-cc/cc-gunit/src/gw/api/databuilder/CICodingBuilder.java
+#   to
+#    file[cc-gunit]:src/gw/api/databuilder/CICodingBuilder.java
+# Usage: git show --name-only --pretty='' | ./transform.pl
+# Or: ./transform.pl < input.txt
+
+# Read all input at once
+local $/;
+my $input = <>;
+
+# Exit if no input
+exit 0 unless defined $input && $input =~ /\S/;
+
+# Remove any leading/trailing whitespace and empty lines
+$input =~ s/^\s*//gm;
+$input =~ s/\s*$//gm;
+$input =~ s/\n\n+/\n/g;
+
+# Transform app-cc paths to file[module]:path format
+$input =~ s|^app-cc/([^/]+)/(.*)$|file[$1]:$2|gm;
+
+# Join all lines with ||
+#$input =~ s/\n/||/g;
+
+# Remove trailing ||
+#$input =~ s/\|\|$//;
+
+print $input;

@@ -3,6 +3,7 @@
 
 _arguments "*: :((
   '--ce: Force use of the IJ Community Edition'
+  '--clipboard: put the command output on the clipboard'
   '--debug'
   '--delay: Sleep for the specified number of seconds (the default)'
   '--dry-run: Print the commands that will be run, but do not actually run them'
@@ -40,6 +41,7 @@ _arguments "*: :((
   'killStudio: Kill the studio whose sdkroot is pwd'
   'lsApd: List the files that \"wipeApd\" would delete'
   'lsDb: List the contents of the database directory'
+  'lsDiff: put the list of files that have changed since origin/h-master (or the specified branch) on the clipboard'
   'lsplugins: List all of the user IntelliJ plugins'
   'lsport: List processes holding the specified port'
   'opendd: Open the data dictionary'
