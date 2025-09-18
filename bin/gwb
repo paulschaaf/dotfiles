@@ -434,15 +434,17 @@ while (($#@)); do
         'Launch URL from String'
         'PlantUML Parser'
         'plantuml4idea'
+        'Run Configuration as Action'
         'String Manipulation'
       )
+
       echo EXPECTED
       note 'Expected:'
       (for exp in ${expectedPlugins}; do echo $exp; done) | cat -n
 #      fullTask="echo Found:; fd --base-directory .idea/settings/system/plugins --no-ignore -e zip --format '{/.}' | sort --ignore-case | cat -n"
-      installedPlugins=("${(@f)$(sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case)}") #" quote to force IJ to consider the previous string as ended
+      installedPlugins=("${(@f)$(sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2/' .idea/settings/system/plugins/meta/*.json | sort --unique --ignore-case)}") #" quote to force IJ to consider the previous string as ended
 
-      # Create lookup tables for matches
+      # Create associative arrays for matches
       typeset -A matched_expected
       typeset -A matched_installed
 
@@ -450,29 +452,27 @@ while (($#@)); do
       for expected in "${expectedPlugins[@]}"; do
         for installed in "${installedPlugins[@]}"; do
           if [[ "$installed" == "$expected"* ]]; then
-            matched_expected["$expected"]=1
-            matched_installed["$installed"]=1
+            matched_expected[$expected]=1
+            matched_installed[$installed]=1
           fi
         done
       done
 
-      echoVar matched_expected matched_installed
+      (($#debug)) && echoVar matched_expected matched_installed
 
       # Create new arrays excluding matched items
       missingExpected=()
       extraInstalled=()
-      set -x
       for expected in "${expectedPlugins[@]}"; do
         [[ -z "${matched_expected[$expected]}" ]] && missingExpected+=("$expected")
       done
-      set +x
       for installed in "${installedPlugins[@]}"; do
         [[ -z "${matched_installed[$installed]}" ]] && extraInstalled+=("$installed")
       done
 
-      echoVar missingExpected extraInstalled
+      (($#debug)) && echoVar missingExpected extraInstalled
 
-      fullTask="echo; sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2  (\1)/' .idea/settings/system/plugins/meta/*.json | sort --ignore-case | cat -n | lite "${expectedPlugins}
+      fullTask="echo; sed -E 's/^.*\"id\":([0-9]+).*name\":\"([^\"]+)\".*$/\2/' .idea/settings/system/plugins/meta/*.json | sort --unique --ignore-case | cat -n | lite \"${(@j:|:)expectedPlugins}\"; echo; echo Missing Expected: ${missingExpected}; echo"
       ;;
     lsport)# List processes holding the specified port
       fullTask="lsof -i tcp:${value}"
