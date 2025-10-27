@@ -35,7 +35,11 @@ while [[ $# -gt 0 && "$1" =~ ^-- ]]; do
   shift
 done
 
-if [[ -z "$1" ]]; then
+if [[ -z "$user" ]]; then
+  echo "Error: You must specify a user."
+fi
+
+if [[ -z "$1" || -z "$user" ]]; then
   echo "Usage: $0 [--athena|--victoria] <regex>"
   exit 1
 fi

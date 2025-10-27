@@ -3,6 +3,8 @@
 srcRoot=~/data/Music
 dstRoot=~/data/soundKonverter/Music
 
+musicFileExtensions=(m3u m4a m4p mp3 mp4 opus)
+
 alias TEST_MODE=false
 alias DEBUG=false
 alias TRACE=false
@@ -184,9 +186,11 @@ log 2 Converted ${count} files, kept ${ignore}
 
 
 ######################################################
-log 1 Copy M4A, M4P, MP3, and MP4 files if missing
+log 1 Copy ${musicFileExtensions} files if missing
 count=0; ignore=0
-for src in **/*.{m4a,m4p,mp3,mp4}; do
+for ext in "${musicFileExtensions[@]}"; do
+  # use zsh nullglob qualifier (N) so the inner loop is skipped if no matches exist
+  for src in **/*.${ext}(N); do
     [[ ! -f "${src}" ]] && continue # nomatch means we'll enter this loop even if e.g. no mp4's exist
     dest="${dstRoot}/${src}"
     if [[ -f "${dest}" ]]; then
@@ -203,6 +207,7 @@ for src in **/*.{m4a,m4p,mp3,mp4}; do
       ((count++))
     fi
     DEBUG && showTree
+  done
 done
 log 2 Copied ${count} files, kept ${ignore} existing files
 

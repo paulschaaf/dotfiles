@@ -1,21 +1,23 @@
 #!/bin/zsh
 
-local file=$1
-local base=${1%%.*}
-local extension=${1##*.}
-local title=${2:-$base}
-local index=1
+# fixed: no top-level 'local' (use inside functions only)
+file="$1"
+base="${1%%.*}"
+extension="${1##*.}"
+title="${2:-$base}"
+index=1
 set -x
 
-# Split audio into 10 minute clips
-ffmpeg -i ${file} -f segment -segment_time 600 -c copy tmp_${base}%03d.${extension}
+# Split audio into 5 minute clips, start numbering at 1
+ffmpeg -i "${file}" -f segment -segment_time 300 -c copy -start_number 1 "tmp_${base}%03d.${extension}"
 
-count=`ls -1q tmp_* | awk 'END {print NR}'`
+count=$(ls -1q tmp_* 2>/dev/null | awk 'END {print NR}')
 for track in tmp_*; do
-  ffmpeg -i ${track} -metadata title="${title} ${index}/${count}" -c copy ${track##tmp_}
-  rm -f ${track}
+  ffmpeg -i "${track}" -metadata title="${title} ${index}-${count}" -metadata track="${index}/${count}" -id3v2_version 3 -c copy "${track##tmp_}"
+  rm -f "${track}"
   : $((index++))
 done
+
 
 # Extract MP3 audio from video
 #ffmpeg -i X.avi X.mp3
