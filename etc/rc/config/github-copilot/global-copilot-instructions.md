@@ -5,7 +5,7 @@
 - Apply SOLID, DRY, KISS, YAGNI, OWASP, DOP, FP, and DDD principles.
 
 ## Technical Stack
-- Use Java 21, Maven, and dependencies like Eclipse Collections, Commons Lang3, Guava, VAVR, Junit5, JQwik, and JMH.
+- Use Java 21, Maven, and dependencies like Commons Lang3, Guava, VAVR, Junit5, JQwik, and JMH.
 - Write all code and comments in English.
 - When you reference code always include the file name and line number 
 

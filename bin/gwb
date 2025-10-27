@@ -221,7 +221,7 @@ function runTask() {
       # keep the exit code from the first command in the chain (i.e. not the sed)
       exitCode=${pipestatus[1]}
       if (($#clipboard )); then
-        echo "\n\e[30;${note_color}mAdded the following to the clipboard\e[0m"
+        echo "\n\e[${note_color}mAdded the following to the clipboard\e[0m"
         pbpaste
         echo
       fi
@@ -324,7 +324,7 @@ while (($#@)); do
       fullTask="perl -pi.bak -e 's/^([_A-Za-z][_A-Za-z0-9]+) \( \)/\1()/g' gwb"
       ;;
     fixRunConfigs)# Replaces the literal port numbers with env var references in each of the .idea/runConfigurations
-      fullTask="perl -pi.bak -e 's/-Xmx4g/-Dgw.port=8001 -Xmx4g/' .idea/runConfigurations/Snowcat*.xml && perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml"
+      fullTask="perl -pi.bak -e 's/-Xmx4g/-Dgw.port=8001 -Xmx4g/' .idea/runConfigurations/Snowcat*.xml && perl -pi.bak -e 's/port=${defaultRunPort}/port=\\$\{GW_PORT\}/; s/port=${defaultDebugPort}/port=\\$\{GW_PORT_DEBUG\}/' .idea/runConfigurations/*.xml; echo 'Remember to add \\$\{GW_PORT_DEBUG\}/ to the default runconfigs!'"
       ;;
     fixPuml)# Remove the cruft (internal classes, DYNPROPs, Bean-level properties, etc. from the file
       if (( $#value == 0 )); then

@@ -17,6 +17,7 @@
 --glob=!**/logs/*
 --glob=!**/node_modules/*
 --glob=!**/*perf*/*
+--glob=!**/secrets.sh
 
 # language translations
 --glob=!{display,typelist}_{de,es,es_ES,fr,it,ja,nl,pt,ru,zh,zh_CN}.properties
