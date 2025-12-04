@@ -1837,7 +1837,7 @@
             <option name="enabled" value="true" />
             <option name="fold" value="false" />
             <option name="foldPlaceholderTextPrefix" value="" />
-            <option name="grepExpression" value="^java.lang.AssertionError" />
+            <option name="grepExpression" value="^java.lang.AssertionError.*" />
             <option name="highlightOnlyMatchingText" value="true" />
             <option name="inputFilter" value="false" />
             <option name="multiline" value="false" />

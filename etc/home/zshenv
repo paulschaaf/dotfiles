@@ -23,6 +23,14 @@ if (( $#zprof )); then
   echo Running zprof from ${(%):-%N}
 fi
 
+# Set PSCHAAF_HOME to the first existing directory from the list
+for dir in /home/pschaaf /Users/pschaaf /home/pauls; do
+  if [[ -d "$dir" ]]; then
+    export PSCHAAF_HOME=$dir
+    break
+  fi
+done
+
 
 # ========
 # ======== Default Settings
@@ -32,10 +40,11 @@ UNAME=${UNAME//_*/}
 (( $#CD_TO )) && builtin cd "$CD_TO" && unset CD_TO
 
 
+
 # ========
 # ======== Recompile if necessary
 autoload -Uz zrecompile
-zrecompile ~/.zshenv ~/.zlogin ~/.zshrc ~pschaaf/etc/rc/zshenv_*
+zrecompile ~/.zshenv ~/.zlogin ~/.zshrc $PSCHAAF_HOME/etc/rc/zshenv_*
 
 
 # ========
@@ -45,7 +54,7 @@ CLASSPATH=${CLASSPATH:=.}
 
 if [ "${UNAME}" = "Darwin" ]; then
    export JAVA_ROOT=/Library/Java/JavaVirtualMachines
-   export JAVA_HOME=${JAVA_ROOT}/amazon-corretto-23.jdk/Contents/Home
+   export JAVA_HOME=${JAVA_ROOT}/jbr_jcef-21.0.7-osx-aarch64-b1038.54/Contents/Home
 else
   export JAVA_HOME=/usr/lib/jvm/default
 fi
@@ -69,7 +78,7 @@ case ${UNAME} in
     export HOMEBREW_CELLAR="${HOMEBREW_PREFIX}/Cellar";
     export HOMEBREW_REPOSITORY=${HOMEBREW_PREFIX};
     export INFOPATH="${HOMEBREW_PREFIX}/share/info:${INFOPATH:-}";
-    alias idea='/Applications/IntelliJ\ IDEA\ 2024.2.3\ CE.app/Contents/MacOS/idea'
+    alias idea='/Applications/IntelliJ\ IDEA\ 2025.1.6\ UE.app/Contents/MacOS/idea'
     os_override_path=(
       ~/bin/macos
       ${os_override_path[@]}
@@ -92,9 +101,9 @@ path=(
   /opt/git-gw
 )
 
-(($#debug)) && echo PATH is && echo $PATH | tr ':' '\n' | cat -n | sed -E 's_/cygdrive__; s_(/c/Users/pschaaf|%HOME%)_~_'
+(($#debug)) && echo PATH is && echo $PATH | tr ':' '\n' | cat -n | sed -E 's_/cygdrive__; s_(/c/Users/pauls|%HOME%)_~_'
 
-fpath=(~pschaaf/etc/zshfunctions ${fpath[@]})
+fpath=($PSCHAAF_HOME/etc/zshfunctions ${fpath[@]})
 
 RUBYLIB=${RUBYLIB}${RUBYLIB:+:}~/src/ruby:~/bin
 
@@ -120,7 +129,7 @@ export LC_ALL=en_US.UTF-8
 # ======== OS-Specific
 if inCygwin; then
   zrecompile ~/etc/rc/zshenv_cygwin
-  source ~pschaaf/etc/rc/zshenv_cygwin
+  source $PSCHAAF_HOME/etc/rc/zshenv_cygwin
 fi
 
 
@@ -132,5 +141,5 @@ fi
 
 if (($#inGuidewire)); then
   zrecompile ~/etc/rc/zshenv_guidewire
-  source ~pschaaf/etc/rc/zshenv_guidewire
+  source $PSCHAAF_HOME/etc/rc/zshenv_guidewire
 fi

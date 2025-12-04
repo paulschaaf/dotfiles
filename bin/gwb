@@ -673,3 +673,8 @@ while (($#@)); do
   fullTask="${fullTask}${outputFilter:+ | }${outputFilter}"
   runTask "${task}" "${fullTask}" ${taskPassIcon:-''} ${taskFailIcon:-''}
 done
+
+return
+## Tips
+# To force your test to use "localhost" instead of your your machine name
+-Dgw.server.overrideLocalhost=true
