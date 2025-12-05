@@ -9,7 +9,6 @@ Host *
   IdentityFile ~/.ssh/id_ecdsa
 #   IdentityFile ~/.ssh/id_dsa
 #   IdentityFile ~/.ssh/id_rsa
-  UseKeychain yes
 
 
 # =========================================================================
@@ -27,6 +26,10 @@ Host pschaaf-C02G787RMD6R
 # =========================================================================
 # ======= Guidewire Machines
 
+Host pschaaf-FV36XW0Q92
+   ForwardAgent yes
+   ForwardX11 yes
+   UseKeychain yes
 
 # =========================================================================
 # ======= Other Machines
