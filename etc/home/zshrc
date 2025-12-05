@@ -173,7 +173,6 @@ if inLinux; then
     disown
   }
 fi
-alias neofetch='neofetch --config ~/etc/rc/neofetchrc'
 alias pd=popd
 inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
 alias rpn='java -jar ~/Applications/rpncalc.jar'
@@ -435,3 +434,9 @@ zmodload -i zsh/complist
 for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
   source $file
 done
+
+if inMacOS; then
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/pschaaf/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+fi

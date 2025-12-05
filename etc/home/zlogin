@@ -28,12 +28,12 @@ if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
 else
     if inMacOS; then
         # in MacOS many shells are login shells, so only show this for remote connections
-        (( $#SSH_CONNECTION )) && neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
+        (( $#SSH_CONNECTION )) && fastfetch
 
         # unless root, move to upper left then resize terminal -- see https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 #         ((UID)) && printf '\e[3;0;0;1t\e[8;142;100t'
     else
-        neofetch --config ~/etc/rc/neofetchrc 2> /dev/null
+        fastfetch
     fi
 fi
 
