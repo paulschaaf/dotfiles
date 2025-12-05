@@ -144,7 +144,7 @@ fi
 
 export MANPAGER=less
 export PAGER=less
-export RIPGREP_CONFIG_PATH=~pschaaf/etc/rc/ripgreprc
+export RIPGREP_CONFIG_PATH=$PSCHAAF_HOME/etc/rc/ripgreprc
 
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word. The remaining punctuation chars are
 # considered separate words, regardless of what may be adjacent.
@@ -350,7 +350,7 @@ function updateDirs() {
 (( $#DIRS )) || updateDirs # unless DIRS is already set, run updateDirs
 add-zsh-hook chpwd updateDirs
 
-export STARSHIP_CONFIG=~pschaaf/etc/rc/starship.toml
+export STARSHIP_CONFIG=$PSCHAAF_HOME/etc/rc/starship.toml
 eval "$(starship init zsh)"
 
 

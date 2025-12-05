@@ -1,6 +1,6 @@
-echo in '============ zshenv_cygwin'
+#echo in '============ zshenv_cygwin'
 #export CYGWIN_NOWINPATH-addwinpath="addwinpath"
-echo pwd is; pwd
+#echo -n pwd is; pwd
 
 #if inMingW32; then
 #    # Change the driveLetter+colon combo into forwardSlash+driveLetter, swap
@@ -10,9 +10,13 @@ echo pwd is; pwd
 #    # directory)
 #    CYGROOT=`echo ${CYGROOT} | sed 's~\([a-zA-Z]\):~/\1~g; s~\\\\~/~g; s~;~:~g'`
 #    alias cygpath=${CYGROOT}/bin/cygpath.exe
+# echo PATH | sed 's_/cygdrive__; s
 #
 #    fixDOSPathIn ANT_HOME GIT_PATH JAVA_HOME
 #fi
+
+#PATH=${PATH//\/cygdrive/}
+#PATH=${PATH// /\ }
 
 fixDOSPathIn () {
     local var val
@@ -22,7 +26,7 @@ fixDOSPathIn () {
     done
 }
 
-export CYGROOT=${CYGROOT:=c:\cygwin}
+#export CYGROOT=${CYGROOT:=c:\cygwin}
 export USER=${USER:=$LOGNAME}
 #export HOME=${HOME/\/c\///}  # e.g. turn /c/home/.. into /home/...
 
@@ -87,3 +91,10 @@ appendToCygList () {
 export cyg_save_path=${path}
 
 set +x
+
+return
+
+for f in ${path[@]}; do
+  fixed=$(echo ${f} | sed 's_/cygdrive__; s_Program Files (x86)_PROGRA~2_; s_Program Files_PROGRA~1_')
+  printf "%-80s | %s\n" $f $fixed
+done

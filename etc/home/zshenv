@@ -68,6 +68,8 @@ export     CDPATH CLASSPATH FPATH       LD_LIBRARY_PATH os_override_path PATH   
 # this enables the correct symlink override for one of inCygwin, inMacOS, inLinux, etc.
 case ${UNAME} in
   CYGWIN)
+    PATH=$(echo $PATH | sed 's_/cygdrive__g; s_Program Files (x86)_PROGRA~2_g; s_Program Files_PROGRA~1_g')
+#    typeset -p PATH
     export HOME=/home/$USERNAME
     os_override_path=(~/bin/win ${os_override_path[@]} )
     # do not source the global rcs
