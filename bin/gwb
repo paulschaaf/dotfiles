@@ -408,7 +408,7 @@ while (($#@)); do
       fullTask="${PKILL} '${serverDebugProcess}'"
       ;;
     killStudio)# Kill the studio whose sdkroot is pwd
-      fullTask="${PKILL} '-Dstudio.sdkroot=${PWD}'"
+      fullTask="${PKILL} '-Dstudio.sdkroot=${PWD} '"
       taskFailIcon=$failIcon
       ;;
     lsApd)# List the files that "wipeApd" would delete

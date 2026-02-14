@@ -107,22 +107,24 @@ export SAVEHIST=$HISTSIZE
 # less
 export LESS='--RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 # LESS_TERMCAP_DEBUG=true        # make manpages show markup codes
-export LESS_TERMCAP_mb=$(tput bold; tput setaf 6)               # start blink => cyan
-export LESS_TERMCAP_md=$(tput bold; tput setaf 2)               # start bold => green
-export LESS_TERMCAP_me=$(tput sgr0)                             # end bold, blink & underline
+if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  export LESS_TERMCAP_mb=$(tput bold; tput setaf 6)               # start blink => cyan
+  export LESS_TERMCAP_md=$(tput bold; tput setaf 2)               # start bold => green
+  export LESS_TERMCAP_me=$(tput sgr0)                             # end bold, blink & underline
 
-export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # start inverse video => yellow on blue
-export LESS_TERMCAP_se=$(tput rmso; tput sgr0)                  # stop inverse video =>
+  export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # start inverse video => yellow on blue
+  export LESS_TERMCAP_se=$(tput rmso; tput sgr0)                  # stop inverse video =>
 
-export LESS_TERMCAP_us=$(tput smul; tput bold;    tput setaf 1) # start underline => ul red
-export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)                  # stop underline
+  export LESS_TERMCAP_us=$(tput smul; tput bold;    tput setaf 1) # start underline => ul red
+  export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)                  # stop underline
 
-export LESS_TERMCAP_mr=$(tput rev)
-export LESS_TERMCAP_mh=$(tput dim)
-export LESS_TERMCAP_ZN=$(tput ssubm)
-export LESS_TERMCAP_ZV=$(tput rsubm)
-export LESS_TERMCAP_ZO=$(tput ssupm)
-export LESS_TERMCAP_ZW=$(tput rsupm)
+  export LESS_TERMCAP_mr=$(tput rev)
+  export LESS_TERMCAP_mh=$(tput dim)
+  export LESS_TERMCAP_ZN=$(tput ssubm)
+  export LESS_TERMCAP_ZV=$(tput rsubm)
+  export LESS_TERMCAP_ZO=$(tput ssupm)
+  export LESS_TERMCAP_ZW=$(tput rsupm)
+fi
 
 export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
 
@@ -151,7 +153,6 @@ export RIPGREP_CONFIG_PATH=$PSCHAAF_HOME/etc/rc/ripgreprc
 export WORDCHARS='|*?-~\\$%^'
 
 if inMacOS; then
-  eval "$(starship init zsh)"
   export ITERM2_SQUELCH_MARK=1
   test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 fi
@@ -350,18 +351,9 @@ function updateDirs() {
 add-zsh-hook chpwd updateDirs
 
 export STARSHIP_CONFIG=$PSCHAAF_HOME/etc/rc/starship.toml
-eval "$(starship init zsh)"
-
-
-# ========
-# ======== Guidewire
-#if [[ -s ${NVM_DIR}/nvm.sh ]]; then
-#  zrecompile -U ${NVM_DIR}/nvm.sh
-#  # Bootstrap the enormous nvm (Node version manager) function
-#  alias node="nvm install 10.13.0 && unalias node && node"
-#  alias nvm="echo Loading...; [[ -s ${NVM_DIR}/nvm.sh ]] && unalias nvm && source ${NVM_DIR}/nvm.sh && nvm"
-#fi
-
+if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+  eval "$(starship init zsh)"
+fi
 
 # ========
 # ======== Keychain
@@ -435,8 +427,24 @@ for file in /Users/pschaaf/.atmos/dotfiles.d/*(N); do
   source $file
 done
 
+# ========
+# ======== Guidewire
 if inMacOS; then
+  export CERTS="${HOME}/.ca-certificates"
+  export NODE_EXTRA_CA_CERTS=$CERTS/ZscalerRootCertificate-2048-SHA256-Feb2025.crt
+#  export DOCKER_HOST=unix://$HOME/.rd/docker.sock
+
+  ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+  export PATH="/Users/pschaaf/.rd/bin:$PATH"
+  ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
+  if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+  fi
+fi
+
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/pschaaf/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-fi

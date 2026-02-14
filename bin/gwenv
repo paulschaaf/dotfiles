@@ -44,15 +44,24 @@ done
 
 # if it's a customer build
 if [[ -f product.properties ]]; then
-  eval "$(sed -En '
-    s/^product.name(.*)/export GW_APPNAME\1 cust/p;
-    s/^product.code/export GW_APPCODE/p;
-    s/^product\./export product_/p
-  ' product.properties)"
+  while IFS='=' read -r key value; do
+    case $key in
+      product.name*) export GW_APPNAME="${value} cust" ;;
+      product.code) export GW_APPCODE="${value}" ;;
+      product.*) export "product_${key#product.}"="${value}" ;;
+      product.majorversion) product_majorversion="${value}" ;;
+      product.minorversion) product_minorversion="${value}" ;;
+      product.patchversion) product_patchversion="${value}" ;;
+      product.patchsuffix) product_patchsuffix="${value}" ;;
+    esac
+  done < product.properties
+
   set | grep product
 
-  (($#GW_VERSION)) || export GW_VERSION=${product_majorversion}.${product_minorversion}.${product_patchversion}${product_patchsuffix}
-  (($#GW_PL_VERSION)) || export GW_PL_VERSION=${GW_VERSION}
+  : "${GW_VERSION:=${product_majorversion}.${product_minorversion}.${product_patchversion}${product_patchsuffix}}"
+  export GW_VERSION
+  : "${GW_PL_VERSION:=${GW_VERSION}}"
+  export GW_PL_VERSION
 
   if ((! $#GW_PORT)); then
       case ${GW_APPCODE} in
@@ -73,19 +82,24 @@ if [[ -f product.properties ]]; then
 
 # it's a dev build
 elif [[ -f gradle.properties ]]; then
-  eval "$(sed -En '
-    s/^appCode/GW_APPCODE/p;
-    s/^appName/GW_APPNAME/p;
-    s/^version/GW_VERSION/p;
-    s/^plVersion/GW_PL_VERSION/p;
-    s/^jettyPort/GW_PORT/p;
-    s/^studioVersion/GW_STUDIO_VERSION/p;
-    s/^camelVersion=.*/GW_APPCODE=ccpi\nGW_APPNAME=CCPI\n/p
-  ' gradle.properties | sed '/./ { s/^/export /g; }')"
+  while IFS='=' read -r key value; do
+    case $key in
+      appCode) export GW_APPCODE="${value}" ;;
+      appName) export GW_APPNAME="${value}" ;;
+      version) export GW_VERSION="${value}" ;;
+      plVersion) export GW_PL_VERSION="${value}" ;;
+      jettyPort) export GW_PORT="${value}" ;;
+      studioVersion) export GW_STUDIO_VERSION="${value}" ;;
+      camelVersion)
+        export GW_APPCODE="ccpi"
+        export GW_APPNAME="CCPI"
+        ;;
+    esac
+  done < gradle.properties
 
-  # or maybe this *is* platform
-  # shellcheck disable=SC2155 # declare separately
-  (($#GW_PL_VERSION)) || eval "$(sed -nE 's/^version=/export GW_PL_VERSION=/gp' gradle.properties 2>/dev/null)"
+  # Set GW_PL_VERSION if not already set, using version as fallback
+  : "${GW_PL_VERSION:=${GW_VERSION}}"
+  export GW_PL_VERSION
 fi
 
 # advance the port # based on the digits in the dirname

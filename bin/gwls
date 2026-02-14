@@ -1,64 +1,70 @@
 #!/bin/zsh
 
+# add this to .zshrc: alias gwcd='cd "$(gwls --choose)"'
+
 unset choose debug setx
 
 while (($#*)); do
   case $1 in
-    --debug)#
       # shellcheck disable=SC2034
-      debug=true
+    --debug) debug=true ;;
+    --choose) choose=true ;;
+    --help)
+      echo "Usage: gwls [--choose] [--debug] [--setx]"
+      echo
+      echo "Lists all the Guidewire installations in ~/gw/". Add this to .zshrc: alias gwcd='cd "$(gwls --choose)"'
+      echo
+      echo "  --choose    Prompt the user to select one of the listed directories"
+      echo "  --debug     Print debugging information"
+      echo "  --setx      Turn on shell tracing"
+      exit 0
       ;;
-    --choose)# prompt the user to select one
-      # add this to .zshrc: alias gwcd='cd "$(gwls --choose)"'
-      choose=true
-      ;;
-    --setx)# turn on tracing
-      setx=true
-      ;;
-    *)
-      echo Illegal argument: "$1"
-      exit 1
-      ;;
+    --setx) setx=true ;;
+    *) echo Illegal argument: "$1"; exit 1 ;;
   esac
   shift
 done
 
 branch_width=68
 version_width=18
-
 repos=()
-sentinel='0'
+sentinel=$'\0330'
 formatStr="%-2s %-${branch_width}s %-${version_width}s %s"
 
-# display column headers on stderr so they don't get piped to the next command
-(($#choose)) && echo -n '#  ' >&2 # header for the number column when the list is displayed using 'select'
+(($#choose)) && echo -n '#  ' >&2
 printf "${formatStr}\n" '  ' 'Branch' 'Version' 'Dir' >&2
-
 (($#setx)) && set -x
 
-for dir in ~/gw/*; do
-  if [[ -d ${dir}/.git ]]; then
-    pushd ${dir} || exit 1
+orig_dir=$PWD
 
-    dir="${PWD//${HOME}/~}"
-    (($#debug)) && echo --- $dir >&2
+find ~/gw -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
+# fd . ~/gw --min-depth 1 --max-depth 1 --type d | while read -r dir; do
+  [[ -d "$dir/.git" ]] || continue
+  cd "$dir" || continue
 
-    source gwenv --quiet
-    appCode=${GW_ANSI_APPCODE:--}
-    version=${GW_VERSION:--}
-    branch=$(git rev-parse --abbrev-ref HEAD); branch=${branch//user?$USER/@}
+  rel_dir="${PWD/#$HOME/~}"
+  (($#debug)) && echo --- $rel_dir >&2
 
-    repo=$(printf ${formatStr} ${appCode} ${branch} ${version} ${sentinel}${dir})
-    (($#choose)) && repos+=(${repo}) || echo $repo
-    popd || exit 1
+  source gwenv --quiet
+  appCode=${GW_ANSI_APPCODE:--}
+  version=${GW_VERSION:--}
+  branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+  branch=${branch//user?$USER/@}
+
+  repo=$(printf "${formatStr}" "${appCode}" "${branch}" "${version}" "${sentinel}${rel_dir}")
+  if (($#choose)); then
+    repos+=("$repo")
+  else
+    echo "$repo"
   fi
+  cd "$orig_dir" || exit 1
 done
 
 if (($#choose)); then
-  select repo in ${repos}; do
+  select repo in "${repos[@]}"; do
     dir=${repo##*${sentinel}}
     (($#debug)) && typeset repo dir >&2
-    echo ${dir//\~/${HOME}}
+    echo "${dir//\~/$HOME}"
     break
   done
 fi
