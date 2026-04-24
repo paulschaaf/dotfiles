@@ -1,3 +1,4 @@
+# ======== Secrets
 # shellcheck source=~ # shellcheck cannot follow non-constant source
 secrets=~/dotfiles/secrets.sh
 if [[ -f $secrets ]]; then
@@ -6,24 +7,37 @@ if [[ -f $secrets ]]; then
 fi
 unset secrets
 
-# ADS Analytics
+export CERTS="${HOME}/.ca-certificates"
+
+# ======== ADS Analytics
 #export DEPLOYMENT_ID_ADS=grn:v1:cc:guidewire:ads:centaurus:rho9:dev:adsgateway:/deployment/andromeda
 
-# APD for CC
+# ======== AI
+function dev() {
+    local repodir
+    repodir=$(git rev-parse --show-toplevel 2>/dev/null)
+    if [[ -n "$repodir" && -f "$repodir/dev.js" ]]; then
+        node "$repodir/dev.js" "$@"
+        return
+    fi
+    npx @aidev/dev "$@"
+}
+
+# ======== APD for CC
 export GW_APD_GenerateSmokeTests=true
 
-# Artifactory
+# ======== Artifactory
 # https://confluence.guidewire.com/display/ISPL/Configuring+an+InsuranceSuite+Core+Build+Environment
 artifactory=https://artifactory.guidewire.com
 export ARTIFACTORY_URL=${artifactory}/devconnect-mvn-prod/
 export ARTIFACTORY_USERNAME=${USER}
 
-# Claim Automation
+# ======== Claim Automation
 export CIS_ARTIFACT_REPO_PASSWORD=${ARTIFACTORY_PASSWORD}
 export CIS_ARTIFACT_REPO_URL=${ARTIFACTORY_URL}
 export CIS_ARTIFACT_REPO_USERNAME=${USER}
 
-# Claims Cloud Policy Integration
+# ======== Claims Cloud Policy Integration
 export APPLICATION_AUTH_ENABLED=true
 export CCPI_IS_LOCAL_SERVER=true
 export DEPLOYMENT_ID_CCPI=grn:v1:igclaimscloudpolicyintegration:futurest:claimssvcs:namerica:rho9:dev:claimsdev:/deployment/andromeda
@@ -34,7 +48,10 @@ export IG_ARTIFACT_REPO_USERNAME=${USER}
 export PC_SERVER_URL_RHS=https://pc-claimsdev-claimssvcs.futurest.mint-1.us-east-1.guidewire.net
 export TENANT_ID=futurest
 
-# InsuranceCore
+# ======== Docker
+export DOCKER_HOST=unix://$HOME/.rd/docker.sock
+
+# ======== InsuranceCore
 export INSURANCESUITE_CORE_DEPENDENCIES_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitecoredependencies-mvn-release
 export INSURANCESUITE_CORE_OSGI_3RD_PARTY_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitecoreosgi3rdparty-mvn-release
 export INSURANCESUITE_CORE_OSGI_3RD_PARTY_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecoreosgi3rdparty-mvn-dev
@@ -42,17 +59,33 @@ export INSURANCESUITE_CORE_RELEASE_REPOSITORY_URL=${artifactory}/insurancesuitec
 export INSURANCESUITE_CORE_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecore-mvn-dev
 export MAVEN_CENTRAL_MIRROR_REPOSITORY_URL=${artifactory}/mavencentral-mvn-remote
 
-# GradlePlugins
+# ======== GradlePlugins
 export GRADLE_DISTRIBUTION_REPOSITORY_URL=${artifactory}/gradledistributions-generic-remote
 export GRADLE_PLUGINS_MIRROR_REPOSITORY_URL=${artifactory}/plugins-gradle-remote
 export INSURANCESUITE_CORE_GRADLE_PLUGINS_PRODUCTION_REPOSITORY_URL=${artifactory}/insurancesuitecoregradleplugins-mvn-prod
 export INSURANCESUITE_CORE_GRADLE_PLUGINS_SNAPSHOT_REPOSITORY_URL=${artifactory}/insurancesuitecoregradleplugins-mvn-dev
 export INSURANCESUITE_CORE_THIRDPARTY_REPOSITORY_URL=${artifactory}/insurancesuitecore-mvn-thirdparty
 
-# Dependency credentials (must not include "@guidewire.com")
+# ======== Dependency credentials (must not include "@guidewire.com")
 export DEPENDENCY_REPOSITORY_PASSWORD=${ARTIFACTORY_PASSWORD}
 export DEPENDENCY_REPOSITORY_USERNAME=${USER}
 
+# ======== Node / NVM
+export NODE_EXTRA_CA_CERTS=$CERTS/ZscalerRootCertificate-2048-SHA256-Feb2025.crt
+
+# Lazy NVM - loads on first use instead of at startup
+if [ -d "$HOME/.nvm" ]; then
+  export NVM_DIR="$HOME/.nvm"
+  # Stub functions that trigger real NVM load on first use
+  nvm() { unset -f nvm node npm npx; source "$NVM_DIR/nvm.sh"; nvm "$@"; }
+  node() { unset -f nvm node npm npx; source "$NVM_DIR/nvm.sh"; node "$@"; }
+  npm() { unset -f nvm node npm npx; source "$NVM_DIR/nvm.sh"; npm "$@"; }
+  npx() { unset -f nvm node npm npx; source "$NVM_DIR/nvm.sh"; npx "$@"; }
+#  if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
+#    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+#    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+#  fi
+fi
 
 # ========
 # ======== Colors

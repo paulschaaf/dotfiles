@@ -430,19 +430,9 @@ done
 # ========
 # ======== Guidewire
 if inMacOS; then
-  export CERTS="${HOME}/.ca-certificates"
-  export NODE_EXTRA_CA_CERTS=$CERTS/ZscalerRootCertificate-2048-SHA256-Feb2025.crt
-#  export DOCKER_HOST=unix://$HOME/.rd/docker.sock
-
   ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
   export PATH="/Users/pschaaf/.rd/bin:$PATH"
   ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-
-  if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-    export NVM_DIR="$HOME/.nvm"
-    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && . "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && . "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-  fi
 fi
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)

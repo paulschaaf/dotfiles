@@ -232,13 +232,22 @@ case ${GW_PLATFORM} in
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
-  Niseko|Olos|*)
+  Niseko|Olos|Palisades)
     export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5 ${ijEdition}.app/Contents"
     export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
     export GW_DB_DIR=./tmp
     [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
     ;;
-  # if you add a new version here make sure to set the required environment above
+  Qusar|*)
+    if [[ "$GW_STUDIO_VERSION" == 9.0.* ]]; then
+      export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5 ${ijEdition}.app/Contents"
+    else
+      export IDEA_HOME="/Applications/IntelliJ IDEA 2025.3.4 ${ijEdition}.app/Contents"
+    fi
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
+      export GW_DB_DIR=./tmp
+      [[ "$GW_APPCODE" = "cc" ]] && GW_DB_DIR=$GW_DB_DIR/test
+    ;;
 esac
 
 

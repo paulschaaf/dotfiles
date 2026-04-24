@@ -104,7 +104,7 @@ if ((!$#txt)); then
   exit 1
 fi
 
-LABEL=${GW_APPCODE}${GW_PLATFORM:0:1}
+LABEL=${GW_APPCODE//cc//}${GW_PLATFORM:0:1}
 
 filename=banner_${LABEL}_${fgColor}${font:+_$font}_${txt}.png
 filename=`echo ${filename} | sed 's/[^-.A-Za-z0-9_]/_/g'`
@@ -132,7 +132,9 @@ command=( magick convert
 
 echo '   '${(q)command}
 if ! dry_run; then
+  set -x
   ${command}
+  set +x
 
 #  eval `identify -ping -format 'width=%w; height=%h' ${filename}`
 
