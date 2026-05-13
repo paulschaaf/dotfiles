@@ -108,22 +108,27 @@ export SAVEHIST=$HISTSIZE
 export LESS='--RAW-CONTROL-CHARS --hilite-unread --ignore-case --jump-target=2 --no-init --quit-if-one-screen --status-column -Ps%dt/%D ?f%f::STDIN:$'
 # LESS_TERMCAP_DEBUG=true        # make manpages show markup codes
 if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-  export LESS_TERMCAP_mb=$(tput bold; tput setaf 6)               # start blink => cyan
-  export LESS_TERMCAP_md=$(tput bold; tput setaf 2)               # start bold => green
-  export LESS_TERMCAP_me=$(tput sgr0)                             # end bold, blink & underline
-
-  export LESS_TERMCAP_so=$(tput bold; tput setaf 3; tput setab 4) # start inverse video => yellow on blue
-  export LESS_TERMCAP_se=$(tput rmso; tput sgr0)                  # stop inverse video =>
-
-  export LESS_TERMCAP_us=$(tput smul; tput bold;    tput setaf 1) # start underline => ul red
-  export LESS_TERMCAP_ue=$(tput rmul; tput sgr0)                  # stop underline
-
-  export LESS_TERMCAP_mr=$(tput rev)
-  export LESS_TERMCAP_mh=$(tput dim)
-  export LESS_TERMCAP_ZN=$(tput ssubm)
-  export LESS_TERMCAP_ZV=$(tput rsubm)
-  export LESS_TERMCAP_ZO=$(tput ssupm)
-  export LESS_TERMCAP_ZW=$(tput rsupm)
+  _tc=${XDG_CACHE_HOME:-~/.cache}/less-termcap-${TERM}.zsh
+  if [[ ! -f $_tc ]]; then
+    () {
+      local _v
+      _v=$(tput bold; tput setaf 6);               print "export LESS_TERMCAP_mb=${(q-)_v}" # start blink => cyan
+      _v=$(tput bold; tput setaf 2);               print "export LESS_TERMCAP_md=${(q-)_v}" # start bold => green
+      _v=$(tput sgr0);                             print "export LESS_TERMCAP_me=${(q-)_v}" # end bold, blink & underline
+      _v=$(tput bold; tput setaf 3; tput setab 4); print "export LESS_TERMCAP_so=${(q-)_v}" # start inverse video => yellow on blue
+      _v=$(tput rmso; tput sgr0);                  print "export LESS_TERMCAP_se=${(q-)_v}" # stop inverse video
+      _v=$(tput smul; tput bold; tput setaf 1);    print "export LESS_TERMCAP_us=${(q-)_v}" # start underline => ul red
+      _v=$(tput rmul; tput sgr0);                  print "export LESS_TERMCAP_ue=${(q-)_v}" # stop underline
+      _v=$(tput rev);                              print "export LESS_TERMCAP_mr=${(q-)_v}"
+      _v=$(tput dim);                              print "export LESS_TERMCAP_mh=${(q-)_v}"
+      _v=$(tput ssubm);                            print "export LESS_TERMCAP_ZN=${(q-)_v}"
+      _v=$(tput rsubm);                            print "export LESS_TERMCAP_ZV=${(q-)_v}"
+      _v=$(tput ssupm);                            print "export LESS_TERMCAP_ZO=${(q-)_v}"
+      _v=$(tput rsupm);                            print "export LESS_TERMCAP_ZW=${(q-)_v}"
+    } >| $_tc
+  fi
+  source $_tc
+  unset _tc
 fi
 
 export GROFF_NO_SGR=1         # For Konsole and Gnome-terminal
@@ -233,10 +238,10 @@ function browse() {
   ${BROWSER} $@
 }
 
-inMacOS && autojump=/usr/local/etc/profile.d/autojump.sh
-inLinux && autojump=/etc/profile.d/autojump.sh
-[[ -s $autojump ]] && source $autojump
-unset autojump
+#inMacOS && autojump=/usr/local/etc/profile.d/autojump.sh
+#inLinux && autojump=/etc/profile.d/autojump.sh
+#[[ -s $autojump ]] && source $autojump
+#unset autojump
 
 alias gwcd='cd "$(gwls --choose)"'
 
@@ -352,7 +357,12 @@ add-zsh-hook chpwd updateDirs
 
 export STARSHIP_CONFIG=$PSCHAAF_HOME/etc/rc/starship.toml
 if [[ -z "$INTELLIJ_ENVIRONMENT_READER" ]]; then
-  eval "$(starship init zsh)"
+  _starship_cache=${XDG_CACHE_HOME:-~/.cache}/starship-init.zsh
+  if [[ ! -f $_starship_cache || $STARSHIP_CONFIG -nt $_starship_cache ]]; then
+    starship init zsh >| $_starship_cache
+  fi
+  source $_starship_cache
+  unset _starship_cache
 fi
 
 # ========
@@ -360,7 +370,10 @@ fi
 # Start or connect to the existing ssh-agent and/or gpg-agent
 if (( ! $#SSH_AGENT_PID )); then
   if inLinux; then
-    ((! UID)) || eval `/usr/bin/keychain -Q --eval ~/.ssh/id_ecdsa`
+    if (( ! UID )); then : # skip for root
+    elif [[ -f ~/.keychain/$HOST-sh ]] && source ~/.keychain/$HOST-sh && kill -0 $SSH_AGENT_PID &>/dev/null; then : # agent already running
+    else eval $(/usr/bin/keychain -Q --eval ~/.ssh/id_ecdsa)
+    fi
   elif inMacOS; then
     ssh_pid_file="$HOME/.config/ssh-agent.pid"
     SSH_AUTH_SOCK="$HOME/.config/ssh-agent.sock"

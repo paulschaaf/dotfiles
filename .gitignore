@@ -25,6 +25,7 @@ ssh/
 **/*.zwc
 **/*.zwc.old
 out/
+.claude
 
 secrets.sh
 
