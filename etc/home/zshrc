@@ -152,6 +152,7 @@ fi
 export MANPAGER=less
 export PAGER=less
 export RIPGREP_CONFIG_PATH=$PSCHAAF_HOME/etc/rc/ripgreprc
+inCygwin && RIPGREP_CONFIG_PATH=$(cygpath -asw $RIPGREP_CONFIG_PATH)
 
 # Any punctuation char in WORDCHARS is considered a part of the adjacent word. The remaining punctuation chars are
 # considered separate words, regardless of what may be adjacent.
@@ -442,11 +443,8 @@ done
 
 # ========
 # ======== Guidewire
-if inMacOS; then
-  ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
-  export PATH="/Users/pschaaf/.rd/bin:$PATH"
-  ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
-fi
+
+inMacOS || return
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/pschaaf/.rd/bin:$PATH"

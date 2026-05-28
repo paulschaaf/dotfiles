@@ -7,6 +7,8 @@ binary=$(if [[ -f /usr/local/bin/rg ]]; then \
       echo /usr/local/bin/rg; \
    elif [[ -f /opt/homebrew/bin/rg ]]; then \
       echo /opt/homebrew/bin/rg; \
+   elif [[ -f /c/ProgramData/chocolatey/bin/rg ]]; then \
+      echo /c/ProgramData/chocolatey/bin/rg; \
    else echo /usr/bin/rg; \
    fi)
 

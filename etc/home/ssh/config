@@ -18,6 +18,11 @@ Host copernicus
    ForwardAgent yes
    ForwardX11 yes
 
+Host satoris
+   ForwardAgent yes
+   ForwardX11 yes
+   User pauls
+
 Host pschaaf-C02G787RMD6R
    ForwardAgent yes
    ForwardX11 yes
@@ -43,3 +48,4 @@ Host *
    ForwardAgent no
    ForwardX11 no
    SendEnv CD_TO SHLVL ZDOTDIR
+   User pschaaf
