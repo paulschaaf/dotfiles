@@ -122,6 +122,7 @@ export EMAIL=paul.schaaf@gmail.com
 inLinux && export IDEA_ROOT=/opt
 export PASTEL_COLOR_MODE=24bit
 export TEMP=/tmp
+export TZ='America/Los_Angeles'
 
 # set all `locale` variables
 export LC_ALL=en_US.UTF-8
