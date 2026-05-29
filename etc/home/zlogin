@@ -34,6 +34,7 @@ else
 #         ((UID)) && printf '\e[3;0;0;1t\e[8;142;100t'
     else
         fastfetch
+        (( $#SSH_CONNECTION )) && export DISPLAY=$(awk '/nameserver / {print $2; exit}' /etc/resolv.conf 2>/dev/null):0
     fi
 fi
 
