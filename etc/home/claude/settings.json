@@ -1,0 +1,39 @@
+{
+  "env": {
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "64000"
+  },
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "devassistant"
+  ],
+  "hooks": {
+    "UserPromptSubmit": [
+      { "hooks": [{ "type": "command", "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/set-tab-title.sh" }] }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "bash -c 'S=\"$WSROOT/.claude/scripts/statusline.py\"; test -f \"$S\" || { echo \"claude-hook[statusline]: $S not found, skipping\" >&2; exit 0; }; R=\"${XDG_CACHE_HOME:-$HOME/.cache}/statusline/runner\"; if read -r M P < \"$R\" 2>/dev/null; then SM=$(stat -c %Y \"$S\" 2>/dev/null || stat -f %m \"$S\" 2>/dev/null); if [ -n \"$SM\" ] && [ \"$M\" = \"$SM\" ] && [ -x \"$P\" ]; then exec \"$P\" \"$S\"; fi; fi; exec uv run --script \"$S\"'",
+    "refreshInterval": 5
+  },
+  "enabledPlugins": {
+    "jdtls-lsp@claude-plugins-official": true,
+    "caveman@caveman": true
+  },
+  "extraKnownMarketplaces": {
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
+    }
+  },
+  "effortLevel": "medium",
+  "advisorModel": "opus",
+  "tui": "default",
+  "skipDangerousModePermissionPrompt": true,
+  "theme": "auto"
+}

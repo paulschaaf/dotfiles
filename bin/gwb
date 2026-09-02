@@ -43,7 +43,7 @@ while [ -n "$*" ]; do
       exec > >(tee -i $logfile)
       exec 2>&1
       ;;
-    --nice)# Run the command with the specified niceness
+    --nice)# Run the command with the specified nicen
       nice=true
       ;;
     --no-scan)
@@ -65,6 +65,31 @@ while [ -n "$*" ]; do
   esac
   shift
 done
+
+function log_section() {
+  local _color=$1
+  local _status=$2
+  local _taskDesc=$3
+
+  local _status="$(date '+%R') - ${_status} "
+
+  # turn bold and color on, show status
+  printf "\n\e[97;${_color}m%-s\e[0;38;5;243m\n" ${_status}
+
+  # turn off bold and show the task description
+  printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" $_taskDesc
+}
+
+# A leading /path argument means "change to ~/gw/path first" — do this before
+# sourcing gwSetEnv so the env is read from the target project directory.
+if [[ "$1" = /* ]]; then
+  working=~/gw$1
+  cd $working || return 1
+  log_section ${pass_color} "DONE 'cd ~/gw$1'" "Change working directory to $working"
+  echo -n pwd=; pwd
+  shift
+  unset working
+fi
 
 # Set up environment
 source $HOME/bin/gwSetEnv
@@ -130,7 +155,7 @@ if [[ "$UNAME" = "Darwin" ]]; then
 else
   seven_zip=7z
 fi
-webserverPort=$((GW_PORT_DEBUG + 1))
+webserverPort=$((GW_PORT_DEBUG - 100))
 
 webserver="ruby -run -ehttpd ${resourcesDir} -p${webserverPort}"
 
@@ -147,20 +172,6 @@ function echoVar() {
 }
 
 autoload -Uz settitle
-
-function log_section() {
-  local _color=$1
-  local _status=$2
-  local _taskDesc=$3
-
-  local _status="$(date '+%R') - ${_status} "
-
-  # turn bold and color on, show status
-  printf "\n\e[97;${_color}m%-s\e[0;38;5;243m\n" ${_status}
-
-  # turn off bold and show the task description
-  printf "\e[0;97;${_color}m%-${COLUMNS}s\e[0m\n" $_taskDesc
-}
 
 function debugPrint() {
   (($#debug)) || return
@@ -208,7 +219,9 @@ function runTask() {
   exitCode=0
   SECONDS=0
   if (($#_dry_run == 0)); then
-    if (($#spawn > 0)); then
+    if (($#evalIt > 0)); then
+      eval ${task}
+    elif (($#spawnIt > 0)); then
       eval nohup ${task} &
     else
       # unless being nice, make sure we source the gwb script instead of just running it
@@ -250,7 +263,8 @@ function runTask() {
 
 # Process arguments
 while (($#@)); do
-  unset ignoreNice
+  unset evalIt ignoreNice spawnIt
+
   task=${1%%=*}
   # value is the text after the equals sign, or empty string if there is none
   # shellcheck disable=SC2299 # expansion can't be nested
@@ -295,6 +309,10 @@ while (($#@)); do
       dbName=$(date "+${dbbackup}_%y%m%d_%H:%M:%S${comment}") # keep this in sync with the switch comment above
       fullTask="$seven_zip a ${dbName} $GW_DB_DIR; $seven_zip l ${dbName}.7z"
       ;;
+    cc|ccc)
+      fullTask="echo Error: You probably meant to say 'dev $task'! && exit 1"
+      taskFailIcon=$failIcon
+      ;;
     clean)# Deletes the build directory
       ;;
     cleanIdea)# Deletes the Studio project
@@ -317,7 +335,7 @@ while (($#@)); do
       taskFailIcon=$failIcon
       ;;
     editDisplayKey)# Edit display.properties in a plain (non-studio) IntelliJ Idea
-      spawn=true
+      spawnIt=true
       fullTask="idea app-${GW_APPCODE}/${GW_APPCODE}/config/locale/display.properties"
       ;;
     fixgwb)# Remove the erroneous spaces from the OOB product gwb script
@@ -363,7 +381,7 @@ while (($#@)); do
     genWsiLocal)#
       ;;
     h2)# Open the H2 console connected to the database
-#      spawn=true
+#      spawnIt=true
       jarFile=`find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit`
       db_path=`pwd`${GW_DB_DIR#.}/${GW_APPCODE}
       fullTask="java -jar ${jarFile} -url 'jdbc:h2:${db_path};IFEXISTS=TRUE'"
@@ -371,7 +389,7 @@ while (($#@)); do
       echo "\n\e[5;97;101mChange the host to 127.0.0.1.\e[0m"
       ;;
     h2Basic)# Open the H2 console
-#      spawn=true
+#      spawnIt=true
       jarFile=`find .gradle ~/.gradle -type f -regex '.*/h2-[0-9.]*\.jar' -print -quit`
       db_path=`pwd`${GW_DB_DIR#.}/${GW_APPCODE}
 
@@ -380,7 +398,7 @@ while (($#@)); do
       echo "\n\e[5;97;101mChange the host to 127.0.0.1, and make sure the JDBC URL is '${db_path}'! There is no username or password.\e[0m"
       ;;
     http)# Start a simple http server in the resources directory
-      spawn=true
+      spawnIt=true
       noNotifySuccess=true
       fullTask=$webserver
       ;;
@@ -388,7 +406,7 @@ while (($#@)); do
       [[ $GW_PL_NUM -lt 9 ]] && fullTask=${fullTask/idea/gen-ide}
       ;;
     ij)# Start the appropriate intellij
-      spawn=true
+      spawnIt=true
       fullTask="${IDEA_HOME}/bin/idelsa.sh"
       ;;
     killH2)# Kill the H2 server on port $((defaultRunPort + 2))
@@ -426,7 +444,6 @@ while (($#@)); do
       ;;
     lsplugins)# List all of the user IntelliJ plugins
       expectedPlugins=(
-        'GitHub Copilot'
         'GitLink'
         'GitToolBox'
         'Grep Console'
@@ -524,9 +541,12 @@ while (($#@)); do
 #      fullTask="ssh -xS $ssh_socket -O exit pschaaf@localhost"
 #      ;;
 #    portOpen)# Open an SSH tunnel on port 8080 redirecting to 8090
-#      spawn=true
+#      spawnIt=true
 #      fullTask="exec ssh -x -M -S $ssh_socket -fnNT -L 8080:127.0.0.1:8090 pschaaf@localhost"
 #      ;;
+    pwd)# Print the working directory
+      fullTask='pwd'
+      ;;
     restoreDb)# Restore the database file named in the argument
       if (( $#value == 0 )); then
         fullTask="echo '$task' requires a database name argument\! && exit 1"
@@ -590,7 +610,7 @@ while (($#@)); do
     studio)# Add --no-scan to skip publishing the build scan
       ignoreNice=true
       # shellcheck disable=SC2034 # var appears unused
-      [[ $GW_PL_NUM -lt 9 ]] && spawn=true
+      [[ $GW_PL_NUM -lt 9 ]] && spawnIt=true
       unset inScreen
       taskFailIcon=$failIcon
       if [[ "$GW_APPCODE" = 'ccpi' ]]; then

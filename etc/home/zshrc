@@ -182,7 +182,7 @@ if inLinux; then
 fi
 alias pd=popd
 inLinux && alias restartplasma='kquitapp5 plasmashell && kstart5 plasmashell'
-alias rpn='java -jar ~/Applications/rpncalc.jar'
+alias rpn='java -jar ~/pschaaf@guidewire.com\ -\ Google\ Drive/My\ Drive/private/setup/rpncalc.jar'
 #alias rm='rm -i'
 ! inCygwin && alias rm=trash
 alias term='echoVar TERM'
@@ -244,6 +244,7 @@ function browse() {
 #[[ -s $autojump ]] && source $autojump
 #unset autojump
 
+alias file='file -h'
 alias gwcd='cd "$(gwls --choose)"'
 
 autoload -Uz colorLabel
@@ -317,21 +318,26 @@ autoload -Uz zed && alias fned='zed -f'
 #[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 bindkey "^?"         backward-delete-char                 # backspace
+bindkey "\033[3~"    delete-char                          # delete
+
+bindkey "\033[H"     beginning-of-line                    # home
+bindkey "\033[F"     end-of-line                          # end
+
 bindkey "^H"         backward-kill-word                   # ctrl_backspace
+bindkey "\033[3;5~"  kill-word                            # ctrl_delete
+
 bindkey "\033[1;3D"  backward-word                        # alt_left
 bindkey "\033[1;5D"  backward-word                        # ctrl_left
-bindkey "\033[H"     beginning-of-line                    # home
-bindkey "\033[18~"   copy-region-as-kill                  # F7
-bindkey "\033[3~"    delete-char                          # delete
-bindkey "\M-C\M-,"   down-case-word
-bindkey "\033[F"     end-of-line                          # end
 bindkey "\033[1;3C"  forward-word                         # alt_right
 bindkey "\033[1;5C"  forward-word                         # ctrl_right
-bindkey "\033[20~"   history-incremental-search-backward  # F9
-bindkey "\033[17~"   kill-whole-line                      # F6
-bindkey "\033[3;5~"  kill-word                            # ctrl_delete
-bindkey "\M-C\M-5"   up-case-word
-bindkey "\033[19~"   yank                                 # F8
+
+#bindkey "\M-C\M-,"   down-case-word
+#bindkey "\M-C\M-5"   up-case-word
+
+#bindkey "\033[17~"   kill-whole-line                      # F6
+#bindkey "\033[18~"   copy-region-as-kill                  # F7
+#bindkey "\033[20~"   history-incremental-search-backward  # F9
+#bindkey "\033[19~"   yank                                 # F8
 
 if [[ "$TERMINAL_EMULATOR" = "JetBrains-JediTerm" ]]; then
   bindkey "\033[5D"    backward-word         # ctrl_left

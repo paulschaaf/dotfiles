@@ -119,7 +119,7 @@ fi
 command=( magick convert
   -background none
   -pointsize ${pointsize}
-  -channel A -evaluate multiply 0.8 +channel        # transparency percentage
+  -channel A -evaluate multiply 0.4 +channel        # transparency percentage
 #  -stroke white -strokewidth 4
 #  -fill ${prodColor}  label:"${LABEL}"
   ${font:+-font} ${font}

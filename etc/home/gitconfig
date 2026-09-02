@@ -19,6 +19,7 @@
     excludesFile = ~/.gitignore
 	autocrlf = input
 	pager = delta
+	hooksPath = /Users/pschaaf/.git-hooks
 [credential]
 	helper = osxkeychain
 [delta]
@@ -66,3 +67,5 @@
 [user]
 	name = Paul Schaaf
 	email = pschaaf@guidewire.com
+[init]
+	templateDir = /Users/pschaaf/.git-templates
