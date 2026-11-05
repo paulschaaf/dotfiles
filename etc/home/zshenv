@@ -146,3 +146,9 @@ if (($#inGuidewire)); then
   zrecompile ~/etc/rc/zshenv_guidewire
   source $PSCHAAF_HOME/etc/rc/zshenv_guidewire
 fi
+
+# >>> ispl zshenv-secrets loader (managed) >>>
+[ -f "$HOME/.zshenv.secrets" ] && source "$HOME/.zshenv.secrets"
+# transition shim: load legacy ~/.zshrc.local in interactive shells only (deprecated)
+case $- in *i*) [ -f "$HOME/.zshrc.local" ] && source "$HOME/.zshrc.local" ;; esac
+# <<< ispl zshenv-secrets loader (managed) <<<

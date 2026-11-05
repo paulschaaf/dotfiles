@@ -39,7 +39,7 @@ orig_dir=$PWD
 
 find ~/gw -mindepth 1 -maxdepth 1 -type d | while read -r dir; do
 # fd . ~/gw --min-depth 1 --max-depth 1 --type d | while read -r dir; do
-  [[ -d "$dir/.git" ]] || continue
+  [[ -e "$dir/.git" ]] || continue
   cd "$dir" || continue
 
   rel_dir="${PWD/#$HOME/~}"

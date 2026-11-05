@@ -240,9 +240,9 @@ case ${GW_PLATFORM} in
     ;;
   Qusar|*)
     if [[ "$GW_STUDIO_VERSION" == 9.0.* ]]; then
-      export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5 ${ijEdition}.app/Contents"
+      export IDEA_HOME="/Applications/IntelliJ IDEA 2024.1.5.app/Contents"
     else
-      export IDEA_HOME="/Applications/IntelliJ IDEA 2025.3.4 ${ijEdition}.app/Contents"
+      export IDEA_HOME="/Applications/IntelliJ IDEA 2025.3.4.app/Contents"
     fi
       export JAVA_HOME=/Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home
       export GW_DB_DIR=./tmp

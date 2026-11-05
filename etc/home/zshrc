@@ -451,6 +451,7 @@ done
 # ======== Guidewire
 
 inMacOS || return
+builtin cd -q ~/gw # no auto_pushd
 
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/pschaaf/.rd/bin:$PATH"

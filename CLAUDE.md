@@ -2,6 +2,16 @@
 
 Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
+## Build & Test
+- This is a Java project (Maven/Gradle). After editing any `.java` file, run the module's build + unit tests before reporting done.
+- Prefer targeted test runs (single module/class) over full builds to keep iterations fast.
+
+
+## Jira Conventions
+- Ticket IDs are referenced in branch names and commit messages as `PROJ-1234`.
+- When work maps to a Jira issue, update the issue (status, comment with summary of change + commit SHA) after the commit lands — do not update Jira before the change is verified.
+
+
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
 ## General Facts
@@ -10,6 +20,8 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 - A Guidewire employee's email address is first initial, last name (e.g. mine is pschaaf@guidewire.com).
 - A Guidewire employee's GitHub username is first initial, last name, then "_gwre" (e.g. mine is "pschaaf_gwre").
 - A "PR" is a GitHub "pull request".
+- Do not create Jira Tasks
+
 
 ## Think Before Doing
 
@@ -21,7 +33,7 @@ Before implementing:
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop. Name what's confusing. Ask.
 - If you spot a risk, an error, or a clearly better approach, flag it even if I didn’t ask.
-- If there’s a relevant tool, feature, or method I might not know about, mention it.
+- If there’s a relevant tool, feature, design pattern, or method I might not know about, mention it.
 
 
 ## Rationality and Defensibility
@@ -46,6 +58,8 @@ Before implementing:
 - Correctness is the most important thing, followed by clarity, performance, then brevity.
 - No flattery and no validation for its own sake.
 - Don’t open feedback with what’s good.
+- Be succinct. Avoid repetition unless it adds clarity.
+- Lead with the answer; use BLUF; omit repeated reasoning unless requested.
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
@@ -90,10 +104,22 @@ Transform tasks into verifiable goals:
 - Gosu files can never reference classes in the com.guidewire package
 - When a PR includes a change to a .eti, .etx, .eix, .tti, .tix, or .ttx file you must increment minor.version in app-cc/cc/config/metadata/metadata.properties to be one more than is currently checked in to origin/h-master
 - When these methods are defined in a test class they should appear in this order: beforeClass, afterClass, beforeMethod, afterMethod. They should be near the top of the file, before any constructors
+- Only use static imports when there is a precedent for doing so (like with com.guidewire.cc.system.internal.InternalMethods)
+- Import classes to avoid full path references, except where it is required, or needed for clarity
+- For code comments, prefer simple language and avoid long comparisons with how it used to work, unless that helps to clarify
 
 
 ## Writing Style Guideline
 - When editing my writing, preserve my voice and word choices. Don’t make it more formal or more polished. If a sentence has a real problem, explain what’s wrong before you change it.
+
+
+## Commit Style
+- One logical change per commit; message format: `PROJ-1234: <imperative summary>`.
+- Do not commit until the build and relevant tests pass.
+
+## Cost & Scope Guardrails
+- Start non-trivial tasks with a short plan (files to touch, commands to run) before making edits.
+- Avoid re-reading large files already in context
 
 ---
 

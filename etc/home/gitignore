@@ -2,6 +2,7 @@
 .idea/
 .metadata/
 .p4config/
+.scratch/
 .ssh/
 .studio/
 build/
